@@ -13,7 +13,6 @@ import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.constraints.IConstraintsHandler;
-import io.agrest.runtime.encoder.IEncoderService;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.DbJoin;
@@ -33,16 +32,13 @@ import java.util.Set;
  */
 public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>> {
 
-    private final IEncoderService encoderService;
     private final IConstraintsHandler constraintsHandler;
     private final EntityResolver entityResolver;
 
     public CayenneApplyServerParamsStage(
-            @Inject IEncoderService encoderService,
             @Inject IConstraintsHandler constraintsHandler,
             @Inject ICayennePersister persister) {
 
-        this.encoderService = encoderService;
         this.constraintsHandler = constraintsHandler;
         this.entityResolver = persister.entityResolver();
     }
@@ -67,11 +63,11 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
             fillIdsFromParentId(context);
         }
 
-        constraintsHandler.constrainUpdate(context, context.getWriteConstraints());
+        constraintsHandler.constrainUpdate(context);
 
         // apply read constraints
         // TODO: should we only care about response constraints after the commit?
-        constraintsHandler.constrainResponse(entity, null, context.getReadConstraints());
+        constraintsHandler.constrainResponse(entity, null);
 
         tagCayenneEntities(context.getEntity());
     }

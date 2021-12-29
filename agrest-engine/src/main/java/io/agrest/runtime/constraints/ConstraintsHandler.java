@@ -2,7 +2,6 @@ package io.agrest.runtime.constraints;
 
 import io.agrest.ResourceEntity;
 import io.agrest.SizeConstraints;
-import io.agrest.constraints.Constraint;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,33 +16,25 @@ public class ConstraintsHandler implements IConstraintsHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConstraintsHandler.class);
 
-    private RequestConstraintsHandler requestConstraintHandler;
     private EntityConstraintHandler modelConstraintHandler;
 
     public ConstraintsHandler() {
-
-        this.requestConstraintHandler = new RequestConstraintsHandler();
         this.modelConstraintHandler = new EntityConstraintHandler();
     }
 
     @Override
-    public <T> void constrainUpdate(UpdateContext<T> context, Constraint<T> c) {
-
-        if (!requestConstraintHandler.constrainUpdate(context, c)) {
-            modelConstraintHandler.constrainUpdate(context);
-        }
+    public <T> void constrainUpdate(UpdateContext<T> context) {
+        modelConstraintHandler.constrainUpdate(context);
     }
 
     @Override
-    public <T> void constrainResponse(ResourceEntity<T> entity, SizeConstraints sizeConstraints, Constraint<T> c) {
+    public <T> void constrainResponse(ResourceEntity<T> entity, SizeConstraints sizeConstraints) {
 
         if (sizeConstraints != null) {
             applySizeConstraintsForRead(entity, sizeConstraints);
         }
 
-        if (!requestConstraintHandler.constrainResponse(entity, c)) {
-            modelConstraintHandler.constrainResponse(entity);
-        }
+        modelConstraintHandler.constrainResponse(entity);
     }
 
     protected void applySizeConstraintsForRead(ResourceEntity<?> entity, SizeConstraints constraints) {

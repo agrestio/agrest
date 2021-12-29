@@ -5,7 +5,6 @@ import io.agrest.access.DeleteAuthorizer;
 import io.agrest.access.PropertyFilter;
 import io.agrest.access.ReadFilter;
 import io.agrest.access.UpdateAuthorizer;
-import io.agrest.constraints.Constraint;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
@@ -58,30 +57,7 @@ public interface UpdateBuilder<T> {
      * @since 1.14
      */
     UpdateBuilder<T> uri(UriInfo uriInfo);
-
-    /**
-     * Installs an optional constraint function defining how much of the request entity attributes / relationships
-     * the client can see.
-     *
-     * @param constraint an instance of Constraint function.
-     * @return this builder instance.
-     * @since 2.4
-     * @deprecated since 4.8 in favor of {@link #readablePropFilter(Class, PropertyFilter)}
-     */
-    @Deprecated
-    UpdateBuilder<T> readConstraint(Constraint<T> constraint);
-
-    /**
-     * Installs an optional constraint function defining how much of the request entity attributes / relationships
-     * the client can modify.
-     *
-     * @param constraint an instance of Constraint function.
-     * @return this builder instance
-     * @deprecated since 4.8 in favor of {@link #writeablePropFilter(Class, PropertyFilter)}
-     */
-    @Deprecated
-    UpdateBuilder<T> writeConstraint(Constraint<T> constraint);
-
+    
     /**
      * Adds a {@link PropertyFilter} that define property read access rules for the current request and a given entity.
      * I.e. which entity attributes, relationships and ids a client is allowed to see. Can be called multiple times to add

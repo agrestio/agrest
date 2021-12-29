@@ -3,7 +3,6 @@ package io.agrest.runtime.constraints;
 import io.agrest.RootResourceEntity;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.constraints.Constraint;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazyAgDataMap;
@@ -30,22 +29,6 @@ public class ConstraintsHandlerWithDefaultsTest {
     }
 
     @Test
-    public void testConstrainResponse_PerRequest() {
-
-        AgEntity<Tr> entity = dataMap.getEntity(Tr.class);
-        Constraint<Tr> tc1 = Constraint.excludeAll(Tr.class).attributes("b");
-
-        RootResourceEntity<Tr> te1 = new RootResourceEntity<>(entity);
-        ResourceEntityUtils.appendAttribute(te1, "a", Integer.class, true, true, Tr::getA);
-        ResourceEntityUtils.appendAttribute(te1, "b", String.class, true, true, Tr::getB);
-
-        constraintsHandler.constrainResponse(te1, null, tc1);
-        assertEquals(1, te1.getAttributes().size());
-        assertTrue(te1.getAttributes().containsKey("b"));
-        assertTrue(te1.getChildren().isEmpty());
-    }
-
-    @Test
     public void testConstrainResponse_Default() {
 
         AgEntity<Tr> entity = dataMap.getEntity(Tr.class);
@@ -54,7 +37,7 @@ public class ConstraintsHandlerWithDefaultsTest {
         ResourceEntityUtils.appendAttribute(te1, "a", Integer.class, true, true, Tr::getA);
         ResourceEntityUtils.appendAttribute(te1, "b", String.class, false, true, Tr::getB);
 
-        constraintsHandler.constrainResponse(te1, null, null);
+        constraintsHandler.constrainResponse(te1, null);
         assertEquals(1, te1.getAttributes().size());
         assertTrue(te1.getAttributes().containsKey("a"));
         assertTrue(te1.getChildren().isEmpty());
@@ -69,7 +52,7 @@ public class ConstraintsHandlerWithDefaultsTest {
         ResourceEntityUtils.appendAttribute(te1, "m", String.class, true, true, Ts::getM);
         ResourceEntityUtils.appendAttribute(te1, "n", String.class, true, true, Ts::getN);
 
-        constraintsHandler.constrainResponse(te1, null, null);
+        constraintsHandler.constrainResponse(te1, null);
         assertEquals(2, te1.getAttributes().size());
         assertTrue(te1.getAttributes().containsKey("m"));
         assertTrue(te1.getAttributes().containsKey("n"));

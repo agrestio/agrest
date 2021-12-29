@@ -1,7 +1,6 @@
 package io.agrest.runtime.processor.meta;
 
 import io.agrest.MetadataResponse;
-import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.meta.AgResource;
 import io.agrest.processor.BaseProcessingContext;
@@ -19,7 +18,6 @@ public class MetadataContext<T> extends BaseProcessingContext<T> {
     private Class<?> resourceType;
     private UriInfo uriInfo;
     private Encoder encoder;
-    private Constraint<T> constraint;
     private Collection<AgResource<T>> resources;
 
     public MetadataContext(Class<T> type) {
@@ -82,21 +80,5 @@ public class MetadataContext<T> extends BaseProcessingContext<T> {
 
     public void setUriInfo(UriInfo uriInfo) {
         this.uriInfo = uriInfo;
-    }
-
-    /**
-     * @return this context's constraint function.
-     * @since 2.10
-     */
-    public Constraint<T> getConstraint() {
-        return constraint;
-    }
-
-    /**
-     * @param constraint constraint function.
-     * @since 2.10
-     */
-    public void setConstraint(Constraint<T> constraint) {
-        this.constraint = constraint;
     }
 }

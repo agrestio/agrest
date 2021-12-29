@@ -9,7 +9,6 @@ import io.agrest.ObjectMapperFactory;
 import io.agrest.SimpleResponse;
 import io.agrest.UpdateBuilder;
 import io.agrest.UpdateStage;
-import io.agrest.constraints.Constraint;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
@@ -74,24 +73,6 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     @Override
     public UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
         context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent));
-        return this;
-    }
-
-    /**
-     * @since 2.4
-     */
-    @Override
-    public UpdateBuilder<T> readConstraint(Constraint<T> constraint) {
-        context.setReadConstraints(constraint);
-        return this;
-    }
-
-    /**
-     * @since 2.4
-     */
-    @Override
-    public UpdateBuilder<T> writeConstraint(Constraint<T> constraint) {
-        context.setWriteConstraints(constraint);
         return this;
     }
 

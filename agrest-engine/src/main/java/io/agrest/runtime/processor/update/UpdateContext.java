@@ -11,7 +11,6 @@ import io.agrest.ObjectMapperFactory;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
-import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.BaseProcessingContext;
@@ -36,8 +35,6 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     private UriInfo uriInfo;
     private AgObjectId id;
     private EntityParent<?> parent;
-    private Constraint<T> readConstraints;
-    private Constraint<T> writeConstraints;
     private boolean includingDataInResponse;
     private ObjectMapperFactory mapper;
     private String entityData;
@@ -151,22 +148,6 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 
     public void setParent(EntityParent<?> parent) {
         this.parent = parent;
-    }
-
-    public Constraint<T> getReadConstraints() {
-        return readConstraints;
-    }
-
-    public void setReadConstraints(Constraint<T> readConstraints) {
-        this.readConstraints = readConstraints;
-    }
-
-    public Constraint<T> getWriteConstraints() {
-        return writeConstraints;
-    }
-
-    public void setWriteConstraints(Constraint<T> writeConstraints) {
-        this.writeConstraints = writeConstraints;
     }
 
     public boolean isIncludingDataInResponse() {

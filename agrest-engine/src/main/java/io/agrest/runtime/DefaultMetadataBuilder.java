@@ -2,7 +2,6 @@ package io.agrest.runtime;
 
 import io.agrest.MetadataBuilder;
 import io.agrest.MetadataResponse;
-import io.agrest.constraints.Constraint;
 import io.agrest.runtime.processor.meta.MetadataContext;
 import io.agrest.runtime.processor.meta.MetadataProcessorFactory;
 
@@ -32,12 +31,6 @@ public class DefaultMetadataBuilder<T> implements MetadataBuilder<T> {
     @Override
     public MetadataBuilder<T> uri(UriInfo uriInfo) {
         context.setUriInfo(uriInfo);
-        return this;
-    }
-
-    @Override
-    public MetadataBuilder<T> constraint(Constraint<T> constraint) {
-        context.setConstraint(constraint);
         return this;
     }
 

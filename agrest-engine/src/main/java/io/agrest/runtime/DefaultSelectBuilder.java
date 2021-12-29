@@ -7,7 +7,6 @@ import io.agrest.EntityParent;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
 import io.agrest.SizeConstraints;
-import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
@@ -57,20 +56,6 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     @Override
     public SelectBuilder<T> parent(EntityParent<?> parent) {
         context.setParent(parent);
-        return this;
-    }
-
-    /**
-     * Installs an optional constraint function defining how much of the request entity attributes / relationships
-     * the client can see.
-     *
-     * @param constraint an instance of Constraint function.
-     * @return this builder instance.
-     * @since 2.4
-     */
-    @Override
-    public SelectBuilder<T> constraint(Constraint<T> constraint) {
-        context.setConstraint(constraint);
         return this;
     }
 

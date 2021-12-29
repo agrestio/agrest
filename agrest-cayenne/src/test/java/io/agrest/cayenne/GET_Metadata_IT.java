@@ -7,12 +7,10 @@ import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.annotation.AgResource;
 import io.agrest.annotation.LinkType;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
-import io.agrest.constraints.Constraint;
-import io.agrest.cayenne.cayenne.main.E15;
 import io.agrest.cayenne.cayenne.main.E19;
 import io.agrest.cayenne.cayenne.main.E5;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.cayenne.unit.DbTest;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.jackson.JacksonService;
 import io.bootique.junit5.BQTestTool;
@@ -56,7 +54,6 @@ public class GET_Metadata_IT extends DbTest {
                         "\"links\":[" +
                         "{\"href\":\"https://example.org/e5\",\"type\":\"collection\",\"operations\":[{\"method\":\"GET\"}]}," +
                         "{\"href\":\"https://example.org/e5/metadata\",\"type\":\"metadata\",\"operations\":[{\"method\":\"GET\"}]}," +
-                        "{\"href\":\"https://example.org/e5/metadata-constraints\",\"type\":\"metadata\",\"operations\":[{\"method\":\"GET\"}]}," +
                         "{\"href\":\"https://example.org/e5/{id}\",\"type\":\"item\"," +
                         "\"operations\":[{\"method\":\"DELETE\"},{\"method\":\"GET\"}]}]}");
     }
@@ -93,21 +90,6 @@ public class GET_Metadata_IT extends DbTest {
                 jsonNode.get("entity").get("properties").toString());
     }
 
-    @Test
-    public void testGetMetadata_Constraints() {
-
-        String metadata = tester.target("/e5/metadata-constraints").get().wasOk().getContentAsString();
-
-        assertTrue(metadata.contains("{\"name\":\"name\",\"type\":\"string\"}"));
-        assertTrue(metadata.contains("{\"name\":\"e15s\",\"type\":\"E15\",\"relationship\":true,\"collection\":true}"));
-        assertFalse(
-                metadata.contains("{\"name\":\"date\",\"type\":\"date\",\"format\":\"date-time\"}"),
-                "Constraint was not applied");
-        assertFalse(
-                metadata.contains("{\"name\":\"e2s\",\"type\":\"E3\",\"relationship\":true,\"collection\":true}"),
-                "Constraint was not applied");
-    }
-
     @Path("e5")
     public static class E5Resource {
 
@@ -138,23 +120,6 @@ public class GET_Metadata_IT extends DbTest {
         @AgResource(entityClass = E5.class, type = LinkType.METADATA)
         public MetadataResponse<E5> getMetadata(@Context UriInfo uriInfo) {
             return Ag.metadata(E5.class, config).forResource(E5Resource.class).uri(uriInfo).process();
-        }
-
-        @GET
-        @Path("metadata-constraints")
-        @AgResource(entityClass = E5.class, type = LinkType.METADATA)
-        public MetadataResponse<E5> getMetadataWithConstraints(@Context UriInfo uriInfo) {
-
-            Constraint<E5> constraint = Constraint.excludeAll(E5.class)
-                    .attribute(E5.NAME.getName())
-                    .path(E5.E15S.getName(), Constraint.idAndAttributes(E15.class));
-
-            return Ag
-                    .metadata(E5.class, config)
-                    .forResource(E5Resource.class)
-                    .uri(uriInfo)
-                    .constraint(constraint)
-                    .process();
         }
     }
 

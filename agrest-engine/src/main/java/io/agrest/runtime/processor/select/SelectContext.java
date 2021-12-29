@@ -9,7 +9,6 @@ import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.SizeConstraints;
-import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.BaseProcessingContext;
@@ -32,7 +31,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     private RootResourceEntity<T> entity;
     private UriInfo uriInfo;
     private SizeConstraints sizeConstraints;
-    private Constraint<T> constraint;
     private boolean atMostOneObject;
     private Encoder encoder;
     private AgRequest mergedRequest;
@@ -132,27 +130,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 
     public void setSizeConstraints(SizeConstraints sizeConstraints) {
         this.sizeConstraints = sizeConstraints;
-    }
-
-
-    /**
-     * @return this context's constraint function.
-     * @since 2.4
-     * @deprecated since 4.8 as Constraint class is deprecated
-     */
-    @Deprecated
-    public Constraint<T> getConstraint() {
-        return constraint;
-    }
-
-    /**
-     * @param constraint constraint function.
-     * @since 2.4
-     * @deprecated since 4.8 as Constraint class is deprecated
-     */
-    @Deprecated
-    public void setConstraint(Constraint<T> constraint) {
-        this.constraint = constraint;
     }
 
     public boolean isAtMostOneObject() {

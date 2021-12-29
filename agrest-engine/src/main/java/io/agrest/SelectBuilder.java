@@ -2,7 +2,6 @@ package io.agrest;
 
 import io.agrest.access.PropertyFilter;
 import io.agrest.access.ReadFilter;
-import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
@@ -67,18 +66,6 @@ public interface SelectBuilder<T> {
      * @since 1.20
      */
     SelectBuilder<T> byId(Map<String, Object> ids);
-
-    /**
-     * Installs a constraint function defining how much of the request entity attributes / relationships
-     * the client can see.
-     *
-     * @param constraint an instance of Constraint function.
-     * @return this builder instance.
-     * @since 2.4
-     * @deprecated since 4.8 in favor of {@link #propFilter(Class, PropertyFilter)}.
-     */
-    @Deprecated
-    SelectBuilder<T> constraint(Constraint<T> constraint);
 
     /**
      * Appends a {@link PropertyFilter} that defines property access rules for the current request and a given entity. I.e.
