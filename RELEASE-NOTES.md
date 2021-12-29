@@ -1,3 +1,7 @@
+## Release 5.0
+
+* #515 Switch to Java 11
+
 ## Release 4.9
 
 * #513 AgEntityOverly with a single root resolver doesn't update the entity
