@@ -126,7 +126,7 @@ public class GET_AgRequestIT extends DbTest {
         @Path("e2_exp")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
             Exp exp = Exp.simple("name = 'xxx'");
-            AgRequest agRequest = Ag.request(config).exp(exp).build();
+            AgRequest agRequest = Ag.request(config).andExp(exp).build();
 
             return Ag.service(config).select(E2.class)
                     .uri(uriInfo)

@@ -43,20 +43,6 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
         return request;
     }
 
-    @Deprecated
-    @Override
-    public AgRequestBuilder exp(String unparsedExp) {
-        Exp exp = unparsedExp != null ? expParser.fromString(unparsedExp) : null;
-        return exp(exp);
-    }
-
-    @Deprecated
-    @Override
-    public AgRequestBuilder exp(Exp exp) {
-        request.exp = exp;
-        return this;
-    }
-
     @Override
     public AgRequestBuilder andExp(String unparsedExp) {
         Exp exp = unparsedExp != null ? expParser.fromString(unparsedExp) : null;

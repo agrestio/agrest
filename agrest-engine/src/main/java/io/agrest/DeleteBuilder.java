@@ -108,13 +108,4 @@ public interface DeleteBuilder<T> {
      * @since 4.8
      */
     SimpleResponse sync();
-
-    /**
-     * @deprecated since 4.8 for API clarity in favor of {@link #sync()}. Previously the chain might have looked as
-     * "Ag.delete(..).delete()".
-     */
-    @Deprecated
-    default SimpleResponse delete() {
-        return sync();
-    }
 }

@@ -41,7 +41,7 @@ public class GET_EntityOverlay_PerStackIT extends DbTest {
 
         AgEntityOverlay<E2> e2Overlay = AgEntity
                 .overlay(E2.class)
-                .exclude("id_");
+                .readablePropFilter(p -> p.property("id_", false));
 
         return builder.entityOverlay(e22Overlay).entityOverlay(e2Overlay);
     }

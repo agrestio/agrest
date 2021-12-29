@@ -161,8 +161,12 @@ public class PUT_EntityOverlay_PerRequestIT extends DbTest {
                 @PathParam("id") Integer id,
                 EntityUpdate<E2> data) {
 
-            AgEntityOverlay<E2> e2Overlay = AgEntity.overlay(E2.class).exclude("address");
-            AgEntityOverlay<E3> e3Overlay = AgEntity.overlay(E3.class).exclude("phoneNumber");
+            AgEntityOverlay<E2> e2Overlay = AgEntity.overlay(E2.class)
+                    .readablePropFilter(p -> p.property("address", false))
+                    .writablePropFilter(p -> p.property("address", false));
+            AgEntityOverlay<E3> e3Overlay = AgEntity.overlay(E3.class)
+                    .readablePropFilter(p -> p.property("phoneNumber", false))
+                    .writablePropFilter(p -> p.property("phoneNumber", false));
 
             return Ag.service(config)
                     .createOrUpdate(E2.class)

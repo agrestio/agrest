@@ -164,10 +164,10 @@ public class AgBuilder_OverlayTest {
     }
 
     @Test
-    @Deprecated // exclude is deprecated
     public void testOverlay_Exclude() {
         AgRuntime runtime = new AgBuilder()
-                .entityOverlay(AgEntity.overlay(X.class).exclude("phoneNumber"))
+                .entityOverlay(AgEntity.overlay(X.class).readablePropFilter(b -> b.property("phoneNumber", false)))
+                .entityOverlay(AgEntity.overlay(X.class).writablePropFilter(b -> b.property("phoneNumber", false)))
                 .build();
 
         AgEntity<X> entity = runtime.service(AgDataMap.class).getEntity(X.class);

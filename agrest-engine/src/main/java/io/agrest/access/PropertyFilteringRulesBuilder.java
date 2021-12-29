@@ -76,7 +76,7 @@ public class PropertyFilteringRulesBuilder {
     }
 
     /**
-     * Sets am access rule for a given named property, that can be an attribute, a relationship or an id.
+     * Sets an access rule for a given named property, that can be an attribute, a relationship or an id.
      */
     public PropertyFilteringRulesBuilder property(String name, boolean accessible) {
         accessFilters.add(accessible

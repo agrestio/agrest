@@ -37,7 +37,7 @@ public class GET_EntityOverlayIT extends DbTest {
 
         AgEntityOverlay<E2> e2Overlay = AgEntity.overlay(E2.class)
                 .redefineAttribute("adhocString", String.class, e2 -> e2.getName() + "*")
-                .exclude("address");
+                .readablePropFilter(p -> p.property("address", false));
 
         AgEntityOverlay<E4> e4Overlay = AgEntity.overlay(E4.class)
                 .redefineAttribute("adhocString", String.class, e4 -> e4.getCVarchar() + "*")

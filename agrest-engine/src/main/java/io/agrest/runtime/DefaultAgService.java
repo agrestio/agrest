@@ -81,6 +81,7 @@ public class DefaultAgService implements IAgService {
         return context.createSimpleResponse();
     }
 
+    @Deprecated
     @Override
     public <T> SimpleResponse delete(Class<T> root, Collection<EntityDelete<T>> deleted) {
         DeleteBuilder<T> builder = delete(root);

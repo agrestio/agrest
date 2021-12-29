@@ -255,8 +255,8 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
         @Path("e2")
         public DataResponse<E2> getE2_With_exclude(@Context UriInfo uriInfo) {
 
-            AgEntityOverlay<E2> e2Overlay = AgEntity.overlay(E2.class).exclude("address");
-            AgEntityOverlay<E3> e3Overlay = AgEntity.overlay(E3.class).exclude("phoneNumber");
+            AgEntityOverlay<E2> e2Overlay = AgEntity.overlay(E2.class).readablePropFilter(p -> p.property("address", false));
+            AgEntityOverlay<E3> e3Overlay = AgEntity.overlay(E3.class).readablePropFilter(p -> p.property("phoneNumber", false));
 
             return Ag.service(config)
                     .select(E2.class)

@@ -388,7 +388,7 @@ public class CreateResourceEntityStageTest {
         SelectContext<Ts> context = new SelectContext<>(Ts.class);
         context.setMergedRequest(requestBuilderFactory
                 .builder()
-                .exp(Exp.simple("x = 12345 and y = 'John Smith' and z = true")).build());
+                .andExp(Exp.simple("x = 12345 and y = 'John Smith' and z = true")).build());
 
         assertDoesNotThrow(() -> stage.execute(context), "Even though the passed spec is invalid, no parsing should occur at this stage");
     }
@@ -400,7 +400,7 @@ public class CreateResourceEntityStageTest {
         SelectContext<Ts> context = new SelectContext<>(Ts.class);
         context.setMergedRequest(requestBuilderFactory
                 .builder()
-                .exp(Exp.simple("m = 'John Smith'")).build());
+                .andExp(Exp.simple("m = 'John Smith'")).build());
 
         stage.execute(context);
 

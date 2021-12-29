@@ -37,21 +37,4 @@ public class CayenneProcessor {
 
         return newExt;
     }
-
-    /**
-     * @deprecated since 4.8 in favor of "getOrCreateExt().setSelect()"
-     */
-    @Deprecated
-    public static <T> SelectQuery<T> getQuery(ResourceEntity<T> entity) {
-        CayenneResourceEntityExt<T> ext = getCayenneEntity(entity);
-        return ext != null ? ext.getSelect() : null;
-    }
-
-    /**
-     * @deprecated since 4.8 in favor of "getOrCreateExt().setSelect()"
-     */
-    @Deprecated
-    public static <T> void setQuery(ResourceEntity<T> entity, SelectQuery<T> query) {
-        getOrCreateCayenneEntity(entity).setSelect(query);
-    }
 }

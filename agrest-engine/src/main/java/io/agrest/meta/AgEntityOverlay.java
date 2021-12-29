@@ -250,21 +250,6 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * Removes a named property (attribute or relationship) from overlaid AgEntity.
-     *
-     * @return this overlay instance
-     * @since 3.7
-     * @deprecated since 4.8 use {@link #readablePropFilter(PropertyFilter)} and/or {@link #writablePropFilter(PropertyFilter)}
-     */
-    @Deprecated
-    public AgEntityOverlay<T> exclude(String... properties) {
-        List<String> asList = asList(properties);
-        readablePropFilter(pa -> asList.forEach(p -> pa.property(p, false)));
-        writablePropFilter(pa -> asList.forEach(p -> pa.property(p, false)));
-        return this;
-    }
-
-    /**
      * Adds or replaces an attribute in the overlaid entity.
      *
      * @since 3.4
@@ -406,30 +391,10 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @since 3.4
-     * @deprecated renamed to {@link #redefineDataResolverFactory(RootDataResolverFactory)}
-     */
-    @Deprecated
-    public AgEntityOverlay<T> redefineRootDataResolver(RootDataResolverFactory rootDataResolverFactory) {
-        this.rootDataResolver = rootDataResolverFactory.resolver(type);
-        return this;
-    }
-
-    /**
      * @since 4.9
      */
     public AgEntityOverlay<T> redefineDataResolverFactory(RootDataResolverFactory rootDataResolverFactory) {
         this.rootDataResolver = rootDataResolverFactory.resolver(type);
-        return this;
-    }
-
-    /**
-     * @since 3.4
-     * @deprecated renamed to {@link #redefineDataResolver(RootDataResolver)}
-     */
-    @Deprecated
-    public AgEntityOverlay<T> redefineRootDataResolver(RootDataResolver<T> rootDataResolver) {
-        this.rootDataResolver = rootDataResolver;
         return this;
     }
 
@@ -454,7 +419,6 @@ public class AgEntityOverlay<T> {
                 return reader.apply(context);
             }
         };
-
         return this;
     }
 }

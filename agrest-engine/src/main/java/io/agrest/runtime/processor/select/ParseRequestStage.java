@@ -113,9 +113,9 @@ public class ParseRequestStage implements Processor<SelectContext<?>> {
 
         private void setExp(AgRequestBuilder builder) {
             if (request.getExp() != null) {
-                builder.exp(request.getExp());
+                builder.andExp(request.getExp());
             } else {
-                builder.exp(exp(parameters));
+                builder.andExp(exp(parameters));
             }
         }
 

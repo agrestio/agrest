@@ -12,27 +12,6 @@ import java.util.Map;
 public interface IAgService {
 
     /**
-     * Selects a single object by ID.
-     *
-     * @deprecated since 4.1 use "select(type).byId(id).get()"
-     */
-    @Deprecated
-    default <T> DataResponse<T> selectById(Class<T> type, Object id) {
-        return select(type).byId(id).get();
-    }
-
-    /**
-     * Selects a single object by ID, applying optional include/exclude
-     * information from the UriInfo to the result.
-     *
-     * @deprecated since 4.1 use "select(type).uri(uriInfo).byId(id).get()"
-     */
-    @Deprecated
-    default <T> DataResponse<T> selectById(Class<T> type, Object id, UriInfo uriInfo) {
-        return select(type).uri(uriInfo).byId(id).get();
-    }
-
-    /**
      * Creates a {@link SelectBuilder} to customize data retrieval. This is the
      * most generic and customizable way to select data. It can be used as a
      * replacement of any other select.
@@ -42,24 +21,10 @@ public interface IAgService {
     <T> SelectBuilder<T> select(Class<T> type);
 
     /**
-     * @deprecated since 4.1 use "delete(type).id(id).delete()"
-     */
-    default SimpleResponse delete(Class<?> type, Object id) {
-        return delete(type).id(id).sync();
-    }
-
-    /**
-     * @deprecated since 4.1 use "delete(type).id(ids).delete()"
+     * @since 2.3
+     * @deprecated since 5.0 as DELETE HTTP method has no body. Can be replaced with "delete(Class).id(id1).id(id2)"
      */
     @Deprecated
-    default SimpleResponse delete(Class<?> type, Map<String, Object> ids) {
-        return delete(type).id(ids).sync();
-    }
-
-    /**
-     * @since 2.3
-     */
-    // TODO: move this to Sencha.. Base Agrest should not support bulk deletes, as DELETE HTTP method has no body
     <T> SimpleResponse delete(Class<T> type, Collection<EntityDelete<T>> deleted);
 
     /**
