@@ -3,7 +3,7 @@
     <parent>
         <artifactId>agrest-docs</artifactId>
         <groupId>io.agrest.docs</groupId>
-        <version>4.10-SNAPSHOT</version>
+        <version>5.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
