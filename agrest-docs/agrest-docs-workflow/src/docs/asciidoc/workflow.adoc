@@ -3,7 +3,3 @@
 = Agrest Workflow
 
 include::_agrest-workflow/create_simple_app.adoc[]
-
-include::_agrest-workflow/design-first-approach.adoc[]
-
-include::_agrest-workflow/code-first-approach.adoc[]

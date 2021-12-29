@@ -3,6 +3,7 @@
 * #515 Switch to Java 11
 * #516 Upgrade jackson to 2.13.1 
 * #517 Remove "agrest-sencha"
+* #518 Remove "agrest-openapi-designfirst"
 
 ## Release 4.9
 
