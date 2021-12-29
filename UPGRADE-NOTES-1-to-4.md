@@ -1,4 +1,4 @@
-This document contains upgrade notes for Agrest 1.x - 4.x. Newer versions are documented in [UPGRADE-NOTES](./UPGRADE-NOTES.md).
+_This document contains upgrade notes for Agrest 1.x - 4.x. Newer versions are documented in [UPGRADE-NOTES](./UPGRADE-NOTES.md)._
 
 ## Upgrading to 4.8
 

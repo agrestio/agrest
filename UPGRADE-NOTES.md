@@ -1,5 +1,5 @@
-This document contains upgrade notes for Agrest 5.x and newer. Older versions are documented in 
-[UPGRADE-NOTES-1-4](./UPGRADE-NOTES-1-to-4.md).
+_This document contains upgrade notes for Agrest 5.x and newer. Older versions are documented in 
+[UPGRADE-NOTES-1-4](./UPGRADE-NOTES-1-to-4.md)._
 
 ## Upgrading to 5.0
 
