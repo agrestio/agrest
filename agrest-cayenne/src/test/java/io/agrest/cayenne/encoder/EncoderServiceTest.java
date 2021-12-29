@@ -1,12 +1,9 @@
 package io.agrest.cayenne.encoder;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.DataResponse;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.ToManyResourceEntity;
-import io.agrest.ToOneResourceEntity;
 import io.agrest.cayenne.cayenne.main.E1;
 import io.agrest.cayenne.cayenne.main.E19;
 import io.agrest.cayenne.cayenne.main.E2;
@@ -15,7 +12,6 @@ import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.Encoders;
-import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
 import io.agrest.runtime.encoder.EncoderService;
 import io.agrest.runtime.encoder.IEncodablePropertyFactory;
@@ -23,18 +19,15 @@ import io.agrest.runtime.encoder.IStringConverterFactory;
 import io.agrest.runtime.encoder.ValueEncodersProvider;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.unit.ResourceEntityUtils;
-import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 
 public class EncoderServiceTest extends CayenneNoDbTest {
@@ -110,185 +103,6 @@ public class EncoderServiceTest extends CayenneNoDbTest {
 
         assertEquals("{\"data\":[{\"id\":7,\"e3s\":[{\"id\":5,\"name\":\"31\"},{\"id\":6,\"name\":\"32\"}]}],\"total\":1}",
                 toJson(e2, descriptor));
-    }
-
-    @Test
-    public void testEncoder_FilteredRoots() {
-
-        EntityEncoderFilter filter = new EntityEncoderFilter() {
-
-            @Override
-            public boolean matches(ResourceEntity<?> entity) {
-                return true;
-            }
-
-            @Override
-            public boolean encode(String propertyName, Object object, JsonGenerator out, Encoder delegate)
-                    throws IOException {
-
-                E2 e2 = (E2) object;
-                if (Cayenne.intPKForObject(e2) == 7) {
-                    delegate.encode(propertyName, object, out);
-                    return true;
-                }
-
-                return false;
-            }
-
-            @Override
-            public boolean willEncode(String propertyName, Object object, Encoder delegate) {
-                E2 e2 = (E2) object;
-                if (Cayenne.intPKForObject(e2) == 7) {
-                    delegate.willEncode(propertyName, object);
-                    return true;
-                }
-
-                return false;
-            }
-        };
-
-        ResourceEntity<E2> descriptor = getResourceEntity(E2.class);
-        descriptor.getEntityEncoderFilters().add(filter);
-        descriptor.includeId();
-
-        ObjectContext context = mockCayennePersister.newContext();
-        E2 e21 = new E2();
-        e21.setObjectId(ObjectId.of("E2", E2.ID__PK_COLUMN, 7));
-        e21.setName("XYZ");
-        e21.setAddress("bla bla street");
-        context.registerNewObject(e21);
-
-        assertEquals("{\"data\":[{\"id\":7}],\"total\":1}", toJson(e21, descriptor));
-
-        E2 e22 = new E2();
-        e22.setObjectId(ObjectId.of("E2", E2.ID__PK_COLUMN, 8));
-        e22.setName("XYZ");
-        e22.setAddress("bla bla street");
-        context.registerNewObject(e22);
-
-        assertEquals("{\"data\":[],\"total\":0}", toJson(e22, descriptor));
-    }
-
-    @Test
-    public void testEncoder_FilteredToOne() {
-
-        EntityEncoderFilter filter = new EntityEncoderFilter() {
-
-            @Override
-            public boolean matches(ResourceEntity<?> entity) {
-                return true;
-            }
-
-            @Override
-            public boolean encode(String propertyName, Object object, JsonGenerator out, Encoder delegate)
-                    throws IOException {
-
-                if (object instanceof E2) {
-                    E2 e2 = (E2) object;
-                    if (Cayenne.intPKForObject(e2) == 7) {
-                        return delegate.encode(propertyName, object, out);
-                    } else {
-                        return false;
-                    }
-                } else {
-                    delegate.encode(propertyName, object, out);
-                    return true;
-                }
-            }
-
-            @Override
-            public boolean willEncode(String propertyName, Object object, Encoder delegate) {
-                if (object instanceof E2) {
-                    E2 e2 = (E2) object;
-                    if (Cayenne.intPKForObject(e2) == 7) {
-                        return delegate.willEncode(propertyName, object);
-                    } else {
-                        return false;
-                    }
-                } else {
-                    return delegate.willEncode(propertyName, object);
-                }
-            }
-        };
-
-        RootResourceEntity<E3> e3Descriptor = getResourceEntity(E3.class);
-        e3Descriptor.includeId();
-        CayenneProcessor.getOrCreateCayenneEntity(e3Descriptor);
-
-        ToOneResourceEntity<E2> e2Descriptor = getToOneChildEntity(E2.class, e3Descriptor, E3.E2.getName());
-        e2Descriptor.getEntityEncoderFilters().add(filter);
-        e2Descriptor.includeId();
-        CayenneProcessor.getOrCreateCayenneEntity(e2Descriptor);
-        e3Descriptor.getChildren().put(E3.E2.getName(), e2Descriptor);
-
-        ObjectContext context = mockCayennePersister.newContext();
-
-        E2 e21 = new E2();
-        e21.setObjectId(ObjectId.of("E2", E2.ID__PK_COLUMN, 7));
-        context.registerNewObject(e21);
-
-        E3 e31 = new E3();
-        e31.setObjectId(ObjectId.of("E3", E3.ID__PK_COLUMN, 5));
-        context.registerNewObject(e31);
-        e31.setE2(e21);
-        // saves result set in ResourceEntity
-        e3Descriptor.setResult(Collections.singletonList(e31));
-        e2Descriptor.addResult(new SimpleObjectId(5), e21);
-
-        assertEquals("{\"data\":[{\"id\":5,\"e2\":{\"id\":7}}],\"total\":1}", toJson(e31, e3Descriptor));
-
-        E2 e22 = new E2();
-        e22.setObjectId(ObjectId.of("E2", E2.ID__PK_COLUMN, 8));
-        context.registerNewObject(e22);
-
-        E3 e32 = new E3();
-        e32.setObjectId(ObjectId.of("E3", E3.ID__PK_COLUMN, 6));
-        context.registerNewObject(e32);
-        e32.setE2(e22);
-        // saves result set in ResourceEntity
-        e3Descriptor.setResult(Collections.singletonList(e32));
-        e2Descriptor.addResult(new SimpleObjectId(6), e22);
-
-        assertEquals("{\"data\":[{\"id\":6}],\"total\":1}", toJson(e32, e3Descriptor));
-    }
-
-    @Test
-    public void testEncoder_FilterNoMatch() throws IOException {
-
-        EntityEncoderFilter filter = new EntityEncoderFilter() {
-
-            @Override
-            public boolean matches(ResourceEntity<?> entity) {
-                return false;
-            }
-
-            @Override
-            public boolean encode(String propertyName, Object object, JsonGenerator out, Encoder delegate) {
-                fail("Non matching filter was not supposed to be invoked");
-                return false;
-            }
-
-            @Override
-            public boolean willEncode(String propertyName, Object object, Encoder delegate) {
-                fail("Non matching filter was not supposed to be invoked");
-                return false;
-            }
-        };
-
-        ResourceEntity<E2> descriptor = getResourceEntity(E2.class);
-        descriptor.getEntityEncoderFilters().add(filter);
-        descriptor.includeId();
-
-        DataResponse<E2> builder = DataResponse.forType(E2.class);
-
-        ObjectContext context = mockCayennePersister.newContext();
-        E2 e21 = new E2();
-        e21.setObjectId(ObjectId.of("E2", E2.ID__PK_COLUMN, 7));
-        e21.setName("XYZ");
-        e21.setAddress("bla bla street");
-        context.registerNewObject(e21);
-
-        builder.getEncoder().encode(null, Collections.singletonList(e21), mock(JsonGenerator.class));
     }
 
     @Test

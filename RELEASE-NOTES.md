@@ -4,6 +4,7 @@
 * #516 Upgrade jackson to 2.13.1 
 * #517 Remove "agrest-sencha"
 * #518 Remove "agrest-openapi-designfirst"
+* #519 Remove deprecated EncoderFilter and Constraint
 
 ## Release 4.9
 

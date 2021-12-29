@@ -1,15 +1,13 @@
 package io.agrest;
 
+import io.agrest.access.PropertyFilter;
+import io.agrest.access.ReadFilter;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.EntityEncoderFilter;
-import io.agrest.access.ReadFilter;
-import io.agrest.access.PropertyFilter;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.processor.select.SelectContext;
 
 import javax.ws.rs.core.UriInfo;
@@ -37,19 +35,6 @@ public interface SelectBuilder<T> {
      * @since 3.4
      */
     SelectBuilder<T> encoder(Encoder encoder);
-
-    /**
-     * Installs request-scoped {@link EntityEncoderFilter} that allows to customize how individual JSON objects are encoded
-     * within the data list. This method can be called multiple times to add more than one filter.
-     *
-     * @param filter a filter to apply when encoding individual entities
-     * @return this builder instance
-     * @see AgBuilder#entityEncoderFilter(EntityEncoderFilter)
-     * @since 3.4
-     * @deprecated since 4.8 in favor of {@link #filter(Class, ReadFilter)}.
-     */
-    @Deprecated
-    SelectBuilder<T> entityEncoderFilter(EntityEncoderFilter filter);
 
     /**
      * Installs request-scoped {@link AgEntityOverlay} that allows to customize, add or redefine client-accessible

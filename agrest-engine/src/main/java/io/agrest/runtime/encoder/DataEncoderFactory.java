@@ -68,19 +68,17 @@ public class DataEncoderFactory {
     }
 
     protected Encoder collectionElementEncoder(ResourceEntity<?> resourceEntity) {
-        Encoder encoder = entityEncoder(resourceEntity);
-        return filteredEncoder(encoder, resourceEntity);
+        return entityEncoder(resourceEntity);
     }
 
-    protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity, AgRelationship relationship) {
+    protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity) {
 
         // to-one encoder is made of the following decorator layers (from outer to inner):
         // (1) custom filters ->
         // (2) value encoder
         // different structure from to-many, so building it differently
 
-        Encoder valueEncoder = entityEncoder(resourceEntity);
-        return filteredEncoder(valueEncoder, resourceEntity);
+        return entityEncoder(resourceEntity);
     }
 
     /**
@@ -106,7 +104,7 @@ public class DataEncoderFactory {
 
             Encoder encoder = relationship.isToMany()
                     ? nestedToManyEncoder(e.getValue())
-                    : toOneEncoder(e.getValue(), relationship);
+                    : toOneEncoder(e.getValue());
 
             EncodableProperty property = encodablePropertyFactory.getRelationshipProperty(
                     resourceEntity,
@@ -122,15 +120,6 @@ public class DataEncoderFactory {
         return idEncoder
                 .map(ide -> (Encoder) new EntityEncoder(ide, attributeEncoders, relationshipEncoders))
                 .orElseGet(() -> new EntityNoIdEncoder(attributeEncoders, relationshipEncoders));
-    }
-
-    /**
-     * @deprecated since 4.8 as EntityEncoderFilter is deprecated
-     */
-    protected Encoder filteredEncoder(Encoder encoder, ResourceEntity<?> resourceEntity) {
-        return resourceEntity.getEntityEncoderFilters().isEmpty()
-                ? encoder
-                : new FilterChainEncoder(encoder, resourceEntity.getEntityEncoderFilters());
     }
 
     protected MapByEncoder mapByEncoder(ResourceEntity<?> entity, CollectionEncoder encoder) {

@@ -2,8 +2,6 @@ package io.agrest;
 
 import io.agrest.base.protocol.Exp;
 import io.agrest.base.protocol.Sort;
-import io.agrest.encoder.EntityEncoderFilter;
-import io.agrest.access.ReadFilter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 
@@ -35,7 +33,6 @@ public abstract class ResourceEntity<T> {
     private Exp qualifier;
     private int fetchOffset;
     private int fetchLimit;
-    private final List<EntityEncoderFilter> entityEncoderFilters;
 
     private final Map<String, Object> requestProperties;
 
@@ -48,8 +45,6 @@ public abstract class ResourceEntity<T> {
         this.defaultAttributes = new HashSet<>();
         this.children = new HashMap<>();
         this.orderings = new ArrayList<>(2);
-        this.entityEncoderFilters = new ArrayList<>(3);
-
         this.requestProperties = new HashMap<>(5);
     }
 
@@ -222,16 +217,7 @@ public abstract class ResourceEntity<T> {
      * @since 1.23
      */
     public boolean isFiltered() {
-        return !(entityEncoderFilters.isEmpty() && agEntity.getReadFilter().allowsAll());
-    }
-
-    /**
-     * @since 3.4
-     * @deprecated since 4.8 in favor of {@link ReadFilter}.
-     */
-    @Deprecated
-    public List<EntityEncoderFilter> getEntityEncoderFilters() {
-        return entityEncoderFilters;
+        return !agEntity.getReadFilter().allowsAll();
     }
 
     /**

@@ -10,7 +10,6 @@ import io.agrest.base.BaseModule;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.encoder.converter.StringConverter;
 import io.agrest.meta.AgDataMap;
@@ -61,9 +60,9 @@ import io.agrest.runtime.processor.meta.MetadataProcessorFactoryProvider;
 import io.agrest.runtime.processor.select.ApplyServerParamsStage;
 import io.agrest.runtime.processor.select.AssembleQueryStage;
 import io.agrest.runtime.processor.select.CreateResourceEntityStage;
+import io.agrest.runtime.processor.select.EncoderInstallStage;
 import io.agrest.runtime.processor.select.FetchDataStage;
 import io.agrest.runtime.processor.select.FilterResultStage;
-import io.agrest.runtime.processor.select.EncoderInstallStage;
 import io.agrest.runtime.processor.select.ParseRequestStage;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import io.agrest.runtime.processor.select.SelectProcessorFactoryProvider;
@@ -112,7 +111,6 @@ public class AgBuilder {
     private final List<Module> modules;
     private final List<AgFeatureProvider> featureProviders;
     private final List<Feature> features;
-    private final List<EntityEncoderFilter> entityEncoderFilters;
     private final Map<String, AgEntityOverlay> entityOverlays;
     private final Map<String, Class<? extends ExceptionMapper>> exceptionMappers;
 
@@ -126,7 +124,6 @@ public class AgBuilder {
         this.autoLoadModules = true;
         this.autoLoadFeatures = true;
         this.entityOverlays = new HashMap<>();
-        this.entityEncoderFilters = new ArrayList<>();
         this.agServiceType = DefaultAgService.class;
         this.exceptionMappers = new HashMap<>();
         this.metadataEncoders = new HashMap<>();
@@ -171,32 +168,6 @@ public class AgBuilder {
     public AgBuilder agService(Class<? extends IAgService> agServiceType) {
         this.agService = null;
         this.agServiceType = agServiceType;
-        return this;
-    }
-
-    /**
-     * Installs a encoding filter that is applied to every request, altering response encoding. This method can be
-     * called multiple times to add more than one filter.
-     *
-     * @param filter a filter to apply when encoding individual entities
-     * @return this builder instance
-     * @see io.agrest.SelectBuilder#entityEncoderFilter(EntityEncoderFilter)
-     * @since 3.4
-     * @deprecated since 4.8 as {@link EntityEncoderFilter} is deprecated
-     */
-    @Deprecated
-    public AgBuilder entityEncoderFilter(EntityEncoderFilter filter) {
-        this.entityEncoderFilters.add(filter);
-        return this;
-    }
-
-    /**
-     * @since 3.4
-     * @deprecated since 4.8 as {@link EntityEncoderFilter} is deprecated
-     */
-    @Deprecated
-    public AgBuilder entityEncoderFilters(Collection<EntityEncoderFilter> filters) {
-        this.entityEncoderFilters.addAll(filters);
         return this;
     }
 
@@ -376,9 +347,6 @@ public class AgBuilder {
         }
 
         return binder -> {
-
-            binder.bindList(EntityEncoderFilter.class).addAll(entityEncoderFilters);
-
 
             binder.bind(AnnotationsAgEntityCompiler.class).to(AnnotationsAgEntityCompiler.class);
             binder.bindList(AgEntityCompiler.class)

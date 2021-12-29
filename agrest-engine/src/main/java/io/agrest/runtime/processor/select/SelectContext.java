@@ -1,9 +1,16 @@
 package io.agrest.runtime.processor.select;
 
-import io.agrest.*;
+import io.agrest.AgObjectId;
+import io.agrest.AgRequest;
+import io.agrest.CompoundObjectId;
+import io.agrest.DataResponse;
+import io.agrest.EntityParent;
+import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
+import io.agrest.SimpleObjectId;
+import io.agrest.SizeConstraints;
 import io.agrest.constraints.Constraint;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.BaseProcessingContext;
 
@@ -30,7 +37,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     private Encoder encoder;
     private AgRequest mergedRequest;
     private AgRequest request;
-    private List<EntityEncoderFilter> entityEncoderFilters;
     private Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
 
     public SelectContext(Class<T> type) {
@@ -89,20 +95,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
      */
     public Map<String, List<String>> getProtocolParameters() {
         return uriInfo != null ? uriInfo.getQueryParameters() : Collections.emptyMap();
-    }
-
-    /**
-     * @since 3.4
-     */
-    public List<EntityEncoderFilter> getEntityEncoderFilters() {
-        return entityEncoderFilters;
-    }
-
-    /**
-     * @since 3.4
-     */
-    public void setEntityEncoderFilters(List<EntityEncoderFilter> entityEncoderFilters) {
-        this.entityEncoderFilters = entityEncoderFilters;
     }
 
     /**

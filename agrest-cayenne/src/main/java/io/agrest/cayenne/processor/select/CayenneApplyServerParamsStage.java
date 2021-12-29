@@ -4,14 +4,11 @@ import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
-import io.agrest.encoder.EntityEncoderFilter;
 import io.agrest.runtime.constraints.IConstraintsHandler;
 import io.agrest.runtime.processor.select.ApplyServerParamsStage;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.EntityResolver;
-
-import java.util.List;
 
 /**
  * @since 4.8
@@ -22,9 +19,8 @@ public class CayenneApplyServerParamsStage extends ApplyServerParamsStage {
 
     public CayenneApplyServerParamsStage(
             @Inject IConstraintsHandler constraintsHandler,
-            @Inject ICayennePersister persister,
-            @Inject List<EntityEncoderFilter> filters) {
-        super(constraintsHandler, filters);
+            @Inject ICayennePersister persister) {
+        super(constraintsHandler);
         this.entityResolver = persister.entityResolver();
     }
 
