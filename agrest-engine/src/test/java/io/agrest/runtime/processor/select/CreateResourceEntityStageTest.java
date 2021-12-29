@@ -381,7 +381,6 @@ public class CreateResourceEntityStageTest {
         assertEquals(new Sort("n", Dir.ASC), resourceEntity.getOrderings().get(1));
     }
 
-    @Deprecated
     @Test
     public void testExecute_Exp_BadSpec() {
 
@@ -392,8 +391,7 @@ public class CreateResourceEntityStageTest {
 
         assertDoesNotThrow(() -> stage.execute(context), "Even though the passed spec is invalid, no parsing should occur at this stage");
     }
-
-    @Deprecated
+    
     @Test
     public void testExecute_Exp() {
 
