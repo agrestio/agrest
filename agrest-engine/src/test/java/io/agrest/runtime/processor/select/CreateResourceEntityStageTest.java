@@ -391,7 +391,7 @@ public class CreateResourceEntityStageTest {
 
         assertDoesNotThrow(() -> stage.execute(context), "Even though the passed spec is invalid, no parsing should occur at this stage");
     }
-    
+
     @Test
     public void testExecute_Exp() {
 

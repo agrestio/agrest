@@ -2,6 +2,10 @@ package io.agrest;
 
 import io.agrest.meta.AgEntity;
 
+/**
+ * @deprecated since 5.0 as DELETE HTTP method has no body.
+ */
+@Deprecated
 public class EntityDelete<T> {
 
     private final AgEntity<T> entity;
