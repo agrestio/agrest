@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 class EntityPathCache {
 
-    private AgEntity<?> entity;
-    private Map<String, PathDescriptor> pathCache;
+    private final AgEntity<?> entity;
+    private final Map<String, PathDescriptor> pathCache;
 
     EntityPathCache(AgEntity<?> entity) {
         this.entity = entity;
@@ -55,60 +55,56 @@ class EntityPathCache {
     }
 
     PathDescriptor getPathDescriptor(ASTObjPath path) {
+        return pathCache.computeIfAbsent(path.getPath(), p -> computePathDescriptor(path));
+    }
 
-        PathDescriptor entry = pathCache.get(path.getPath());
-        if (entry == null) {
+    private PathDescriptor computePathDescriptor(ASTObjPath path) {
 
-            String stringPath = (String) path.getOperand(0);
-            final Object last = lastPathComponent(entity, stringPath);
+        String stringPath = (String) path.getOperand(0);
+        final Object last = lastPathComponent(entity, stringPath);
 
-            if (last instanceof AgAttribute) {
-                entry = new PathDescriptor() {
+        if (last instanceof AgAttribute) {
+            return new PathDescriptor() {
 
-                    AgAttribute attribute = (AgAttribute) last;
+                AgAttribute attribute = (AgAttribute) last;
 
-                    @Override
-                    public boolean isAttribute() {
-                        return true;
-                    }
+                @Override
+                public boolean isAttribute() {
+                    return true;
+                }
 
-                    @Override
-                    public Class<?> getType() {
-                        return attribute.getType();
-                    }
+                @Override
+                public Class<?> getType() {
+                    return attribute.getType();
+                }
 
-                    @Override
-                    public ASTPath getPathExp() {
-                        return path;
-                    }
-                };
-            } else {
-                entry = new PathDescriptor() {
+                @Override
+                public ASTPath getPathExp() {
+                    return path;
+                }
+            };
+        } else {
+            return new PathDescriptor() {
 
-                    AgRelationship relationship = (AgRelationship) last;
-                    Class<?> type = relationship.getTargetEntity().getType();
+                AgRelationship relationship = (AgRelationship) last;
+                Class<?> type = relationship.getTargetEntity().getType();
 
-                    @Override
-                    public boolean isAttribute() {
-                        return false;
-                    }
+                @Override
+                public boolean isAttribute() {
+                    return false;
+                }
 
-                    @Override
-                    public Class<?> getType() {
-                        return type;
-                    }
+                @Override
+                public Class<?> getType() {
+                    return type;
+                }
 
-                    @Override
-                    public ASTPath getPathExp() {
-                        return path;
-                    }
-                };
-            }
-
-            pathCache.put(path.getPath(), entry);
+                @Override
+                public ASTPath getPathExp() {
+                    return path;
+                }
+            };
         }
-
-        return entry;
     }
 
     Object lastPathComponent(AgEntity<?> entity, String path) {
