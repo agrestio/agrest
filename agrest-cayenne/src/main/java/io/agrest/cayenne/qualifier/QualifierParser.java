@@ -10,6 +10,9 @@ import io.agrest.base.protocol.exp.PositionalParamsExp;
 import io.agrest.base.protocol.exp.SimpleExp;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
+import org.apache.cayenne.exp.parser.ASTDbPath;
+import org.apache.cayenne.exp.parser.ASTObjPath;
+import org.apache.cayenne.exp.parser.ASTPath;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -82,25 +85,25 @@ public class QualifierParser implements IQualifierParser {
 
     static Expression parseKeyValueExpression(String key, String op, Object value) {
 
-        // TODO: should we support DBPath?
+        ASTPath path = parsePath(key);
 
         switch (op) {
             case "=":
-                return ExpressionFactory.matchExp(key, value);
+                return ExpressionFactory.matchExp(path, value);
             case "<":
-                return ExpressionFactory.lessExp(key, value);
+                return ExpressionFactory.lessExp(path, value);
             case ">":
-                return ExpressionFactory.greaterExp(key, value);
+                return ExpressionFactory.greaterExp(path, value);
             case "<=":
-                return ExpressionFactory.lessOrEqualExp(key, value);
+                return ExpressionFactory.lessOrEqualExp(path, value);
             case ">=":
-                return ExpressionFactory.greaterOrEqualExp(key, value);
+                return ExpressionFactory.greaterOrEqualExp(path, value);
             case "like":
-                return ExpressionFactory.likeExp(key, value);
+                return ExpressionFactory.likeExp(path, value);
             case "likeIgnoreCase":
-                return ExpressionFactory.likeIgnoreCaseExp(key, value);
+                return ExpressionFactory.likeIgnoreCaseExp(path, value);
             case "in":
-                return ExpressionFactory.inExp(key, inValues(value));
+                return ExpressionFactory.inExp(path, inValues(value));
             default:
                 throw new IllegalArgumentException("Unsupported operation in Expression: " + op);
         }
@@ -126,5 +129,11 @@ public class QualifierParser implements IQualifierParser {
         }
 
         return new Object[]{value};
+    }
+
+    public static ASTPath parsePath(String path) {
+        return path.startsWith(ASTDbPath.DB_PREFIX)
+                ? new ASTDbPath(path.substring(ASTDbPath.DB_PREFIX.length()))
+                : new ASTObjPath(path);
     }
 }

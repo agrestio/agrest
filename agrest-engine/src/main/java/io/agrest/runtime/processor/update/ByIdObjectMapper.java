@@ -37,7 +37,7 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
 
         Exp exp = null;
         for (AgIdPart id : entity.getIdParts()) {
-            match(id, idMap).and(exp);
+            exp = match(id, idMap).and(exp);
         }
 
         return exp;

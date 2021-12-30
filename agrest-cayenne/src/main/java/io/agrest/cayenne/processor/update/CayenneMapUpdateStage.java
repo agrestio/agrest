@@ -21,6 +21,8 @@ import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
+import org.apache.cayenne.exp.parser.ASTDbPath;
+import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.exp.property.Property;
 import org.apache.cayenne.exp.property.PropertyFactory;
 import org.apache.cayenne.map.EntityResolver;
@@ -87,7 +89,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
             UpdateContext<T> context,
             UpdateMap<T> updateMap) {
 
-        if(!updateMap.getNoId().isEmpty()) {
+        if (!updateMap.getNoId().isEmpty()) {
             throw AgException.badRequest("Request is not idempotent.");
         }
 
@@ -223,9 +225,8 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
             properties.add(PropertyFactory.createSelf(child.getType()));
 
             for (AgIdPart id : entity.getAgEntity().getIdParts()) {
-                properties.add(PropertyFactory.createBase(ExpressionFactory.dbPathExp(
-                                objRelationship.getReverseDbRelationshipPath() + "." + id.getName()),
-                        id.getType()));
+                Expression exp = concatPath(objRelationship, id.getName());
+                properties.add(PropertyFactory.createBase(exp, id.getType()));
             }
 
             SelectQuery childQuery = buildQuery(context, child, translateExpressionToSource(objRelationship, parentSelect.getQualifier()));
@@ -233,7 +234,15 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         }
     }
 
+    static ASTPath concatPath(ObjRelationship objRelationship, String idPath) {
+        String relPath = objRelationship.getReverseDbRelationshipPath();
+        String dbPath = idPath.startsWith(ASTDbPath.DB_PREFIX)
+                ? idPath.substring(ASTDbPath.DB_PREFIX.length())
+                : objRelationship.getSourceEntity().getAttribute(idPath).getDbAttributePath();
 
+        return new ASTDbPath(relPath + "." + dbPath);
+    }
+    
     protected <T> List<T> fetchEntity(UpdateContext<T> context, ResourceEntity<T> entity) {
 
         SelectQuery<T> select = CayenneProcessor.getCayenneEntity(entity).getSelect();

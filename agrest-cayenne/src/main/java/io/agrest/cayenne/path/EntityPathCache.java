@@ -2,13 +2,12 @@ package io.agrest.cayenne.path;
 
 import io.agrest.AgException;
 import io.agrest.PathConstants;
+import io.agrest.cayenne.qualifier.QualifierParser;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
-import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.apache.cayenne.exp.parser.ASTPath;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +32,7 @@ class EntityPathCache {
             // TODO: here we are ignoring the name of the ID attribute and are using the fixed name instead.
             //  Same issue as the above
             AgIdPart id = entity.getIdParts().iterator().next();
-            pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor(id.getType(), pathForIdPart(id), true));
+            pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor(id.getType(), QualifierParser.parsePath(id.getName()), true));
         }
     }
 
@@ -51,17 +50,11 @@ class EntityPathCache {
 
         if (last instanceof AgIdPart) {
             AgIdPart id = (AgIdPart) last;
-            return new PathDescriptor(id.getType(), pathForIdPart(id), true);
+            return new PathDescriptor(id.getType(), QualifierParser.parsePath(id.getName()), true);
         }
 
         AgRelationship relationship = (AgRelationship) last;
         return new PathDescriptor(relationship.getTargetEntity().getType(), new ASTObjPath(agPath), false);
-    }
-
-    private ASTPath pathForIdPart(AgIdPart id) {
-        return id.getName().startsWith(ASTDbPath.DB_PREFIX)
-                ? new ASTDbPath(id.getName().substring(ASTDbPath.DB_PREFIX.length()))
-                : new ASTObjPath(id.getName());
     }
 
     Object lastPathComponent(AgEntity<?> entity, String path) {

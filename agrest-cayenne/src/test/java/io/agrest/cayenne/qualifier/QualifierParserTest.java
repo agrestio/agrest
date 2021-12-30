@@ -51,6 +51,12 @@ public class QualifierParserTest {
     }
 
     @Test
+    public void testParseKeyValue_DB_Path_Eq() {
+        Expression e = parser.parse(Exp.keyValue("db:a", "=", 5));
+        assertEquals(ExpressionFactory.exp("db:a = 5"), e);
+    }
+
+    @Test
     public void testParseComposite() {
 
         Exp e0 = Exp.simple("a = 'b'");
