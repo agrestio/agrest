@@ -23,7 +23,6 @@ import org.apache.cayenne.exp.property.Property;
 import org.apache.cayenne.exp.property.PropertyFactory;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.EntityResolver;
-import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.Ordering;
@@ -44,17 +43,17 @@ import static io.agrest.base.reflect.Types.typeForName;
 public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
     private final EntityResolver entityResolver;
-    private final IPathResolver pathCache;
+    private final IPathResolver pathResolver;
     private final IQualifierParser qualifierParser;
     private final IQualifierPostProcessor qualifierPostProcessor;
 
     public CayenneQueryAssembler(
             @Inject ICayennePersister persister,
-            @Inject IPathResolver pathCache,
+            @Inject IPathResolver pathResolver,
             @Inject IQualifierParser qualifierParser,
             @Inject IQualifierPostProcessor qualifierPostProcessor) {
         this.entityResolver = persister.entityResolver();
-        this.pathCache = pathCache;
+        this.pathResolver = pathResolver;
         this.qualifierParser = qualifierParser;
         this.qualifierPostProcessor = qualifierPostProcessor;
     }
@@ -115,7 +114,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
         ResourceEntity<?> parent = entity.getParent();
         CayenneResourceEntityExt<?> parentExt = CayenneProcessor.getCayenneEntity(parent);
-        if(parentExt == null) {
+        if (parentExt == null) {
             throw AgException.internalServerError("Parent '%s' of entity '%s' is not managed by Cayenne",
                     parent.getName(),
                     entity.getName());
@@ -265,33 +264,16 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
                         idAttribute.getName());
             }
 
-            DbAttribute dbAttribute = dbAttributeForAgIdPart(entity, idAttribute);
-
-            if (dbAttribute == null) {
-                throw AgException.internalServerError("ID attribute '%s' has no mapping to a column name", idAttribute.getName());
-            }
-
-            qualifiers.add(ExpressionFactory.matchDbExp(dbAttribute.getName(), idValue));
+            ASTPath path = pathResolver.resolve(entity, idAttribute.getName()).getPathExp();
+            qualifiers.add(ExpressionFactory.matchExp(path, idValue));
         }
         return ExpressionFactory.and(qualifiers);
     }
 
-    protected DbAttribute dbAttributeForAgIdPart(AgEntity<?> agEntity, AgIdPart agIdPart) {
-
-        ObjEntity entity = entityResolver.getObjEntity(agEntity.getName());
-        ObjAttribute objAttribute = entity.getAttribute(agIdPart.getName());
-        return objAttribute != null
-                ? objAttribute.getDbAttribute()
-                // this is suspect.. don't see how we would allow DbAttribute names to leak in the Ag model
-                : entity.getDbEntity().getAttribute(agIdPart.getName());
-    }
-
     protected Ordering toOrdering(ResourceEntity<?> entity, Sort sort) {
-        return new Ordering(toCayennePath(entity, sort.getProperty()), toSortOrder(sort.getDirection()));
-    }
-
-    private ASTPath toCayennePath(ResourceEntity<?> entity, String agPath) {
-        return pathCache.resolve(entity.getAgEntity(), agPath).getPathExp();
+        return new Ordering(
+                pathResolver.resolve(entity.getAgEntity(), sort.getProperty()).getPathExp(),
+                toSortOrder(sort.getDirection()));
     }
 
     private SortOrder toSortOrder(Dir direction) {

@@ -1,10 +1,10 @@
 package io.agrest.cayenne.compiler;
 
-import io.agrest.compiler.AnnotationsAgEntityBuilder;
 import io.agrest.access.CreateAuthorizer;
 import io.agrest.access.DeleteAuthorizer;
 import io.agrest.access.ReadFilter;
 import io.agrest.access.UpdateAuthorizer;
+import io.agrest.compiler.AnnotationsAgEntityBuilder;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
@@ -20,7 +20,6 @@ import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.exp.parser.ASTDbPath;
-import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjAttribute;
@@ -129,14 +128,13 @@ public class CayenneAgEntityBuilder<T> {
             AgIdPart id;
             if (attribute == null) {
 
-                // TODO: we are using a DB name for the attribute... Perhaps it should not be exposed in Ag model?
                 id = new DefaultAgIdPart(
-                        pk.getName(),
+                        // TODO: we are exposing DB column name here
+                        ASTDbPath.DB_PREFIX + pk.getName(),
                         typeForName(TypesMapping.getJavaBySqlType(pk.getType())),
                         true,
                         true,
-                        ObjectIdValueReader.reader(pk.getName()),
-                        new ASTDbPath(pk.getName())
+                        ObjectIdValueReader.reader(pk.getName())
                 );
             } else {
                 id = new DefaultAgIdPart(
@@ -144,8 +142,7 @@ public class CayenneAgEntityBuilder<T> {
                         typeForName(attribute.getType()),
                         true,
                         true,
-                        DataObjectPropertyReader.reader(attribute.getName()),
-                        new ASTObjPath(attribute.getName()));
+                        DataObjectPropertyReader.reader(attribute.getName()));
             }
 
             addId(id);

@@ -4,7 +4,10 @@ import org.apache.cayenne.exp.parser.ASTPath;
 
 public interface PathDescriptor {
 
-	boolean isAttribute();
+	/**
+	 * @since 5.0
+	 */
+	boolean isAttributeOrId();
 
 	Class<?> getType();
 

@@ -137,7 +137,7 @@ public class QualifierPostProcessor implements IQualifierPostProcessor {
             if (peerPath != null) {
 
                 PathDescriptor pd = pathCache.resolve(entity, peerPath);
-                if (pd.isAttribute()) {
+                if (pd.isAttributeOrId()) {
                     JsonValueConverter<?> converter = converters.get(pd.getType());
                     if (converter != null) {
 

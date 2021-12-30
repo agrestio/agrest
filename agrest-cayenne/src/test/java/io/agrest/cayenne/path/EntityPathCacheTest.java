@@ -29,7 +29,7 @@ public class EntityPathCacheTest {
         EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
         PathDescriptor pd = cache.getOrCreate("name");
         assertNotNull(pd);
-        assertTrue(pd.isAttribute());
+        assertTrue(pd.isAttributeOrId());
         assertEquals(String.class, pd.getType());
         assertEquals("name", pd.getPathExp().getPath());
         assertSame(pd, cache.getOrCreate("name"));
@@ -40,7 +40,7 @@ public class EntityPathCacheTest {
         EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
         PathDescriptor pd = cache.getOrCreate("y");
         assertNotNull(pd);
-        assertFalse(pd.isAttribute());
+        assertFalse(pd.isAttributeOrId());
         assertEquals(Y.class, pd.getType());
         assertEquals("y", pd.getPathExp().getPath());
         assertSame(pd, cache.getOrCreate("y"));
@@ -51,7 +51,7 @@ public class EntityPathCacheTest {
         EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
         PathDescriptor pd = cache.getOrCreate("y.name");
         assertNotNull(pd);
-        assertTrue(pd.isAttribute());
+        assertTrue(pd.isAttributeOrId());
         assertEquals(String.class, pd.getType());
         assertEquals("y.name", pd.getPathExp().getPath());
         assertSame(pd, cache.getOrCreate("y.name"));
@@ -68,7 +68,7 @@ public class EntityPathCacheTest {
         EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
         PathDescriptor pd = cache.getOrCreate("y+.name");
         assertNotNull(pd);
-        assertTrue(pd.isAttribute());
+        assertTrue(pd.isAttributeOrId());
         assertEquals(String.class, pd.getType());
         assertEquals("y+.name", pd.getPathExp().getPath());
         assertSame(pd, cache.getOrCreate("y+.name"));

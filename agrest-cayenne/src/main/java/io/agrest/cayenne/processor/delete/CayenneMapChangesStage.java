@@ -3,6 +3,8 @@ package io.agrest.cayenne.processor.delete;
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
 import io.agrest.EntityParent;
+import io.agrest.cayenne.path.IPathResolver;
+import io.agrest.cayenne.path.PathResolver;
 import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
@@ -29,9 +31,11 @@ import java.util.List;
 public class CayenneMapChangesStage implements Processor<DeleteContext<?>> {
 
     private final AgDataMap dataMap;
+    private final IPathResolver pathResolver;
 
-    public CayenneMapChangesStage(@Inject AgDataMap dataMap) {
+    public CayenneMapChangesStage(@Inject AgDataMap dataMap, @Inject PathResolver pathResolver) {
         this.dataMap = dataMap;
+        this.pathResolver = pathResolver;
     }
 
     @Override
@@ -76,7 +80,7 @@ public class CayenneMapChangesStage implements Processor<DeleteContext<?>> {
 
             // TODO: batch objects retrieval into a single query
 
-            T o = CayenneUtil.findById(cayenneContext, context.getType(), context.getAgEntity(), id.get());
+            T o = CayenneUtil.findById(pathResolver, cayenneContext, context.getType(), context.getAgEntity(), id.get());
 
             if (o == null) {
                 ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(context.getType());
@@ -93,7 +97,7 @@ public class CayenneMapChangesStage implements Processor<DeleteContext<?>> {
 
         EntityParent<?> parent = context.getParent();
         ObjectContext cayenneContext = CayenneDeleteStartStage.cayenneContext(context);
-        Object parentObject = CayenneUtil.findById(cayenneContext, parent.getType(), agParentEntity, parent.getId().get());
+        Object parentObject = CayenneUtil.findById(pathResolver, cayenneContext, parent.getType(), agParentEntity, parent.getId().get());
 
         if (parentObject == null) {
             ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(parent.getType());

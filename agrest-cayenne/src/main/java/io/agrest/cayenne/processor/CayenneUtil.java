@@ -3,12 +3,14 @@ package io.agrest.cayenne.processor;
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
 import io.agrest.EntityParent;
+import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.parser.ASTEqual;
+import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.map.*;
 import org.apache.cayenne.query.ObjectSelect;
 
@@ -22,7 +24,7 @@ public final class CayenneUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static <A> A findById(ObjectContext context, Class<A> type, AgEntity<?> agEntity, Object id) {
+    public static <A> A findById(IPathResolver pathResolver, ObjectContext context, Class<A> type, AgEntity<?> agEntity, Object id) {
         ObjEntity entity = context.getEntityResolver().getObjEntity(type);
 
         // sanity checking...
@@ -44,9 +46,9 @@ public final class CayenneUtil {
             }
             return query.selectOne(context);
         } else {
-            // TODO: this will break if this is am ID attribute not mapped as ObjAttribute in Cayenne
-            AgIdPart attribute = agEntity.getIdParts().iterator().next();
-            return ObjectSelect.query(type, new ASTEqual(attribute.getPathExp(), id)).selectOne(context);
+            AgIdPart idPart = agEntity.getIdParts().iterator().next();
+            ASTPath idPath = pathResolver.resolve(agEntity, idPart.getName()).getPathExp();
+            return ObjectSelect.query(type).where(new ASTEqual(idPath, id)).selectOne(context);
         }
     }
 

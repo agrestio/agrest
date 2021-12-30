@@ -4,6 +4,7 @@ import io.agrest.AgException;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
+import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.meta.AgDataMap;
@@ -43,13 +44,16 @@ import java.util.Set;
 public class CayenneMergeChangesStage implements Processor<UpdateContext<?>> {
 
     private final AgDataMap dataMap;
-    private EntityResolver entityResolver;
+    private final EntityResolver entityResolver;
+    private final IPathResolver pathResolver;
 
     public CayenneMergeChangesStage(
             @Inject AgDataMap dataMap,
-            @Inject ICayennePersister persister) {
+            @Inject ICayennePersister persister,
+            @Inject IPathResolver pathResolver) {
         this.dataMap = dataMap;
         this.entityResolver = persister.entityResolver();
+        this.pathResolver = pathResolver;
     }
 
     @Override
@@ -333,8 +337,12 @@ public class CayenneMergeChangesStage implements Processor<UpdateContext<?>> {
 
         ObjEntity parentEntity = objectContext.getEntityResolver().getObjEntity(parent.getType());
         AgEntity<?> parentAgEntity = dataMap.getEntity(context.getParent().getType());
-        final DataObject parentObject = (DataObject) CayenneUtil.findById(objectContext, parent.getType(),
-                parentAgEntity, parent.getId().get());
+        final DataObject parentObject = (DataObject) CayenneUtil.findById(
+                pathResolver,
+                objectContext,
+                parent.getType(),
+                parentAgEntity,
+                parent.getId().get());
 
         if (parentObject == null) {
             throw AgException.notFound("No parent object for ID '%s' and entity '%s'", parent.getId(), parentEntity.getName());

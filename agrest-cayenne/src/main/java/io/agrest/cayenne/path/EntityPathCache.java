@@ -6,6 +6,7 @@ import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
+import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 
@@ -20,38 +21,6 @@ class EntityPathCache {
     EntityPathCache(AgEntity<?> entity) {
         this.entity = entity;
         this.pathCache = new ConcurrentHashMap<>();
-
-        // immediately cache a special entry matching "id" constant ... if there
-        // is a single ID
-
-        // TODO: single ID check allows us to support id-less entities (quite
-        // common, e.g. various aggregated data reports). However it does not
-        // solve an issue of more common case of entities with multi-column ID.
-        // Will need a concept of "virtual" ID built from ObjectId (or POJO id
-        // properties) via cayenne-lifecycle.
-
-        if (entity.getIdParts().size() == 1) {
-
-            pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor() {
-
-                AgIdPart id = entity.getIdParts().iterator().next();
-
-                @Override
-                public boolean isAttribute() {
-                    return true;
-                }
-
-                @Override
-                public Class<?> getType() {
-                    return id.getType();
-                }
-
-                @Override
-                public ASTPath getPathExp() {
-                    return id.getPathExp();
-                }
-            });
-        }
     }
 
     PathDescriptor getOrCreate(String agPath) {
@@ -69,7 +38,7 @@ class EntityPathCache {
                 final AgAttribute attribute = (AgAttribute) last;
 
                 @Override
-                public boolean isAttribute() {
+                public boolean isAttributeOrId() {
                     return true;
                 }
 
@@ -83,29 +52,54 @@ class EntityPathCache {
                     return cayennePath;
                 }
             };
-        } else {
+        }
+
+        if (last instanceof AgIdPart) {
             return new PathDescriptor() {
 
-                final ASTObjPath cayennePath = new ASTObjPath(agPath);
-                final AgRelationship relationship = (AgRelationship) last;
-                final Class<?> type = relationship.getTargetEntity().getType();
+                final AgIdPart id = (AgIdPart) last;
+                final ASTPath idPath = id.getName().startsWith(ASTDbPath.DB_PREFIX)
+                        ? new ASTDbPath(id.getName().substring(ASTDbPath.DB_PREFIX.length()))
+                        : new ASTObjPath(id.getName());
 
                 @Override
-                public boolean isAttribute() {
-                    return false;
+                public boolean isAttributeOrId() {
+                    return true;
                 }
 
                 @Override
                 public Class<?> getType() {
-                    return type;
+                    return id.getType();
                 }
 
                 @Override
                 public ASTPath getPathExp() {
-                    return cayennePath;
+                    return idPath;
                 }
             };
         }
+
+        return new PathDescriptor() {
+
+            final ASTObjPath cayennePath = new ASTObjPath(agPath);
+            final AgRelationship relationship = (AgRelationship) last;
+            final Class<?> type = relationship.getTargetEntity().getType();
+
+            @Override
+            public boolean isAttributeOrId() {
+                return false;
+            }
+
+            @Override
+            public Class<?> getType() {
+                return type;
+            }
+
+            @Override
+            public ASTPath getPathExp() {
+                return cayennePath;
+            }
+        };
     }
 
     Object lastPathComponent(AgEntity<?> entity, String path) {
@@ -131,10 +125,14 @@ class EntityPathCache {
             return lastPathComponent(targetEntity, path.substring(dot + 1));
         }
 
-        // can be a relationship or an attribute
         AgAttribute attribute = entity.getAttribute(path);
         if (attribute != null) {
             return attribute;
+        }
+
+        AgIdPart idPart = entity.getIdPart(path);
+        if (idPart != null) {
+            return idPart;
         }
 
         AgRelationship relationship = entity.getRelationship(toRelationshipName(path));

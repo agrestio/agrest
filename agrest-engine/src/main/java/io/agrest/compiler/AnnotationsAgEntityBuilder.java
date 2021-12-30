@@ -1,14 +1,14 @@
 package io.agrest.compiler;
 
+import io.agrest.access.CreateAuthorizer;
+import io.agrest.access.DeleteAuthorizer;
+import io.agrest.access.ReadFilter;
+import io.agrest.access.UpdateAuthorizer;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.base.reflect.BeanAnalyzer;
 import io.agrest.base.reflect.PropertyGetter;
-import io.agrest.access.CreateAuthorizer;
-import io.agrest.access.DeleteAuthorizer;
-import io.agrest.access.ReadFilter;
-import io.agrest.access.UpdateAuthorizer;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
@@ -20,7 +20,6 @@ import io.agrest.meta.DefaultAgRelationship;
 import io.agrest.resolver.ReaderBasedResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
-import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,7 +121,7 @@ public class AnnotationsAgEntityBuilder<T> {
         if (aId != null) {
 
             if (checkValidIdType(type)) {
-                addId(new DefaultAgIdPart(name, type, aId.readable(), aId.writable(), getter::getValue, new ASTObjPath(name)));
+                addId(new DefaultAgIdPart(name, type, aId.readable(), aId.writable(), getter::getValue));
             } else {
                 // still return true after validation failure... this is an attribute, just not a proper one
                 LOGGER.warn("Invalid ID attribute type for " + this.name + "." + name + ". Skipping.");
