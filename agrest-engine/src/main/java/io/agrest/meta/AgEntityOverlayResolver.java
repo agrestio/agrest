@@ -35,7 +35,7 @@ class AgEntityOverlayResolver {
         AgIdPart id = ids.get(name);
         if (id != null) {
             if (id.isReadable()) {
-                ids.put(name, new DefaultAgIdPart(name, id.getType(), false, id.isWritable(), id.getReader(), id.getPathExp()));
+                ids.put(name, new DefaultAgIdPart(name, id.getType(), false, id.isWritable(), id.getReader()));
             }
 
             return;
@@ -64,7 +64,7 @@ class AgEntityOverlayResolver {
         AgIdPart id = ids.get(name);
         if (id != null) {
             if (id.isWritable()) {
-                ids.put(name, new DefaultAgIdPart(name, id.getType(), id.isReadable(), false, id.getReader(), id.getPathExp()));
+                ids.put(name, new DefaultAgIdPart(name, id.getType(), id.isReadable(), false, id.getReader()));
             }
 
             return;

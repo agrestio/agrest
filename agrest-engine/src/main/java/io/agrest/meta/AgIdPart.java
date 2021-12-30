@@ -1,7 +1,6 @@
 package io.agrest.meta;
 
 import io.agrest.property.PropertyReader;
-import org.apache.cayenne.exp.parser.ASTPath;
 
 /**
  * Represents one a possibly multiple values in an entity id.
@@ -25,7 +24,4 @@ public interface AgIdPart {
     boolean isWritable();
 
     PropertyReader getReader();
-
-    // TODO: Cayenne API leak..
-    ASTPath getPathExp();
 }

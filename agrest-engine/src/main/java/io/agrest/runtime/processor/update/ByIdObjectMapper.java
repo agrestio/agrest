@@ -3,6 +3,7 @@ package io.agrest.runtime.processor.update;
 import io.agrest.AgException;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
+import io.agrest.base.protocol.Exp;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import org.apache.cayenne.exp.Expression;
@@ -22,7 +23,7 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
     }
 
     @Override
-    public Expression expressionForKey(Object key) {
+    public Exp expressionForKey(Object key) {
 
         // can't match by NULL id
         if (key == null) {
@@ -37,35 +38,35 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
             return null;
         }
 
-        Collection<AgIdPart> ids = entity.getIdParts();
-        int len = ids.size();
-        if (len == 1) {
-            return match(ids.iterator().next().getPathExp(), idMap);
+        Exp exp = null;
+        for (AgIdPart id : entity.getIdParts()) {
+            match(id, idMap).and(exp);
         }
 
-        List<Expression> exps = new ArrayList<>(len);
-        for (AgIdPart id : ids) {
-            exps.add(match(id.getPathExp(), idMap));
-        }
-        return joinExp(Expression.AND, exps);
+        return exp;
     }
 
-    private Expression match(ASTPath path, Map<String, Object> idMap) {
+    private Exp match(AgIdPart id, Map<String, Object> idMap) {
 
-        Object value = idMap.get(path.getPath());
+        Object value = idMap.get(id.getName());
         if (value == null) {
-            throw AgException.badRequest("No ID value for path: %s", path);
+            throw AgException.badRequest("No ID value for path: %s", id.getName());
         }
 
-        return new ASTEqual(path, value);
+        return Exp.withPositionalParams(id.getName() + " = $k", key);
     }
 
     @Override
     public Object keyForObject(T object) {
+
+        // TODO: for performance do not wrap the key in a Map for a single ID case. All other key-related methods
+        //   would need to be aligned with this assumption
         Map<String, Object> idMap = new HashMap<>();
+
         for (AgIdPart id : entity.getIdParts()) {
-            idMap.put(id.getPathExp().getPath(), id.getReader().value(object));
+            idMap.put(id.getName(), id.getReader().value(object));
         }
+
         return idMap;
     }
 
@@ -73,5 +74,4 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
     public Object keyForUpdate(EntityUpdate<T> update) {
         return update.getId();
     }
-
 }

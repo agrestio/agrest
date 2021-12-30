@@ -1,7 +1,6 @@
 package io.agrest.meta;
 
 import io.agrest.property.PropertyReader;
-import org.apache.cayenne.exp.parser.ASTPath;
 
 /**
  * @since 4.1
@@ -13,21 +12,18 @@ public class DefaultAgIdPart implements AgIdPart {
     private final boolean readable;
     private final boolean writable;
     private final PropertyReader reader;
-    private final ASTPath path;
 
     public DefaultAgIdPart(
             String name,
             Class<?> javaType,
             boolean readable,
             boolean writable,
-            PropertyReader reader,
-            ASTPath path) {
+            PropertyReader reader) {
         this.name = name;
         this.javaType = javaType;
         this.readable = readable;
         this.writable = writable;
         this.reader = reader;
-        this.path = path;
     }
 
     @Override
@@ -54,11 +50,6 @@ public class DefaultAgIdPart implements AgIdPart {
     @Override
     public boolean isWritable() {
         return writable;
-    }
-
-    @Override
-    public ASTPath getPathExp() {
-        return path;
     }
 
     @Override
