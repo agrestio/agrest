@@ -6,13 +6,10 @@ import io.agrest.ObjectMapper;
 import io.agrest.base.protocol.Exp;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
-import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.parser.ASTEqual;
-import org.apache.cayenne.exp.parser.ASTPath;
 
-import java.util.*;
-
-import static org.apache.cayenne.exp.ExpressionFactory.joinExp;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 class ByIdObjectMapper<T> implements ObjectMapper<T> {
 
@@ -53,7 +50,7 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
             throw AgException.badRequest("No ID value for path: %s", id.getName());
         }
 
-        return Exp.withPositionalParams(id.getName() + " = $k", key);
+        return Exp.keyValue(id.getName(), "=", value);
     }
 
     @Override

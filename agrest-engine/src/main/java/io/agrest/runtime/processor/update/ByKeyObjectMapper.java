@@ -26,6 +26,6 @@ class ByKeyObjectMapper<T> implements ObjectMapper<T> {
     @Override
     public Exp expressionForKey(Object key) {
         // allowing nulls here
-        return Exp.withPositionalParams(attribute.getName() + " = $k", key);
+        return Exp.keyValue(attribute.getName(), "=", key);
     }
 }
