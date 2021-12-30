@@ -23,6 +23,18 @@ public interface Exp {
         return params.isEmpty() ? simple(template) : new NamedParamsExp(template, params);
     }
 
+    /**
+     * @since 5.0
+     */
+    static Exp keyValue(String key, String op, Object value) {
+        return new KeyValueExp(key, op, value);
+    }
+
+    /**
+     * Invokes a callback on the visitor corresponding to one of the known expression types. The operation is
+     * non-recursive even for composite expressions. If the visitor needs to descend into expression tree, it will
+     * need to implement this logic on its own.
+     */
     void visit(ExpVisitor visitor);
 
     default Exp and(Exp exp) {

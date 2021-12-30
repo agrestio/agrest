@@ -11,5 +11,10 @@ public interface ExpVisitor {
 
     void visitPositionalParamsExp(PositionalParamsExp exp);
 
+    /**
+     * @since 5.0
+     */
+    void visitKeyValueExp(KeyValueExp exp);
+
     void visitCompositeExp(CompositeExp exp);
 }

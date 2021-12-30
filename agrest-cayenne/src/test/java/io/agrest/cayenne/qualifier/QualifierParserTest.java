@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QualifierParserTest {
@@ -29,6 +30,24 @@ public class QualifierParserTest {
     public void testParsePositionalParams() {
         Expression e = parser.parse(Exp.withPositionalParams("a = $a", "x"));
         assertEquals(ExpressionFactory.exp("a = 'x'"), e);
+    }
+
+    @Test
+    public void testParseKeyValue_Eq() {
+        Expression e = parser.parse(Exp.keyValue("a", "=", 5));
+        assertEquals(ExpressionFactory.exp("a = 5"), e);
+    }
+
+    @Test
+    public void testParseKeyValue_In() {
+        Expression e1 = parser.parse(Exp.keyValue("a", "in", asList(5, 6, 7)));
+        assertEquals(ExpressionFactory.exp("a in (5, 6, 7)"), e1);
+
+        Expression e2 = parser.parse(Exp.keyValue("a", "in", new String[]{"x", "y", "z"}));
+        assertEquals(ExpressionFactory.exp("a in ('x','y','z')"), e2);
+
+        Expression e3 = parser.parse(Exp.keyValue("a", "in", new Integer[]{5, 6, 7}));
+        assertEquals(ExpressionFactory.exp("a in (5, 6, 7)"), e3);
     }
 
     @Test

@@ -1,11 +1,18 @@
 package io.agrest.cayenne.qualifier;
 
+import io.agrest.AgException;
 import io.agrest.base.protocol.Exp;
-import io.agrest.base.protocol.exp.*;
+import io.agrest.base.protocol.exp.CompositeExp;
+import io.agrest.base.protocol.exp.ExpVisitor;
+import io.agrest.base.protocol.exp.KeyValueExp;
+import io.agrest.base.protocol.exp.NamedParamsExp;
+import io.agrest.base.protocol.exp.PositionalParamsExp;
+import io.agrest.base.protocol.exp.SimpleExp;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -40,6 +47,11 @@ public class QualifierParser implements IQualifierParser {
             }
 
             @Override
+            public void visitKeyValueExp(KeyValueExp exp) {
+                stack.add(parseKeyValueExpression(exp.getKey(), exp.getOp(), exp.getValue()));
+            }
+
+            @Override
             public void visitCompositeExp(CompositeExp exp) {
 
                 Exp[] children = exp.getParts();
@@ -66,5 +78,53 @@ public class QualifierParser implements IQualifierParser {
         });
 
         return stack.isEmpty() ? null : stack.get(0);
+    }
+
+    static Expression parseKeyValueExpression(String key, String op, Object value) {
+
+        // TODO: should we support DBPath?
+
+        switch (op) {
+            case "=":
+                return ExpressionFactory.matchExp(key, value);
+            case "<":
+                return ExpressionFactory.lessExp(key, value);
+            case ">":
+                return ExpressionFactory.greaterExp(key, value);
+            case "<=":
+                return ExpressionFactory.lessOrEqualExp(key, value);
+            case ">=":
+                return ExpressionFactory.greaterOrEqualExp(key, value);
+            case "like":
+                return ExpressionFactory.likeExp(key, value);
+            case "likeIgnoreCase":
+                return ExpressionFactory.likeIgnoreCaseExp(key, value);
+            case "in":
+                return ExpressionFactory.inExp(key, inValues(value));
+            default:
+                throw new IllegalArgumentException("Unsupported operation in Expression: " + op);
+        }
+    }
+
+    static Object[] inValues(Object value) {
+        if (value == null) {
+            return new Object[]{null};
+        }
+
+        if (value instanceof Collection) {
+            return ((Collection) value).toArray(new Object[0]);
+        }
+
+        if (value.getClass().isArray()) {
+            Class<?> componentType = value.getClass().getComponentType();
+            if (componentType.isPrimitive()) {
+                // TODO: this limitation is arbitrary. Wrap primitives to objects
+                throw AgException.internalServerError("Primitive array is not supported as an 'in' exp parameter");
+            } else {
+                return (Object[]) value;
+            }
+        }
+
+        return new Object[]{value};
     }
 }
