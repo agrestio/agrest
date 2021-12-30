@@ -8,7 +8,9 @@ import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
+import io.agrest.base.protocol.Exp;
 import io.agrest.cayenne.processor.CayenneProcessor;
+import io.agrest.cayenne.qualifier.IQualifierParser;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgIdPart;
 import io.agrest.runtime.processor.update.ByIdObjectMapperFactory;
@@ -16,6 +18,7 @@ import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
+import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.property.Property;
@@ -37,6 +40,12 @@ import java.util.Map;
  * @since 4.8
  */
 public class CayenneMapUpdateStage extends CayenneMapChangesStage {
+
+    private final IQualifierParser qualifierParser;
+
+    public CayenneMapUpdateStage(@Inject IQualifierParser qualifierParser) {
+        this.qualifierParser = qualifierParser;
+    }
 
     protected <T extends DataObject> void map(UpdateContext<T> context) {
 
@@ -133,14 +142,15 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         // not using streaming API to read data from Cayenne, we are already
         // limited in how much data can fit in the memory map.
 
+
         List<Expression> expressions = new ArrayList<>(keys.size());
         for (Object key : keys) {
 
             // update keys can be null... see a note in "mutableUpdatesByKey"
             if (key != null) {
-                Expression e = mapper.expressionForKey(key);
+                Exp e = mapper.expressionForKey(key);
                 if (e != null) {
-                    expressions.add(e);
+                    expressions.add(qualifierParser.parse(e));
                 }
             }
         }

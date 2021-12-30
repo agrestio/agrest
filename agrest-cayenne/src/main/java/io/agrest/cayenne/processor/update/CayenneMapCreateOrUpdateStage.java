@@ -1,10 +1,12 @@
 package io.agrest.cayenne.processor.update;
 
 import io.agrest.EntityUpdate;
+import io.agrest.cayenne.qualifier.IQualifierParser;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
+import org.apache.cayenne.di.Inject;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,6 +16,10 @@ import java.util.List;
  * @since 4.8
  */
 public class CayenneMapCreateOrUpdateStage extends CayenneMapUpdateStage {
+
+    public CayenneMapCreateOrUpdateStage(@Inject IQualifierParser qualifierParser) {
+        super(qualifierParser);
+    }
 
     @Override
     protected <T extends DataObject> void collectCreateOps(

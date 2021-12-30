@@ -6,10 +6,12 @@ import io.agrest.ObjectMapper;
 import io.agrest.ResourceEntity;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.CayenneUtil;
+import io.agrest.cayenne.qualifier.IQualifierParser;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
+import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.query.SelectQuery;
@@ -22,6 +24,10 @@ import java.util.List;
  * @since 4.8
  */
 public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreateOrUpdateStage {
+
+    public CayenneMapIdempotentFullSyncStage(@Inject IQualifierParser qualifierParser) {
+        super(qualifierParser);
+    }
 
     @Override
     protected <T extends DataObject> void collectUpdateDeleteOps(

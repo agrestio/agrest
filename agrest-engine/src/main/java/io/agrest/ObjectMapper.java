@@ -1,6 +1,6 @@
 package io.agrest;
 
-import org.apache.cayenne.exp.Expression;
+import io.agrest.base.protocol.Exp;
 
 /**
  * A helper to locate objects within a context of a single update request.
@@ -13,5 +13,5 @@ public interface ObjectMapper<T> {
 
 	Object keyForUpdate(EntityUpdate<T> update);
 
-	Expression expressionForKey(Object key);
+	Exp expressionForKey(Object key);
 }
