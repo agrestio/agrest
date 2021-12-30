@@ -6,8 +6,8 @@ import io.agrest.AgException;
 import io.agrest.base.jsonvalueconverter.JsonValueConverter;
 import io.agrest.base.jsonvalueconverter.UtcDateConverter;
 import io.agrest.meta.AgEntity;
-import io.agrest.runtime.path.IPathDescriptorManager;
-import io.agrest.runtime.path.PathDescriptor;
+import io.agrest.cayenne.path.IPathResolver;
+import io.agrest.cayenne.path.PathDescriptor;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.TraversalHelper;
@@ -20,11 +20,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class QualifierPostProcessor implements IQualifierPostProcessor {
 
-    private IPathDescriptorManager pathCache;
+    private IPathResolver pathCache;
     private Map<Class<?>, JsonValueConverter<?>> converters;
     private Map<AgEntity<?>, ExpressionProcessor> postProcessors;
 
-    public QualifierPostProcessor(@Inject IPathDescriptorManager pathCache) {
+    public QualifierPostProcessor(@Inject IPathResolver pathCache) {
         this.pathCache = pathCache;
 
         // TODO: instead of manually assembling converters we must switch to
@@ -57,7 +57,7 @@ public class QualifierPostProcessor implements IQualifierPostProcessor {
         // 'expressionPostProcessor'. If it happens to be "id", it will be
         // converted to "db:id".
         if (exp instanceof ASTObjPath) {
-            exp = pathCache.getPathDescriptor(entity, (ASTObjPath) exp).getPathExp();
+            exp = pathCache.resolve(entity, ((ASTObjPath) exp).getPath()).getPathExp();
         }
 
         return exp;
@@ -95,7 +95,7 @@ public class QualifierPostProcessor implements IQualifierPostProcessor {
                 // validate and replace if needed ... note that we can only
                 // replace non-root nodes during the traversal. Root node is
                 // validated and replaced explicitly by the caller.
-                ASTPath replacement = pathCache.getPathDescriptor(entity, (ASTObjPath) childNode).getPathExp();
+                ASTPath replacement = pathCache.resolve(entity, ((ASTObjPath) childNode).getPath()).getPathExp();
                 if (replacement != childNode) {
                     parentNode.setOperand(childIndex, replacement);
                 }
@@ -132,11 +132,11 @@ public class QualifierPostProcessor implements IQualifierPostProcessor {
 
         private Object convert(SimpleNode parentExp, JsonNode node) {
 
-            ASTObjPath peerPath = findPeerPath(parentExp, node);
+            String peerPath = findPeerPath(parentExp, node);
 
             if (peerPath != null) {
 
-                PathDescriptor pd = pathCache.getPathDescriptor(entity, peerPath);
+                PathDescriptor pd = pathCache.resolve(entity, peerPath);
                 if (pd.isAttribute()) {
                     JsonValueConverter<?> converter = converters.get(pd.getType());
                     if (converter != null) {
@@ -154,7 +154,7 @@ public class QualifierPostProcessor implements IQualifierPostProcessor {
             return node.asText();
         }
 
-        private ASTObjPath findPeerPath(SimpleNode exp, Object child) {
+        private String findPeerPath(SimpleNode exp, Object child) {
 
             if (exp == null) {
                 return null;
@@ -172,7 +172,7 @@ public class QualifierPostProcessor implements IQualifierPostProcessor {
                     continue;
                 }
 
-                ASTObjPath path = findChildPath((Expression) operand);
+                String path = findChildPath((Expression) operand);
                 if (path != null) {
                     return path;
                 }
@@ -181,9 +181,9 @@ public class QualifierPostProcessor implements IQualifierPostProcessor {
             return null;
         }
 
-        private ASTObjPath findChildPath(Expression exp) {
+        private String findChildPath(Expression exp) {
             if (exp instanceof ASTObjPath) {
-                return (ASTObjPath) exp;
+                return ((ASTObjPath) exp).getPath();
             }
 
             int len = exp.getOperandCount();
@@ -193,7 +193,7 @@ public class QualifierPostProcessor implements IQualifierPostProcessor {
                     continue;
                 }
 
-                ASTObjPath path = findChildPath((Expression) operand);
+                String path = findChildPath((Expression) operand);
                 if (path != null) {
                     return path;
                 }

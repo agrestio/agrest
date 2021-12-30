@@ -1,4 +1,4 @@
-package io.agrest.runtime.path;
+package io.agrest.cayenne.path;
 
 import io.agrest.AgException;
 import io.agrest.PathConstants;
@@ -54,19 +54,19 @@ class EntityPathCache {
         }
     }
 
-    PathDescriptor getPathDescriptor(ASTObjPath path) {
-        return pathCache.computeIfAbsent(path.getPath(), p -> computePathDescriptor(path));
+    PathDescriptor getOrCreate(String agPath) {
+        return pathCache.computeIfAbsent(agPath, p -> computePathDescriptor(agPath));
     }
 
-    private PathDescriptor computePathDescriptor(ASTObjPath path) {
+    private PathDescriptor computePathDescriptor(String agPath) {
 
-        String stringPath = (String) path.getOperand(0);
-        final Object last = lastPathComponent(entity, stringPath);
+        final Object last = lastPathComponent(entity, agPath);
 
         if (last instanceof AgAttribute) {
             return new PathDescriptor() {
 
-                AgAttribute attribute = (AgAttribute) last;
+                final ASTObjPath cayennePath = new ASTObjPath(agPath);
+                final AgAttribute attribute = (AgAttribute) last;
 
                 @Override
                 public boolean isAttribute() {
@@ -80,14 +80,15 @@ class EntityPathCache {
 
                 @Override
                 public ASTPath getPathExp() {
-                    return path;
+                    return cayennePath;
                 }
             };
         } else {
             return new PathDescriptor() {
 
-                AgRelationship relationship = (AgRelationship) last;
-                Class<?> type = relationship.getTargetEntity().getType();
+                final ASTObjPath cayennePath = new ASTObjPath(agPath);
+                final AgRelationship relationship = (AgRelationship) last;
+                final Class<?> type = relationship.getTargetEntity().getType();
 
                 @Override
                 public boolean isAttribute() {
@@ -101,7 +102,7 @@ class EntityPathCache {
 
                 @Override
                 public ASTPath getPathExp() {
-                    return path;
+                    return cayennePath;
                 }
             };
         }

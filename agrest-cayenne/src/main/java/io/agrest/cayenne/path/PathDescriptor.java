@@ -1,4 +1,4 @@
-package io.agrest.runtime.path;
+package io.agrest.cayenne.path;
 
 import org.apache.cayenne.exp.parser.ASTPath;
 

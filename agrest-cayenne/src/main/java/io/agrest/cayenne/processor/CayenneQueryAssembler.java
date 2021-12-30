@@ -1,24 +1,31 @@
 package io.agrest.cayenne.processor;
 
-import io.agrest.*;
+import io.agrest.AgException;
+import io.agrest.AgObjectId;
+import io.agrest.NestedResourceEntity;
+import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.base.protocol.Dir;
 import io.agrest.base.protocol.Sort;
+import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.qualifier.IQualifierParser;
 import io.agrest.cayenne.qualifier.IQualifierPostProcessor;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
-import io.agrest.runtime.path.IPathDescriptorManager;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
-import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.exp.property.Property;
 import org.apache.cayenne.exp.property.PropertyFactory;
-import org.apache.cayenne.map.*;
+import org.apache.cayenne.map.DbAttribute;
+import org.apache.cayenne.map.EntityResolver;
+import org.apache.cayenne.map.ObjAttribute;
+import org.apache.cayenne.map.ObjEntity;
+import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.query.SortOrder;
@@ -37,13 +44,13 @@ import static io.agrest.base.reflect.Types.typeForName;
 public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
     private final EntityResolver entityResolver;
-    private final IPathDescriptorManager pathCache;
+    private final IPathResolver pathCache;
     private final IQualifierParser qualifierParser;
     private final IQualifierPostProcessor qualifierPostProcessor;
 
     public CayenneQueryAssembler(
             @Inject ICayennePersister persister,
-            @Inject IPathDescriptorManager pathCache,
+            @Inject IPathResolver pathCache,
             @Inject IQualifierParser qualifierParser,
             @Inject IQualifierPostProcessor qualifierPostProcessor) {
         this.entityResolver = persister.entityResolver();
@@ -284,9 +291,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
     }
 
     private ASTPath toCayennePath(ResourceEntity<?> entity, String agPath) {
-        return pathCache.getPathDescriptor(
-                entity.getAgEntity(),
-                new ASTObjPath(agPath)).getPathExp();
+        return pathCache.resolve(entity.getAgEntity(), agPath).getPathExp();
     }
 
     private SortOrder toSortOrder(Dir direction) {

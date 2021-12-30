@@ -4,6 +4,8 @@ import io.agrest.base.jsonvalueconverter.JsonValueConverter;
 import io.agrest.cayenne.compiler.CayenneAgEntityCompiler;
 import io.agrest.cayenne.converter.JsonConverter;
 import io.agrest.cayenne.encoder.JsonEncoder;
+import io.agrest.cayenne.path.IPathResolver;
+import io.agrest.cayenne.path.PathResolver;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneQueryAssembler;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
@@ -70,6 +72,7 @@ public class AgCayenneModule implements Module {
         binder.bind(IQualifierParser.class).to(QualifierParser.class);
         binder.bind(IQualifierPostProcessor.class).to(QualifierPostProcessor.class);
         binder.bind(ICayenneQueryAssembler.class).to(CayenneQueryAssembler.class);
+        binder.bind(IPathResolver.class).to(PathResolver.class);
 
         // select stages
         binder.bind(ApplyServerParamsStage.class).to(io.agrest.cayenne.processor.select.CayenneApplyServerParamsStage.class);

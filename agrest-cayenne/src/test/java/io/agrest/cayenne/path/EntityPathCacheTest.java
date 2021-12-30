@@ -1,4 +1,4 @@
-package io.agrest.runtime.path;
+package io.agrest.cayenne.path;
 
 import io.agrest.AgException;
 import io.agrest.annotation.AgAttribute;
@@ -7,7 +7,6 @@ import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.LazyAgDataMap;
-import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,54 +25,54 @@ public class EntityPathCacheTest {
     }
 
     @Test
-    public void testGetPathDescriptor_Attribute() {
+    public void testGetOrCreate_Attribute() {
         EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
-        PathDescriptor pd = cache.getPathDescriptor(new ASTObjPath("name"));
+        PathDescriptor pd = cache.getOrCreate("name");
         assertNotNull(pd);
         assertTrue(pd.isAttribute());
         assertEquals(String.class, pd.getType());
         assertEquals("name", pd.getPathExp().getPath());
-        assertSame(pd, cache.getPathDescriptor(new ASTObjPath("name")));
+        assertSame(pd, cache.getOrCreate("name"));
     }
 
     @Test
-    public void testGetPathDescriptor_Relationship() {
+    public void testGetOrCreate_Relationship() {
         EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
-        PathDescriptor pd = cache.getPathDescriptor(new ASTObjPath("y"));
+        PathDescriptor pd = cache.getOrCreate("y");
         assertNotNull(pd);
         assertFalse(pd.isAttribute());
         assertEquals(Y.class, pd.getType());
         assertEquals("y", pd.getPathExp().getPath());
-        assertSame(pd, cache.getPathDescriptor(new ASTObjPath("y")));
+        assertSame(pd, cache.getOrCreate("y"));
     }
 
     @Test
-    public void testGetPathDescriptor_RelatedAttribute() {
+    public void testGetOrCreate_RelatedAttribute() {
         EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
-        PathDescriptor pd = cache.getPathDescriptor(new ASTObjPath("y.name"));
+        PathDescriptor pd = cache.getOrCreate("y.name");
         assertNotNull(pd);
         assertTrue(pd.isAttribute());
         assertEquals(String.class, pd.getType());
         assertEquals("y.name", pd.getPathExp().getPath());
-        assertSame(pd, cache.getPathDescriptor(new ASTObjPath("y.name")));
+        assertSame(pd, cache.getOrCreate("y.name"));
     }
 
     @Test
-    public void testGetPathDescriptor_BadPath() {
+    public void tesGetOrCreate_BadPath() {
         EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
-        assertThrows(AgException.class, () -> cache.getPathDescriptor(new ASTObjPath("y.xyz")));
+        assertThrows(AgException.class, () -> cache.getOrCreate("y.xyz"));
     }
 
     @Test
-    public void testGetPathDescriptor_OuterRelatedAttribute() {
+    public void testGetOrCreate_OuterRelatedAttribute() {
         EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
-        PathDescriptor pd = cache.getPathDescriptor(new ASTObjPath("y+.name"));
+        PathDescriptor pd = cache.getOrCreate("y+.name");
         assertNotNull(pd);
         assertTrue(pd.isAttribute());
         assertEquals(String.class, pd.getType());
         assertEquals("y+.name", pd.getPathExp().getPath());
-        assertSame(pd, cache.getPathDescriptor(new ASTObjPath("y+.name")));
-        assertNotSame(pd, cache.getPathDescriptor(new ASTObjPath("y.name")));
+        assertSame(pd, cache.getOrCreate("y+.name"));
+        assertNotSame(pd, cache.getOrCreate("y.name"));
     }
 
     public static class X {

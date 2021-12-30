@@ -52,8 +52,6 @@ import io.agrest.runtime.meta.BaseUrlProvider;
 import io.agrest.runtime.meta.IResourceMetadataService;
 import io.agrest.runtime.meta.LazyAgDataMapProvider;
 import io.agrest.runtime.meta.ResourceMetadataService;
-import io.agrest.runtime.path.IPathDescriptorManager;
-import io.agrest.runtime.path.PathDescriptorManager;
 import io.agrest.runtime.processor.meta.CollectMetadataStage;
 import io.agrest.runtime.processor.meta.MetadataProcessorFactory;
 import io.agrest.runtime.processor.meta.MetadataProcessorFactoryProvider;
@@ -419,8 +417,6 @@ public class AgBuilder {
             binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
 
             binder.bind(IJacksonService.class).to(JacksonService.class);
-
-            binder.bind(IPathDescriptorManager.class).to(PathDescriptorManager.class);
 
             // Query parameter parsers from the UriInfo
             binder.bind(IExpParser.class).to(ExpParser.class);
