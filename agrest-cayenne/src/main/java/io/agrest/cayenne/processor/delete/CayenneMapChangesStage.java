@@ -4,7 +4,6 @@ import io.agrest.AgException;
 import io.agrest.AgObjectId;
 import io.agrest.EntityParent;
 import io.agrest.cayenne.path.IPathResolver;
-import io.agrest.cayenne.path.PathResolver;
 import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
@@ -33,7 +32,7 @@ public class CayenneMapChangesStage implements Processor<DeleteContext<?>> {
     private final AgDataMap dataMap;
     private final IPathResolver pathResolver;
 
-    public CayenneMapChangesStage(@Inject AgDataMap dataMap, @Inject PathResolver pathResolver) {
+    public CayenneMapChangesStage(@Inject AgDataMap dataMap, @Inject IPathResolver pathResolver) {
         this.dataMap = dataMap;
         this.pathResolver = pathResolver;
     }

@@ -21,6 +21,20 @@ class EntityPathCache {
     EntityPathCache(AgEntity<?> entity) {
         this.entity = entity;
         this.pathCache = new ConcurrentHashMap<>();
+
+        // Immediately cache a special entry matching the "id" constant. Can only do that if the ID is made of a
+        // single "part", as only such an ID would resolve to a single Cayenne path
+
+        // TODO: this is a hack - we are treating "id" as a "virtual" attribute, as there's generally no "id"
+        //   property in AgEntity. See the same note in EncodablePropertyFactory
+
+        if (entity.getIdParts().size() == 1) {
+
+            // TODO: here we are ignoring the name of the ID attribute and are using the fixed name instead.
+            //  Same issue as the above
+            AgIdPart id = entity.getIdParts().iterator().next();
+            pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor(id.getType(), pathForIdPart(id), true));
+        }
     }
 
     PathDescriptor getOrCreate(String agPath) {
@@ -32,74 +46,22 @@ class EntityPathCache {
         final Object last = lastPathComponent(entity, agPath);
 
         if (last instanceof AgAttribute) {
-            return new PathDescriptor() {
-
-                final ASTObjPath cayennePath = new ASTObjPath(agPath);
-                final AgAttribute attribute = (AgAttribute) last;
-
-                @Override
-                public boolean isAttributeOrId() {
-                    return true;
-                }
-
-                @Override
-                public Class<?> getType() {
-                    return attribute.getType();
-                }
-
-                @Override
-                public ASTPath getPathExp() {
-                    return cayennePath;
-                }
-            };
+            return new PathDescriptor(((AgAttribute) last).getType(), new ASTObjPath(agPath), true);
         }
 
         if (last instanceof AgIdPart) {
-            return new PathDescriptor() {
-
-                final AgIdPart id = (AgIdPart) last;
-                final ASTPath idPath = id.getName().startsWith(ASTDbPath.DB_PREFIX)
-                        ? new ASTDbPath(id.getName().substring(ASTDbPath.DB_PREFIX.length()))
-                        : new ASTObjPath(id.getName());
-
-                @Override
-                public boolean isAttributeOrId() {
-                    return true;
-                }
-
-                @Override
-                public Class<?> getType() {
-                    return id.getType();
-                }
-
-                @Override
-                public ASTPath getPathExp() {
-                    return idPath;
-                }
-            };
+            AgIdPart id = (AgIdPart) last;
+            return new PathDescriptor(id.getType(), pathForIdPart(id), true);
         }
 
-        return new PathDescriptor() {
+        AgRelationship relationship = (AgRelationship) last;
+        return new PathDescriptor(relationship.getTargetEntity().getType(), new ASTObjPath(agPath), false);
+    }
 
-            final ASTObjPath cayennePath = new ASTObjPath(agPath);
-            final AgRelationship relationship = (AgRelationship) last;
-            final Class<?> type = relationship.getTargetEntity().getType();
-
-            @Override
-            public boolean isAttributeOrId() {
-                return false;
-            }
-
-            @Override
-            public Class<?> getType() {
-                return type;
-            }
-
-            @Override
-            public ASTPath getPathExp() {
-                return cayennePath;
-            }
-        };
+    private ASTPath pathForIdPart(AgIdPart id) {
+        return id.getName().startsWith(ASTDbPath.DB_PREFIX)
+                ? new ASTDbPath(id.getName().substring(ASTDbPath.DB_PREFIX.length()))
+                : new ASTObjPath(id.getName());
     }
 
     Object lastPathComponent(AgEntity<?> entity, String path) {

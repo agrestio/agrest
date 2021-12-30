@@ -56,7 +56,7 @@ public interface AgEntity<T> {
     RootDataResolver<T> getDataResolver();
 
     /**
-     * Returns a reader that returns id values as a Map.
+     * Returns a reader that allows to read all parts of the entity id at once as a Map.
      *
      * @since 4.2
      */

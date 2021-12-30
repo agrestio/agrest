@@ -2,14 +2,30 @@ package io.agrest.cayenne.path;
 
 import org.apache.cayenne.exp.parser.ASTPath;
 
-public interface PathDescriptor {
+public class PathDescriptor {
 
-	/**
-	 * @since 5.0
-	 */
-	boolean isAttributeOrId();
+    private final boolean attributeOrId;
+    private final ASTPath path;
+    private final Class<?> type;
 
-	Class<?> getType();
+    public PathDescriptor(Class<?> type, ASTPath path, boolean attributeOrId) {
+        this.path = path;
+        this.type = type;
+        this.attributeOrId = attributeOrId;
+    }
 
-	ASTPath getPathExp();
+    /**
+     * @since 5.0
+     */
+    public boolean isAttributeOrId() {
+        return attributeOrId;
+    }
+
+    public Class<?> getType() {
+        return type;
+    }
+
+    public ASTPath getPathExp() {
+        return path;
+    }
 }

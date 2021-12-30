@@ -56,6 +56,9 @@ public class EncodablePropertyFactory implements IEncodablePropertyFactory {
 
         Collection<AgIdPart> ids = entity.getAgEntity().getIdParts();
 
+        // TODO: this is a hack - we are treating "id" as a "virtual" attribute, as there's generally no "id"
+        //   property in AgEntity. See the same note in EntityPathCache
+
         switch (ids.size()) {
             case 0:
                 return Optional.empty();
