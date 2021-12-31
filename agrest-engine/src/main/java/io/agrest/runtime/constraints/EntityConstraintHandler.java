@@ -30,7 +30,6 @@ class EntityConstraintHandler {
 
         if (entity.isIdIncluded()) {
 
-            // there's no ID overlays yet, so check AgEntity id attributes for writeability
             for (AgIdPart idPart : entity.getAgEntity().getIdParts()) {
                 if (!idPart.isWritable()) {
                     context.setIdUpdatesDisallowed(true);

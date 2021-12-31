@@ -1,6 +1,9 @@
 package io.agrest.meta;
 
+import io.agrest.PathConstants;
+
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 class AgEntityOverlayResolver {
@@ -32,6 +35,19 @@ class AgEntityOverlayResolver {
     }
 
     void makeUnreadable(String name) {
+        if (PathConstants.ID_PK_ATTRIBUTE.equals(name)) {
+
+            Iterator<Map.Entry<String, AgIdPart>> it = ids.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, AgIdPart> e = it.next();
+                if (e.getValue().isReadable()) {
+                    e.setValue(new DefaultAgIdPart(name, e.getValue().getType(), false, e.getValue().isWritable(), e.getValue().getReader()));
+                }
+            }
+
+            return;
+        }
+
         AgIdPart id = ids.get(name);
         if (id != null) {
             if (id.isReadable()) {
@@ -61,6 +77,20 @@ class AgEntityOverlayResolver {
     }
 
     void makeUnwritable(String name) {
+
+        if (PathConstants.ID_PK_ATTRIBUTE.equals(name)) {
+
+            Iterator<Map.Entry<String, AgIdPart>> it = ids.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, AgIdPart> e = it.next();
+                if (e.getValue().isWritable()) {
+                    e.setValue(new DefaultAgIdPart(name, e.getValue().getType(), e.getValue().isReadable(), false, e.getValue().getReader()));
+                }
+            }
+
+            return;
+        }
+
         AgIdPart id = ids.get(name);
         if (id != null) {
             if (id.isWritable()) {

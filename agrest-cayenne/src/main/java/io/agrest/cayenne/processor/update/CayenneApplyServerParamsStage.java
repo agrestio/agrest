@@ -15,6 +15,7 @@ import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.constraints.IConstraintsHandler;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.di.Inject;
+import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.EntityResolver;
@@ -158,7 +159,7 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
 
             // if size != 1 : throw?
             if (pk != null && pk.size() == 1) {
-                u.getOrCreateId().putIfAbsent(outgoingJoin.getSourceName(), pk.iterator().next());
+                u.getOrCreateId().putIfAbsent(ASTDbPath.DB_PREFIX + outgoingJoin.getSourceName(), pk.iterator().next());
             }
         }
     }
@@ -180,7 +181,7 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
                 Map<String, Object> pkMap = (Map) pk.iterator().next();
                 for (DbJoin join : outgoingJoins) {
                     // 'getSourceName' and 'getTargetName' assumes AgEntity's id attribute name is based on DbAttribute name
-                    u.getOrCreateId().putIfAbsent(join.getSourceName(), pkMap.get(join.getTargetName()));
+                    u.getOrCreateId().putIfAbsent(ASTDbPath.DB_PREFIX + join.getSourceName(), pkMap.get(join.getTargetName()));
                 }
             }
         }
@@ -223,7 +224,7 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
                     for (EntityUpdate<T> u : context.getUpdates()) {
                         for (DbJoin join : incomingDbRelationship.getJoins()) {
                             // 'getSourceName' and 'getTargetName' assumes AgEntity's id attribute name is based on DbAttribute name
-                            u.getOrCreateId().putIfAbsent(join.getTargetName(), id.get(join.getSourceName()));
+                            u.getOrCreateId().putIfAbsent(ASTDbPath.DB_PREFIX + join.getTargetName(), id.get(join.getSourceName()));
                         }
                     }
                 }
