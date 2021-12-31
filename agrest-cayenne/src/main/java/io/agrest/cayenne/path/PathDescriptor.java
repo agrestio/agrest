@@ -4,6 +4,9 @@ import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 
+/**
+ * A mapping of an Agrest property path to a Cayenne path.
+ */
 public class PathDescriptor {
 
     private final boolean attributeOrId;

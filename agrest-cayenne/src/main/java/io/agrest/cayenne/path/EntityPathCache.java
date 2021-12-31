@@ -60,8 +60,12 @@ class EntityPathCache {
 
         int dot = path.indexOf(PathConstants.DOT);
 
-        if (dot == 0 || dot == path.length() - 1) {
-            throw AgException.badRequest("Invalid path '%s' for '%s'", path, entity.getName());
+        if (dot == 0) {
+            throw AgException.badRequest("Invalid path '%s' for '%s' - can't start with a dot", path, entity.getName());
+        }
+
+        if (dot == path.length() - 1) {
+            throw AgException.badRequest("Invalid path '%s' for '%s' - can't end with a dot", path, entity.getName());
         }
 
         if (dot > 0) {
