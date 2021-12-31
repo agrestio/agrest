@@ -21,6 +21,7 @@ import org.apache.cayenne.DataRow;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.ExpressionFactory;
+import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.DbEntity;
 import org.apache.cayenne.map.EntityResolver;
@@ -133,8 +134,6 @@ public class CayenneMergeChangesStage implements Processor<UpdateContext<?>> {
         Map<DbAttribute, Object> idByDbAttribute = new HashMap<>((int) (idByAgAttribute.size() / 0.75) + 1);
         for (Map.Entry<String, Object> e : idByAgAttribute.entrySet()) {
 
-            // I guess this kind of type checking is not too dirty ... CayenneAgDbAttribute was created by Cayenne
-            // part of Ag, and we are back again in Cayenne part of Ag, trying to map Ag model back to Cayenne
             DbAttribute dbAttribute = dbAttributeForAgAttribute(agEntity, e.getKey());
 
             if (dbAttribute == null) {
@@ -367,13 +366,9 @@ public class CayenneMergeChangesStage implements Processor<UpdateContext<?>> {
     }
 
     protected DbAttribute dbAttributeForAgAttribute(AgEntity<?> agEntity, String attributeName) {
-
-        ObjEntity entity = entityResolver.getObjEntity(agEntity.getName());
-        ObjAttribute objAttribute = entity.getAttribute(attributeName);
-        return objAttribute != null
-                ? objAttribute.getDbAttribute()
-                // this is suspect.. don't see how we would allow DbAttribute names to leak in the Ag model
-                : entity.getDbEntity().getAttribute(attributeName);
+        ASTPath path = pathResolver.resolve(agEntity, attributeName).getPathExp();
+        Object attribute = path.evaluate(entityResolver.getObjEntity(agEntity.getName()));
+        return attribute instanceof ObjAttribute ? ((ObjAttribute) attribute).getDbAttribute() : (DbAttribute) attribute;
     }
 
     interface RelationshipUpdate {

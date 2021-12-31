@@ -8,10 +8,9 @@ import io.agrest.base.protocol.exp.KeyValueExp;
 import io.agrest.base.protocol.exp.NamedParamsExp;
 import io.agrest.base.protocol.exp.PositionalParamsExp;
 import io.agrest.base.protocol.exp.SimpleExp;
+import io.agrest.cayenne.path.PathDescriptor;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
-import org.apache.cayenne.exp.parser.ASTDbPath;
-import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 
 import java.util.ArrayList;
@@ -85,7 +84,7 @@ public class QualifierParser implements IQualifierParser {
 
     static Expression parseKeyValueExpression(String key, String op, Object value) {
 
-        ASTPath path = parsePath(key);
+        ASTPath path = PathDescriptor.parsePath(key);
 
         switch (op) {
             case "=":
@@ -129,11 +128,5 @@ public class QualifierParser implements IQualifierParser {
         }
 
         return new Object[]{value};
-    }
-
-    public static ASTPath parsePath(String path) {
-        return path.startsWith(ASTDbPath.DB_PREFIX)
-                ? new ASTDbPath(path.substring(ASTDbPath.DB_PREFIX.length()))
-                : new ASTObjPath(path);
     }
 }

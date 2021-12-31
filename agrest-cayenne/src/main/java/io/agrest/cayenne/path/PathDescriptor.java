@@ -1,5 +1,7 @@
 package io.agrest.cayenne.path;
 
+import org.apache.cayenne.exp.parser.ASTDbPath;
+import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 
 public class PathDescriptor {
@@ -7,6 +9,12 @@ public class PathDescriptor {
     private final boolean attributeOrId;
     private final ASTPath path;
     private final Class<?> type;
+
+    public static ASTPath parsePath(String path) {
+        return path.startsWith(ASTDbPath.DB_PREFIX)
+                ? new ASTDbPath(path.substring(ASTDbPath.DB_PREFIX.length()))
+                : new ASTObjPath(path);
+    }
 
     public PathDescriptor(Class<?> type, ASTPath path, boolean attributeOrId) {
         this.path = path;
