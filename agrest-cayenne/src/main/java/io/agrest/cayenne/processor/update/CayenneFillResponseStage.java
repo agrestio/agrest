@@ -77,6 +77,7 @@ public abstract class CayenneFillResponseStage implements Processor<UpdateContex
                     continue;
                 }
 
+                // TODO: getIdSnapshot() will not prefix keys with "db". Must use AgIdParts to resolve the ID
                 AgObjectId id = root.getObjectId().getIdSnapshot().size() > 1
                         ? new CompoundObjectId(root.getObjectId().getIdSnapshot())
                         : new SimpleObjectId(root.getObjectId().getIdSnapshot().values().iterator().next());

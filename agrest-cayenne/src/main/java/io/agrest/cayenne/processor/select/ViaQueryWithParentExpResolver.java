@@ -79,19 +79,25 @@ public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseNes
 
         AgEntity<?> parentEntity = entity.getParent().getAgEntity();
 
-        // Per #473 there may be no ID in AgEntity, but there's one in Cayenne DbEntity, so let's the one from
-        // Cayenne if possible. This would allow nested prefetches even if ID is excluded from the public data.
-
-        // Note that this ID reader should only be used inside "agrest-cayenne" and should not leak to the generic
-        // part of the Agrest stack.
-
-        PropertyReader parentIdReader = persister.entityResolver().getObjEntity(parentEntity.getName()) != null
-                ? p -> ((Persistent) p).getObjectId().getIdSnapshot()
-                : parentEntity.getIdReader();
+        PropertyReader parentIdReader = parentEntity.getIdReader();
 
         return entity instanceof ToManyResourceEntity
                 ? new ToManyEntityResultReader((ToManyResourceEntity) entity, parentIdReader)
                 : new ToOneEntityResultReader((ToOneResourceEntity<?>) entity, parentIdReader);
+    }
+
+    protected PropertyReader parentIdReader(AgEntity<?> parentEntity) {
+
+        // Per #473 there may be no ID in AgEntity, but there's one in Cayenne DbEntity. So let's the one from Cayenne
+        // if that's the case. This would allow nested prefetches even if ID is excluded from the public data.
+
+        // Note that this ID reader should only be used inside "agrest-cayenne" and should not leak to the generic
+        // part of the Agrest stack.
+
+        return parentEntity.getIdParts().isEmpty() && persister.entityResolver().getObjEntity(parentEntity.getName()) != null
+                // TODO: ID snapshot keys should be prefixed with "db:"
+                ? p -> ((Persistent) p).getObjectId().getIdSnapshot()
+                : parentEntity.getIdReader();
     }
 
     protected void indexResultByParentId(NestedResourceEntity<T> entity, List<Object[]> result) {
