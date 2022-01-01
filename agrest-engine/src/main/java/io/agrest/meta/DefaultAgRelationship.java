@@ -9,12 +9,12 @@ import java.util.Objects;
  */
 public class DefaultAgRelationship implements AgRelationship {
 
-    private String name;
-    private AgEntity<?> targetEntity;
-    private boolean toMany;
+    private final String name;
+    private final AgEntity<?> targetEntity;
+    private final boolean toMany;
     private final boolean readable;
     private final boolean writable;
-    private NestedDataResolver<?> dataResolver;
+    private final NestedDataResolver<?> dataResolver;
 
     public DefaultAgRelationship(
             String name,

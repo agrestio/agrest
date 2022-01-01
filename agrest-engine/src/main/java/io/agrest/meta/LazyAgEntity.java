@@ -15,7 +15,7 @@ import java.util.function.Supplier;
  */
 public class LazyAgEntity<T> extends BaseLazyAgEntity<T, AgEntity<T>> implements AgEntity<T> {
 
-    private Class<T> type;
+    private final Class<T> type;
 
     public LazyAgEntity(Class<T> type, Supplier<AgEntity<T>> delegateSupplier) {
         super(delegateSupplier);
@@ -68,7 +68,7 @@ public class LazyAgEntity<T> extends BaseLazyAgEntity<T, AgEntity<T>> implements
     }
 
     @Override
-    public ReadFilter getReadFilter() {
+    public ReadFilter<T> getReadFilter() {
         return getDelegate().getReadFilter();
     }
 
