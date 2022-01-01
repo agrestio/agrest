@@ -101,7 +101,7 @@ public class PUT_NaturalIdIT extends DbTest {
     }
 
     @Test
-    public void testNaturalIdInPayload_MascaradingAsId() {
+    public void testNaturalIdInPayload_MasqueradingAsId() {
 
         tester.e23().insertColumns("id", "name").values(12, "John").exec();
 
