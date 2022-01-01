@@ -1,5 +1,6 @@
 package io.agrest.meta;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -7,11 +8,11 @@ import java.util.function.Supplier;
  */
 public abstract class BaseLazyAgEntity<T, E extends AgEntity<T>> {
 
-    private final Supplier<E> delegateSupplier;
-    private E delegate;
+    private Supplier<E> delegateSupplier;
+    private volatile E delegate;
 
     public BaseLazyAgEntity(Supplier<E> delegateSupplier) {
-        this.delegateSupplier = delegateSupplier;
+        this.delegateSupplier = Objects.requireNonNull(delegateSupplier);
     }
 
     protected final E getDelegate() {
@@ -20,6 +21,7 @@ public abstract class BaseLazyAgEntity<T, E extends AgEntity<T>> {
             synchronized (this) {
                 if (delegate == null) {
                     delegate = delegateSupplier.get();
+                    delegateSupplier = null;
                 }
             }
         }
