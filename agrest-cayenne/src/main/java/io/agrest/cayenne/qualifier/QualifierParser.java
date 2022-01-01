@@ -8,7 +8,7 @@ import io.agrest.base.protocol.exp.KeyValueExp;
 import io.agrest.base.protocol.exp.NamedParamsExp;
 import io.agrest.base.protocol.exp.PositionalParamsExp;
 import io.agrest.base.protocol.exp.SimpleExp;
-import io.agrest.cayenne.path.PathDescriptor;
+import io.agrest.cayenne.path.PathOps;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.parser.ASTPath;
@@ -84,7 +84,7 @@ public class QualifierParser implements IQualifierParser {
 
     static Expression parseKeyValueExpression(String key, String op, Object value) {
 
-        ASTPath path = PathDescriptor.parsePath(key);
+        ASTPath path = PathOps.parsePath(key);
 
         switch (op) {
             case "=":

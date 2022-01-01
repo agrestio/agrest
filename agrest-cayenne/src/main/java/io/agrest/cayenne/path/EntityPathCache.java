@@ -31,7 +31,7 @@ class EntityPathCache {
             // TODO: here we are ignoring the name of the ID attribute and are using the fixed name instead.
             //  Same issue as the above
             AgIdPart id = entity.getIdParts().iterator().next();
-            pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor(id.getType(), PathDescriptor.parsePath(id.getName()), true));
+            pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor(id.getType(), PathOps.parsePath(id.getName()), true));
         }
     }
 
@@ -49,7 +49,7 @@ class EntityPathCache {
 
         if (last instanceof AgIdPart) {
             AgIdPart id = (AgIdPart) last;
-            return new PathDescriptor(id.getType(), PathDescriptor.parsePath(id.getName()), true);
+            return new PathDescriptor(id.getType(), PathOps.parsePath(id.getName()), true);
         }
 
         AgRelationship relationship = (AgRelationship) last;

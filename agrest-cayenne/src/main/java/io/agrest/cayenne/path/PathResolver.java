@@ -6,17 +6,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A caching {@link IPathResolver} implementation. Each app only has a fixed number of paths, so this makes
- * {@link PathDescriptor} lookup efficient.
+ * A caching {@link IPathResolver} implementation.
  *
  * @since 5.0
  */
 public class PathResolver implements IPathResolver {
 
-    private Map<String, EntityPathCache> pathCacheByEntity;
+    private final Map<String, EntityPathCache> pathCaches;
 
     public PathResolver() {
-        this.pathCacheByEntity = new ConcurrentHashMap<>();
+        this.pathCaches = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -25,7 +24,9 @@ public class PathResolver implements IPathResolver {
     }
 
     EntityPathCache entityPathCache(AgEntity<?> entity) {
-        return pathCacheByEntity.computeIfAbsent(entity.getName(), k -> new EntityPathCache(entity));
+        return pathCaches.computeIfAbsent(
+                entity.getName(),
+                k -> new EntityPathCache(entity));
     }
 
 }

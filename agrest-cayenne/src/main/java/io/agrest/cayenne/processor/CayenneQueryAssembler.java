@@ -8,20 +8,20 @@ import io.agrest.RootResourceEntity;
 import io.agrest.base.protocol.Dir;
 import io.agrest.base.protocol.Sort;
 import io.agrest.cayenne.path.IPathResolver;
+import io.agrest.cayenne.path.PathOps;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.qualifier.IQualifierParser;
 import io.agrest.cayenne.qualifier.IQualifierPostProcessor;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import io.agrest.runtime.processor.select.SelectContext;
-import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
+import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.exp.property.Property;
 import org.apache.cayenne.exp.property.PropertyFactory;
-import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
@@ -34,8 +34,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
-
-import static io.agrest.base.reflect.Types.typeForName;
 
 /**
  * @since 3.4
@@ -76,26 +74,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
     public <T> SelectQuery<T> createQueryWithParentQualifier(NestedResourceEntity<T> entity) {
 
         SelectQuery<T> query = createBaseQuery(entity);
-
-        // Use Cayenne metadata for query building. Agrest metadata may be missing some important parts like ids
-        // (e.g. see https://github.com/agrestio/agrest/issues/473)
-
-        ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getName());
-        ObjRelationship objRelationship = parentObjEntity.getRelationship(entity.getIncoming().getName());
-        String reversePath = objRelationship.getReverseDbRelationshipPath();
-
-        List<Property<?>> properties = new ArrayList<>();
-        Class entityType = entity.getType();
-        properties.add(PropertyFactory.createSelf(entityType));
-
-        for (DbAttribute pk : parentObjEntity.getDbEntity().getPrimaryKeys()) {
-            String path = reversePath + "." + pk.getName();
-            Expression propertyExp = ExpressionFactory.dbPathExp(path);
-            Class<?> pkType = typeForName(TypesMapping.getJavaBySqlType(pk.getType()));
-            properties.add(PropertyFactory.createBase(propertyExp, pkType));
-        }
-
-        query.setColumns(properties);
+        query.setColumns(queryColumns(entity));
 
         // Translate expression from parent.
         // Find the closest parent in the chain that has a query of its own, and use that as a base.
@@ -167,32 +146,18 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
     public <T, P> SelectQuery<T> createQueryWithParentIdsQualifier(NestedResourceEntity<T> entity, Iterator<P> parentData) {
 
         SelectQuery<T> query = createBaseQuery(entity);
-
-        // Use Cayenne metadata for query building. Agrest metadata may be missing some important parts like ids
-        // (e.g. see https://github.com/agrestio/agrest/issues/473)
-
-        ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getName());
-        ObjRelationship objRelationship = parentObjEntity.getRelationship(entity.getIncoming().getName());
-        String reversePath = objRelationship.getReverseDbRelationshipPath();
-
-        List<Property<?>> properties = new ArrayList<>();
-        Class entityType = entity.getType();
-        properties.add(PropertyFactory.createSelf(entityType));
-
-        for (DbAttribute pk : parentObjEntity.getDbEntity().getPrimaryKeys()) {
-            String path = reversePath + "." + pk.getName();
-            Expression propertyExp = ExpressionFactory.dbPathExp(path);
-            Class<?> pkType = typeForName(TypesMapping.getJavaBySqlType(pk.getType()));
-            properties.add(PropertyFactory.createBase(propertyExp, pkType));
-        }
-
-        query.setColumns(properties);
+        query.setColumns(queryColumns(entity));
 
         // build id-based qualifier
         List<Expression> qualifiers = new ArrayList<>();
 
         // if pagination is in effect, we should only fault the requested range. It makes this particular strategy
         // very efficient in case of pagination
+
+        ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getName());
+        ObjRelationship objRelationship = parentObjEntity.getRelationship(entity.getIncoming().getName());
+        String reversePath = objRelationship.getReverseDbRelationshipPath();
+
         consumeRange(parentData, entity.getParent().getFetchOffset(), entity.getParent().getFetchLimit(),
                 // TODO: this only works for single column ids
                 p -> qualifiers.add(ExpressionFactory.matchDbExp(reversePath, p)));
@@ -289,5 +254,30 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
             default:
                 throw new IllegalArgumentException("Missing or unexpected sort direction: " + direction);
         }
+    }
+
+    private List<Property<?>> queryColumns(NestedResourceEntity<?> entity) {
+
+        // Use Cayenne metadata for query building. Agrest metadata may be missing some important parts like ids
+        // (e.g. see https://github.com/agrestio/agrest/issues/473)
+
+        AgEntity<?> parentEntity = entity.getParent().getAgEntity();
+        ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getName());
+        ObjRelationship objRelationship = parentObjEntity.getRelationship(entity.getIncoming().getName());
+        ASTDbPath reversePath = new ASTDbPath(objRelationship.getReverseDbRelationshipPath());
+
+        List<Property<?>> columns = new ArrayList<>(parentEntity.getIdParts().size() + 1);
+
+        Class entityType = entity.getType();
+        columns.add(PropertyFactory.createSelf(entityType));
+
+        // columns must be added in the order of id parts iteration, as this is how they will be read from result
+        for (AgIdPart idPart : parentEntity.getIdParts()) {
+            ASTPath idPartPath = pathResolver.resolve(parentEntity, idPart.getName()).getPathExp();
+            Expression propertyExp = PathOps.concatWithDbPath(parentObjEntity, reversePath, idPartPath);
+            columns.add(PropertyFactory.createBase(propertyExp, idPart.getType()));
+        }
+
+        return columns;
     }
 }
