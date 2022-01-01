@@ -117,16 +117,16 @@ public class PUT_NaturalIdIT extends DbTest {
     public void testMultiId_MixedDbObj() {
 
         tester.target("/mixed-multi-id")
-                .put("{\"id\":{\"id1\":18,\"id2Prop\":345}}")
+                .put("{\"id\":{\"db:id1\":18,\"id2Prop\":345}}")
                 .wasCreated()
-                .bodyEquals(1, "{\"id\":{\"id1\":18,\"id2Prop\":345},\"id2Prop\":345}");
+                .bodyEquals(1, "{\"id\":{\"db:id1\":18,\"id2Prop\":345},\"id2Prop\":345}");
 
         tester.e29().matcher().eq("id1", 18).eq("id2", 345).assertOneMatch();
 
         tester.target("/mixed-multi-id")
-                .put("{\"id\":{\"id1\":18,\"id2Prop\":345}}")
+                .put("{\"id\":{\"db:id1\":18,\"id2Prop\":345}}")
                 .wasOk()
-                .bodyEquals(1, "{\"id\":{\"id1\":18,\"id2Prop\":345},\"id2Prop\":345}");
+                .bodyEquals(1, "{\"id\":{\"db:id1\":18,\"id2Prop\":345},\"id2Prop\":345}");
     }
 
     @Path("")

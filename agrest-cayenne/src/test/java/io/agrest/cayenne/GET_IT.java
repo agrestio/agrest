@@ -286,7 +286,7 @@ public class GET_IT extends DbTest {
                 .get()
                 .wasOk()
                 // "id1" is a DB column name, "id2Prop" is an object property name
-                .bodyEquals(1, "{\"id\":{\"id1\":1,\"id2Prop\":15},\"id2Prop\":15}");
+                .bodyEquals(1, "{\"id\":{\"db:id1\":1,\"id2Prop\":15},\"id2Prop\":15}");
     }
 
     @Test

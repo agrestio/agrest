@@ -63,16 +63,16 @@ public class POST_NaturalIdIT extends DbTest {
     public void testMultiId_MixedDbObj() {
 
         tester.target("/mixed-multi-id")
-                .post("{\"id\":{\"id1\":18,\"id2Prop\":345}}")
+                .post("{\"id\":{\"db:id1\":18,\"id2Prop\":345}}")
                 .wasCreated()
-                .bodyEquals(1, "{\"id\":{\"id1\":18,\"id2Prop\":345},\"id2Prop\":345}");
+                .bodyEquals(1, "{\"id\":{\"db:id1\":18,\"id2Prop\":345},\"id2Prop\":345}");
 
         tester.e29().matcher().eq("id1", 18).eq("id2", 345).assertOneMatch();
 
         tester.target("/mixed-multi-id")
-                .post("{\"id\":{\"id1\":18,\"id2Prop\":345}}")
+                .post("{\"id\":{\"db:id1\":18,\"id2Prop\":345}}")
                 .wasBadRequest()
-                .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E29' with id {id2Prop:345,id1:18} - already exists\"}");
+                .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E29' with id {id2Prop:345,db:id1:18} - already exists\"}");
     }
 
     @Path("")

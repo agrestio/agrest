@@ -130,8 +130,7 @@ public class GET_Related_IT extends DbTest {
                 .queryParam("include", "e12", "e13")
                 .get()
                 .wasOk()
-                // note how ID leaks DB column names
-                .bodyEquals(1, "{\"id\":{\"e12_id\":12,\"e13_id\":16},\"e12\":{\"id\":12},\"e13\":{\"id\":16}}");
+                .bodyEquals(1, "{\"id\":{\"db:e12_id\":12,\"db:e13_id\":16},\"e12\":{\"id\":12},\"e13\":{\"id\":16}}");
     }
 
     @Path("")
