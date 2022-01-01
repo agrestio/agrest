@@ -67,4 +67,10 @@ public class DefaultAgRelationship implements AgRelationship {
     public NestedDataResolver<?> getResolver() {
         return dataResolver;
     }
+
+    @Override
+    public String toString() {
+        String cardinality = toMany ? "to-many" : "to-one";
+        return "DefaultAgRelationship[" + getName() + ", " + cardinality + "]";
+    }
 }

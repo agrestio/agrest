@@ -86,4 +86,9 @@ public class LazyAgEntity<T> extends BaseLazyAgEntity<T, AgEntity<T>> implements
     public DeleteAuthorizer<T> getDeleteAuthorizer() {
         return getDelegate().getDeleteAuthorizer();
     }
+
+    @Override
+    public String toString() {
+        return "LazyAgEntity[" + type.getSimpleName() + "]";
+    }
 }

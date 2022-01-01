@@ -62,6 +62,6 @@ public class DefaultAgAttribute implements AgAttribute {
 
     @Override
     public String toString() {
-        return getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(this)) + "[" + getName() + "]";
+        return "DefaultAgAttribute[" + getName() + "]";
     }
 }

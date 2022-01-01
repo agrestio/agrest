@@ -119,6 +119,6 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
 
     @Override
     public String toString() {
-        return getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(this)) + "[" + getName() + "]";
+        return "DefaultAgEntity[" + getName() + "]";
     }
 }
