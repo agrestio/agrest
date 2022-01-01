@@ -6,6 +6,7 @@ import io.agrest.ObjectMapper;
 import io.agrest.ResourceEntity;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.CayenneUtil;
+import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.qualifier.IQualifierParser;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
@@ -25,8 +26,8 @@ import java.util.List;
  */
 public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreateOrUpdateStage {
 
-    public CayenneMapIdempotentFullSyncStage(@Inject IQualifierParser qualifierParser) {
-        super(qualifierParser);
+    public CayenneMapIdempotentFullSyncStage(@Inject IQualifierParser qualifierParser, @Inject ICayenneQueryAssembler queryAssembler) {
+        super(qualifierParser, queryAssembler);
     }
 
     @Override

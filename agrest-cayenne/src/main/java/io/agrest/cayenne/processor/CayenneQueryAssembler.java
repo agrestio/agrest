@@ -86,6 +86,34 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         return query;
     }
 
+    /**
+     * @since 5.0
+     */
+    public <T> List<Property<?>> queryColumns(NestedResourceEntity<T> entity) {
+
+        // Use Cayenne metadata for query building. Agrest metadata may be missing some important parts like ids
+        // (e.g. see https://github.com/agrestio/agrest/issues/473)
+
+        AgEntity<?> parentEntity = entity.getParent().getAgEntity();
+        ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getName());
+        ObjRelationship objRelationship = parentObjEntity.getRelationship(entity.getIncoming().getName());
+        ASTDbPath reversePath = new ASTDbPath(objRelationship.getReverseDbRelationshipPath());
+
+        List<Property<?>> columns = new ArrayList<>(parentEntity.getIdParts().size() + 1);
+
+        Class entityType = entity.getType();
+        columns.add(PropertyFactory.createSelf(entityType));
+
+        // columns must be added in the order of id parts iteration, as this is how they will be read from result
+        for (AgIdPart idPart : parentEntity.getIdParts()) {
+            ASTPath idPartPath = pathResolver.resolve(parentEntity, idPart.getName()).getPathExp();
+            Expression propertyExp = PathOps.concatWithDbPath(parentObjEntity, reversePath, idPartPath);
+            columns.add(PropertyFactory.createBase(propertyExp, idPart.getType()));
+        }
+
+        return columns;
+    }
+
     // using dbpaths for all expression operations on the theory that some object paths can be unidirectional, and
     // hence may be missing for some relationships (although all "incoming" relationships along the parents chain
     // should be present, no?)
@@ -254,30 +282,5 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
             default:
                 throw new IllegalArgumentException("Missing or unexpected sort direction: " + direction);
         }
-    }
-
-    private List<Property<?>> queryColumns(NestedResourceEntity<?> entity) {
-
-        // Use Cayenne metadata for query building. Agrest metadata may be missing some important parts like ids
-        // (e.g. see https://github.com/agrestio/agrest/issues/473)
-
-        AgEntity<?> parentEntity = entity.getParent().getAgEntity();
-        ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getName());
-        ObjRelationship objRelationship = parentObjEntity.getRelationship(entity.getIncoming().getName());
-        ASTDbPath reversePath = new ASTDbPath(objRelationship.getReverseDbRelationshipPath());
-
-        List<Property<?>> columns = new ArrayList<>(parentEntity.getIdParts().size() + 1);
-
-        Class entityType = entity.getType();
-        columns.add(PropertyFactory.createSelf(entityType));
-
-        // columns must be added in the order of id parts iteration, as this is how they will be read from result
-        for (AgIdPart idPart : parentEntity.getIdParts()) {
-            ASTPath idPartPath = pathResolver.resolve(parentEntity, idPart.getName()).getPathExp();
-            Expression propertyExp = PathOps.concatWithDbPath(parentObjEntity, reversePath, idPartPath);
-            columns.add(PropertyFactory.createBase(propertyExp, idPart.getType()));
-        }
-
-        return columns;
     }
 }

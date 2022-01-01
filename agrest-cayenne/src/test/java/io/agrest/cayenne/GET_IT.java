@@ -290,6 +290,20 @@ public class GET_IT extends DbTest {
     }
 
     @Test
+    public void testByCompoundDbId() {
+
+        tester.e29().insertColumns("id1", "id2")
+                .values(1, 15)
+                .values(2, 35).exec();
+
+        tester.target("/e29_compound_db")
+                .queryParam("id1", 1)
+                .queryParam("id2", 15)
+                .get().wasOk()
+                .bodyEquals(1, "{\"id\":{\"db:id1\":1,\"id2Prop\":15},\"id2Prop\":15}");
+    }
+
+    @Test
     public void testMapByRootEntity() {
 
         tester.e4().insertColumns("c_varchar", "c_int").values("xxx", 1)
@@ -487,8 +501,8 @@ public class GET_IT extends DbTest {
                 @QueryParam("id2") Integer id2) {
 
             Map<String, Object> ids = new HashMap<>();
-            ids.put(E17.ID1_PK_COLUMN, id1);
-            ids.put(E17.ID2_PK_COLUMN, id2);
+            ids.put(E17.ID1.getName(), id1);
+            ids.put(E17.ID2.getName(), id2);
 
             return Ag.select(E17.class, config).uri(uriInfo).byId(ids).getOne();
         }
@@ -497,6 +511,20 @@ public class GET_IT extends DbTest {
         @Path("e29")
         public DataResponse<E29> getAllE29s(@Context UriInfo uriInfo) {
             return Ag.select(E29.class, config).uri(uriInfo).getOne();
+        }
+
+        @GET
+        @Path("e29_compound_db")
+        public DataResponse<E29> getByCompoundDbId(
+                @Context UriInfo uriInfo,
+                @QueryParam("id1") Integer id1,
+                @QueryParam("id2") Integer id2) {
+
+            Map<String, Object> ids = new HashMap<>();
+            ids.put("db:" + E29.ID1_PK_COLUMN, id1);
+            ids.put(E29.ID2PROP.getName(), id2);
+
+            return Ag.select(E29.class, config).uri(uriInfo).byId(ids).getOne();
         }
     }
 

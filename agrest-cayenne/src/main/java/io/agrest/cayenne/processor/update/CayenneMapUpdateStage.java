@@ -10,9 +10,9 @@ import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.base.protocol.Exp;
 import io.agrest.cayenne.processor.CayenneProcessor;
+import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.qualifier.IQualifierParser;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgIdPart;
 import io.agrest.runtime.processor.update.ByIdObjectMapperFactory;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
@@ -21,10 +21,6 @@ import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
-import org.apache.cayenne.exp.parser.ASTDbPath;
-import org.apache.cayenne.exp.parser.ASTPath;
-import org.apache.cayenne.exp.property.Property;
-import org.apache.cayenne.exp.property.PropertyFactory;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
@@ -44,9 +40,13 @@ import java.util.Map;
 public class CayenneMapUpdateStage extends CayenneMapChangesStage {
 
     private final IQualifierParser qualifierParser;
+    private final ICayenneQueryAssembler queryAssembler;
 
-    public CayenneMapUpdateStage(@Inject IQualifierParser qualifierParser) {
+    public CayenneMapUpdateStage(
+            @Inject IQualifierParser qualifierParser,
+            @Inject ICayenneQueryAssembler queryAssembler) {
         this.qualifierParser = qualifierParser;
+        this.queryAssembler = queryAssembler;
     }
 
     protected <T extends DataObject> void map(UpdateContext<T> context) {
@@ -221,28 +221,11 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
                 continue;
             }
 
-            List<Property> properties = new ArrayList<>();
-            properties.add(PropertyFactory.createSelf(child.getType()));
-
-            for (AgIdPart id : entity.getAgEntity().getIdParts()) {
-                Expression exp = concatPath(objRelationship, id.getName());
-                properties.add(PropertyFactory.createBase(exp, id.getType()));
-            }
-
             SelectQuery childQuery = buildQuery(context, child, translateExpressionToSource(objRelationship, parentSelect.getQualifier()));
-            childQuery.setColumns(properties);
+            childQuery.setColumns(queryAssembler.queryColumns(child));
         }
     }
 
-    static ASTPath concatPath(ObjRelationship objRelationship, String idPath) {
-        String relPath = objRelationship.getReverseDbRelationshipPath();
-        String dbPath = idPath.startsWith(ASTDbPath.DB_PREFIX)
-                ? idPath.substring(ASTDbPath.DB_PREFIX.length())
-                : objRelationship.getSourceEntity().getAttribute(idPath).getDbAttributePath();
-
-        return new ASTDbPath(relPath + "." + dbPath);
-    }
-    
     protected <T> List<T> fetchEntity(UpdateContext<T> context, ResourceEntity<T> entity) {
 
         SelectQuery<T> select = CayenneProcessor.getCayenneEntity(entity).getSelect();
