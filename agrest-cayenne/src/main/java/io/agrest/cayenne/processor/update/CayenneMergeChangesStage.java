@@ -103,11 +103,12 @@ public class CayenneMergeChangesStage implements Processor<UpdateContext<?>> {
 
             Map<DbAttribute, Object> idByDbAttribute = mapToDbAttributes(agEntity, idByAgAttribute);
 
+            // need to make an additional check that the AgId is unique
+            checkExisting(objectContext, agEntity, idByDbAttribute, idByAgAttribute);
+
             if (isPrimaryKey(dbEntity, idByDbAttribute.keySet())) {
                 createSingleFromPk(objEntity, idByDbAttribute, o);
             } else {
-                // need to make an additional check that the AgId is unique
-                checkExisting(objectContext, agEntity, idByDbAttribute, idByAgAttribute);
                 createSingleFromIdValues(objEntity, idByDbAttribute, idByAgAttribute, o);
             }
         }

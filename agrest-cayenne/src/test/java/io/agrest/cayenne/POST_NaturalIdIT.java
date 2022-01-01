@@ -5,6 +5,7 @@ import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
 import io.agrest.cayenne.cayenne.main.E20;
 import io.agrest.cayenne.cayenne.main.E21;
+import io.agrest.cayenne.cayenne.main.E29;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.bootique.junit5.BQTestTool;
@@ -20,7 +21,7 @@ public class POST_NaturalIdIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E20.class, E21.class)
+            .entities(E20.class, E21.class, E29.class)
             .build();
 
     @Test
@@ -58,6 +59,22 @@ public class POST_NaturalIdIT extends DbTest {
                 .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E21' with id {name:John,age:18} - already exists\"}");
     }
 
+    @Test
+    public void testMultiId_MixedDbObj() {
+
+        tester.target("/mixed-multi-id")
+                .post("{\"id\":{\"id1\":18,\"id2Prop\":345}}")
+                .wasCreated()
+                .bodyEquals(1, "{\"id\":{\"id1\":18,\"id2Prop\":345},\"id2Prop\":345}");
+
+        tester.e29().matcher().eq("id1", 18).eq("id2", 345).assertOneMatch();
+
+        tester.target("/mixed-multi-id")
+                .post("{\"id\":{\"id1\":18,\"id2Prop\":345}}")
+                .wasBadRequest()
+                .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E29' with id {id2Prop:345,id1:18} - already exists\"}");
+    }
+
     @Path("")
     public static class Resource {
 
@@ -75,6 +92,12 @@ public class POST_NaturalIdIT extends DbTest {
         @Path("multi-id")
         public DataResponse<E21> createE21(EntityUpdate<E21> update, @Context UriInfo uriInfo) {
             return Ag.create(E21.class, config).uri(uriInfo).syncAndSelect(update);
+        }
+
+        @POST
+        @Path("mixed-multi-id")
+        public DataResponse<E29> createE29(EntityUpdate<E29> update, @Context UriInfo uriInfo) {
+            return Ag.create(E29.class, config).uri(uriInfo).syncAndSelect(update);
         }
     }
 
