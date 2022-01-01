@@ -20,7 +20,6 @@ public class POST_NaturalIdIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-
             .entities(E20.class, E21.class)
             .build();
 
@@ -31,7 +30,6 @@ public class POST_NaturalIdIT extends DbTest {
                 .queryParam("exclude", "age", "description")
                 .post("{\"id\":\"John\"}")
                 .wasCreated()
-                .replaceId("RID")
                 .bodyEquals(1, "{\"id\":\"John\",\"name\":\"John\"}");
 
         tester.e20().matcher().eq("name_col", "John").assertOneMatch();
