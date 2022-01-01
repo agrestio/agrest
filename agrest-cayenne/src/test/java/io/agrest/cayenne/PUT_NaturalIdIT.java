@@ -4,11 +4,12 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
 import io.agrest.SimpleResponse;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E20;
 import io.agrest.cayenne.cayenne.main.E21;
 import io.agrest.cayenne.cayenne.main.E23;
+import io.agrest.cayenne.cayenne.main.E29;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.cayenne.unit.DbTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +28,7 @@ public class PUT_NaturalIdIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entitiesAndDependencies(E20.class, E21.class, E23.class)
+            .entitiesAndDependencies(E20.class, E21.class, E23.class, E29.class)
             .build();
 
     @Test
@@ -112,6 +113,22 @@ public class PUT_NaturalIdIT extends DbTest {
         tester.e23().matcher().assertMatches(2);
     }
 
+    @Test
+    public void testMultiId_MixedDbObj() {
+
+        tester.target("/mixed-multi-id")
+                .put("{\"id\":{\"id1\":18,\"id2Prop\":345}}")
+                .wasCreated()
+                .bodyEquals(1, "{\"id\":{\"id1\":18,\"id2Prop\":345},\"id2Prop\":345}");
+
+        tester.e29().matcher().eq("id1", 18).eq("id2", 345).assertOneMatch();
+
+        tester.target("/mixed-multi-id")
+                .put("{\"id\":{\"id1\":18,\"id2Prop\":345}}")
+                .wasOk()
+                .bodyEquals(1, "{\"id\":{\"id1\":18,\"id2Prop\":345},\"id2Prop\":345}");
+    }
+
     @Path("")
     public static class Resource {
 
@@ -149,6 +166,12 @@ public class PUT_NaturalIdIT extends DbTest {
             id.put("age", age);
             id.put("name", name);
             return Ag.idempotentCreateOrUpdate(E21.class, config).id(id).uri(uriInfo).syncAndSelect(update);
+        }
+
+        @PUT
+        @Path("mixed-multi-id")
+        public DataResponse<E29> createE29(EntityUpdate<E29> update, @Context UriInfo uriInfo) {
+            return Ag.idempotentCreateOrUpdate(E29.class, config).uri(uriInfo).syncAndSelect(update);
         }
     }
 
