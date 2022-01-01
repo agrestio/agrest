@@ -38,7 +38,6 @@ public class POST_NaturalIdIT extends DbTest {
                 .queryParam("exclude", "age", "description")
                 .post("{\"id\":\"John\"}")
                 .wasBadRequest()
-                // TODO: DB columns exposed in the message
                 .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E20' with id {name:John} - already exists\"}");
     }
 
