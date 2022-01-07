@@ -235,7 +235,7 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
                     }
                     idTranslated.put(e.getValue(), val);
                 }
-                
+
                 for (EntityUpdate<T> u : context.getUpdates()) {
                     Map<String, Object> updateId = u.getOrCreateId();
                     idTranslated.forEach((k, v) -> updateId.putIfAbsent(k, v));

@@ -5,6 +5,7 @@
 * #517 Remove "agrest-sencha"
 * #518 Remove "agrest-openapi-designfirst"
 * #519 Remove deprecated EncoderFilter and Constraint
+* #521 Cayenne entity ID part represented by a DB column to be prefixed with "db:"
 
 ## Release 4.9
 
