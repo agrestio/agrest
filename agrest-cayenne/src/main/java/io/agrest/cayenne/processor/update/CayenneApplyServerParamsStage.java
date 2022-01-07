@@ -1,14 +1,18 @@
 package io.agrest.cayenne.processor.update;
 
-import io.agrest.AgObjectId;
+import io.agrest.AgException;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
+import io.agrest.cayenne.path.IPathResolver;
+import io.agrest.cayenne.path.PathOps;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
@@ -16,6 +20,7 @@ import io.agrest.runtime.constraints.IConstraintsHandler;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.parser.ASTDbPath;
+import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.EntityResolver;
@@ -24,6 +29,7 @@ import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,13 +41,19 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
 
     private final IConstraintsHandler constraintsHandler;
     private final EntityResolver entityResolver;
+    private final IPathResolver pathResolver;
+    private final AgDataMap dataMap;
 
     public CayenneApplyServerParamsStage(
+            @Inject IPathResolver pathResolver,
             @Inject IConstraintsHandler constraintsHandler,
-            @Inject ICayennePersister persister) {
+            @Inject ICayennePersister persister,
+            @Inject AgDataMap dataMap) {
 
+        this.pathResolver = pathResolver;
         this.constraintsHandler = constraintsHandler;
         this.entityResolver = persister.entityResolver();
+        this.dataMap = dataMap;
     }
 
     @Override
@@ -96,7 +108,6 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
 
         AgEntity<T> entity = context.getEntity().getAgEntity();
 
-        // TODO: AgEntityOverlay relationships are ignored here
         for (AgRelationship r : entity.getRelationships()) {
 
             ObjRelationship objRelationship = objRelationshipForAgRelationship(entity.getName(), r);
@@ -213,30 +224,73 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
 
         if (parent != null && parent.getId() != null) {
 
-            ObjRelationship fromParent = relationshipFromParent(context);
-            if (fromParent != null) {
+            Map<String, String> parentAgKeysToChildDbPaths = parentAgKeysToChildDbPaths(parent.getType(), parent.getRelationship());
+            if (!parentAgKeysToChildDbPaths.isEmpty()) {
 
-                // TODO: is this appropriate for flattened parent rels?
-                DbRelationship incomingDbRelationship = fromParent.getDbRelationships().get(0);
-                if (incomingDbRelationship.isToDependentPK()) {
-
-                    // TODO: #521 use AgIdPart to decode id
-                    AgObjectId id = parent.getId();
-                    for (EntityUpdate<T> u : context.getUpdates()) {
-                        for (DbJoin join : incomingDbRelationship.getJoins()) {
-                            // 'getSourceName' and 'getTargetName' assumes AgEntity's id attribute name is based on DbAttribute name
-                            u.getOrCreateId().putIfAbsent(ASTDbPath.DB_PREFIX + join.getTargetName(), id.get(join.getSourceName()));
-                        }
+                Map<String, Object> idTranslated = new HashMap<>(5);
+                for (Map.Entry<String, String> e : parentAgKeysToChildDbPaths.entrySet()) {
+                    Object val = parent.getId().get(e.getKey());
+                    if (val == null) {
+                        throw AgException.badRequest("Missing parent id value for '%s'", e.getKey());
                     }
+                    idTranslated.put(e.getValue(), val);
+                }
+                
+                for (EntityUpdate<T> u : context.getUpdates()) {
+                    Map<String, Object> updateId = u.getOrCreateId();
+                    idTranslated.forEach((k, v) -> updateId.putIfAbsent(k, v));
                 }
             }
         }
     }
 
-    private ObjRelationship relationshipFromParent(UpdateContext<?> context) {
-        return context.getParent() != null
-                ? entityResolver.getObjEntity(context.getParent().getType()).getRelationship(context.getParent().getRelationship())
-                : null;
+    private Map<String, String> parentAgKeysToChildDbPaths(Class<?> parentType, String objRelationshipFromParent) {
+
+        // TODO: too much Ag to Cayenne metadata translation happens here.
+        //  We should cache and reuse the returned map
+
+        ObjEntity parentCayenneEntity = entityResolver.getObjEntity(parentType);
+        ObjRelationship fromParent = parentCayenneEntity.getRelationship(objRelationshipFromParent);
+
+        if (fromParent == null) {
+            throw AgException.internalServerError("Invalid parent relationship: '%s'", objRelationshipFromParent);
+        }
+
+        // TODO: flattened relationships handling
+        DbRelationship dbFromParent = fromParent.getDbRelationships().get(0);
+        if (!dbFromParent.isToDependentPK()) {
+            return Collections.emptyMap();
+        }
+
+        Map<String, String> sourceToTargetJoins = new HashMap<>();
+        for (DbJoin join : dbFromParent.getJoins()) {
+            sourceToTargetJoins.put(join.getSourceName(), join.getTargetName());
+        }
+
+        AgEntity<?> parentEntity = dataMap.getEntity(parentType);
+
+        Map<String, String> parentAgKeysToChildDbPaths = new HashMap<>();
+        for (AgIdPart idPart : parentEntity.getIdParts()) {
+
+            ASTPath idPath = pathResolver.resolve(parentEntity, idPart.getName()).getPathExp();
+            ASTDbPath dbPath = PathOps.resolveAsDbPath(parentCayenneEntity, idPath);
+            String targetPath = sourceToTargetJoins.remove(dbPath.getPath());
+            if (targetPath == null) {
+                // not a part of our relationship, ignore
+                continue;
+            }
+
+            parentAgKeysToChildDbPaths.put(idPart.getName(), ASTDbPath.DB_PREFIX + targetPath);
+        }
+
+        if (!sourceToTargetJoins.isEmpty()) {
+            throw AgException.internalServerError(
+                    "One or more parent join keys are not mapped as Ag IDs and can't be propagated over relationship '%s': %s",
+                    objRelationshipFromParent,
+                    sourceToTargetJoins.keySet());
+        }
+
+        return parentAgKeysToChildDbPaths;
     }
 
     // TODO: copied verbatim from CayenneQueryAssembler... Unify this code?

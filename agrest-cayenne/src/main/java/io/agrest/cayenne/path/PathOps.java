@@ -31,6 +31,21 @@ public class PathOps {
     /**
      * @since 5.0
      */
+    public static ASTDbPath resolveAsDbPath(ObjEntity entity, ASTPath p) {
+
+        switch (p.getType()) {
+            case Expression.DB_PATH:
+                return (ASTDbPath) p;
+            case Expression.OBJ_PATH:
+                return resolveAsDbPath(entity, p);
+            default:
+                throw new IllegalArgumentException("Unexpected p type: " + p.getType());
+        }
+    }
+
+    /**
+     * @since 5.0
+     */
     public static ASTPath concat(ObjEntity entity, ASTPath p1, ASTPath p2) {
 
         switch (p1.getType()) {
