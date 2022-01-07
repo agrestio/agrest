@@ -2,9 +2,7 @@ package io.agrest.resolver;
 
 import io.agrest.pojo.model.P3;
 import io.agrest.pojo.model.P4;
-import org.apache.cayenne.ObjectContext;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -14,16 +12,8 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.Mockito.mock;
 
 public class ToOneFlattenedIteratorTest {
-
-    private ObjectContext context;
-
-    @BeforeEach
-    public void before() {
-        context = mock(ObjectContext.class);
-    }
 
     @Test
     public void testIterator_Empty() {

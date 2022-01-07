@@ -24,11 +24,9 @@
             <artifactId>agrest-annotations</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Unfortunately there are still Cayenne dependencies related to DI, Expressions, etc.
-        TODO: remove this when we can. -->
         <dependency>
             <groupId>org.apache.cayenne</groupId>
-            <artifactId>cayenne-server</artifactId>
+            <artifactId>cayenne-di</artifactId>
         </dependency>
 
         <!-- Provided dependencies -->
