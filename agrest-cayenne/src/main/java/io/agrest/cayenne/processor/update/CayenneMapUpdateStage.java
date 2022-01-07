@@ -11,8 +11,8 @@ import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.base.protocol.Exp;
 import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.cayenne.processor.CayenneNestedResourceEntityExt;
 import io.agrest.cayenne.processor.CayenneProcessor;
-import io.agrest.cayenne.processor.CayenneResourceEntityExt;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.qualifier.IQualifierParser;
 import io.agrest.meta.AgAttribute;
@@ -28,7 +28,8 @@ import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
-import org.apache.cayenne.query.SelectQuery;
+import org.apache.cayenne.query.ColumnSelect;
+import org.apache.cayenne.query.ObjectSelect;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -193,21 +194,20 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         return expressions.isEmpty() ? null : ExpressionFactory.or(expressions);
     }
 
-    protected <T> SelectQuery<T> buildRootQuery(RootResourceEntity<T> entity, Expression qualifier) {
+    protected <T> ObjectSelect<T> buildRootQuery(RootResourceEntity<T> entity, Expression qualifier) {
 
-        SelectQuery<T> query = SelectQuery.query(entity.getType());
-        query.setQualifier(qualifier);
+        ObjectSelect<T> query = ObjectSelect.query(entity.getType()).where(qualifier);
 
         for (Map.Entry<String, NestedResourceEntity<?>> e : entity.getChildren().entrySet()) {
-            buildNestedQuery(e.getValue(), query.getQualifier());
+            buildNestedQuery(e.getValue(), query.getWhere());
         }
 
-        CayenneProcessor.getCayenneEntity(entity).setSelect(query);
+        CayenneProcessor.getRootEntity(entity).setSelect(query);
         return query;
     }
 
-    protected <T> SelectQuery<T> buildNestedQuery(
-            NestedResourceEntity<T> entity,
+    protected ColumnSelect<Object[]> buildNestedQuery(
+            NestedResourceEntity<?> entity,
             Expression parentQualifier) {
 
         ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getName());
@@ -218,21 +218,21 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
             return null;
         }
 
-        SelectQuery<T> query = SelectQuery.query(entity.getType());
-        query.setQualifier(translateExpressionToSource(incomingObjRelationship, parentQualifier));
-        query.setColumns(queryAssembler.queryColumns(entity));
+        ColumnSelect<Object[]> query = ObjectSelect.query(entity.getType())
+                .where(translateExpressionToSource(incomingObjRelationship, parentQualifier))
+                .columns(queryAssembler.queryColumns(entity));
 
         for (Map.Entry<String, NestedResourceEntity<?>> e : entity.getChildren().entrySet()) {
-            buildNestedQuery(e.getValue(), query.getQualifier());
+            buildNestedQuery(e.getValue(), query.getWhere());
         }
 
-        CayenneProcessor.getCayenneEntity(entity).setSelect(query);
+        CayenneProcessor.getNestedEntity(entity).setSelect(query);
         return query;
     }
 
     protected <T> List<T> fetchRootEntity(ObjectContext context, RootResourceEntity<T> entity) {
 
-        List<T> objects = CayenneProcessor.getCayenneEntity(entity).getSelect().select(context);
+        List<T> objects = CayenneProcessor.getRootEntity(entity).getSelect().select(context);
         for (NestedResourceEntity<?> c : entity.getChildren().values()) {
             fetchNestedEntity(context, c);
         }
@@ -242,9 +242,9 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
 
     protected <T> void fetchNestedEntity(ObjectContext context, NestedResourceEntity<T> entity) {
 
-        CayenneResourceEntityExt<T> ext = CayenneProcessor.getCayenneEntity(entity);
+        CayenneNestedResourceEntityExt ext = CayenneProcessor.getNestedEntity(entity);
         if (ext != null && ext.getSelect() != null) {
-            List<T> objects = ext.getSelect().select(context);
+            List<Object[]> objects = ext.getSelect().select(context);
             assignChildrenToParent(entity, objects);
 
             for (NestedResourceEntity<?> c : entity.getChildren().values()) {
@@ -253,26 +253,23 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         }
     }
 
-    protected <T> void assignChildrenToParent(NestedResourceEntity<T> entity, List<T> objects) {
+    protected <T> void assignChildrenToParent(NestedResourceEntity<T> entity, List<Object[]> objects) {
 
         ResourceEntity<?> parentEntity = entity.getParent();
+        for (Object[] row : objects) {
 
-        for (Object child : objects) {
-            if (child instanceof Object[]) {
-                Object[] ids = (Object[]) child;
-                if (ids.length == 2) {
-                    entity.addResult(new SimpleObjectId(ids[1]), (T) ids[0]);
-                } else if (ids.length > 2) {
-                    // saves entity with a compound ID
-                    Map<String, Object> compoundKeys = new LinkedHashMap<>();
-                    AgAttribute[] idAttributes = parentEntity.getAgEntity().getIdParts().toArray(new AgAttribute[0]);
-                    if (idAttributes.length == (ids.length - 1)) {
-                        for (int i = 1; i < ids.length; i++) {
-                            compoundKeys.put(idAttributes[i - 1].getName(), ids[i]);
-                        }
+            if (row.length == 2) {
+                entity.addResult(new SimpleObjectId(row[1]), (T) row[0]);
+            } else if (row.length > 2) {
+
+                Map<String, Object> compoundKeys = new LinkedHashMap<>();
+                AgAttribute[] idAttributes = parentEntity.getAgEntity().getIdParts().toArray(new AgAttribute[0]);
+                if (idAttributes.length == (row.length - 1)) {
+                    for (int i = 1; i < row.length; i++) {
+                        compoundKeys.put(idAttributes[i - 1].getName(), row[i]);
                     }
-                    entity.addResult(new CompoundObjectId(compoundKeys), (T) ids[0]);
                 }
+                entity.addResult(new CompoundObjectId(compoundKeys), (T) row[0]);
             }
         }
     }

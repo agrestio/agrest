@@ -40,7 +40,7 @@ public class ContextualCayenneNestedDataResolver<T> implements NestedDataResolve
     }
 
     protected NestedDataResolver<T> pickResolver(NestedResourceEntity<T> entity) {
-        CayenneResourceEntityExt<?> parentExt = CayenneProcessor.getCayenneEntity(entity.getParent());
+        CayenneResourceEntityExt parentExt = CayenneProcessor.getEntity(entity.getParent());
 
         // depending on the parent Cayenne semantics, we have some choices to make
         if (parentExt == null) {
@@ -50,7 +50,7 @@ public class ContextualCayenneNestedDataResolver<T> implements NestedDataResolve
                     entity.getName());
         }
 
-        return parentExt.hasSelect() ? parentQueryResolver : parentIdsResolver;
+        return parentExt.getSelect() != null ? parentQueryResolver : parentIdsResolver;
     }
 }
 

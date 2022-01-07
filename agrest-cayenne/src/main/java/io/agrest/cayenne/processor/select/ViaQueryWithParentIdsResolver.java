@@ -6,7 +6,7 @@ import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.query.SelectQuery;
+import org.apache.cayenne.query.ColumnSelect;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -41,13 +41,13 @@ public class ViaQueryWithParentIdsResolver<T extends DataObject> extends ViaQuer
         }
 
         // assemble query here, where we have access to all parent ids
-        SelectQuery<T> select = queryAssembler.createQueryWithParentIdsQualifier(entity, parentIt);
+        ColumnSelect<Object[]> select = queryAssembler.createQueryWithParentIdsQualifier(entity, parentIt);
         if (select == null) {
             // no parents - nothing to fetch for this entity, and no need to descend into children
             return Collections.emptyList();
         }
 
-        CayenneProcessor.getCayenneEntity(entity).setSelect(select);
+        CayenneProcessor.getNestedEntity(entity).setSelect(select);
         afterQueryAssembled(entity, context);
         return super.doOnParentDataResolved(entity, parentData, context);
     }

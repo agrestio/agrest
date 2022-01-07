@@ -5,9 +5,10 @@ import io.agrest.RootResourceEntity;
 import io.agrest.ToManyResourceEntity;
 import io.agrest.ToOneResourceEntity;
 import io.agrest.cayenne.compiler.CayenneAgEntityCompiler;
+import io.agrest.cayenne.path.IPathResolver;
+import io.agrest.cayenne.path.PathResolver;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneQueryAssembler;
-import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.qualifier.QualifierParser;
 import io.agrest.cayenne.qualifier.QualifierPostProcessor;
 import io.agrest.compiler.AgEntityCompiler;
@@ -20,8 +21,6 @@ import io.agrest.meta.parser.ResourceParser;
 import io.agrest.runtime.meta.BaseUrlProvider;
 import io.agrest.runtime.meta.IResourceMetadataService;
 import io.agrest.runtime.meta.ResourceMetadataService;
-import io.agrest.cayenne.path.IPathResolver;
-import io.agrest.cayenne.path.PathResolver;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
@@ -55,7 +54,7 @@ public abstract class CayenneNoDbTest {
     protected AgDataMap dataMap;
     protected IResourceMetadataService resourceMetadataService;
     protected IResourceParser resourceParser;
-    protected ICayenneQueryAssembler queryAssembler;
+    protected CayenneQueryAssembler queryAssembler;
 
     @BeforeAll
     public static void setUpClass() {

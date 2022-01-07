@@ -28,8 +28,10 @@ import org.apache.cayenne.exp.property.PropertyFactory;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
+import org.apache.cayenne.query.ColumnSelect;
+import org.apache.cayenne.query.FluentSelect;
+import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.query.Ordering;
-import org.apache.cayenne.query.SelectQuery;
 import org.apache.cayenne.query.SortOrder;
 
 import java.util.ArrayList;
@@ -68,15 +70,15 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
     }
 
     @Override
-    public <T> SelectQuery<T> createRootQuery(SelectContext<T> context) {
+    public <T> ObjectSelect<T> createRootQuery(SelectContext<T> context) {
 
-        SelectQuery<T> query = context.getId() != null
+        ObjectSelect<T> query = context.getId() != null
                 ? createRootIdQuery(context.getEntity(), context.getId())
                 : createBaseQuery(context.getEntity());
 
         EntityParent<?> parent = context.getParent();
         if (parent != null) {
-            query.andQualifier(CayenneUtil.parentQualifier(
+            query.and(CayenneUtil.parentQualifier(
                     pathResolver,
                     dataMap.get().getEntity(parent.getType()),
                     parent,
@@ -87,16 +89,15 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
     }
 
     @Override
-    public <T> SelectQuery<T> createQueryWithParentQualifier(NestedResourceEntity<T> entity) {
+    public <T> ColumnSelect<Object[]> createQueryWithParentQualifier(NestedResourceEntity<T> entity) {
 
-        SelectQuery<T> query = createBaseQuery(entity);
-        query.setColumns(queryColumns(entity));
+        ColumnSelect<Object[]> query = createBaseQuery(entity).columns(queryColumns(entity));
 
         // Translate expression from parent.
         // Find the closest parent in the chain that has a query of its own, and use that as a base.
         Expression parentQualifier = resolveParentQualifier(entity, null);
         if (parentQualifier != null) {
-            query.andQualifier(parentQualifier);
+            query.and(parentQualifier);
         }
 
         return query;
@@ -105,7 +106,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
     /**
      * @since 5.0
      */
-    public <T> List<Property<?>> queryColumns(NestedResourceEntity<T> entity) {
+    public <T> Property<?>[] queryColumns(NestedResourceEntity<T> entity) {
 
         // Use Cayenne metadata for query building. Agrest metadata may be missing some important parts like ids
         // (e.g. see https://github.com/agrestio/agrest/issues/473)
@@ -115,16 +116,17 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         ObjRelationship objRelationship = parentObjEntity.getRelationship(entity.getIncoming().getName());
         ASTDbPath reversePath = new ASTDbPath(objRelationship.getReverseDbRelationshipPath());
 
-        List<Property<?>> columns = new ArrayList<>(parentEntity.getIdParts().size() + 1);
+        Property<?>[] columns = new Property<?>[parentEntity.getIdParts().size() + 1];
 
         Class entityType = entity.getType();
-        columns.add(PropertyFactory.createSelf(entityType));
+        columns[0] = PropertyFactory.createSelf(entityType);
 
         // columns must be added in the order of id parts iteration, as this is how they will be read from result
+        int i = 1;
         for (AgIdPart idPart : parentEntity.getIdParts()) {
             ASTPath idPartPath = pathResolver.resolve(parentEntity, idPart.getName()).getPathExp();
             Expression propertyExp = PathOps.concatWithDbPath(parentObjEntity, reversePath, idPartPath);
-            columns.add(PropertyFactory.createBase(propertyExp, idPart.getType()));
+            columns[i++] = PropertyFactory.createBase(propertyExp, idPart.getType());
         }
 
         return columns;
@@ -136,18 +138,18 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
     protected Expression resolveParentQualifier(NestedResourceEntity<?> entity, String outgoingDbPath) {
 
         ResourceEntity<?> parent = entity.getParent();
-        CayenneResourceEntityExt<?> parentExt = CayenneProcessor.getCayenneEntity(parent);
+        CayenneResourceEntityExt parentExt = CayenneProcessor.getEntity(parent);
         if (parentExt == null) {
             throw AgException.internalServerError("Parent '%s' of entity '%s' is not managed by Cayenne",
                     parent.getName(),
                     entity.getName());
         }
 
-        SelectQuery<?> select = parentExt.getSelect();
+        FluentSelect<?> parentSelect = parentExt.getSelect();
 
-        if (select != null) {
+        if (parentSelect != null) {
 
-            Expression parentQualifier = select.getQualifier();
+            Expression parentQualifier = parentSelect.getWhere();
             if (parentQualifier == null) {
                 return null;
             }
@@ -187,10 +189,9 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
     }
 
     @Override
-    public <T, P> SelectQuery<T> createQueryWithParentIdsQualifier(NestedResourceEntity<T> entity, Iterator<P> parentData) {
+    public <T, P> ColumnSelect<Object[]> createQueryWithParentIdsQualifier(NestedResourceEntity<T> entity, Iterator<P> parentData) {
 
-        SelectQuery<T> query = createBaseQuery(entity);
-        query.setColumns(queryColumns(entity));
+        ColumnSelect<Object[]> query = createBaseQuery(entity).columns(queryColumns(entity));
 
         // build id-based qualifier
         List<Expression> qualifiers = new ArrayList<>();
@@ -208,9 +209,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
         // TODO: There is some functionality in Cayenne that allows to break long OR qualifiers in a series of queries.
         //  How do we use it here?
-        query.andQualifier(ExpressionFactory.or(qualifiers));
-
-        return query;
+        return query.and(ExpressionFactory.or(qualifiers));
     }
 
     static <P> void consumeRange(Iterator<P> parentData, int offset, int len, Consumer<P> consumer) {
@@ -227,30 +226,28 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         }
     }
 
-    @Override
-    public <T> SelectQuery<T> createRootIdQuery(ResourceEntity<T> entity, AgObjectId rootId) {
-        SelectQuery<T> query = new SelectQuery<>(entity.getType());
-        query.andQualifier(buildIdQualifier(entity.getAgEntity(), rootId));
-        return query;
+    protected <T> ObjectSelect<T> createRootIdQuery(ResourceEntity<T> entity, AgObjectId rootId) {
+        return ObjectSelect.query(entity.getType())
+                .where(buildIdQualifier(entity.getAgEntity(), rootId));
     }
 
-    protected <T> SelectQuery<T> createBaseQuery(ResourceEntity<T> entity) {
+    protected <T> ObjectSelect<T> createBaseQuery(ResourceEntity<T> entity) {
 
-        SelectQuery<T> query = SelectQuery.query(entity.getType());
+        ObjectSelect<T> query = ObjectSelect.query(entity.getType());
 
         if (!entity.isFiltered()) {
             int limit = entity.getFetchLimit();
             if (limit > 0) {
-                query.setPageSize(limit);
+                query.pageSize(limit);
             }
         }
 
         Expression parsedExp = qualifierParser.parse(entity.getQualifier());
         Expression finalExp = qualifierPostProcessor.process(entity.getAgEntity(), parsedExp);
-        query.setQualifier(finalExp);
+        query.where(finalExp);
 
         for (Sort o : entity.getOrderings()) {
-            query.addOrdering(toOrdering(entity, o));
+            query.orderBy(toOrdering(entity, o));
         }
 
         return query;

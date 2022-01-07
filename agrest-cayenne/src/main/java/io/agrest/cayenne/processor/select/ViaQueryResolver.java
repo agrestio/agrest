@@ -8,7 +8,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.resolver.BaseRootDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.query.SelectQuery;
+import org.apache.cayenne.query.ObjectSelect;
 
 import java.util.List;
 
@@ -29,12 +29,12 @@ public class ViaQueryResolver<T extends DataObject> extends BaseRootDataResolver
 
     @Override
     protected void doAssembleQuery(SelectContext<T> context) {
-        CayenneProcessor.getCayenneEntity(context.getEntity()).setSelect(queryAssembler.createRootQuery(context));
+        CayenneProcessor.getRootEntity(context.getEntity()).setSelect(queryAssembler.createRootQuery(context));
     }
 
     @Override
     protected List<T> doFetchData(SelectContext<T> context) {
-        SelectQuery<T> select = CayenneProcessor.getCayenneEntity(context.getEntity()).getSelect();
+        ObjectSelect<T> select = CayenneProcessor.getRootEntity(context.getEntity()).getSelect();
         List<T> result = persister.sharedContext().select(select);
         checkObjectNotFound(context, result);
         return result;

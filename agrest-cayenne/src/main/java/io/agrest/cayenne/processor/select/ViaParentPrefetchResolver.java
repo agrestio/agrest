@@ -5,15 +5,17 @@ import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.cayenne.compiler.DataObjectPropertyReader;
+import io.agrest.cayenne.processor.CayenneNestedResourceEntityExt;
 import io.agrest.cayenne.processor.CayenneProcessor;
-import io.agrest.cayenne.processor.CayenneResourceEntityExt;
+import io.agrest.cayenne.processor.CayenneRootResourceEntityExt;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.BaseNestedDataResolver;
 import io.agrest.resolver.ToManyFlattenedIterator;
 import io.agrest.resolver.ToOneFlattenedIterator;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.query.SelectQuery;
+import org.apache.cayenne.query.ColumnSelect;
+import org.apache.cayenne.query.ObjectSelect;
 
 /**
  * A resolver that doesn't run its own queries, but instead amends parent node query with prefetch spec, so that the
@@ -51,16 +53,17 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
     }
 
     protected void addNestedPrefetch(NestedResourceEntity<?> entity, String path, int prefetchSemantics) {
-        CayenneResourceEntityExt<?> parentExt = CayenneProcessor.getCayenneEntity(entity);
-        if (parentExt == null) {
+        CayenneNestedResourceEntityExt ext = CayenneProcessor.getNestedEntity(entity);
+        if (ext == null) {
             throw AgException.internalServerError(
-                    "Parent entity '%s' is not handled by Cayenne. Can not use prefetch resolver",
-                    entity.getAgEntity().getName());
+                    "Entity '%s' is not handled by Cayenne. Can not use prefetch resolver for path '%s'",
+                    entity.getAgEntity().getName(),
+                    path);
         }
 
-        SelectQuery<?> parentSelect = parentExt.getSelect();
-        if (parentSelect != null) {
-            parentSelect.addPrefetch(path).setSemantics(prefetchSemantics);
+        ColumnSelect<Object[]> select = ext.getSelect();
+        if (select != null) {
+            select.prefetch(path, prefetchSemantics);
             return;
         }
 
@@ -75,22 +78,24 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
 
     protected void addRootPrefetch(RootResourceEntity<?> entity, String path, int prefetchSemantics) {
 
-        CayenneResourceEntityExt<?> parentExt = CayenneProcessor.getCayenneEntity(entity);
-        if (parentExt == null) {
+        CayenneRootResourceEntityExt<?> ext = CayenneProcessor.getRootEntity(entity);
+        if (ext == null) {
             throw AgException.internalServerError(
-                    "Parent entity '%s' is not handled by Cayenne. Can not use prefetch resolver",
-                    entity.getAgEntity().getName());
-        }
-
-        SelectQuery<?> parentSelect = parentExt.getSelect();
-        if (parentSelect == null) {
-            throw AgException.internalServerError(
-                    "Can't add prefetch to root entity '%s' that has no SelectQuery of its own. Path: %s",
+                    "Entity '%s' is not handled by Cayenne. Can not use prefetch resolver for path '%s'",
                     entity.getAgEntity().getName(),
                     path);
         }
 
-        parentSelect.addPrefetch(path).setSemantics(prefetchSemantics);
+        ObjectSelect<?> select = ext.getSelect();
+        if (select != null) {
+            select.prefetch(path, prefetchSemantics);
+            return;
+        }
+
+        throw AgException.internalServerError(
+                "Can't add prefetch to root entity '%s' that has no query of its own. Path: %s",
+                entity.getAgEntity().getName(),
+                path);
     }
 
 

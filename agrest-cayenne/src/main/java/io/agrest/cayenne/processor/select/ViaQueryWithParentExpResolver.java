@@ -6,8 +6,8 @@ import io.agrest.SimpleObjectId;
 import io.agrest.ToManyResourceEntity;
 import io.agrest.ToOneResourceEntity;
 import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.cayenne.processor.CayenneNestedResourceEntityExt;
 import io.agrest.cayenne.processor.CayenneProcessor;
-import io.agrest.cayenne.processor.CayenneResourceEntityExt;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
@@ -17,7 +17,7 @@ import io.agrest.property.ToOneEntityResultReader;
 import io.agrest.resolver.BaseNestedDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.query.SelectQuery;
+import org.apache.cayenne.Persistent;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -43,7 +43,7 @@ public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseNes
 
     @Override
     protected void doOnParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context) {
-        CayenneProcessor.getCayenneEntity(entity)
+        CayenneProcessor.getNestedEntity(entity)
                 .setSelect(queryAssembler.createQueryWithParentQualifier(entity));
     }
 
@@ -60,11 +60,9 @@ public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseNes
         }
 
         // TODO: the actual query is a column query instead of T, hence ugly generics stripping
-        CayenneResourceEntityExt ext = CayenneProcessor.getCayenneEntity(entity);
+        CayenneNestedResourceEntityExt ext = CayenneProcessor.getNestedEntity(entity);
 
-
-        SelectQuery<Object[]> select = ext.getSelect();
-        List<Object[]> result = persister.sharedContext().select(select);
+        List<Object[]> result = ext.getSelect().select(persister.sharedContext());
         indexResultByParentId(entity, result);
 
         return result.isEmpty()
