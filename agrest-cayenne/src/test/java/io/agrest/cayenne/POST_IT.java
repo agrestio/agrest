@@ -249,8 +249,8 @@ public class POST_IT extends DbTest {
                 String requestBody) {
 
             Map<String, Object> ids = new HashMap<>();
-            ids.put(E17.ID1_PK_COLUMN, id1);
-            ids.put(E17.ID2_PK_COLUMN, id2);
+            ids.put(E17.ID1.getName(), id1);
+            ids.put(E17.ID2.getName(), id2);
 
             return Ag.create(E17.class, config).id(ids).syncAndSelect(requestBody);
         }

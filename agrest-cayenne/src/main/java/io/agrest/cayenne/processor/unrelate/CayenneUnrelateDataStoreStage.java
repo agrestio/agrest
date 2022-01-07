@@ -57,11 +57,13 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
             throw AgException.badRequest("Invalid relationship: '%s'", context.getParent().getRelationship());
         }
 
+        // TODO: #521 use CayenneUtil.parentQualifier(..)
         DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
                 .getParent().getId().get());
 
         Class<?> childType = relationship.getTargetEntity().getType();
 
+        // TODO: #521 use CayenneUtil.findById(..)
         // among other things this call checks that the target exists
         DataObject child = (DataObject) getExistingObject(childType, cayenneContext, context.getId());
 
@@ -97,6 +99,7 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
             throw AgException.badRequest("Invalid relationship: '%s'", context.getParent().getRelationship());
         }
 
+        // TODO: #521 use CayenneUtil.parentQualifier(..)
         DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
                 .getParent().getId().get());
 
@@ -124,7 +127,7 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
         cayenneContext.commitChanges();
     }
 
-    // TODO: use ObjectMapper
+    // TODO: use CayenneUtil.findById(..) or CayenneUtil.parentQualifier()
     private Object getExistingObject(Class<?> type, ObjectContext context, Object id) {
 
         Object object = getOptionalExistingObject(type, context, id);
@@ -136,7 +139,7 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
         return object;
     }
 
-    // TODO: use ObjectMapper
+    // TODO: use CayenneUtil.findById(..) or CayenneUtil.parentQualifier
     private Object getOptionalExistingObject(Class<?> type, ObjectContext context, Object id) {
 
         ObjEntity entity = context.getEntityResolver().getObjEntity(type);

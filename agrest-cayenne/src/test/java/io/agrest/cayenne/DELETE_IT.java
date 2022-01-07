@@ -181,8 +181,8 @@ public class DELETE_IT extends DbTest {
                 @QueryParam("id2") Integer id2) {
 
             Map<String, Object> ids = new HashMap<>();
-            ids.put(E17.ID1_PK_COLUMN, id1);
-            ids.put(E17.ID2_PK_COLUMN, id2);
+            ids.put(E17.ID1.getName(), id1);
+            ids.put(E17.ID2.getName(), id2);
 
             return Ag.service(config).delete(E17.class).id(ids).sync();
         }

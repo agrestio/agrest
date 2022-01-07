@@ -149,8 +149,8 @@ public class POST_Related_IT extends DbTest {
                 String targetData) {
 
             Map<String, Object> parentIds = new HashMap<>();
-            parentIds.put(E17.ID1_PK_COLUMN, parentId1);
-            parentIds.put(E17.ID2_PK_COLUMN, parentId2);
+            parentIds.put(E17.ID1.getName(), parentId1);
+            parentIds.put(E17.ID2.getName(), parentId2);
 
             return Ag.createOrUpdate(E18.class, config)
                     .parent(E17.class, parentIds, E17.E18S.getName())

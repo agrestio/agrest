@@ -1,6 +1,7 @@
 package io.agrest.cayenne.processor.update;
 
 import io.agrest.AgException;
+import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
 import io.agrest.ResourceEntity;
@@ -9,6 +10,7 @@ import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.qualifier.IQualifierParser;
+import io.agrest.meta.AgDataMap;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -27,13 +29,17 @@ import java.util.List;
  */
 public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreateOrUpdateStage {
 
+    private final AgDataMap dataMap;
     private final IPathResolver pathResolver;
 
     public CayenneMapIdempotentFullSyncStage(
+            @Inject AgDataMap dataMap,
             @Inject IPathResolver pathResolver,
             @Inject IQualifierParser qualifierParser,
             @Inject ICayenneQueryAssembler queryAssembler) {
         super(qualifierParser, queryAssembler);
+
+        this.dataMap = dataMap;
         this.pathResolver = pathResolver;
     }
 
@@ -94,9 +100,14 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
             query.andQualifier(qualifier);
         }
 
-        if (context.getParent() != null) {
+        EntityParent<?> parent = context.getParent();
+        if (parent != null) {
             EntityResolver resolver = CayenneUpdateStartStage.cayenneContext(context).getEntityResolver();
-            query.andQualifier(CayenneUtil.parentQualifier(pathResolver, context.getParent(), resolver));
+            query.andQualifier(CayenneUtil.parentQualifier(
+                    pathResolver,
+                    dataMap.getEntity(parent.getType()),
+                    parent,
+                    resolver));
         }
 
         CayenneProcessor.getCayenneEntity(entity).setSelect(query);

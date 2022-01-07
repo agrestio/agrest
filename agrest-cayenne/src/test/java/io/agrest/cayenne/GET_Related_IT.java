@@ -107,8 +107,8 @@ public class GET_Related_IT extends DbTest {
     @Test
     public void testInvalidRel() {
         tester.target("/e2/1/dummyrel").get()
-                .wasBadRequest()
-                .bodyEquals("{\"success\":false,\"message\":\"Invalid relationship: 'dummyrel'\"}");
+                .wasServerError()
+                .bodyEquals("{\"success\":false,\"message\":\"Invalid parent relationship: 'dummyrel'\"}");
     }
 
     @Test
@@ -196,8 +196,8 @@ public class GET_Related_IT extends DbTest {
                 @MatrixParam("parentId2") Integer parentId2) {
 
             Map<String, Object> parentIds = new HashMap<>();
-            parentIds.put(E17.ID1_PK_COLUMN, parentId1);
-            parentIds.put(E17.ID2_PK_COLUMN, parentId2);
+            parentIds.put(E17.ID1.getName(), parentId1);
+            parentIds.put(E17.ID2.getName(), parentId2);
 
             return Ag.select(E18.class, config).parent(E17.class, parentIds, E17.E18S.getName()).uri(uriInfo).get();
         }

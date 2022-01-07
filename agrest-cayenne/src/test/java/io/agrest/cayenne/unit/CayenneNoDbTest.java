@@ -93,6 +93,7 @@ public abstract class CayenneNoDbTest {
 
         this.pathDescriptorManager = new PathResolver();
         this.queryAssembler = new CayenneQueryAssembler(
+                () -> dataMap,
                 mockCayennePersister,
                 pathDescriptorManager,
                 new QualifierParser(),

@@ -104,7 +104,7 @@ public class CayenneMapChangesStage implements Processor<DeleteContext<?>> {
         }
 
         return ObjectSelect.query(context.getType())
-                .where(CayenneUtil.parentQualifier(pathResolver, parent, cayenneContext.getEntityResolver()))
+                .where(CayenneUtil.parentQualifier(pathResolver, agParentEntity, parent, cayenneContext.getEntityResolver()))
                 .select(CayenneDeleteStartStage.cayenneContext(context));
     }
 

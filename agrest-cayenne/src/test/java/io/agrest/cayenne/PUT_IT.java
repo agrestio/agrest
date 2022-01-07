@@ -536,8 +536,8 @@ public class PUT_IT extends DbTest {
                 String targetData) {
 
             Map<String, Object> ids = new HashMap<>();
-            ids.put(E17.ID1_PK_COLUMN, id1);
-            ids.put(E17.ID2_PK_COLUMN, id2);
+            ids.put(E17.ID1.getName(), id1);
+            ids.put(E17.ID2.getName(), id2);
 
             return Ag.update(E17.class, config).uri(uriInfo).id(ids).syncAndSelect(targetData);
         }

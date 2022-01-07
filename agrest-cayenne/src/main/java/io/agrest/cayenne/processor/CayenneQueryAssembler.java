@@ -2,6 +2,7 @@ package io.agrest.cayenne.processor;
 
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
+import io.agrest.EntityParent;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
@@ -12,10 +13,12 @@ import io.agrest.cayenne.path.PathOps;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.qualifier.IQualifierParser;
 import io.agrest.cayenne.qualifier.IQualifierPostProcessor;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
+import org.apache.cayenne.di.Provider;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.parser.ASTDbPath;
@@ -40,16 +43,24 @@ import java.util.function.Consumer;
  */
 public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
+    private final Provider<AgDataMap> dataMap;
     private final EntityResolver entityResolver;
     private final IPathResolver pathResolver;
     private final IQualifierParser qualifierParser;
     private final IQualifierPostProcessor qualifierPostProcessor;
 
     public CayenneQueryAssembler(
+
+            // AgDataMap is not yet available when we are first creating CayenneQueryAssembler,
+            // so injecting provider for lazy init
+            @Inject Provider<AgDataMap> dataMap,
+
             @Inject ICayennePersister persister,
             @Inject IPathResolver pathResolver,
             @Inject IQualifierParser qualifierParser,
             @Inject IQualifierPostProcessor qualifierPostProcessor) {
+
+        this.dataMap = dataMap;
         this.entityResolver = persister.entityResolver();
         this.pathResolver = pathResolver;
         this.qualifierParser = qualifierParser;
@@ -63,8 +74,13 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
                 ? createRootIdQuery(context.getEntity(), context.getId())
                 : createBaseQuery(context.getEntity());
 
-        if (context.getParent() != null) {
-            query.andQualifier(CayenneUtil.parentQualifier(pathResolver, context.getParent(), entityResolver));
+        EntityParent<?> parent = context.getParent();
+        if (parent != null) {
+            query.andQualifier(CayenneUtil.parentQualifier(
+                    pathResolver,
+                    dataMap.get().getEntity(parent.getType()),
+                    parent,
+                    entityResolver));
         }
 
         return query;

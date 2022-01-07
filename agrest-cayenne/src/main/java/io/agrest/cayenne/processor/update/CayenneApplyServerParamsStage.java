@@ -220,6 +220,7 @@ public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>
                 DbRelationship incomingDbRelationship = fromParent.getDbRelationships().get(0);
                 if (incomingDbRelationship.isToDependentPK()) {
 
+                    // TODO: #521 use AgIdPart to decode id
                     AgObjectId id = parent.getId();
                     for (EntityUpdate<T> u : context.getUpdates()) {
                         for (DbJoin join : incomingDbRelationship.getJoins()) {
