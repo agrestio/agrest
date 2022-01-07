@@ -130,7 +130,7 @@ public class DELETE_RelatedIT extends DbTest {
         @DELETE
         @Path("{id}")
         public SimpleResponse deleteE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.delete(E2.class, config).id(id).sync();
+            return Ag.delete(E2.class, config).byId(id).sync();
         }
 
         @DELETE

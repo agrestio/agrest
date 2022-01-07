@@ -452,7 +452,7 @@ public class PUT_IT extends DbTest {
         @PUT
         @Path("e2/{id}")
         public DataResponse<E2> createOrUpdate_E2(@PathParam("id") int id, String entityData, @Context UriInfo uriInfo) {
-            return Ag.idempotentCreateOrUpdate(E2.class, config).id(id).uri(uriInfo).syncAndSelect(entityData);
+            return Ag.idempotentCreateOrUpdate(E2.class, config).byId(id).uri(uriInfo).syncAndSelect(entityData);
         }
 
         @PUT
@@ -464,13 +464,13 @@ public class PUT_IT extends DbTest {
         @PUT
         @Path("e3/{id}")
         public DataResponse<E3> updateE3(@PathParam("id") int id, String requestBody) {
-            return Ag.update(E3.class, config).id(id).syncAndSelect(requestBody);
+            return Ag.update(E3.class, config).byId(id).syncAndSelect(requestBody);
         }
 
         @PUT
         @Path("e4/{id}")
         public DataResponse<E4> updateE4(@PathParam("id") int id, String requestBody) {
-            return Ag.update(E4.class, config).id(id).syncAndSelect(requestBody);
+            return Ag.update(E4.class, config).byId(id).syncAndSelect(requestBody);
         }
 
         @PUT
@@ -506,7 +506,7 @@ public class PUT_IT extends DbTest {
         @PUT
         @Path("e7/{id}")
         public DataResponse<E7> syncOneE7(@PathParam("id") int id, @Context UriInfo uriInfo, String data) {
-            return Ag.idempotentFullSync(E7.class, config).id(id).uri(uriInfo).syncAndSelect(data);
+            return Ag.idempotentFullSync(E7.class, config).byId(id).uri(uriInfo).syncAndSelect(data);
         }
 
         @PUT
@@ -524,7 +524,7 @@ public class PUT_IT extends DbTest {
         @PUT
         @Path("e14/{id}")
         public DataResponse<E14> update(@PathParam("id") int id, String data) {
-            return Ag.update(E14.class, config).id(id).syncAndSelect(data);
+            return Ag.update(E14.class, config).byId(id).syncAndSelect(data);
         }
 
         @PUT
@@ -539,13 +539,13 @@ public class PUT_IT extends DbTest {
             ids.put(E17.ID1.getName(), id1);
             ids.put(E17.ID2.getName(), id2);
 
-            return Ag.update(E17.class, config).uri(uriInfo).id(ids).syncAndSelect(targetData);
+            return Ag.update(E17.class, config).uri(uriInfo).byId(ids).syncAndSelect(targetData);
         }
 
         @PUT
         @Path("e23_create_or_update/{id}")
         public DataResponse<E23> createOrUpdateE4(@PathParam("id") int id, String requestBody) {
-            return Ag.createOrUpdate(E23.class, config).id(id).syncAndSelect(requestBody);
+            return Ag.createOrUpdate(E23.class, config).byId(id).syncAndSelect(requestBody);
         }
 
         @PUT

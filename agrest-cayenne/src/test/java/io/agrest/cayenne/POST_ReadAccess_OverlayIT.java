@@ -142,7 +142,7 @@ public class POST_ReadAccess_OverlayIT extends DbTest {
                 @Context UriInfo uriInfo,
                 String requestBody) {
 
-            return Ag.create(E8.class, config).uri(uriInfo).id(id)
+            return Ag.create(E8.class, config).uri(uriInfo).byId(id)
                     .writeablePropFilter(E8.class, b -> b.idOnly().property("name", true))
                     .sync(requestBody);
         }
@@ -153,7 +153,7 @@ public class POST_ReadAccess_OverlayIT extends DbTest {
                 @PathParam("id") int id,
                 @Context UriInfo uriInfo,
                 String requestBody) {
-            return Ag.create(E8.class, config).uri(uriInfo).id(id)
+            return Ag.create(E8.class, config).uri(uriInfo).byId(id)
                     .writeablePropFilter(E8.class, b -> b.empty().property("name", true))
                     .sync(requestBody);
         }

@@ -14,17 +14,42 @@ import java.util.function.Consumer;
  */
 public interface DeleteBuilder<T> {
 
-    DeleteBuilder<T> id(Object id);
+    /**
+     * Will delete na object with a given id. Can be called multiple times for multiple ids.
+     *
+     * @since 5.0
+     */
+    DeleteBuilder<T> byId(Object id);
 
     /**
-     * @param ids multi-attribute ID
-     * @since 1.20
+     * @deprecated since 5.0 in favor of {@link #byId(Object)}
      */
-    DeleteBuilder<T> id(Map<String, Object> ids);
+    @Deprecated
+    default DeleteBuilder<T> id(Object id) {
+        return byId(id);
+    }
+
+    /**
+     * Will delete na object with a given id. Can be called multiple times for multiple ids.
+     *
+     * @param id multi-attribute ID
+     * @since 5.0
+     */
+    DeleteBuilder<T> byId(Map<String, Object> id);
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #byId(Map)}
+     */
+    @Deprecated
+    default DeleteBuilder<T> id(Map<String, Object> id) {
+        return byId(id);
+    }
 
     /**
      * @since 2.3
+     * @deprecated since 5.0 in favor of {@link #byId(Map)}.
      */
+    @Deprecated
     DeleteBuilder<T> id(AgObjectId id);
 
     DeleteBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent);

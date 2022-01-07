@@ -37,5 +37,5 @@ On the server this affects the following user-facing APIs:
 * `SelectBuilder.byId(Map)`
 * `SelectBuilder.parent(Class,Map,String)`
 * `UpdateBuilder.parent(Class,Map,String)`
-* `DeleteBuilder.id(Map)`
+* `DeleteBuilder.byId(Map)`
 * `DeleteBuilder.parent(Class,Map,String)`

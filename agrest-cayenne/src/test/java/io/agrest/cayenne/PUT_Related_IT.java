@@ -334,7 +334,7 @@ public class PUT_Related_IT extends DbTest {
                 @PathParam("tid") int id,
                 String entityData) {
             return Ag.idempotentCreateOrUpdate(E2.class, config)
-                    .id(id)
+                    .byId(id)
                     .parent(E3.class, parentId, E3.E2.getName())
                     .syncAndSelect(entityData);
         }
@@ -343,7 +343,7 @@ public class PUT_Related_IT extends DbTest {
         @Path("e7/{id}/e8/{tid}")
         public DataResponse<E8> relateToOneExisting(@PathParam("id") int parentId, @PathParam("tid") int id, String data) {
             return Ag.idempotentCreateOrUpdate(E8.class, config)
-                    .id(id)
+                    .byId(id)
                     .parent(E7.class, parentId, E7.E8.getName())
                     .syncAndSelect(data);
         }
@@ -394,7 +394,7 @@ public class PUT_Related_IT extends DbTest {
         @PUT
         @Path("e15/{id}")
         public DataResponse<E15> createOrUpdate_Joins_FlattenedRel(@PathParam("id") long id, @Context UriInfo info, String entityData) {
-            return Ag.createOrUpdate(E15.class, config).id(id).uri(info).syncAndSelect(entityData);
+            return Ag.createOrUpdate(E15.class, config).byId(id).uri(info).syncAndSelect(entityData);
         }
     }
 }

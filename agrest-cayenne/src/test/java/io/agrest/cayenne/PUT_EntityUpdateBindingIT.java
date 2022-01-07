@@ -74,7 +74,7 @@ public class PUT_EntityUpdateBindingIT extends DbTest {
                 @PathParam("id") int id,
                 EntityUpdate<E3> update) {
 
-            return Ag.createOrUpdate(E3.class, config).id(id).sync(update);
+            return Ag.createOrUpdate(E3.class, config).byId(id).sync(update);
         }
     }
 }

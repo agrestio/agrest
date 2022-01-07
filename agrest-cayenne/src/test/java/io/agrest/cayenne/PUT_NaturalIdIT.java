@@ -151,7 +151,7 @@ public class PUT_NaturalIdIT extends DbTest {
                 EntityUpdate<E20> update,
                 @Context UriInfo uriInfo) {
 
-            return Ag.idempotentCreateOrUpdate(E20.class, config).id(name).uri(uriInfo).syncAndSelect(update);
+            return Ag.idempotentCreateOrUpdate(E20.class, config).byId(name).uri(uriInfo).syncAndSelect(update);
         }
 
         @PUT
@@ -165,7 +165,7 @@ public class PUT_NaturalIdIT extends DbTest {
             Map<String, Object> id = new HashMap<>(3);
             id.put("age", age);
             id.put("name", name);
-            return Ag.idempotentCreateOrUpdate(E21.class, config).id(id).uri(uriInfo).syncAndSelect(update);
+            return Ag.idempotentCreateOrUpdate(E21.class, config).byId(id).uri(uriInfo).syncAndSelect(update);
         }
 
         @PUT

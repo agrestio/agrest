@@ -26,18 +26,34 @@ import java.util.function.Consumer;
 public interface UpdateBuilder<T> {
 
     /**
-     * Set an explicit id for the update. In this case only a single object is
-     * allowed in the update.
+     * Set an explicit id for the update. In this case only a single object is allowed in the update.
+     *
+     * @since 5.0
      */
-    UpdateBuilder<T> id(Object id);
+    UpdateBuilder<T> byId(Object id);
 
     /**
-     * Set an explicit compound id for the update. In this case only a single
-     * object is allowed in the update.
-     *
-     * @since 1.20
+     * @deprecated since 5.0 in favor of {@link #byId(Object)}
      */
-    UpdateBuilder<T> id(Map<String, Object> ids);
+    @Deprecated
+    default UpdateBuilder<T> id(Object id) {
+        return byId(id);
+    }
+
+    /**
+     * Set an explicit multi-value id for the update. In this case only a single object is allowed in the update.
+     *
+     * @since 5.0
+     */
+    UpdateBuilder<T> byId(Map<String, Object> id);
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #byId(Map)}.
+     */
+    @Deprecated
+    default UpdateBuilder<T> id(Map<String, Object> id) {
+        return byId(id);
+    }
 
     /**
      * Sets up a relationship clause for all objects in this update.
@@ -57,7 +73,7 @@ public interface UpdateBuilder<T> {
      * @since 1.14
      */
     UpdateBuilder<T> uri(UriInfo uriInfo);
-    
+
     /**
      * Adds a {@link PropertyFilter} that define property read access rules for the current request and a given entity.
      * I.e. which entity attributes, relationships and ids a client is allowed to see. Can be called multiple times to add

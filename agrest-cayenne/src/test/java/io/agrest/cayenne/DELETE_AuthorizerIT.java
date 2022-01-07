@@ -99,7 +99,7 @@ public class DELETE_AuthorizerIT extends DbTest {
         public SimpleResponse putE2StackFilter(@PathParam("id") int id) {
             return Ag.service(config)
                     .delete(E2.class)
-                    .id(id)
+                    .byId(id)
                     .sync();
         }
 
@@ -111,7 +111,7 @@ public class DELETE_AuthorizerIT extends DbTest {
 
             return Ag.service(config)
                     .delete(E2.class)
-                    .id(id)
+                    .byId(id)
                     .authorizer(o -> !name.equals(o.getName()))
                     .sync();
         }

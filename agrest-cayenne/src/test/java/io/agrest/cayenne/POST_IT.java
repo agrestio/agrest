@@ -252,7 +252,7 @@ public class POST_IT extends DbTest {
             ids.put(E17.ID1.getName(), id1);
             ids.put(E17.ID2.getName(), id2);
 
-            return Ag.create(E17.class, config).id(ids).syncAndSelect(requestBody);
+            return Ag.create(E17.class, config).byId(ids).syncAndSelect(requestBody);
         }
 
         @POST

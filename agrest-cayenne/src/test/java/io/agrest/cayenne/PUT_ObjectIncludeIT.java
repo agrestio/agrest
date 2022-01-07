@@ -85,7 +85,7 @@ public class PUT_ObjectIncludeIT extends DbTest {
         @PUT
         @Path("e2/{id}")
         public DataResponse<E2> createOrUpdate_E2(@PathParam("id") int id, String entityData, @Context UriInfo uriInfo) {
-            return Ag.idempotentCreateOrUpdate(E2.class, config).id(id).uri(uriInfo).syncAndSelect(entityData);
+            return Ag.idempotentCreateOrUpdate(E2.class, config).byId(id).uri(uriInfo).syncAndSelect(entityData);
         }
 
         @PUT
@@ -97,7 +97,7 @@ public class PUT_ObjectIncludeIT extends DbTest {
         @PUT
         @Path("e3/{id}")
         public DataResponse<E3> updateE3(@PathParam("id") int id, String data, @Context UriInfo uriInfo) {
-            return Ag.update(E3.class, config).uri(uriInfo).id(id).syncAndSelect(data);
+            return Ag.update(E3.class, config).uri(uriInfo).byId(id).syncAndSelect(data);
         }
     }
 }

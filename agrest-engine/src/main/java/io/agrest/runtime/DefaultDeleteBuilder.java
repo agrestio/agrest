@@ -32,24 +32,25 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
     }
 
     @Override
-    public DeleteBuilder<T> id(Object id) {
+    public DeleteBuilder<T> byId(Object id) {
         context.addId(id);
         return this;
     }
 
     @Override
-    public DeleteBuilder<T> id(Map<String, Object> ids) {
+    public DeleteBuilder<T> byId(Map<String, Object> id) {
 
-        ids.forEach((name, value) -> {
-            if (value == null) {
-                throw AgException.notFound("Part of compound ID is null: %s", name);
+        for (Map.Entry<String, Object> e : id.entrySet()) {
+            if (e.getValue() == null) {
+                throw AgException.notFound("Part of compound ID is null: %s", e.getKey());
             }
-        });
+        }
 
-        context.addCompoundId(ids);
+        context.addCompoundId(id);
         return this;
     }
 
+    @Deprecated
     @Override
     public DeleteBuilder<T> id(AgObjectId id) {
         context.addId(id);

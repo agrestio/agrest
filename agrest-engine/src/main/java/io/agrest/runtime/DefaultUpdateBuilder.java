@@ -46,21 +46,21 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     }
 
     @Override
-    public UpdateBuilder<T> id(Object id) {
+    public UpdateBuilder<T> byId(Object id) {
         context.setId(id);
         return this;
     }
 
     @Override
-    public UpdateBuilder<T> id(Map<String, Object> ids) {
+    public UpdateBuilder<T> byId(Map<String, Object> id) {
 
-        for (Object id : ids.entrySet()) {
-            if (id == null) {
-                throw AgException.notFound("Part of compound ID is null");
+        for (Map.Entry<String, Object> e : id.entrySet()) {
+            if (e.getValue() == null) {
+                throw AgException.notFound("Part of compound ID is null: %s", e.getKey());
             }
         }
 
-        context.setCompoundId(ids);
+        context.setCompoundId(id);
         return this;
     }
 

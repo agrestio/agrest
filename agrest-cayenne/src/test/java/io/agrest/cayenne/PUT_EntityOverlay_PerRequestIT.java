@@ -125,7 +125,7 @@ public class PUT_EntityOverlay_PerRequestIT extends DbTest {
             return Ag.service(config)
                     .createOrUpdate(E10.class)
                     .entityOverlay(overlay)
-                    .id(id)
+                    .byId(id)
                     .uri(uriInfo)
                     .syncAndSelect(data);
         }
@@ -173,7 +173,7 @@ public class PUT_EntityOverlay_PerRequestIT extends DbTest {
                     .entityOverlay(e2Overlay)
                     .entityOverlay(e3Overlay)
                     .uri(uriInfo)
-                    .id(id)
+                    .byId(id)
                     .syncAndSelect(data);
         }
     }
