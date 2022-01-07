@@ -341,7 +341,7 @@ public class CayenneMergeChangesStage implements Processor<UpdateContext<?>> {
                 objectContext,
                 parent.getType(),
                 parentAgEntity,
-                parent.getId().get());
+                parent.getId());
 
         if (parentObject == null) {
             throw AgException.notFound("No parent object for ID '%s' and entity '%s'", parent.getId(), parentEntity.getName());

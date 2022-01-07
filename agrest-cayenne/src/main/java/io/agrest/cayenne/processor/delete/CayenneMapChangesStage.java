@@ -79,7 +79,7 @@ public class CayenneMapChangesStage implements Processor<DeleteContext<?>> {
 
             // TODO: batch objects retrieval into a single query
 
-            T o = CayenneUtil.findById(pathResolver, cayenneContext, context.getType(), context.getAgEntity(), id.get());
+            T o = CayenneUtil.findById(pathResolver, cayenneContext, context.getType(), context.getAgEntity(), id);
 
             if (o == null) {
                 ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(context.getType());
@@ -96,7 +96,7 @@ public class CayenneMapChangesStage implements Processor<DeleteContext<?>> {
 
         EntityParent<?> parent = context.getParent();
         ObjectContext cayenneContext = CayenneDeleteStartStage.cayenneContext(context);
-        Object parentObject = CayenneUtil.findById(pathResolver, cayenneContext, parent.getType(), agParentEntity, parent.getId().get());
+        Object parentObject = CayenneUtil.findById(pathResolver, cayenneContext, parent.getType(), agParentEntity, parent.getId());
 
         if (parentObject == null) {
             ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(parent.getType());
@@ -104,7 +104,7 @@ public class CayenneMapChangesStage implements Processor<DeleteContext<?>> {
         }
 
         return ObjectSelect.query(context.getType())
-                .where(CayenneUtil.parentQualifier(parent, cayenneContext.getEntityResolver()))
+                .where(CayenneUtil.parentQualifier(pathResolver, parent, cayenneContext.getEntityResolver()))
                 .select(CayenneDeleteStartStage.cayenneContext(context));
     }
 

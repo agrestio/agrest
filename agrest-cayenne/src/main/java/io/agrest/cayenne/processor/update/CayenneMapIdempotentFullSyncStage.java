@@ -4,6 +4,7 @@ import io.agrest.AgException;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
 import io.agrest.ResourceEntity;
+import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
@@ -26,8 +27,14 @@ import java.util.List;
  */
 public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreateOrUpdateStage {
 
-    public CayenneMapIdempotentFullSyncStage(@Inject IQualifierParser qualifierParser, @Inject ICayenneQueryAssembler queryAssembler) {
+    private final IPathResolver pathResolver;
+
+    public CayenneMapIdempotentFullSyncStage(
+            @Inject IPathResolver pathResolver,
+            @Inject IQualifierParser qualifierParser,
+            @Inject ICayenneQueryAssembler queryAssembler) {
         super(qualifierParser, queryAssembler);
+        this.pathResolver = pathResolver;
     }
 
     @Override
@@ -89,7 +96,7 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
 
         if (context.getParent() != null) {
             EntityResolver resolver = CayenneUpdateStartStage.cayenneContext(context).getEntityResolver();
-            query.andQualifier(CayenneUtil.parentQualifier(context.getParent(), resolver));
+            query.andQualifier(CayenneUtil.parentQualifier(pathResolver, context.getParent(), resolver));
         }
 
         CayenneProcessor.getCayenneEntity(entity).setSelect(query);

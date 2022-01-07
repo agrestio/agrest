@@ -24,7 +24,13 @@ public final class CayenneUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static <A> A findById(IPathResolver pathResolver, ObjectContext context, Class<A> type, AgEntity<?> agEntity, Object id) {
+    public static <A> A findById(
+            IPathResolver pathResolver,
+            ObjectContext context,
+            Class<A> type,
+            AgEntity<?> agEntity,
+            AgObjectId id) {
+
         ObjEntity entity = context.getEntityResolver().getObjEntity(type);
 
         // sanity checking...
@@ -36,23 +42,26 @@ public final class CayenneUtil {
             throw AgException.badRequest("No id specified");
         }
 
-        if (id instanceof Map) {
-            Map<String, Object> ids = (Map<String, Object>) id;
-            DbEntity dbEntity = entity.getDbEntity();
+        Object idVal = id.get();
+
+        if (idVal instanceof Map) {
+            Map<String, Object> ids = (Map<String, Object>) idVal;
 
             ObjectSelect<A> query = ObjectSelect.query(type);
             for (Map.Entry<String, Object> entry : ids.entrySet()) {
-                query.and(ExpressionFactory.matchDbExp(dbEntity.getAttribute(entry.getKey()).getName(), entry.getValue()));
+
+                ASTPath idPath = pathResolver.resolve(agEntity, entity.getName()).getPathExp();
+                query.and(ExpressionFactory.matchExp(idPath, entry.getValue()));
             }
             return query.selectOne(context);
         } else {
             AgIdPart idPart = agEntity.getIdParts().iterator().next();
             ASTPath idPath = pathResolver.resolve(agEntity, idPart.getName()).getPathExp();
-            return ObjectSelect.query(type).where(new ASTEqual(idPath, id)).selectOne(context);
+            return ObjectSelect.query(type).where(new ASTEqual(idPath, idVal)).selectOne(context);
         }
     }
 
-    public static Expression parentQualifier(EntityParent<?> parent, EntityResolver resolver) {
+    public static Expression parentQualifier(IPathResolver pathResolver, EntityParent<?> parent, EntityResolver resolver) {
 
         ObjEntity parentEntity = resolver.getObjEntity(parent.getType());
         ObjRelationship objRelationship = parentEntity.getRelationship(parent.getRelationship());
@@ -69,10 +78,12 @@ public final class CayenneUtil {
             for (DbRelationship dbRelationship : objRelationship.getDbRelationships()) {
                 DbRelationship reverseRelationship = dbRelationship.getReverseRelationship();
                 for (DbJoin join : reverseRelationship.getJoins()) {
+
+                    // TODO: #521 ... Must use resolver to build the expression
                     Object joinValue = id.get(join.getTargetName());
                     if (joinValue == null) {
                         throw AgException.badRequest(
-                                "Failed to build a Cayenne qualifier for a by-parent relationship '%s'; one of the parent's ID parts is missing in it's ID: %s",
+                                "Failed to build Cayenne qualifier for a by-parent relationship '%s' - one of the parent ID parts is missing: %s",
                                 parent.getRelationship(),
                                 join.getTargetName());
                     }

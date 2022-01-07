@@ -64,7 +64,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
                 : createBaseQuery(context.getEntity());
 
         if (context.getParent() != null) {
-            query.andQualifier(CayenneUtil.parentQualifier(context.getParent(), entityResolver));
+            query.andQualifier(CayenneUtil.parentQualifier(pathResolver, context.getParent(), entityResolver));
         }
 
         return query;
