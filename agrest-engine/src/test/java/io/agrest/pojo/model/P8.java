@@ -1,6 +1,7 @@
 package io.agrest.pojo.model;
 
 import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgId;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -17,12 +18,22 @@ public class P8 {
     public static final String CHARACTERS = "characters";
 
 
+    private int id;
     private Set<String> stringSet;
     private List<Number> numberList;
     private Collection<? extends Number> wildcardCollection;
     private Collection<Boolean> booleans;
     private Collection<Double> doubles;
     private Collection<Character> characters;
+
+    @AgId
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     @AgAttribute
     public Set<String> getStringSet() {

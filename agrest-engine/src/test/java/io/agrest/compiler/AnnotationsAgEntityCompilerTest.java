@@ -37,7 +37,7 @@ public class AnnotationsAgEntityCompilerTest {
         AgEntity<P8> entity = new AnnotationsAgEntityCompiler(Collections.emptyMap())
                 .compile(P8.class, new LazyAgDataMap(compilers));
         assertNotNull(entity);
-        assertEquals(0, entity.getIdParts().size());
+        assertEquals(1, entity.getIdParts().size());
         assertEquals(7, entity.getAttributes().size());
         assertEquals(Collection.class, entity.getAttribute(P8.BOOLEANS).getType());
         assertEquals(Collection.class, entity.getAttribute(P8.DOUBLES).getType());

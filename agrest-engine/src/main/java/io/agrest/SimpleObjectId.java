@@ -10,58 +10,60 @@ import java.util.Objects;
 
 /**
  * A single value id.
- * 
+ *
  * @since 1.24
  */
 public class SimpleObjectId extends BaseObjectId {
 
-	private final Object id;
+    private final Object id;
 
-	public SimpleObjectId(Object id) {
-		this.id = Objects.requireNonNull(id);
-	}
+    public SimpleObjectId(Object id) {
+        this.id = Objects.requireNonNull(id);
+    }
 
-	@Override
-	public Object get(String attributeName) {
-		return get();
-	}
+    @Override
+    public Object get(String attributeName) {
+        // TODO: check for valid attribute name?
+        return id;
+    }
 
-	@Override
-	public Object get() {
-		return id;
-	}
+    @Deprecated
+    @Override
+    public Object get() {
+        return id;
+    }
 
-	@Override
-	public int size() {
-		return 1;
-	}
+    @Override
+    public int size() {
+        return 1;
+    }
 
-	@Override
-	protected Map<String, Object> asMap(Collection<AgIdPart> idAttributes) {
-		AgIdPart idAttribute = idAttributes.iterator().next();
-		return Collections.singletonMap(idAttribute.getName(), Normalizer.normalize(id, idAttribute.getType()));
-	}
+    @Override
+    protected Map<String, Object> asMap(Collection<AgIdPart> idAttributes) {
+        AgIdPart idAttribute = idAttributes.iterator().next();
+        return Collections.singletonMap(idAttribute.getName(), Normalizer.normalize(id, idAttribute.getType()));
+    }
 
-	@Override
-	public String toString() {
-		return id.toString();
-	}
+    @Override
+    public String toString() {
+        return id.toString();
+    }
 
-	@Override
-	public boolean equals(Object object) {
-		if (this == object) {
-			return true;
-		}
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
 
-		if (!(object instanceof SimpleObjectId)) {
-			return false;
-		}
+        if (!(object instanceof SimpleObjectId)) {
+            return false;
+        }
 
-		return id.equals(((SimpleObjectId)object).get());
-	}
+        return Objects.equals(id, ((SimpleObjectId) object).id);
+    }
 
-	@Override
-	public int hashCode() {
-		return id.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

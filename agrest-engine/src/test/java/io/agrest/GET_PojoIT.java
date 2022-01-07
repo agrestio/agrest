@@ -144,6 +144,7 @@ public class GET_PojoIT extends PojoTest {
     public void testCollectionAttributes() {
 
         P8 o1 = new P8();
+        o1.setId(1);
         o1.setBooleans(Arrays.asList(true, false));
         o1.setCharacters(Arrays.asList('a', 'b', 'c'));
         o1.setDoubles(Arrays.asList(1., 2.5, 3.5));
@@ -157,7 +158,7 @@ public class GET_PojoIT extends PojoTest {
 
         tester.target("/pojo/p8/1").get()
                 .wasOk()
-                .bodyEquals(1, "{" +
+                .bodyEquals(1, "{\"id\":1," +
                         "\"booleans\":[true,false]," +
                         "\"characters\":[\"a\",\"b\",\"c\"]," +
                         "\"doubles\":[1.0,2.5,3.5]," +
