@@ -154,6 +154,11 @@
 		<db-attribute name="name" type="VARCHAR" length="200"/>
 		<db-attribute name="phone_number" type="VARCHAR" length="12"/>
 	</db-entity>
+	<db-entity name="e30">
+		<db-attribute name="e29_id1" type="INTEGER"/>
+		<db-attribute name="e29_id2" type="INTEGER"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+	</db-entity>
 	<db-entity name="e4">
 		<db-attribute name="c_boolean" type="BOOLEAN"/>
 		<db-attribute name="c_date" type="DATE"/>
@@ -291,6 +296,7 @@
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 		<obj-attribute name="phoneNumber" type="java.lang.String" db-attribute-path="phone_number"/>
 	</obj-entity>
+	<obj-entity name="E30" className="io.agrest.cayenne.cayenne.main.E30" dbEntityName="e30"/>
 	<obj-entity name="E4" className="io.agrest.cayenne.cayenne.main.E4" dbEntityName="e4">
 		<obj-attribute name="cBoolean" type="java.lang.Boolean" db-attribute-path="c_boolean"/>
 		<obj-attribute name="cDate" type="java.util.Date" db-attribute-path="c_date"/>
@@ -388,11 +394,19 @@
 	<db-relationship name="e23" source="e26" target="e23">
 		<db-attribute-pair source="e23_id" target="id"/>
 	</db-relationship>
+	<db-relationship name="e30s" source="e29" target="e30" toMany="true">
+		<db-attribute-pair source="id1" target="e29_id1"/>
+		<db-attribute-pair source="id2" target="e29_id2"/>
+	</db-relationship>
 	<db-relationship name="e2" source="e3" target="e2">
 		<db-attribute-pair source="e2_id" target="id_"/>
 	</db-relationship>
 	<db-relationship name="e5" source="e3" target="e5">
 		<db-attribute-pair source="e5_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="e29" source="e30" target="e29">
+		<db-attribute-pair source="e29_id1" target="id1"/>
+		<db-attribute-pair source="e29_id2" target="id2"/>
 	</db-relationship>
 	<db-relationship name="e15e5" source="e5" target="e15_e5" toDependentPK="true" toMany="true">
 		<db-attribute-pair source="id" target="e5_id"/>
@@ -432,8 +446,10 @@
 	<obj-relationship name="e20s" source="E21" target="E20" deleteRule="Nullify" db-relationship-path="e20"/>
 	<obj-relationship name="e26s" source="E23" target="E26" deleteRule="Deny" db-relationship-path="e26s"/>
 	<obj-relationship name="e23" source="E26" target="E23" deleteRule="Nullify" db-relationship-path="e23"/>
+	<obj-relationship name="e30s" source="E29" target="E30" deleteRule="Deny" db-relationship-path="e30s"/>
 	<obj-relationship name="e2" source="E3" target="E2" deleteRule="Nullify" db-relationship-path="e2"/>
 	<obj-relationship name="e5" source="E3" target="E5" deleteRule="Nullify" db-relationship-path="e5"/>
+	<obj-relationship name="e29" source="E30" target="E29" deleteRule="Nullify" db-relationship-path="e29"/>
 	<obj-relationship name="e15s" source="E5" target="E15" db-relationship-path="e15e5.e15"/>
 	<obj-relationship name="e3s" source="E5" target="E3" deleteRule="Deny" db-relationship-path="e2s"/>
 	<obj-relationship name="e8" source="E7" target="E8" deleteRule="Nullify" db-relationship-path="e8"/>

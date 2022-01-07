@@ -8,7 +8,9 @@ import io.agrest.cayenne.cayenne.main.E13;
 import io.agrest.cayenne.cayenne.main.E17;
 import io.agrest.cayenne.cayenne.main.E18;
 import io.agrest.cayenne.cayenne.main.E2;
+import io.agrest.cayenne.cayenne.main.E29;
 import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.cayenne.main.E30;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.bootique.junit5.BQTestTool;
@@ -29,7 +31,7 @@ public class GET_Related_IT extends DbTest {
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E17.class, E18.class)
-            .entitiesAndDependencies(E12.class, E13.class)
+            .entitiesAndDependencies(E12.class, E13.class, E29.class)
             .build();
 
     @Test
@@ -133,6 +135,23 @@ public class GET_Related_IT extends DbTest {
                 .bodyEquals(1, "{\"id\":{\"db:e12_id\":12,\"db:e13_id\":16},\"e12\":{\"id\":12},\"e13\":{\"id\":16}}");
     }
 
+    @Test
+    public void testByParentCompoundDbId() {
+
+        tester.e29().insertColumns("id1", "id2")
+                .values(1, 15)
+                .values(2, 35).exec();
+
+        tester.e30().insertColumns("id", "e29_id1", "e29_id2")
+                .values(1, 1, 15)
+                .values(2, 2, 35)
+                .values(3, 1, 15).exec();
+
+        tester.target("/e30_compound_db/1/15")
+                .get().wasOk()
+                .bodyEquals(2, "{\"id\":1}", "{\"id\":3}");
+    }
+
     @Path("")
     public static class Resource {
 
@@ -181,6 +200,20 @@ public class GET_Related_IT extends DbTest {
             parentIds.put(E17.ID2_PK_COLUMN, parentId2);
 
             return Ag.select(E18.class, config).parent(E17.class, parentIds, E17.E18S.getName()).uri(uriInfo).get();
+        }
+
+        @GET
+        @Path("e30_compound_db/{parent_id1}/{parent_id2}")
+        public DataResponse<E30> getByParentCompoundDbId(
+                @Context UriInfo uriInfo,
+                @PathParam("parent_id1") Integer parentId1,
+                @PathParam("parent_id2") Integer parentId2) {
+
+            Map<String, Object> ids = new HashMap<>();
+            ids.put("db:" + E29.ID1_PK_COLUMN, parentId1);
+            ids.put(E29.ID2PROP.getName(), parentId2);
+
+            return Ag.select(E30.class, config).uri(uriInfo).parent(E29.class, ids, E29.E30S.getName()).get();
         }
     }
 }

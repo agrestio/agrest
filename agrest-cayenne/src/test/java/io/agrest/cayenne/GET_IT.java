@@ -29,7 +29,8 @@ public class GET_IT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E6.class, E17.class, E19.class, E28.class, E29.class)
+            .entities(E2.class, E3.class, E4.class, E6.class, E17.class, E19.class, E28.class)
+            .entitiesAndDependencies(E29.class)
             .build();
 
     @Test
