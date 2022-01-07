@@ -11,13 +11,12 @@ import io.agrest.cayenne.processor.CayenneResourceEntityExt;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
-import io.agrest.property.ToManyEntityResultReader;
 import io.agrest.property.PropertyReader;
+import io.agrest.property.ToManyEntityResultReader;
 import io.agrest.property.ToOneEntityResultReader;
 import io.agrest.resolver.BaseNestedDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.Persistent;
 import org.apache.cayenne.query.SelectQuery;
 
 import java.util.Collections;
@@ -84,20 +83,6 @@ public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseNes
         return entity instanceof ToManyResourceEntity
                 ? new ToManyEntityResultReader((ToManyResourceEntity) entity, parentIdReader)
                 : new ToOneEntityResultReader((ToOneResourceEntity<?>) entity, parentIdReader);
-    }
-
-    protected PropertyReader parentIdReader(AgEntity<?> parentEntity) {
-
-        // Per #473 there may be no ID in AgEntity, but there's one in Cayenne DbEntity. So let's the one from Cayenne
-        // if that's the case. This would allow nested prefetches even if ID is excluded from the public data.
-
-        // Note that this ID reader should only be used inside "agrest-cayenne" and should not leak to the generic
-        // part of the Agrest stack.
-
-        return parentEntity.getIdParts().isEmpty() && persister.entityResolver().getObjEntity(parentEntity.getName()) != null
-                // TODO: ID snapshot keys should be prefixed with "db:"
-                ? p -> ((Persistent) p).getObjectId().getIdSnapshot()
-                : parentEntity.getIdReader();
     }
 
     protected void indexResultByParentId(NestedResourceEntity<T> entity, List<Object[]> result) {
