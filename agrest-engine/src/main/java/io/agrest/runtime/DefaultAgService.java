@@ -1,6 +1,12 @@
 package io.agrest.runtime;
 
-import io.agrest.*;
+import io.agrest.DeleteBuilder;
+import io.agrest.EntityDelete;
+import io.agrest.MetadataBuilder;
+import io.agrest.SelectBuilder;
+import io.agrest.SimpleResponse;
+import io.agrest.UnrelateBuilder;
+import io.agrest.UpdateBuilder;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.meta.MetadataContext;
@@ -49,36 +55,6 @@ public class DefaultAgService implements IAgService {
 
     private <T> SelectBuilder<T> toSelectBuilder(SelectContext<T> context) {
         return new DefaultSelectBuilder<>(context, selectProcessorFactory);
-    }
-
-    /**
-     * @since 1.2
-     */
-    @Override
-    public <T> SimpleResponse unrelate(Class<T> type, Object sourceId, String relationship) {
-
-        // TODO: should context 'type' be the target type, not "parent" type?
-
-        UnrelateContext<T> context = new UnrelateContext<>(type, new EntityParent<>(type, sourceId, relationship));
-        unrelateProcessorFactory.createProcessor().execute(context);
-        return context.createSimpleResponse();
-    }
-
-    /**
-     * @since 1.2
-     */
-    @Override
-    public <T> SimpleResponse unrelate(Class<T> type, Object sourceId, String relationship, Object targetId) {
-
-        // TODO: should context 'type' be the target type, not "parent" type?
-
-        UnrelateContext<T> context = new UnrelateContext<>(
-                type,
-                new EntityParent<>(type, sourceId, relationship),
-                targetId);
-
-        unrelateProcessorFactory.createProcessor().execute(context);
-        return context.createSimpleResponse();
     }
 
     @Deprecated
@@ -137,6 +113,15 @@ public class DefaultAgService implements IAgService {
         UpdateContext<T> context = new UpdateContext<>(type);
         return new DefaultUpdateBuilder<>(context,
                 updateProcessorFactoryFactory.getFactory(UpdateOperation.update));
+    }
+
+    /**
+     * @since 5.0
+     */
+    @Override
+    public <T> UnrelateBuilder<T> unrelate(Class<T> type) {
+        UnrelateContext<T> context = new UnrelateContext<>(type);
+        return new DefaultUnrelateBuilder<>(context, unrelateProcessorFactory);
     }
 
     /**

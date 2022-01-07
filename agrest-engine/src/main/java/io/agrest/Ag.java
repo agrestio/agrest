@@ -52,6 +52,13 @@ public class Ag {
     }
 
     /**
+     * @since 5.0
+     */
+    public static <T> UnrelateBuilder<T> unrelate(Class<T> type, Configuration config) {
+        return service(config).unrelate(type);
+    }
+
+    /**
      * @since 1.18
      * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
      */

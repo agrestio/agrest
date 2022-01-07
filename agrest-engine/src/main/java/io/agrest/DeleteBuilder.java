@@ -128,7 +128,7 @@ public interface DeleteBuilder<T> {
     <U> DeleteBuilder<T> routingStage(DeleteStage afterStage, Processor<DeleteContext<U>> customStage);
 
     /**
-     * Executes configured deletion pipeline.
+     * Executes deletion pipeline for the request configured in this builder.
      *
      * @since 4.8
      */

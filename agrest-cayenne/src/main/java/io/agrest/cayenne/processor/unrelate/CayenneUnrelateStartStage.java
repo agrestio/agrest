@@ -23,7 +23,7 @@ public class CayenneUnrelateStartStage implements Processor<UnrelateContext<?>> 
         return (ObjectContext) context.getAttribute(CayenneUnrelateStartStage.UNRELATE_OBJECT_CONTEXT_ATTRIBITE);
     }
 
-    private ICayennePersister persister;
+    private final ICayennePersister persister;
 
     public CayenneUnrelateStartStage(@Inject ICayennePersister persister) {
         this.persister = persister;

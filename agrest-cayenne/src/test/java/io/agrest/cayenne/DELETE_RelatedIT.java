@@ -133,6 +133,7 @@ public class DELETE_RelatedIT extends DbTest {
             return Ag.delete(E2.class, config).byId(id).sync();
         }
 
+        @Deprecated
         @DELETE
         public SimpleResponse deleteE2_Batch(Collection<EntityDelete<E2>> deleted, @Context UriInfo uriInfo) {
             return Ag.service(config).delete(E2.class, deleted);
@@ -140,9 +141,11 @@ public class DELETE_RelatedIT extends DbTest {
 
         @DELETE
         @Path("{id}/{rel}/{tid}")
-        public SimpleResponse deleteToMany(@PathParam("id") int id, @PathParam("rel") String relationship,
-                                           @PathParam("tid") int tid) {
-            return Ag.service(config).unrelate(E2.class, id, relationship, tid);
+        public SimpleResponse deleteToMany(
+                @PathParam("id") int id,
+                @PathParam("rel") String relationship,
+                @PathParam("tid") int tid) {
+            return Ag.unrelate(E2.class, config).sourceId(id).related(relationship, tid).sync();
         }
     }
 
@@ -155,14 +158,14 @@ public class DELETE_RelatedIT extends DbTest {
         @DELETE
         @Path("{id}/e2")
         public SimpleResponse deleteE2_Implicit(@PathParam("id") int id) {
-            return Ag.service(config).unrelate(E3.class, id, E3.E2.getName());
+            return Ag.unrelate(E3.class, config).sourceId(id).allRelated(E3.E2.getName()).sync();
         }
 
 
         @DELETE
         @Path("{id}/e2/{tid}")
         public SimpleResponse deleteE2(@PathParam("id") int id, @PathParam("tid") int tid) {
-            return Ag.service(config).unrelate(E3.class, id, E3.E2.getName(), tid);
+            return Ag.unrelate(E3.class, config).sourceId(id).related(E3.E2.getName(), tid).sync();
         }
     }
 

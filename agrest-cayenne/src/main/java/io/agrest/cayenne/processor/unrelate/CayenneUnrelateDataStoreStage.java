@@ -39,7 +39,7 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
 
         ObjectContext cayenneContext = CayenneUnrelateStartStage.cayenneContext(context);
 
-        if (context.getId() != null) {
+        if (context.getTargetId() != null) {
             unrelateSingle(context, cayenneContext);
         } else {
             unrelateAll(context, cayenneContext);
@@ -50,22 +50,21 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
 
         // validate relationship before doing anything else
         AgRelationship relationship = dataMap
-                .getEntity(context.getParent().getType())
-                .getRelationship(context.getParent().getRelationship());
+                .getEntity(context.getType())
+                .getRelationship(context.getRelationship());
 
         if (relationship == null) {
-            throw AgException.badRequest("Invalid relationship: '%s'", context.getParent().getRelationship());
+            throw AgException.badRequest("Invalid relationship: '%s'", context.getRelationship());
         }
 
         // TODO: #521 use CayenneUtil.parentQualifier(..)
-        DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
-                .getParent().getId().get());
+        DataObject parent = (DataObject) getExistingObject(context.getType(), cayenneContext, context.getSourceId());
 
         Class<?> childType = relationship.getTargetEntity().getType();
 
         // TODO: #521 use CayenneUtil.findById(..)
         // among other things this call checks that the target exists
-        DataObject child = (DataObject) getExistingObject(childType, cayenneContext, context.getId());
+        DataObject child = (DataObject) getExistingObject(childType, cayenneContext, context.getTargetId());
 
         if (relationship.isToMany()) {
 
@@ -92,16 +91,15 @@ public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<
     private <T extends DataObject> void unrelateAll(UnrelateContext<T> context, ObjectContext cayenneContext) {
         // validate relationship before doing anything else
         AgRelationship relationship = dataMap
-                .getEntity(context.getParent().getType())
-                .getRelationship(context.getParent().getRelationship());
+                .getEntity(context.getType())
+                .getRelationship(context.getRelationship());
 
         if (relationship == null) {
-            throw AgException.badRequest("Invalid relationship: '%s'", context.getParent().getRelationship());
+            throw AgException.badRequest("Invalid relationship: '%s'", context.getRelationship());
         }
 
         // TODO: #521 use CayenneUtil.parentQualifier(..)
-        DataObject parent = (DataObject) getExistingObject(context.getParent().getType(), cayenneContext, context
-                .getParent().getId().get());
+        DataObject parent = (DataObject) getExistingObject(context.getType(), cayenneContext, context.getSourceId());
 
         if (relationship.isToMany()) {
 

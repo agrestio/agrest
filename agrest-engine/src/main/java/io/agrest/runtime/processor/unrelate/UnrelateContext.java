@@ -1,31 +1,38 @@
 package io.agrest.runtime.processor.unrelate;
 
-import io.agrest.EntityParent;
 import io.agrest.processor.BaseProcessingContext;
 
-/**
- * @since 1.16
- */
 public class UnrelateContext<T> extends BaseProcessingContext<T> {
 
-    private EntityParent<?> parent;
-    private Object id;
+    private Object sourceId;
+    private String relationship;
+    private Object targetId;
 
-    public UnrelateContext(Class<T> type, EntityParent<?> parent) {
+    public UnrelateContext(Class<T> type) {
         super(type);
-        this.parent = parent;
     }
 
-    public UnrelateContext(Class<T> type, EntityParent<?> parent, Object id) {
-        this(type, parent);
-        this.id = id;
+    public Object getSourceId() {
+        return sourceId;
     }
 
-    public EntityParent<?> getParent() {
-        return parent;
+    public void setSourceId(Object sourceId) {
+        this.sourceId = sourceId;
     }
 
-    public Object getId() {
-        return id;
+    public String getRelationship() {
+        return relationship;
+    }
+
+    public void setRelationship(String relationship) {
+        this.relationship = relationship;
+    }
+
+    public Object getTargetId() {
+        return targetId;
+    }
+
+    public void setTargetId(Object targetId) {
+        this.targetId = targetId;
     }
 }

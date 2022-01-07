@@ -25,13 +25,11 @@ import java.util.function.Function;
  */
 public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
-    protected SelectContext<T> context;
-    protected SelectProcessorFactory processorFactory;
-    protected EnumMap<SelectStage, Processor<SelectContext<?>>> processors;
+    protected final SelectContext<T> context;
+    protected final SelectProcessorFactory processorFactory;
+    protected final EnumMap<SelectStage, Processor<SelectContext<?>>> processors;
 
-    public DefaultSelectBuilder(
-            SelectContext<T> context,
-            SelectProcessorFactory processorFactory) {
+    public DefaultSelectBuilder(SelectContext<T> context, SelectProcessorFactory processorFactory) {
         this.context = context;
         this.processorFactory = processorFactory;
         this.processors = new EnumMap<>(SelectStage.class);

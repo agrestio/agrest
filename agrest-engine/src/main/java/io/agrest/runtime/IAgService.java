@@ -1,10 +1,14 @@
 package io.agrest.runtime;
 
-import io.agrest.*;
+import io.agrest.DeleteBuilder;
+import io.agrest.EntityDelete;
+import io.agrest.MetadataBuilder;
+import io.agrest.SelectBuilder;
+import io.agrest.SimpleResponse;
+import io.agrest.UnrelateBuilder;
+import io.agrest.UpdateBuilder;
 
-import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * The main entry point to Agrest stack. Indirectly used from the user REST resource classes to build request processors.
@@ -12,9 +16,7 @@ import java.util.Map;
 public interface IAgService {
 
     /**
-     * Creates a {@link SelectBuilder} to customize data retrieval. This is the
-     * most generic and customizable way to select data. It can be used as a
-     * replacement of any other select.
+     * Creates a {@link SelectBuilder} to customize data retrieval.
      *
      * @since 1.14
      */
@@ -22,24 +24,40 @@ public interface IAgService {
 
     /**
      * @since 2.3
-     * @deprecated since 5.0 as DELETE HTTP method has no body. Can be replaced with "delete(Class).id(id1).id(id2)"
+     * @deprecated since 5.0 as DELETE HTTP method has no body. Can be replaced with "delete(Class).byId(id1).byId(id2)"
      */
     @Deprecated
     <T> SimpleResponse delete(Class<T> type, Collection<EntityDelete<T>> deleted);
 
     /**
+     * Creates a {@link UnrelateBuilder} to build an operation breaking a relationship between a source objects and
+     * some or all related objects.
+     *
+     * @since 5.0
+     */
+    <T> UnrelateBuilder<T> unrelate(Class<T> type);
+
+    /**
      * Breaks the relationship between source and all its target objects.
      *
      * @since 1.2
+     * @deprecated since 5.0 in favor of a builder created per {@link #unrelate(Class)}.
      */
-    <T> SimpleResponse unrelate(Class<T> type, Object sourceId, String relationship);
+    @Deprecated
+    default <T> SimpleResponse unrelate(Class<T> type, Object sourceId, String relationship) {
+        return unrelate(type).sourceId(sourceId).allRelated(relationship).sync();
+    }
 
     /**
      * Breaks the relationship between source and a target object.
      *
      * @since 1.2
+     * @deprecated since 5.0 in favor of a builder created per {@link #unrelate(Class)}.
      */
-    <T> SimpleResponse unrelate(Class<T> type, Object sourceId, String relationship, Object targetId);
+    @Deprecated
+    default <T> SimpleResponse unrelate(Class<T> type, Object sourceId, String relationship, Object targetId) {
+        return unrelate(type).sourceId(sourceId).related(relationship, targetId).sync();
+    }
 
     /**
      * @since 1.3
