@@ -74,7 +74,7 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
     }
 
     @Override
-    <T extends DataObject> List<T> existingObjects(UpdateContext<T> context, Collection<Object> keys, ObjectMapper<T> mapper) {
+    protected <T extends DataObject> List<T> existingObjects(UpdateContext<T> context, Collection<Object> keys, ObjectMapper<T> mapper) {
 
         buildQuery(context, context.getEntity(), null);
 
@@ -92,7 +92,7 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
     }
 
     @Override
-    <T> SelectQuery<T> buildQuery(UpdateContext<T> context, ResourceEntity<T> entity, Expression qualifier) {
+    protected <T> SelectQuery<T> buildQuery(UpdateContext<T> context, ResourceEntity<T> entity, Expression qualifier) {
 
         SelectQuery<T> query = SelectQuery.query(entity.getType());
 

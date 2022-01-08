@@ -135,7 +135,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         return new UpdateMap<>(withId, noId);
     }
 
-    <T extends DataObject> List<T> existingObjects(UpdateContext<T> context, Collection<Object> keys, ObjectMapper<T> mapper) {
+    protected <T extends DataObject> List<T> existingObjects(UpdateContext<T> context, Collection<Object> keys, ObjectMapper<T> mapper) {
 
         // TODO: split query in batches:
         // respect Constants.SERVER_MAX_ID_QUALIFIER_SIZE_PROPERTY
@@ -176,7 +176,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         return objects;
     }
 
-    <T> SelectQuery<T> buildQuery(UpdateContext<T> context, ResourceEntity<T> entity, Expression qualifier) {
+    protected <T> SelectQuery<T> buildQuery(UpdateContext<T> context, ResourceEntity<T> entity, Expression qualifier) {
 
         SelectQuery<T> query = SelectQuery.query(entity.getType());
 
