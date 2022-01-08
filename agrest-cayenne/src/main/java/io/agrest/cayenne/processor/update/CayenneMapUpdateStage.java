@@ -163,7 +163,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         }
 
         ResourceEntity resourceEntity = context.getEntity();
-        buildQuery(context, context.getEntity(), ExpressionFactory.joinExp(Expression.OR, expressions));
+        buildQuery(context, context.getEntity(), ExpressionFactory.or(expressions));
 
         List<T> objects = fetchEntity(context, resourceEntity);
         if (context.isById() && objects.size() > 1) {

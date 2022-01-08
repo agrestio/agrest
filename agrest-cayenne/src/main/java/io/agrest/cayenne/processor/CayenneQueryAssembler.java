@@ -208,7 +208,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
         // TODO: There is some functionality in Cayenne that allows to break long OR qualifiers in a series of queries.
         //  How do we use it here?
-        query.andQualifier(ExpressionFactory.joinExp(Expression.OR, qualifiers));
+        query.andQualifier(ExpressionFactory.or(qualifiers));
 
         return query;
     }
