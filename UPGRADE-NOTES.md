@@ -39,3 +39,10 @@ On the server this affects the following user-facing APIs:
 * `UpdateBuilder.parent(Class,Map,String)`
 * `DeleteBuilder.byId(Map)`
 * `DeleteBuilder.parent(Class,Map,String)`
+
+### "agrest-client" was removed [#527](https://github.com/agrestio/agrest/issues/527)
+Java Agrest client ("agrest-client" module) was removed. Straight HTTP requests can be used to query Agrest services 
+from Java. 
+
+TODO: we might add a utility for DataResponse deserialization in the Agrest core. Nothing like that is 
+available yet. 
