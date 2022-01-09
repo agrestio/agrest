@@ -20,7 +20,7 @@ public class MapByMerger implements IMapByMerger {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MapByMerger.class);
 
-    private AgDataMap dataMap;
+    private final AgDataMap dataMap;
 
     public MapByMerger(@Inject AgDataMap dataMap) {
         this.dataMap = dataMap;
