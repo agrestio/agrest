@@ -3,6 +3,8 @@ package io.agrest.runtime.entity;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
+import io.agrest.ToManyResourceEntity;
+import io.agrest.ToOneResourceEntity;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.di.Inject;
@@ -40,8 +42,21 @@ public class MapByMerger implements IMapByMerger {
             return;
         }
 
-        ResourceEntity<?> mapByCompanionEntity = new RootResourceEntity<>(entity.getAgEntity());
+        ResourceEntity<?> mapByCompanionEntity = entity instanceof NestedResourceEntity
+                ? mapByCompanionEntity((NestedResourceEntity) entity)
+                : mapByCompanionEntity((RootResourceEntity) entity);
+
         new ResourceEntityTreeBuilder(mapByCompanionEntity, dataMap, overlays).inflatePath(mapByPath);
         entity.mapBy(mapByCompanionEntity, mapByPath);
+    }
+
+    protected <T> RootResourceEntity<?> mapByCompanionEntity(RootResourceEntity<T> entity) {
+        return new RootResourceEntity<>(entity.getAgEntity());
+    }
+
+    protected <T> NestedResourceEntity<?> mapByCompanionEntity(NestedResourceEntity<T> entity) {
+        return entity instanceof ToOneResourceEntity
+                ? new ToOneResourceEntity<>(entity.getAgEntity(), entity.getParent(), entity.getIncoming())
+                : new ToManyResourceEntity<>(entity.getAgEntity(), entity.getParent(), entity.getIncoming());
     }
 }
