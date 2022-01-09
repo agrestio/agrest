@@ -31,8 +31,15 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
 
     @Override
     protected void doOnParentQueryAssembled(NestedResourceEntity<DataObject> entity, SelectContext<?> context) {
-        // add prefetch to the parent query
-        addPrefetch(entity, prefetchSemantics);
+        // add prefetch to the (grand)parent query
+
+        ResourceEntity<?> parent = entity.getParent();
+        String parentPath = entity.getIncoming().getName();
+        if (parent instanceof RootResourceEntity) {
+            addRootPrefetch((RootResourceEntity) parent, parentPath, prefetchSemantics);
+        } else {
+            addNestedPrefetch((NestedResourceEntity<?>) parent, parentPath, prefetchSemantics);
+        }
     }
 
     @Override
@@ -43,23 +50,12 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
         return iterableData(entity, (Iterable<DataObject>) parentData);
     }
 
-    protected void addPrefetch(NestedResourceEntity<?> entity, int prefetchSemantics) {
-        addPrefetch(entity, null, prefetchSemantics);
-    }
-
-    protected void addPrefetch(NestedResourceEntity<?> entity, String outgoingPath, int prefetchSemantics) {
-
-        // add prefetch to the first available (grand)parent query
-
-        String incomingPath = entity.getIncoming().getName();
-        String path = outgoingPath != null ? incomingPath + "." + outgoingPath : incomingPath;
-
-        ResourceEntity<?> parent = entity.getParent();
-        CayenneResourceEntityExt<?> parentExt = CayenneProcessor.getCayenneEntity(parent);
+    protected void addNestedPrefetch(NestedResourceEntity<?> entity, String path, int prefetchSemantics) {
+        CayenneResourceEntityExt<?> parentExt = CayenneProcessor.getCayenneEntity(entity);
         if (parentExt == null) {
             throw AgException.internalServerError(
                     "Parent entity '%s' is not handled by Cayenne. Can not use prefetch resolver",
-                    parent.getAgEntity().getName());
+                    entity.getAgEntity().getName());
         }
 
         SelectQuery<?> parentSelect = parentExt.getSelect();
@@ -68,15 +64,35 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
             return;
         }
 
+        ResourceEntity<?> parent = entity.getParent();
+        String parentPath = entity.getIncoming().getName() + "." + path;
         if (parent instanceof RootResourceEntity) {
+            addRootPrefetch((RootResourceEntity) parent, parentPath, prefetchSemantics);
+        } else {
+            addNestedPrefetch((NestedResourceEntity<?>) parent, parentPath, prefetchSemantics);
+        }
+    }
+
+    protected void addRootPrefetch(RootResourceEntity<?> entity, String path, int prefetchSemantics) {
+
+        CayenneResourceEntityExt<?> parentExt = CayenneProcessor.getCayenneEntity(entity);
+        if (parentExt == null) {
+            throw AgException.internalServerError(
+                    "Parent entity '%s' is not handled by Cayenne. Can not use prefetch resolver",
+                    entity.getAgEntity().getName());
+        }
+
+        SelectQuery<?> parentSelect = parentExt.getSelect();
+        if (parentSelect == null) {
             throw AgException.internalServerError(
                     "Can't add prefetch to root entity '%s' that has no SelectQuery of its own. Path: %s",
-                    parent.getAgEntity().getName(),
+                    entity.getAgEntity().getName(),
                     path);
         }
 
-        addPrefetch(((NestedResourceEntity) parent), path, prefetchSemantics);
+        parentSelect.addPrefetch(path).setSemantics(prefetchSemantics);
     }
+
 
     @Override
     public PropertyReader reader(NestedResourceEntity<DataObject> entity) {
