@@ -19,40 +19,49 @@ import java.lang.reflect.Type;
 @Provider
 public class DataResponseWriter implements MessageBodyWriter<DataResponse<?>> {
 
-	@Override
-	public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-		return DataResponse.class.isAssignableFrom(type);
-	}
+    @Override
+    public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        return DataResponse.class.isAssignableFrom(type);
+    }
 
-	private IJacksonService jacksonService;
+    private IJacksonService jacksonService;
 
-	@Context
-	private Configuration configuration;
+    @Context
+    private Configuration configuration;
 
-	@Override
-	public long getSize(DataResponse<?> t, Class<?> type, Type genericType, Annotation[] annotations,
-			MediaType mediaType) {
-		return -1;
-	}
+    @Override
+    public long getSize(
+            DataResponse<?> t,
+            Class<?> type,
+            Type genericType,
+            Annotation[] annotations,
+            MediaType mediaType) {
+        return -1;
+    }
 
-	@Override
-	public void writeTo(final DataResponse<?> t, Class<?> type, Type genericType, Annotation[] annotations,
-			MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream)
-					throws IOException {
+    @Override
+    public void writeTo(
+            DataResponse<?> t,
+            Class<?> type,
+            Type genericType,
+            Annotation[] annotations,
+            MediaType mediaType,
+            MultivaluedMap<String, Object> httpHeaders,
+            OutputStream entityStream)
+            throws IOException {
 
-		getJacksonService().outputJson(out -> writeData(t, out), entityStream);
-	}
+        getJacksonService().outputJson(out -> writeData(t, out), entityStream);
+    }
 
-	private IJacksonService getJacksonService() {
-		if (jacksonService == null) {
-			jacksonService = AgRuntime.service(IJacksonService.class, configuration);
-		}
+    private IJacksonService getJacksonService() {
+        if (jacksonService == null) {
+            jacksonService = AgRuntime.service(IJacksonService.class, configuration);
+        }
 
-		return jacksonService;
-	}
+        return jacksonService;
+    }
 
-	protected void writeData(DataResponse<?> t, JsonGenerator out) throws IOException {
-		t.writeData(out);
-	}
-
+    protected void writeData(DataResponse<?> t, JsonGenerator out) throws IOException {
+        t.getEncoder().encode(null, t.getObjects(), out);
+    }
 }

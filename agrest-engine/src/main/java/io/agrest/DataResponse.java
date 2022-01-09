@@ -1,10 +1,8 @@
 package io.agrest;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.GenericEncoder;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -54,10 +52,6 @@ public class DataResponse<T> extends AgResponse {
         return type;
     }
 
-    public Encoder getEncoder() {
-        return encoder;
-    }
-
     /**
      * @since 1.24
      */
@@ -80,9 +74,8 @@ public class DataResponse<T> extends AgResponse {
     }
 
     /**
-     * Returns a collection of objects associated with the root node of the
-     * request include tree. Unlike {@link #getObjects()}, the result only
-     * includes objects that will be rendered via encoder.
+     * Returns a collection of objects associated with the root node of the request include tree. Unlike
+     * {@link #getObjects()}, the result only includes objects that will be rendered via encoder.
      *
      * @since 2.0
      */
@@ -91,11 +84,9 @@ public class DataResponse<T> extends AgResponse {
     }
 
     /**
-     * Returns a flat collection of objects associated with a node of the
-     * request include tree, defined by the path argument. Unlike
-     * {@link #getObjects()}, the result only includes objects that will be
-     * rendered via encoder. Path must have been included in the request that
-     * generated this response and known to the response encoders.
+     * Returns a flat collection of objects associated with a node of the request include tree, defined by the path
+     * argument. Unlike {@link #getObjects()}, the result only includes objects that will be rendered via encoder.
+     * Path must have been included in the request that generated this response and known to the response encoders.
      *
      * @since 2.0
      */
@@ -106,18 +97,14 @@ public class DataResponse<T> extends AgResponse {
         return extractor.getResult();
     }
 
+    public Encoder getEncoder() {
+        return encoder;
+    }
+
     /**
      * @since 1.24
      */
     public void setEncoder(Encoder encoder) {
         this.encoder = encoder;
-    }
-
-    /**
-     * Writes internal state to the provided JSON stream using the internal
-     * {@link Encoder}.
-     */
-    public void writeData(JsonGenerator out) throws IOException {
-        encoder.encode(null, getObjects(), out);
     }
 }
