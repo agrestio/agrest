@@ -3,7 +3,6 @@ package io.agrest.runtime.encoder;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.Encoders;
 import io.agrest.meta.AgEntity;
 import io.agrest.compiler.AnnotationsAgEntityBuilder;
 import io.agrest.meta.LazyAgDataMap;

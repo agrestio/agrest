@@ -6,14 +6,14 @@ import io.agrest.AgModuleProvider;
 import io.agrest.DataResponse;
 import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
-import io.agrest.jsonvalueconverter.DefaultJsonValueConverterFactoryProvider;
-import io.agrest.jsonvalueconverter.IJsonValueConverterFactory;
-import io.agrest.jsonvalueconverter.JsonValueConverter;
+import io.agrest.converter.jsonvalue.DefaultJsonValueConverterFactoryProvider;
+import io.agrest.converter.jsonvalue.IJsonValueConverterFactory;
+import io.agrest.converter.jsonvalue.JsonValueConverter;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.PropertyMetadataEncoder;
-import io.agrest.encoder.converter.StringConverter;
+import io.agrest.converter.valuejson.ValueJsonConverter;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.parser.IResourceParser;
@@ -407,7 +407,7 @@ public class AgBuilder {
             binder.bind(ValueEncoders.class).toProvider(ValueEncodersProvider.class);
 
             // a map of custom converters
-            binder.bindMap(StringConverter.class);
+            binder.bindMap(ValueJsonConverter.class);
             binder.bind(IStringConverterFactory.class).toProvider(StringConverterFactoryProvider.class);
 
             binder.bind(IEncoderService.class).to(EncoderService.class);

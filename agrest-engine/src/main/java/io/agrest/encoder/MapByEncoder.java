@@ -2,7 +2,7 @@ package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.AgException;
-import io.agrest.encoder.converter.StringConverter;
+import io.agrest.converter.valuejson.ValueJsonConverter;
 import io.agrest.property.PropertyReader;
 
 import java.io.IOException;
@@ -15,14 +15,14 @@ public class MapByEncoder implements CollectionEncoder {
     private final List<PropertyReader> mapByReaders;
     private final CollectionEncoder collectionEncoder;
     private final boolean byId;
-    private final StringConverter fieldNameConverter;
+    private final ValueJsonConverter fieldNameConverter;
 
     public MapByEncoder(
             String mapByPath,
             List<PropertyReader> mapByReaders,
             CollectionEncoder collectionEncoder,
             boolean byId,
-            StringConverter fieldNameConverter) {
+            ValueJsonConverter fieldNameConverter) {
 
         this.mapByPath = mapByPath;
         this.mapByReaders = mapByReaders;

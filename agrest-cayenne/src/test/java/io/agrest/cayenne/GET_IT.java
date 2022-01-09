@@ -2,7 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.jsonvalueconverter.UtcDateConverter;
+import io.agrest.converter.jsonvalue.UtcDateConverter;
 import io.agrest.cayenne.cayenne.main.*;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;

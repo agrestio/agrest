@@ -5,7 +5,7 @@ import io.agrest.property.PropertyReader;
 import io.agrest.resolver.ReaderBasedResolver;
 import org.junit.jupiter.api.Test;
 
-import static io.agrest.encoder.Encoders.toJson;
+import static io.agrest.runtime.encoder.Encoders.toJson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;

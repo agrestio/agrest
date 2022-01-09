@@ -1,14 +1,14 @@
 package io.agrest.runtime.encoder;
 
-import io.agrest.encoder.converter.GenericConverter;
-import io.agrest.encoder.converter.ISODateConverter;
-import io.agrest.encoder.converter.ISODateTimeConverter;
-import io.agrest.encoder.converter.ISOLocalDateConverter;
-import io.agrest.encoder.converter.ISOLocalDateTimeConverter;
-import io.agrest.encoder.converter.ISOLocalTimeConverter;
-import io.agrest.encoder.converter.ISOOffsetDateTimeConverter;
-import io.agrest.encoder.converter.ISOTimeConverter;
-import io.agrest.encoder.converter.StringConverter;
+import io.agrest.converter.valuejson.GenericConverter;
+import io.agrest.converter.valuejson.ISODateConverter;
+import io.agrest.converter.valuejson.ISODateTimeConverter;
+import io.agrest.converter.valuejson.ISOLocalDateConverter;
+import io.agrest.converter.valuejson.ISOLocalDateTimeConverter;
+import io.agrest.converter.valuejson.ISOLocalTimeConverter;
+import io.agrest.converter.valuejson.ISOOffsetDateTimeConverter;
+import io.agrest.converter.valuejson.ISOTimeConverter;
+import io.agrest.converter.valuejson.ValueJsonConverter;
 import org.apache.cayenne.di.DIRuntimeException;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.di.Provider;
@@ -23,15 +23,15 @@ import static io.agrest.reflect.Types.typeForName;
  */
 public class StringConverterFactoryProvider implements Provider<IStringConverterFactory> {
 
-    private Map<String, StringConverter> injectedConverters;
+    private Map<String, ValueJsonConverter> injectedConverters;
 
-    public StringConverterFactoryProvider(@Inject Map<String, StringConverter> injectedConverters) {
+    public StringConverterFactoryProvider(@Inject Map<String, ValueJsonConverter> injectedConverters) {
         this.injectedConverters = injectedConverters;
     }
 
     @Override
     public IStringConverterFactory get() throws DIRuntimeException {
-        Map<Class<?>, StringConverter> converters =
+        Map<Class<?>, ValueJsonConverter> converters =
                 appendInjectedConverters(
                         appendKnownConverters(new HashMap<>()));
 
@@ -41,22 +41,22 @@ public class StringConverterFactoryProvider implements Provider<IStringConverter
     /**
      * @since 2.11
      */
-    protected IStringConverterFactory createFactory(Map<Class<?>, StringConverter> converters,
-                                                     StringConverter defaultConverter) {
+    protected IStringConverterFactory createFactory(Map<Class<?>, ValueJsonConverter> converters,
+                                                     ValueJsonConverter defaultConverter) {
         return new StringConverterFactory(converters, defaultConverter);
     }
 
     /**
      * @since 2.11
      */
-    protected StringConverter defaultConverter() {
+    protected ValueJsonConverter defaultConverter() {
         return GenericConverter.converter();
     }
 
     /**
      * @since 2.11
      */
-    protected Map<Class<?>, StringConverter> appendKnownConverters(Map<Class<?>, StringConverter> converters) {
+    protected Map<Class<?>, ValueJsonConverter> appendKnownConverters(Map<Class<?>, ValueJsonConverter> converters) {
         converters.put(PropertyTypes.LOCAL_DATE, ISOLocalDateConverter.converter());
         converters.put(PropertyTypes.LOCAL_TIME, ISOLocalDateTimeConverter.converter());
         converters.put(PropertyTypes.LOCAL_DATETIME, ISOLocalTimeConverter.converter());
@@ -69,7 +69,7 @@ public class StringConverterFactoryProvider implements Provider<IStringConverter
         return converters;
     }
 
-    protected Map<Class<?>, StringConverter> appendInjectedConverters(Map<Class<?>, StringConverter> converters) {
+    protected Map<Class<?>, ValueJsonConverter> appendInjectedConverters(Map<Class<?>, ValueJsonConverter> converters) {
         injectedConverters.forEach((k, v) -> converters.put(typeForName(k), v));
         return converters;
     }

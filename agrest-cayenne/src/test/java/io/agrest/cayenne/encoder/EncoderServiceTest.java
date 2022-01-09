@@ -11,12 +11,13 @@ import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.Encoders;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
 import io.agrest.runtime.encoder.EncoderService;
 import io.agrest.runtime.encoder.IEncodablePropertyFactory;
 import io.agrest.runtime.encoder.IStringConverterFactory;
 import io.agrest.runtime.encoder.ValueEncodersProvider;
+import io.agrest.runtime.jackson.IJacksonService;
+import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.unit.ResourceEntityUtils;
 import org.apache.cayenne.ObjectContext;
@@ -24,6 +25,8 @@ import org.apache.cayenne.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
@@ -32,6 +35,7 @@ import static org.mockito.Mockito.mock;
 
 public class EncoderServiceTest extends CayenneNoDbTest {
 
+    private static final IJacksonService jacksonService = new JacksonService();
     private EncoderService encoderService;
 
     @BeforeEach
@@ -121,6 +125,19 @@ public class EncoderServiceTest extends CayenneNoDbTest {
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
         Encoder encoder = encoderService.dataEncoder(resourceEntity);
-        return Encoders.toJson(encoder, Collections.singletonList(object));
+        return toJson(encoder, Collections.singletonList(object));
+    }
+
+    private String toJson(Encoder encoder, Object value) {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        try {
+            jacksonService.outputJson(g -> encoder.encode(null, value, g), out);
+        } catch (IOException e) {
+            throw new RuntimeException("Encoding error: " + e.getMessage());
+        }
+
+        return new String(out.toByteArray());
     }
 }
