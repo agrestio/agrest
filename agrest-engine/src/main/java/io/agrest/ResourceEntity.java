@@ -28,7 +28,7 @@ public abstract class ResourceEntity<T> {
     private final Map<String, NestedResourceEntity<?>> children;
 
     private String mapByPath;
-    private RootResourceEntity<?> mapBy;
+    private ResourceEntity<?> mapBy;
     private final List<Sort> orderings;
     private Exp qualifier;
     private int fetchOffset;
@@ -164,14 +164,14 @@ public abstract class ResourceEntity<T> {
         return this;
     }
 
-    public RootResourceEntity<?> getMapBy() {
+    public ResourceEntity<?> getMapBy() {
         return mapBy;
     }
 
     /**
      * @since 1.1
      */
-    public ResourceEntity<T> mapBy(RootResourceEntity<?> mapBy, String mapByPath) {
+    public ResourceEntity<T> mapBy(ResourceEntity<?> mapBy, String mapByPath) {
         this.mapByPath = mapByPath;
         this.mapBy = mapBy;
         return this;
