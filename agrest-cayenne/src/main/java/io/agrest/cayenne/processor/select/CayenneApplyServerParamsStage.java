@@ -33,6 +33,10 @@ public class CayenneApplyServerParamsStage extends ApplyServerParamsStage {
     private void tagCayenneEntities(ResourceEntity<?> entity) {
         if (entityResolver.getObjEntity(entity.getName()) != null) {
             CayenneProcessor.getOrCreateCayenneEntity(entity);
+
+            if(entity.getMapBy() != null) {
+                CayenneProcessor.getOrCreateCayenneEntity(entity.getMapBy());
+            }
         }
 
         if (entity.getMapBy() != null) {
