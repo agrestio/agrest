@@ -87,7 +87,7 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
 
         // TODO: implement entity-tied resolvers for updates to avoid duplicating selecting logic
 
-        List<T> objects = fetchEntity(context, context.getEntity());
+        List<T> objects = fetchRootEntity(CayenneUpdateStartStage.cayenneContext(context), context.getEntity());
 
         if (context.isById() && objects.size() > 1) {
             throw AgException.internalServerError(

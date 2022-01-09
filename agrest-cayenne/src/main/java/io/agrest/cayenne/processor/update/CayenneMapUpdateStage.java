@@ -12,6 +12,7 @@ import io.agrest.SimpleObjectId;
 import io.agrest.base.protocol.Exp;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
+import io.agrest.cayenne.processor.CayenneResourceEntityExt;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.qualifier.IQualifierParser;
 import io.agrest.meta.AgAttribute;
@@ -20,6 +21,7 @@ import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
+import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
@@ -165,7 +167,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
 
         // TODO: implement entity-tied resolvers for updates to avoid duplicating selecting logic
 
-        List<T> objects = fetchEntity(context, context.getEntity());
+        List<T> objects = fetchRootEntity(CayenneUpdateStartStage.cayenneContext(context), context.getEntity());
         if (context.isById() && objects.size() > 1) {
             throw AgException.internalServerError(
                     "Found more than one object for ID '%s' and entity '%s'",
@@ -228,33 +230,38 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         return query;
     }
 
-    protected <T> List<T> fetchEntity(UpdateContext<T> context, ResourceEntity<T> entity) {
+    protected <T> List<T> fetchRootEntity(ObjectContext context, RootResourceEntity<T> entity) {
 
-        SelectQuery<T> select = CayenneProcessor.getCayenneEntity(entity).getSelect();
-        List<T> objects = CayenneUpdateStartStage.cayenneContext(context).select(select);
-        fetchChildren(context, entity, entity.getChildren());
+        List<T> objects = CayenneProcessor.getCayenneEntity(entity).getSelect().select(context);
+        for (NestedResourceEntity<?> c : entity.getChildren().values()) {
+            fetchNestedEntity(context, c);
+        }
 
         return objects;
     }
 
-    protected <T> void fetchChildren(UpdateContext context, ResourceEntity<T> parent, Map<String, NestedResourceEntity<?>> children) {
-        for (Map.Entry<String, NestedResourceEntity<?>> e : children.entrySet()) {
-            NestedResourceEntity childEntity = e.getValue();
-            List childObjects = fetchEntity(context, childEntity);
-            assignChildrenToParent(parent, childObjects, childEntity);
+    protected <T> void fetchNestedEntity(ObjectContext context, NestedResourceEntity<T> entity) {
+
+        CayenneResourceEntityExt<T> ext = CayenneProcessor.getCayenneEntity(entity);
+        if (ext != null && ext.getSelect() != null) {
+            List<T> objects = ext.getSelect().select(context);
+            assignChildrenToParent(entity, objects);
+
+            for (NestedResourceEntity<?> c : entity.getChildren().values()) {
+                fetchNestedEntity(context, c);
+            }
         }
     }
 
-    /**
-     * Assigns child items to the appropriate parent item
-     */
-    protected <T> void assignChildrenToParent(ResourceEntity<?> parentEntity, List<T> children, NestedResourceEntity<T> childEntity) {
+    protected <T> void assignChildrenToParent(NestedResourceEntity<T> entity, List<T> objects) {
 
-        for (Object child : children) {
+        ResourceEntity<?> parentEntity = entity.getParent();
+
+        for (Object child : objects) {
             if (child instanceof Object[]) {
                 Object[] ids = (Object[]) child;
                 if (ids.length == 2) {
-                    childEntity.addResult(new SimpleObjectId(ids[1]), (T) ids[0]);
+                    entity.addResult(new SimpleObjectId(ids[1]), (T) ids[0]);
                 } else if (ids.length > 2) {
                     // saves entity with a compound ID
                     Map<String, Object> compoundKeys = new LinkedHashMap<>();
@@ -264,7 +271,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
                             compoundKeys.put(idAttributes[i - 1].getName(), ids[i]);
                         }
                     }
-                    childEntity.addResult(new CompoundObjectId(compoundKeys), (T) ids[0]);
+                    entity.addResult(new CompoundObjectId(compoundKeys), (T) ids[0]);
                 }
             }
         }
