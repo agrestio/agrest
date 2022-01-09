@@ -7,8 +7,10 @@ import io.agrest.NestedResourceEntity;
 import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.ResourceEntity;
+import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.base.protocol.Exp;
+import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.qualifier.IQualifierParser;
@@ -41,12 +43,15 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
 
     private final IQualifierParser qualifierParser;
     private final ICayenneQueryAssembler queryAssembler;
+    protected final EntityResolver entityResolver;
 
     public CayenneMapUpdateStage(
             @Inject IQualifierParser qualifierParser,
-            @Inject ICayenneQueryAssembler queryAssembler) {
+            @Inject ICayenneQueryAssembler queryAssembler,
+            @Inject ICayennePersister persister) {
         this.qualifierParser = qualifierParser;
         this.queryAssembler = queryAssembler;
+        this.entityResolver = persister.entityResolver();
     }
 
     protected <T extends DataObject> void map(UpdateContext<T> context) {
@@ -135,7 +140,14 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         return new UpdateMap<>(withId, noId);
     }
 
-    protected <T extends DataObject> List<T> existingObjects(UpdateContext<T> context, Collection<Object> keys, ObjectMapper<T> mapper) {
+    protected <T extends DataObject> List<T> existingObjects(
+            UpdateContext<T> context,
+            Collection<Object> keys,
+            ObjectMapper<T> mapper) {
+
+        if (keys.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         // TODO: split query in batches:
         // respect Constants.SERVER_MAX_ID_QUALIFIER_SIZE_PROPERTY
@@ -144,28 +156,16 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         // not using streaming API to read data from Cayenne, we are already
         // limited in how much data can fit in the memory map.
 
-
-        List<Expression> expressions = new ArrayList<>(keys.size());
-        for (Object key : keys) {
-
-            // update keys can be null... see a note in "mutableUpdatesByKey"
-            if (key != null) {
-                Exp e = mapper.expressionForKey(key);
-                if (e != null) {
-                    expressions.add(qualifierParser.parse(e));
-                }
-            }
-        }
-
-        // no keys or all keys were for non-persistent objects
-        if (expressions.isEmpty()) {
+        Expression rootQualifier = qualifierForKeys(keys, mapper);
+        if (rootQualifier == null) {
             return Collections.emptyList();
         }
 
-        ResourceEntity resourceEntity = context.getEntity();
-        buildQuery(context, context.getEntity(), ExpressionFactory.or(expressions));
+        buildRootQuery(context.getEntity(), rootQualifier);
 
-        List<T> objects = fetchEntity(context, resourceEntity);
+        // TODO: implement entity-tied resolvers for updates to avoid duplicating selecting logic
+
+        List<T> objects = fetchEntity(context, context.getEntity());
         if (context.isById() && objects.size() > 1) {
             throw AgException.internalServerError(
                     "Found more than one object for ID '%s' and entity '%s'",
@@ -176,54 +176,56 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         return objects;
     }
 
-    protected <T> SelectQuery<T> buildQuery(UpdateContext<T> context, ResourceEntity<T> entity, Expression qualifier) {
+    protected Expression qualifierForKeys(Collection<Object> keys, ObjectMapper<?> mapper) {
+        List<Expression> expressions = new ArrayList<>(keys.size());
+        for (Object key : keys) {
+            // update keys can be null... see a note in "mutableUpdatesByKey"
+            if (key != null) {
+                Exp e = mapper.expressionForKey(key);
+                if (e != null) {
+                    expressions.add(qualifierParser.parse(e));
+                }
+            }
+        }
+
+        return expressions.isEmpty() ? null : ExpressionFactory.or(expressions);
+    }
+
+    protected <T> SelectQuery<T> buildRootQuery(RootResourceEntity<T> entity, Expression qualifier) {
 
         SelectQuery<T> query = SelectQuery.query(entity.getType());
+        query.setQualifier(qualifier);
 
-        if (qualifier != null) {
-            query.setQualifier(qualifier);
+        for (Map.Entry<String, NestedResourceEntity<?>> e : entity.getChildren().entrySet()) {
+            buildNestedQuery(e.getValue(), query.getQualifier());
         }
 
         CayenneProcessor.getCayenneEntity(entity).setSelect(query);
-        buildChildrenQuery(context, entity);
-
         return query;
     }
 
-    protected void buildChildrenQuery(UpdateContext context, ResourceEntity<?> entity) {
+    protected <T> SelectQuery<T> buildNestedQuery(
+            NestedResourceEntity<T> entity,
+            Expression parentQualifier) {
 
-        Map<String, NestedResourceEntity<?>> children = entity.getChildren();
+        ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getName());
+        ObjRelationship incomingObjRelationship = parentObjEntity.getRelationship(entity.getIncoming().getName());
 
-        if (children.isEmpty()) {
-            return;
+        // relationship may not be mapped in Cayenne...
+        if (incomingObjRelationship == null) {
+            return null;
         }
 
-        EntityResolver entityResolver = CayenneUpdateStartStage.cayenneContext(context).getEntityResolver();
+        SelectQuery<T> query = SelectQuery.query(entity.getType());
+        query.setQualifier(translateExpressionToSource(incomingObjRelationship, parentQualifier));
+        query.setColumns(queryAssembler.queryColumns(entity));
 
-        // both entities and properties may be non-persistent and unknown to Cayenne
-        ObjEntity cayenneEntity = entityResolver.getObjEntity(entity.getName());
-        if (cayenneEntity == null) {
-            return;
+        for (Map.Entry<String, NestedResourceEntity<?>> e : entity.getChildren().entrySet()) {
+            buildNestedQuery(e.getValue(), query.getQualifier());
         }
 
-        SelectQuery<?> parentSelect = CayenneProcessor.getCayenneEntity(entity).getSelect();
-
-        for (Map.Entry<String, NestedResourceEntity<?>> e : children.entrySet()) {
-            NestedResourceEntity child = e.getValue();
-
-            // both entities and properties may be non-persistent and unknown to Cayenne
-            if (entityResolver.getObjEntity(child.getType()) == null) {
-                continue;
-            }
-
-            ObjRelationship objRelationship = cayenneEntity.getRelationship(child.getIncoming().getName());
-            if (objRelationship == null) {
-                continue;
-            }
-
-            SelectQuery childQuery = buildQuery(context, child, translateExpressionToSource(objRelationship, parentSelect.getQualifier()));
-            childQuery.setColumns(queryAssembler.queryColumns(child));
-        }
+        CayenneProcessor.getCayenneEntity(entity).setSelect(query);
+        return query;
     }
 
     protected <T> List<T> fetchEntity(UpdateContext<T> context, ResourceEntity<T> entity) {
@@ -268,7 +270,6 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         }
     }
 
-    // TODO: copied verbatim from CayenneQueryAssembler... Unify this code?
     protected Expression translateExpressionToSource(ObjRelationship relationship, Expression expression) {
         return expression != null
                 ? relationship.getSourceEntity().translateToRelatedEntity(expression, relationship.getName())

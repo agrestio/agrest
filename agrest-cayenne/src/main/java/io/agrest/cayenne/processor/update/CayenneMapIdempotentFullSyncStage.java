@@ -4,9 +4,8 @@ import io.agrest.AgException;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
-import io.agrest.ResourceEntity;
 import io.agrest.cayenne.path.IPathResolver;
-import io.agrest.cayenne.processor.CayenneProcessor;
+import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.qualifier.IQualifierParser;
@@ -17,8 +16,6 @@ import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.map.EntityResolver;
-import org.apache.cayenne.query.SelectQuery;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,8 +33,10 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
             @Inject AgDataMap dataMap,
             @Inject IPathResolver pathResolver,
             @Inject IQualifierParser qualifierParser,
-            @Inject ICayenneQueryAssembler queryAssembler) {
-        super(qualifierParser, queryAssembler);
+            @Inject ICayenneQueryAssembler queryAssembler,
+            @Inject ICayennePersister persister) {
+
+        super(qualifierParser, queryAssembler, persister);
 
         this.dataMap = dataMap;
         this.pathResolver = pathResolver;
@@ -74,11 +73,19 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
     }
 
     @Override
-    protected <T extends DataObject> List<T> existingObjects(UpdateContext<T> context, Collection<Object> keys, ObjectMapper<T> mapper) {
+    protected <T extends DataObject> List<T> existingObjects(
+            UpdateContext<T> context,
+            Collection<Object> keys,
+            ObjectMapper<T> mapper) {
 
-        buildQuery(context, context.getEntity(), null);
+        EntityParent<?> parent = context.getParent();
+        Expression rootQualifier = parent != null ?
+                CayenneUtil.parentQualifier(pathResolver, dataMap.getEntity(parent.getType()), parent, entityResolver)
+                : null;
 
-        // TODO: use SelectBuilder to get Cayenne representation of the resource, instead of duplicating this here...
+        buildRootQuery(context.getEntity(), rootQualifier);
+
+        // TODO: implement entity-tied resolvers for updates to avoid duplicating selecting logic
 
         List<T> objects = fetchEntity(context, context.getEntity());
 
@@ -89,30 +96,5 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
                     context.getEntity().getName());
         }
         return objects;
-    }
-
-    @Override
-    protected <T> SelectQuery<T> buildQuery(UpdateContext<T> context, ResourceEntity<T> entity, Expression qualifier) {
-
-        SelectQuery<T> query = SelectQuery.query(entity.getType());
-
-        if (qualifier != null) {
-            query.andQualifier(qualifier);
-        }
-
-        EntityParent<?> parent = context.getParent();
-        if (parent != null) {
-            EntityResolver resolver = CayenneUpdateStartStage.cayenneContext(context).getEntityResolver();
-            query.andQualifier(CayenneUtil.parentQualifier(
-                    pathResolver,
-                    dataMap.getEntity(parent.getType()),
-                    parent,
-                    resolver));
-        }
-
-        CayenneProcessor.getCayenneEntity(entity).setSelect(query);
-        buildChildrenQuery(context, entity);
-
-        return query;
     }
 }
