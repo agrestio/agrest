@@ -3,7 +3,7 @@ package io.agrest.runtime.processor.update;
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
 import io.agrest.EntityUpdate;
-import io.agrest.base.protocol.AgProtocol;
+import io.agrest.protocol.AgProtocol;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;

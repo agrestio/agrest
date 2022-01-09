@@ -1,7 +1,7 @@
 package io.agrest.pojo.runtime;
 
 import io.agrest.PathConstants;
-import io.agrest.base.protocol.Sort;
+import io.agrest.protocol.Sort;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;

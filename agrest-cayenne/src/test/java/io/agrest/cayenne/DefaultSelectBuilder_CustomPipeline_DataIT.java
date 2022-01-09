@@ -3,7 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.DataResponse;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
-import io.agrest.base.protocol.Exp;
+import io.agrest.protocol.Exp;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;

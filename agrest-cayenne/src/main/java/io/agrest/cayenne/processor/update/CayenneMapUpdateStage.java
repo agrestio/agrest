@@ -9,7 +9,7 @@ import io.agrest.ObjectMapperFactory;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
-import io.agrest.base.protocol.Exp;
+import io.agrest.protocol.Exp;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneNestedResourceEntityExt;
 import io.agrest.cayenne.processor.CayenneProcessor;

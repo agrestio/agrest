@@ -2,7 +2,7 @@ package io.agrest.runtime.processor.select;
 
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
-import io.agrest.base.protocol.AgProtocol;
+import io.agrest.protocol.AgProtocol;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.protocol.ParameterExtractor;

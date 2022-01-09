@@ -1,7 +1,7 @@
 package io.agrest.runtime.entity;
 
 import io.agrest.ResourceEntity;
-import io.agrest.base.protocol.Exp;
+import io.agrest.protocol.Exp;
 
 /**
  * @since 2.13

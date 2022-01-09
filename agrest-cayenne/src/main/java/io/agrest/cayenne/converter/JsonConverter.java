@@ -1,7 +1,7 @@
 package io.agrest.cayenne.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.base.jsonvalueconverter.AbstractConverter;
+import io.agrest.jsonvalueconverter.AbstractConverter;
 import org.apache.cayenne.value.Json;
 
 /**

@@ -1,6 +1,6 @@
 package io.agrest.cayenne;
 
-import io.agrest.base.jsonvalueconverter.JsonValueConverter;
+import io.agrest.jsonvalueconverter.JsonValueConverter;
 import io.agrest.cayenne.compiler.CayenneAgEntityCompiler;
 import io.agrest.cayenne.converter.JsonConverter;
 import io.agrest.cayenne.encoder.JsonEncoder;

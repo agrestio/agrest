@@ -1,6 +1,6 @@
 package io.agrest;
 
-import io.agrest.base.protocol.Exp;
+import io.agrest.protocol.Exp;
 import io.agrest.meta.AgEntity;
 import io.agrest.pojo.model.P1;
 import org.junit.jupiter.api.Test;

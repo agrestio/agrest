@@ -1,10 +1,10 @@
 package io.agrest.runtime.request;
 
 import io.agrest.AgRequest;
-import io.agrest.base.protocol.Exp;
-import io.agrest.base.protocol.Exclude;
-import io.agrest.base.protocol.Include;
-import io.agrest.base.protocol.Sort;
+import io.agrest.protocol.Exp;
+import io.agrest.protocol.Exclude;
+import io.agrest.protocol.Include;
+import io.agrest.protocol.Sort;
 
 import java.util.ArrayList;
 import java.util.List;

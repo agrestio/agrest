@@ -1,6 +1,6 @@
 package io.agrest;
 
-import io.agrest.base.protocol.Exp;
+import io.agrest.protocol.Exp;
 
 /**
  * A helper to locate objects within a context of a single update request.

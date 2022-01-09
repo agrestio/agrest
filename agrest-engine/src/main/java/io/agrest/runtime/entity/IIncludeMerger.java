@@ -2,7 +2,7 @@ package io.agrest.runtime.entity;
 
 import io.agrest.ResourceEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.base.protocol.Include;
+import io.agrest.protocol.Include;
 
 import java.util.List;
 import java.util.Map;

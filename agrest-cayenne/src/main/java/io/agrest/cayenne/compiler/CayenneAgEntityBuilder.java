@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.agrest.base.reflect.Types.typeForName;
+import static io.agrest.reflect.Types.typeForName;
 
 /**
  * @since 3.4

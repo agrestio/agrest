@@ -1,6 +1,6 @@
 package io.agrest.runtime.protocol;
 
-import io.agrest.base.protocol.Include;
+import io.agrest.protocol.Include;
 
 import java.util.List;
 

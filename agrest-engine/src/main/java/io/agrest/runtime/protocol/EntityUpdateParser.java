@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.EntityUpdate;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.jackson.IJacksonService;
-import io.agrest.base.jsonvalueconverter.IJsonValueConverterFactory;
+import io.agrest.jsonvalueconverter.IJsonValueConverterFactory;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 import org.apache.cayenne.di.Inject;
 

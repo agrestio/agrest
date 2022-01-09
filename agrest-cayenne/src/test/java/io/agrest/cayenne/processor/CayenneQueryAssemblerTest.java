@@ -1,9 +1,9 @@
 package io.agrest.cayenne.processor;
 
 import io.agrest.RootResourceEntity;
-import io.agrest.base.protocol.Dir;
-import io.agrest.base.protocol.Exp;
-import io.agrest.base.protocol.Sort;
+import io.agrest.protocol.Dir;
+import io.agrest.protocol.Exp;
+import io.agrest.protocol.Sort;
 import io.agrest.cayenne.cayenne.main.E1;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.runtime.processor.select.SelectContext;

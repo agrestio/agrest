@@ -3,7 +3,7 @@ package io.agrest.runtime.entity;
 import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
-import io.agrest.base.protocol.Exclude;
+import io.agrest.protocol.Exclude;
 import io.agrest.meta.AgEntity;
 
 import java.util.List;

@@ -1,8 +1,8 @@
 package io.agrest.runtime.protocol;
 
-import io.agrest.base.protocol.exp.NamedParamsExp;
-import io.agrest.base.protocol.exp.PositionalParamsExp;
-import io.agrest.base.protocol.exp.SimpleExp;
+import io.agrest.protocol.exp.NamedParamsExp;
+import io.agrest.protocol.exp.PositionalParamsExp;
+import io.agrest.protocol.exp.SimpleExp;
 import io.agrest.runtime.jackson.JacksonService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

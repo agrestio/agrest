@@ -1,7 +1,7 @@
 package io.agrest.runtime.protocol;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.base.protocol.Sort;
+import io.agrest.protocol.Sort;
 
 import java.util.List;
 

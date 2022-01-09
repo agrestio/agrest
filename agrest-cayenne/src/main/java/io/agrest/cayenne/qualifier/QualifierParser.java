@@ -1,13 +1,13 @@
 package io.agrest.cayenne.qualifier;
 
 import io.agrest.AgException;
-import io.agrest.base.protocol.Exp;
-import io.agrest.base.protocol.exp.CompositeExp;
-import io.agrest.base.protocol.exp.ExpVisitor;
-import io.agrest.base.protocol.exp.KeyValueExp;
-import io.agrest.base.protocol.exp.NamedParamsExp;
-import io.agrest.base.protocol.exp.PositionalParamsExp;
-import io.agrest.base.protocol.exp.SimpleExp;
+import io.agrest.protocol.Exp;
+import io.agrest.protocol.exp.CompositeExp;
+import io.agrest.protocol.exp.ExpVisitor;
+import io.agrest.protocol.exp.KeyValueExp;
+import io.agrest.protocol.exp.NamedParamsExp;
+import io.agrest.protocol.exp.PositionalParamsExp;
+import io.agrest.protocol.exp.SimpleExp;
 import io.agrest.cayenne.path.PathOps;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;

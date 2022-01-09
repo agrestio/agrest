@@ -1,7 +1,7 @@
 package io.agrest;
 
-import io.agrest.base.protocol.Exp;
-import io.agrest.base.protocol.Sort;
+import io.agrest.protocol.Exp;
+import io.agrest.protocol.Sort;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 

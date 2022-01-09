@@ -3,7 +3,7 @@ package io.agrest.runtime.entity;
 import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
-import io.agrest.base.protocol.Include;
+import io.agrest.protocol.Include;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntityOverlay;

@@ -6,7 +6,9 @@ import io.agrest.AgModuleProvider;
 import io.agrest.DataResponse;
 import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
-import io.agrest.base.BaseModule;
+import io.agrest.jsonvalueconverter.DefaultJsonValueConverterFactoryProvider;
+import io.agrest.jsonvalueconverter.IJsonValueConverterFactory;
+import io.agrest.jsonvalueconverter.JsonValueConverter;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.encoder.Encoder;
@@ -286,8 +288,7 @@ public class AgBuilder {
 
         Collection<Module> moduleCollector = new ArrayList<>();
 
-        // base and core module goes first, the rest of them override the core and each other
-        moduleCollector.add(createBaseModule());
+        // core module goes first, the rest of modules override the core and each other
         moduleCollector.add(createCoreModule());
 
         // TODO: consistent sorting policy past core module...
@@ -334,10 +335,6 @@ public class AgBuilder {
         moduleProviders.forEach(p -> collector.add(p.module()));
     }
 
-    private Module createBaseModule() {
-        return new BaseModule();
-    }
-
     private Module createCoreModule() {
 
         if (agService == null && agServiceType == null) {
@@ -345,6 +342,9 @@ public class AgBuilder {
         }
 
         return binder -> {
+
+            binder.bindMap(JsonValueConverter.class);
+            binder.bind(IJsonValueConverterFactory.class).toProvider(DefaultJsonValueConverterFactoryProvider.class);
 
             binder.bind(AnnotationsAgEntityCompiler.class).to(AnnotationsAgEntityCompiler.class);
             binder.bindList(AgEntityCompiler.class)

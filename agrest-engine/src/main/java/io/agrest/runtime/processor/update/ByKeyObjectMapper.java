@@ -2,7 +2,7 @@ package io.agrest.runtime.processor.update;
 
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
-import io.agrest.base.protocol.Exp;
+import io.agrest.protocol.Exp;
 import io.agrest.meta.AgAttribute;
 
 class ByKeyObjectMapper<T> implements ObjectMapper<T> {

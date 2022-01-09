@@ -1,7 +1,7 @@
 package io.agrest.provider;
 
 import io.agrest.EntityUpdate;
-import io.agrest.base.reflect.Types;
+import io.agrest.reflect.Types;
 import io.agrest.meta.AgDataMap;
 import io.agrest.runtime.protocol.IEntityUpdateParser;
 

@@ -1,7 +1,7 @@
 package io.agrest.runtime.entity;
 
 import io.agrest.ResourceEntity;
-import io.agrest.base.protocol.Sort;
+import io.agrest.protocol.Sort;
 
 import java.util.List;
 

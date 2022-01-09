@@ -1,6 +1,6 @@
 package io.agrest;
 
-import io.agrest.base.jsonvalueconverter.Normalizer;
+import io.agrest.jsonvalueconverter.Normalizer;
 import io.agrest.meta.AgIdPart;
 
 import java.util.*;

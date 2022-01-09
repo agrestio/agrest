@@ -3,7 +3,7 @@ package io.agrest.runtime.protocol;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
 import io.agrest.PathConstants;
-import io.agrest.base.protocol.Exclude;
+import io.agrest.protocol.Exclude;
 import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.jackson.IJacksonService;
 import org.apache.cayenne.di.Inject;

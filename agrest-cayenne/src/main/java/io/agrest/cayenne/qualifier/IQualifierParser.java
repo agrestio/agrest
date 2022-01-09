@@ -1,6 +1,6 @@
 package io.agrest.cayenne.qualifier;
 
-import io.agrest.base.protocol.Exp;
+import io.agrest.protocol.Exp;
 import org.apache.cayenne.exp.Expression;
 
 /**

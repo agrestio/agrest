@@ -1,7 +1,7 @@
 package io.agrest.openapi.parmconverter;
 
-import io.agrest.base.protocol.AgProtocol;
-import io.agrest.base.protocol.Dir;
+import io.agrest.protocol.AgProtocol;
+import io.agrest.protocol.Dir;
 import io.agrest.openapi.TypeWrapper;
 import io.swagger.v3.jaxrs2.ResolvedParameter;
 import io.swagger.v3.oas.models.media.Schema;
