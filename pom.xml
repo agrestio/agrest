@@ -13,7 +13,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>agrest-base</module>
         <module>agrest-annotations</module>
         <module>agrest-engine</module>
         <module>agrest-cayenne</module>

@@ -1,4 +1,4 @@
-package io.agrest.base.jsonvalueconverter;
+package io.agrest.jsonvalueconverter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;

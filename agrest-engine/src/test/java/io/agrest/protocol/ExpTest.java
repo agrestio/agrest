@@ -1,4 +1,4 @@
-package io.agrest.base.protocol;
+package io.agrest.protocol;
 
 import org.junit.jupiter.api.Test;
 

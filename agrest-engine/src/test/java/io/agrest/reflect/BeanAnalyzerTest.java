@@ -1,4 +1,4 @@
-package io.agrest.base.reflect;
+package io.agrest.reflect;
 
 import org.junit.jupiter.api.Test;
 

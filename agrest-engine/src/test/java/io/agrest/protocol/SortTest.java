@@ -1,6 +1,9 @@
-package io.agrest.base.protocol;
+package io.agrest.protocol;
 
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class SortTest {
 

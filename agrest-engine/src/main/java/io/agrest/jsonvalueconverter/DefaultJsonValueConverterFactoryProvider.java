@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.agrest.base.reflect.Types.typeForName;
+import static io.agrest.reflect.Types.typeForName;
 
 /**
  * @since 2.10

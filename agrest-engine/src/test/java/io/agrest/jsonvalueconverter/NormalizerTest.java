@@ -1,4 +1,4 @@
-package io.agrest.base.jsonvalueconverter;
+package io.agrest.jsonvalueconverter;
 
 import org.junit.jupiter.api.Test;
 

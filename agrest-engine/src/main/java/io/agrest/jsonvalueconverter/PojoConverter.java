@@ -1,7 +1,7 @@
 package io.agrest.jsonvalueconverter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.base.reflect.PropertySetter;
+import io.agrest.reflect.PropertySetter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

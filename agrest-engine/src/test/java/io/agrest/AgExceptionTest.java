@@ -1,6 +1,5 @@
-package io.agrest.base;
+package io.agrest;
 
-import io.agrest.AgException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
