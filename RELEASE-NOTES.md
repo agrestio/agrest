@@ -10,6 +10,7 @@
 * #524 Align APIs for passing ID to requests: "byId" vs "id"
 * #525 UnrelateBuilder
 * #526 Replace deprecated Cayenne SelectQuery with ObjectSelect/ColumnSelect
+* #527 Remove "agrest-client"
 
 ## Release 4.9
 

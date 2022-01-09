@@ -84,11 +84,6 @@
                 <artifactId>agrest-openapi</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>io.agrest</groupId>
-                <artifactId>agrest-client</artifactId>
-                <version>${project.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
