@@ -46,3 +46,14 @@ from Java.
 
 TODO: we might add a utility for DataResponse deserialization in the Agrest core. Nothing like that is 
 available yet. 
+
+### Custom Exception mapping is no longer tied to JAX-RS [#530](https://github.com/agrestio/agrest/issues/530)
+
+Now if you need a mapper for a custom Exception to be rendered in a response in a certain way, instead of 
+using JAX-RS API (`binder.bindMap(ExceptionMapper.class)`), you would bind a special AgExceptionMapper 
+(`binder.bindMap(AgExceptionMapper.class)`) that converts a custom exception to AgException instead of Response. 
+
+In addition to changing the API above, if your code throws `CayenneRuntimeException`, `ValidationException` or any
+custom exception other than `AgException` explicitly outside of Agrest processing chain, you will need to replace 
+those exceptions with `AgException` to ensure it is rendered cleanly in the response. Throwing within custom "stages"
+works the same way as before and requires no changes.
