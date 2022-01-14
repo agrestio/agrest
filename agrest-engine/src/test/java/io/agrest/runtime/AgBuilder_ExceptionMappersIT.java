@@ -1,9 +1,12 @@
 package io.agrest.runtime;
 
+import io.agrest.Ag;
 import io.agrest.AgException;
 import io.agrest.DataResponse;
+import io.agrest.SelectStage;
 import io.agrest.pojo.model.P1;
 import io.agrest.pojo.model.P2;
+import io.agrest.spi.AgExceptionMapper;
 import io.agrest.unit.AgPojoTester;
 import io.agrest.unit.PojoTest;
 import io.bootique.junit5.BQTestTool;
@@ -13,8 +16,10 @@ import org.junit.jupiter.api.Test;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.*;
-import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
 
 public class AgBuilder_ExceptionMappersIT extends PojoTest {
 
@@ -25,7 +30,7 @@ public class AgBuilder_ExceptionMappersIT extends PojoTest {
 
     private static Module exceptionsModule() {
         return cb -> cb
-                .bindMap(ExceptionMapper.class)
+                .bindMap(AgExceptionMapper.class)
                 .put(AgException.class.getName(), TestAgExceptionMapper.class)
                 .put(TestException.class.getName(), TestExceptionMapper.class);
     }
@@ -36,12 +41,12 @@ public class AgBuilder_ExceptionMappersIT extends PojoTest {
         // override standard mapper
         tester.target("/agexception").get()
                 .wasServerError()
-                .bodyEquals("_ag__ag_exception_");
+                .bodyEquals("{\"success\":false,\"message\":\"_ag__ag_exception_\"}");
 
         // install custom mapper
         tester.target("/testexception").get()
                 .wasServerError()
-                .bodyEquals("_test__test_exception_");
+                .bodyEquals("{\"success\":false,\"message\":\"_test__test_exception_\"}");
     }
 
     @Path("")
@@ -54,33 +59,37 @@ public class AgBuilder_ExceptionMappersIT extends PojoTest {
         @GET
         @Path("agexception")
         public DataResponse<P1> agException(@Context UriInfo uriInfo) {
-            throw AgException.forbidden("_ag_exception_");
+            return Ag.select(P1.class, config)
+                    .stage(SelectStage.APPLY_SERVER_PARAMS, c -> {
+                        throw AgException.forbidden("_ag_exception_");
+                    })
+                    .get();
         }
 
         @GET
         @Path("testexception")
         public DataResponse<P2> testException(@Context UriInfo uriInfo) {
-            throw new TestException("_test_exception_");
+            return Ag.select(P2.class, config)
+                    .stage(SelectStage.APPLY_SERVER_PARAMS, c -> {
+                        throw new TestException("_test_exception_");
+                    })
+                    .get();
         }
     }
 
-    public static class TestAgExceptionMapper implements ExceptionMapper<AgException> {
+    public static class TestAgExceptionMapper implements AgExceptionMapper<AgException> {
 
         @Override
-        public Response toResponse(AgException exception) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("_ag_" + exception.getMessage())
-                    .type(MediaType.TEXT_PLAIN_TYPE).build();
+        public AgException toAgException(AgException e) {
+            return AgException.internalServerError(e, "_ag_%s", e.getMessage());
         }
     }
 
-    public static class TestExceptionMapper implements ExceptionMapper<TestException> {
+    public static class TestExceptionMapper implements AgExceptionMapper<TestException> {
 
         @Override
-        public Response toResponse(TestException exception) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("_test_" + exception.getMessage())
-                    .type(MediaType.TEXT_PLAIN_TYPE).build();
+        public AgException toAgException(TestException e) {
+            return AgException.internalServerError(e, "_test_%s", e.getMessage());
         }
     }
 

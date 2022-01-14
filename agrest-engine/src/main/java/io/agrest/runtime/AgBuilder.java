@@ -1,5 +1,6 @@
 package io.agrest.runtime;
 
+import io.agrest.AgException;
 import io.agrest.AgFeatureProvider;
 import io.agrest.AgModuleProvider;
 import io.agrest.DataResponse;
@@ -82,6 +83,7 @@ import io.agrest.runtime.request.DefaultRequestBuilderFactory;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 import io.agrest.runtime.semantics.RelationshipMapper;
+import io.agrest.spi.AgExceptionDefaultMapper;
 import io.agrest.spi.AgExceptionMapper;
 import org.apache.cayenne.di.DIBootstrap;
 import org.apache.cayenne.di.Injector;
@@ -308,9 +310,9 @@ public class AgBuilder {
     private void loadExceptionMapperFeature(Collection<Feature> collector, Injector i) {
 
         collector.add(c -> {
-                    c.register(new JaxrsAgExceptionMapper());
-                    return true;
-                });
+            c.register(new JaxrsAgExceptionMapper());
+            return true;
+        });
     }
 
     private void loadBuilderFeatures(Collection<Feature> collector, Injector i) {
@@ -359,7 +361,9 @@ public class AgBuilder {
                 binder.bind(IAgService.class).toInstance(agService);
             }
 
-            MapBuilder<AgExceptionMapper> mapperBuilder = binder.bindMap(AgExceptionMapper.class);
+            MapBuilder<AgExceptionMapper> mapperBuilder = binder
+                    .bindMap(AgExceptionMapper.class)
+                    .put(AgException.class.getName(), AgExceptionDefaultMapper.class);
             exceptionMappers.forEach(mapperBuilder::put);
 
             binder.bind(ExceptionMappers.class).to(ExceptionMappers.class);

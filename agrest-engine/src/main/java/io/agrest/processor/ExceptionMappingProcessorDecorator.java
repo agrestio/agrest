@@ -20,8 +20,6 @@ public class ExceptionMappingProcessorDecorator<C extends ProcessingContext<?>> 
     public ProcessorOutcome execute(C context) {
         try {
             return delegate.execute(context);
-        } catch (AgException e) {
-            throw e;
         } catch (Throwable th) {
             throw exceptionMappers.toAgException(th);
         }
