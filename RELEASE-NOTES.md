@@ -12,6 +12,7 @@
 * #526 Replace deprecated Cayenne SelectQuery with ObjectSelect/ColumnSelect
 * #527 Remove "agrest-client"
 * #529 Remove "agrest-openapi-designfirst"
+* #530 JAX-RS free exception mapper
 
 ## Release 4.9
 
