@@ -1,43 +1,34 @@
 package io.agrest.cayenne.provider;
 
-import io.agrest.SimpleResponse;
+import io.agrest.AgException;
+import io.agrest.HttpStatus;
+import io.agrest.spi.AgExceptionMapper;
 import org.apache.cayenne.validation.ValidationException;
 import org.apache.cayenne.validation.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
-
 /**
- * @since 1.1
+ * @since 5.0
  */
-@Provider
-public class ValidationExceptionMapper implements ExceptionMapper<ValidationException> {
+public class ValidationExceptionMapper implements AgExceptionMapper<ValidationException> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidationExceptionMapper.class);
 
     private static final String ERROR_MESSAGE_EN = "Object validation failed. There were %s failure(s).";
 
     @Override
-    public Response toResponse(ValidationException exception) {
+    public AgException toAgException(ValidationException e) {
 
-        ValidationResult validation = exception.getValidationResult();
-        Status status = Status.BAD_REQUEST;
+        ValidationResult validation = e.getValidationResult();
+        int status = HttpStatus.BAD_REQUEST;
 
-        // TODO: perhaps we can convert this in a true DataResponse with a list
-        //   of failed properties that can be analyzed on the client?
-        // for now log details, return a generic validation message to avoid leaking too much server internals
-        LOGGER.info("{} {} ({})", status.getStatusCode(), status.getReasonPhrase(), validation);
+        // TODO: perhaps we can convert this to a response with a list of failed properties that can be analyzed
+        //  on the client? For now log details, return a generic validation message to avoid leaking too much
+        //  server internals
+        LOGGER.info("{} ({})", status, validation);
 
-        // TODO: localize error message
-        String message = String.format(ERROR_MESSAGE_EN, validation.getFailures().size());
-
-        SimpleResponse body = new SimpleResponse(false, message);
-        return Response.status(status).entity(body).type(MediaType.APPLICATION_JSON_TYPE).build();
+        return AgException.of(status, e, ERROR_MESSAGE_EN, validation.getFailures().size());
     }
 
 }

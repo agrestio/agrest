@@ -1,29 +1,31 @@
 package io.agrest.cayenne.provider;
 
+import io.agrest.Ag;
 import io.agrest.DataResponse;
+import io.agrest.SelectStage;
+import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
-import io.agrest.cayenne.cayenne.main.E2;
 import io.bootique.junit5.BQTestTool;
-import org.apache.cayenne.CayenneException;
 import org.apache.cayenne.CayenneRuntimeException;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
 
 public class CayenneRuntimeExceptionMapperIT extends DbTest {
 
     @BQTestTool
-    static final AgCayenneTester tester = tester(Resource.class)
-
-            .build();
+    static final AgCayenneTester tester = tester(Resource.class).build();
 
     @Test
     public void testException() {
-        String cayenneVersion = CayenneException.getExceptionLabel();
+        String cayenneVersion = CayenneRuntimeException.getExceptionLabel();
         String expected = String.format(
                 "{\"success\":false,\"message\":\"CayenneRuntimeException %s_something_w_cayenne_\"}",
                 cayenneVersion);
@@ -43,7 +45,12 @@ public class CayenneRuntimeExceptionMapperIT extends DbTest {
         @GET
         @Path("g1")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-            throw new CayenneRuntimeException("_something_w_cayenne_");
+            // must be thrown within Ag chain
+            return Ag.select(E2.class, config)
+                    .stage(SelectStage.APPLY_SERVER_PARAMS, c -> {
+                        throw new CayenneRuntimeException("_something_w_cayenne_");
+                    })
+                    .get();
         }
     }
 }

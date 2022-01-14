@@ -1,6 +1,8 @@
 package io.agrest.cayenne.provider;
 
+import io.agrest.Ag;
 import io.agrest.DataResponse;
+import io.agrest.SelectStage;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
@@ -42,9 +44,15 @@ public class ValidationExceptionMapperIT extends DbTest {
         @GET
         @Path("g1")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-            ValidationResult result = new ValidationResult();
-            result.addFailure(new SimpleValidationFailure(new Object(), "_error_"));
-            throw new ValidationException("_cayenne_validation_", result);
+
+            // must be thrown within Ag chain
+            return Ag.select(E2.class, config)
+                    .stage(SelectStage.APPLY_SERVER_PARAMS, c -> {
+                        ValidationResult result = new ValidationResult();
+                        result.addFailure(new SimpleValidationFailure(new Object(), "_error_"));
+                        throw new ValidationException("_cayenne_validation_", result);
+                    })
+                    .get();
         }
     }
 }

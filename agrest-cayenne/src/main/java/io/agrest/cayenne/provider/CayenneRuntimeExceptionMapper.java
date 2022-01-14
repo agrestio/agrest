@@ -1,48 +1,42 @@
 package io.agrest.cayenne.provider;
 
+import io.agrest.AgException;
 import io.agrest.HttpStatus;
-import io.agrest.SimpleResponse;
+import io.agrest.spi.AgExceptionMapper;
 import org.apache.cayenne.CayenneRuntimeException;
 import org.apache.cayenne.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
-
 /**
- * A handler for stray CayenneRuntimeExceptions that would log the exception and
- * package the response in familiar JSON format.
+ * A handler for stray CayenneRuntimeExceptions that would log the exception and package the response in familiar JSON
+ * format.
+ *
+ * @since 5.0
  */
-@Provider
-public class CayenneRuntimeExceptionMapper implements ExceptionMapper<CayenneRuntimeException> {
+public class CayenneRuntimeExceptionMapper implements AgExceptionMapper<CayenneRuntimeException> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CayenneRuntimeExceptionMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CayenneRuntimeExceptionMapper.class);
 
-	@Override
-	public Response toResponse(CayenneRuntimeException ex) {
+    @Override
+    public AgException toAgException(CayenneRuntimeException e) {
 
-		LOGGER.warn("Cayenne exception", ex);
+        LOGGER.warn("Cayenne exception", e);
 
-		Throwable cause = Util.unwindException(ex);
+        Throwable cause = Util.unwindException(e);
 
-		String message = cause.getMessage();
+        String message = cause.getMessage();
 
-		if (message == null) {
-			message = "";
-		}
+        if (message == null) {
+            message = "";
+        }
 
-		// Cayenne result iterators would sometimes stick the entire cause stack
-		// trace in the message...
-		if (message.length() > 300) {
-			message = message.substring(0, 300) + "...";
-		}
+        // Cayenne result iterators would sometimes stick the entire cause stack
+        // trace in the message...
+        if (message.length() > 300) {
+            message = message.substring(0, 300) + "...";
+        }
 
-		message = "CayenneRuntimeException " + message;
-
-		SimpleResponse body = new SimpleResponse(false, message);
-		return Response.status(HttpStatus.INTERNAL_SERVER_ERROR).entity(body).type(MediaType.APPLICATION_JSON_TYPE).build();
-	}
+        return AgException.of(HttpStatus.INTERNAL_SERVER_ERROR, e, "CayenneRuntimeException: %s", message);
+    }
 }

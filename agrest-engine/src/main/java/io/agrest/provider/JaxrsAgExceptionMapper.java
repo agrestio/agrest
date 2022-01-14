@@ -11,11 +11,10 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-
 @Provider
-public class AgExceptionMapper implements ExceptionMapper<AgException> {
+public class JaxrsAgExceptionMapper implements ExceptionMapper<AgException> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AgExceptionMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JaxrsAgExceptionMapper.class);
 
     @Override
     public Response toResponse(AgException exception) {

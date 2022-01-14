@@ -15,7 +15,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-public class AgExceptionMapperIT extends PojoTest {
+public class JaxrsAgExceptionMapperIT extends PojoTest {
 
     @BQTestTool
     static final AgPojoTester tester = tester(Resource.class).build();

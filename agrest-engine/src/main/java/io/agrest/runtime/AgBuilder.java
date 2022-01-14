@@ -1,25 +1,24 @@
 package io.agrest.runtime;
 
-import io.agrest.AgException;
 import io.agrest.AgFeatureProvider;
 import io.agrest.AgModuleProvider;
 import io.agrest.DataResponse;
 import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
+import io.agrest.compiler.AgEntityCompiler;
+import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.converter.jsonvalue.DefaultJsonValueConverterFactoryProvider;
 import io.agrest.converter.jsonvalue.IJsonValueConverterFactory;
 import io.agrest.converter.jsonvalue.JsonValueConverter;
-import io.agrest.compiler.AgEntityCompiler;
-import io.agrest.compiler.AnnotationsAgEntityCompiler;
+import io.agrest.converter.valuejson.ValueJsonConverter;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.PropertyMetadataEncoder;
-import io.agrest.converter.valuejson.ValueJsonConverter;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
-import io.agrest.provider.AgExceptionMapper;
 import io.agrest.provider.DataResponseWriter;
+import io.agrest.provider.JaxrsAgExceptionMapper;
 import io.agrest.provider.MetadataResponseWriter;
 import io.agrest.provider.SimpleResponseWriter;
 import io.agrest.runtime.constraints.ConstraintsHandler;
@@ -83,15 +82,14 @@ import io.agrest.runtime.request.DefaultRequestBuilderFactory;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 import io.agrest.runtime.semantics.RelationshipMapper;
+import io.agrest.spi.AgExceptionMapper;
 import org.apache.cayenne.di.DIBootstrap;
 import org.apache.cayenne.di.Injector;
-import org.apache.cayenne.di.Key;
 import org.apache.cayenne.di.MapBuilder;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.di.spi.ModuleLoader;
 
 import javax.ws.rs.core.Feature;
-import javax.ws.rs.ext.ExceptionMapper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -112,7 +110,7 @@ public class AgBuilder {
     private final List<AgFeatureProvider> featureProviders;
     private final List<Feature> features;
     private final Map<String, AgEntityOverlay> entityOverlays;
-    private final Map<String, Class<? extends ExceptionMapper>> exceptionMappers;
+    private final Map<String, Class<? extends AgExceptionMapper>> exceptionMappers;
 
     @Deprecated
     private final Map<String, PropertyMetadataEncoder> metadataEncoders;
@@ -309,12 +307,10 @@ public class AgBuilder {
 
     private void loadExceptionMapperFeature(Collection<Feature> collector, Injector i) {
 
-        i.getInstance(Key.getMapOf(String.class, ExceptionMapper.class))
-                .values()
-                .forEach(em -> collector.add(c -> {
-                    c.register(em);
+        collector.add(c -> {
+                    c.register(new JaxrsAgExceptionMapper());
                     return true;
-                }));
+                });
     }
 
     private void loadBuilderFeatures(Collection<Feature> collector, Injector i) {
@@ -347,8 +343,7 @@ public class AgBuilder {
             binder.bind(IJsonValueConverterFactory.class).toProvider(DefaultJsonValueConverterFactoryProvider.class);
 
             binder.bind(AnnotationsAgEntityCompiler.class).to(AnnotationsAgEntityCompiler.class);
-            binder.bindList(AgEntityCompiler.class)
-                    .add(AnnotationsAgEntityCompiler.class);
+            binder.bindList(AgEntityCompiler.class).add(AnnotationsAgEntityCompiler.class);
 
             binder.bindMap(AgEntityOverlay.class).putAll(entityOverlays);
             binder.bindMap(Class.class, AgRuntime.BODY_WRITERS_MAP)
@@ -364,11 +359,10 @@ public class AgBuilder {
                 binder.bind(IAgService.class).toInstance(agService);
             }
 
-            MapBuilder<ExceptionMapper> mapperBuilder = binder.bindMap(ExceptionMapper.class)
-                    .put(AgException.class.getName(), AgExceptionMapper.class);
-
-            // override with custom mappers
+            MapBuilder<AgExceptionMapper> mapperBuilder = binder.bindMap(AgExceptionMapper.class);
             exceptionMappers.forEach(mapperBuilder::put);
+
+            binder.bind(ExceptionHandler.class).to(ExceptionHandler.class);
 
             // select stages
             binder.bind(SelectProcessorFactory.class).toProvider(SelectProcessorFactoryProvider.class);

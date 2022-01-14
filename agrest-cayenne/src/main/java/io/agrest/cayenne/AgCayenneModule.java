@@ -1,6 +1,5 @@
 package io.agrest.cayenne;
 
-import io.agrest.converter.jsonvalue.JsonValueConverter;
 import io.agrest.cayenne.compiler.CayenneAgEntityCompiler;
 import io.agrest.cayenne.converter.JsonConverter;
 import io.agrest.cayenne.encoder.JsonEncoder;
@@ -36,18 +35,19 @@ import io.agrest.cayenne.qualifier.QualifierParser;
 import io.agrest.cayenne.qualifier.QualifierPostProcessor;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
+import io.agrest.converter.jsonvalue.JsonValueConverter;
 import io.agrest.encoder.Encoder;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.select.ApplyServerParamsStage;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
 import io.agrest.runtime.processor.update.UpdateProcessorFactoryFactory;
+import io.agrest.spi.AgExceptionMapper;
 import org.apache.cayenne.CayenneRuntimeException;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.validation.ValidationException;
 import org.apache.cayenne.value.Json;
 
-import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Objects;
 
 /**
@@ -98,7 +98,7 @@ public class AgCayenneModule implements Module {
         binder.bind(CayenneCreatedResponseStage.class).to(CayenneCreatedResponseStage.class);
         binder.bind(CayenneCreatedOrOkResponseStage.class).to(CayenneCreatedOrOkResponseStage.class);
 
-        binder.bindMap(ExceptionMapper.class)
+        binder.bindMap(AgExceptionMapper.class)
                 .put(CayenneRuntimeException.class.getName(), CayenneRuntimeExceptionMapper.class)
                 .put(ValidationException.class.getName(), ValidationExceptionMapper.class);
 
