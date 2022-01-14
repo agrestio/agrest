@@ -2,8 +2,16 @@ package io.agrest.cayenne.processor.update;
 
 import io.agrest.UpdateStage;
 import io.agrest.processor.Processor;
+import io.agrest.runtime.ExceptionMappers;
 import io.agrest.runtime.UpdateOperation;
-import io.agrest.runtime.processor.update.*;
+import io.agrest.runtime.processor.update.AuthorizeChangesStage;
+import io.agrest.runtime.processor.update.CreateResourceEntityStage;
+import io.agrest.runtime.processor.update.EncoderInstallStage;
+import io.agrest.runtime.processor.update.FilterResultStage;
+import io.agrest.runtime.processor.update.ParseRequestStage;
+import io.agrest.runtime.processor.update.UpdateContext;
+import io.agrest.runtime.processor.update.UpdateProcessorFactory;
+import io.agrest.runtime.processor.update.UpdateProcessorFactoryFactory;
 import org.apache.cayenne.di.DIRuntimeException;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.di.Provider;
@@ -15,6 +23,7 @@ import java.util.EnumMap;
  */
 public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<UpdateProcessorFactoryFactory> {
 
+    private final ExceptionMappers exceptionMappers;
     private final EnumMap<UpdateStage, Processor<UpdateContext<?>>> createStages;
     private final EnumMap<UpdateStage, Processor<UpdateContext<?>>> updateStages;
     private final EnumMap<UpdateStage, Processor<UpdateContext<?>>> createOrUpdateStages;
@@ -43,8 +52,12 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
             @Inject CayenneCreatedOrOkResponseStage createdOrOkResponseStage,
 
             @Inject FilterResultStage filterResultStage,
-            @Inject EncoderInstallStage encoderInstallStage
+            @Inject EncoderInstallStage encoderInstallStage,
+
+            @Inject ExceptionMappers exceptionMappers
     ) {
+
+        this.exceptionMappers = exceptionMappers;
 
         this.createStages = new EnumMap<>(UpdateStage.class);
         this.createStages.put(UpdateStage.START, startStage);
@@ -117,11 +130,11 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
 
         EnumMap<UpdateOperation, UpdateProcessorFactory> factories = new EnumMap<>(UpdateOperation.class);
 
-        factories.put(UpdateOperation.create, new UpdateProcessorFactory(createStages));
-        factories.put(UpdateOperation.createOrUpdate, new UpdateProcessorFactory(createOrUpdateStages));
-        factories.put(UpdateOperation.idempotentCreateOrUpdate, new UpdateProcessorFactory(idempotentCreateOrUpdateStages));
-        factories.put(UpdateOperation.idempotentFullSync, new UpdateProcessorFactory(idempotentFullSyncStages));
-        factories.put(UpdateOperation.update, new UpdateProcessorFactory(updateStages));
+        factories.put(UpdateOperation.create, new UpdateProcessorFactory(createStages, exceptionMappers));
+        factories.put(UpdateOperation.createOrUpdate, new UpdateProcessorFactory(createOrUpdateStages, exceptionMappers));
+        factories.put(UpdateOperation.idempotentCreateOrUpdate, new UpdateProcessorFactory(idempotentCreateOrUpdateStages, exceptionMappers));
+        factories.put(UpdateOperation.idempotentFullSync, new UpdateProcessorFactory(idempotentFullSyncStages, exceptionMappers));
+        factories.put(UpdateOperation.update, new UpdateProcessorFactory(updateStages, exceptionMappers));
 
         return new UpdateProcessorFactoryFactory(factories);
     }

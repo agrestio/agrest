@@ -2,6 +2,7 @@ package io.agrest.cayenne.processor.delete;
 
 import io.agrest.DeleteStage;
 import io.agrest.processor.Processor;
+import io.agrest.runtime.ExceptionMappers;
 import io.agrest.runtime.processor.delete.AuthorizeChangesStage;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
@@ -15,14 +16,19 @@ import java.util.EnumMap;
  */
 public class CayenneDeleteProcessorFactoryProvider implements Provider<DeleteProcessorFactory> {
 
+    private final ExceptionMappers exceptionMappers;
     private final EnumMap<DeleteStage, Processor<DeleteContext<?>>> stages;
 
     public CayenneDeleteProcessorFactoryProvider(
             @Inject CayenneDeleteStartStage startStage,
             @Inject CayenneMapChangesStage mapChangesStage,
             @Inject AuthorizeChangesStage authorizeChangesStage,
-            @Inject CayenneDeleteStage deleteStage
+            @Inject CayenneDeleteStage deleteStage,
+
+            @Inject ExceptionMappers exceptionMappers
     ) {
+
+        this.exceptionMappers = exceptionMappers;
 
         this.stages = new EnumMap<>(DeleteStage.class);
         stages.put(DeleteStage.START, startStage);
@@ -33,6 +39,6 @@ public class CayenneDeleteProcessorFactoryProvider implements Provider<DeletePro
 
     @Override
     public DeleteProcessorFactory get() {
-        return new DeleteProcessorFactory(stages);
+        return new DeleteProcessorFactory(stages, exceptionMappers);
     }
 }

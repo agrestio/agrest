@@ -3,6 +3,7 @@ package io.agrest.runtime.processor.unrelate;
 import io.agrest.UnrelateStage;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorFactory;
+import io.agrest.runtime.ExceptionMappers;
 
 import java.util.EnumMap;
 
@@ -11,7 +12,9 @@ import java.util.EnumMap;
  */
 public class UnrelateProcessorFactory extends ProcessorFactory<UnrelateStage, UnrelateContext<?>> {
 
-    public UnrelateProcessorFactory(EnumMap<UnrelateStage, Processor<UnrelateContext<?>>> defaultStages) {
-        super(defaultStages);
+    public UnrelateProcessorFactory(
+            EnumMap<UnrelateStage, Processor<UnrelateContext<?>>> defaultStages,
+            ExceptionMappers exceptionMappers) {
+        super(defaultStages, exceptionMappers);
     }
 }

@@ -3,6 +3,7 @@ package io.agrest.runtime.processor.select;
 import io.agrest.SelectStage;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorFactory;
+import io.agrest.runtime.ExceptionMappers;
 
 import java.util.EnumMap;
 
@@ -11,7 +12,9 @@ import java.util.EnumMap;
  */
 public class SelectProcessorFactory extends ProcessorFactory<SelectStage, SelectContext<?>> {
 
-    public SelectProcessorFactory(EnumMap<SelectStage, Processor<SelectContext<?>>> defaultStages) {
-        super(defaultStages);
+    public SelectProcessorFactory(
+            EnumMap<SelectStage, Processor<SelectContext<?>>> defaultStages,
+            ExceptionMappers exceptionMappers) {
+        super(defaultStages, exceptionMappers);
     }
 }

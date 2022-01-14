@@ -2,6 +2,7 @@ package io.agrest.runtime.processor.meta;
 
 import io.agrest.MetadataStage;
 import io.agrest.processor.Processor;
+import io.agrest.runtime.ExceptionMappers;
 import org.apache.cayenne.di.DIRuntimeException;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.di.Provider;
@@ -15,15 +16,20 @@ import java.util.EnumMap;
 @Deprecated
 public class MetadataProcessorFactoryProvider implements Provider<MetadataProcessorFactory> {
 
-    private EnumMap<MetadataStage, Processor<MetadataContext<?>>> stages;
+    private final EnumMap<MetadataStage, Processor<MetadataContext<?>>> stages;
+    private final ExceptionMappers exceptionMappers;
 
-    public MetadataProcessorFactoryProvider(@Inject CollectMetadataStage collectMetadataStage) {
-        stages = new EnumMap<>(MetadataStage.class);
-        stages.put(MetadataStage.COLLECT_METADATA, collectMetadataStage);
+    public MetadataProcessorFactoryProvider(
+            @Inject ExceptionMappers exceptionMappers,
+            @Inject CollectMetadataStage collectMetadataStage) {
+
+        this.stages = new EnumMap<>(MetadataStage.class);
+        this.stages.put(MetadataStage.COLLECT_METADATA, collectMetadataStage);
+        this.exceptionMappers = exceptionMappers;
     }
 
     @Override
     public MetadataProcessorFactory get() throws DIRuntimeException {
-        return new MetadataProcessorFactory(stages);
+        return new MetadataProcessorFactory(stages, exceptionMappers);
     }
 }

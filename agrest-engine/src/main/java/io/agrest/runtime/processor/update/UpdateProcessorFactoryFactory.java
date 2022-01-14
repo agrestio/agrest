@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public class UpdateProcessorFactoryFactory {
 
-    private EnumMap<UpdateOperation, UpdateProcessorFactory> factories;
+    private final EnumMap<UpdateOperation, UpdateProcessorFactory> factories;
 
     public UpdateProcessorFactoryFactory(EnumMap<UpdateOperation, UpdateProcessorFactory> factories) {
         this.factories = factories;

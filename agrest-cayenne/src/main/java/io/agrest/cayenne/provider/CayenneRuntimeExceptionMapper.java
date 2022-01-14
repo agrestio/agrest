@@ -37,6 +37,6 @@ public class CayenneRuntimeExceptionMapper implements AgExceptionMapper<CayenneR
             message = message.substring(0, 300) + "...";
         }
 
-        return AgException.of(HttpStatus.INTERNAL_SERVER_ERROR, e, "CayenneRuntimeException: %s", message);
+        return AgException.of(HttpStatus.INTERNAL_SERVER_ERROR, e, "CayenneRuntimeException %s", message);
     }
 }

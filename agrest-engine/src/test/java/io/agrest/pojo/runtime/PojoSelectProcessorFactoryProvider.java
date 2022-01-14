@@ -3,6 +3,7 @@ package io.agrest.pojo.runtime;
 import io.agrest.SelectStage;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
+import io.agrest.runtime.ExceptionMappers;
 import io.agrest.runtime.processor.select.ApplyServerParamsStage;
 import io.agrest.runtime.processor.select.CreateResourceEntityStage;
 import io.agrest.runtime.processor.select.EncoderInstallStage;
@@ -18,7 +19,8 @@ import java.util.EnumMap;
 
 public class PojoSelectProcessorFactoryProvider implements Provider<SelectProcessorFactory> {
 
-    private EnumMap<SelectStage, Processor<SelectContext<?>>> stages;
+    private final ExceptionMappers exceptionMappers;
+    private final EnumMap<SelectStage, Processor<SelectContext<?>>> stages;
 
     public PojoSelectProcessorFactoryProvider(
             @Inject StartStage startStage,
@@ -26,7 +28,11 @@ public class PojoSelectProcessorFactoryProvider implements Provider<SelectProces
             @Inject CreateResourceEntityStage createResourceEntityStage,
             @Inject ApplyServerParamsStage applyServerParamsStage,
             @Inject PojoFetchStage pojoFetchStage,
-            @Inject EncoderInstallStage encoderStage) {
+            @Inject EncoderInstallStage encoderStage,
+
+            @Inject ExceptionMappers exceptionMappers) {
+
+        this.exceptionMappers = exceptionMappers;
 
         stages = new EnumMap<>(SelectStage.class);
         stages.put(SelectStage.START, startStage);
@@ -40,7 +46,7 @@ public class PojoSelectProcessorFactoryProvider implements Provider<SelectProces
 
     @Override
     public SelectProcessorFactory get() throws DIRuntimeException {
-        return new SelectProcessorFactory(stages);
+        return new SelectProcessorFactory(stages, exceptionMappers);
     }
 
 
