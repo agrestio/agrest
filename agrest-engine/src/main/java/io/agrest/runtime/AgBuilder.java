@@ -8,12 +8,16 @@ import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.converter.jsonvalue.JsonValueConverterFactoryProvider;
-import io.agrest.converter.jsonvalue.IJsonValueConverterFactory;
 import io.agrest.converter.jsonvalue.JsonValueConverter;
+import io.agrest.converter.jsonvalue.JsonValueConverters;
+import io.agrest.converter.jsonvalue.JsonValueConvertersProvider;
+import io.agrest.converter.valuestring.IValueStringConverterFactory;
 import io.agrest.converter.valuestring.ValueStringConverter;
+import io.agrest.converter.valuestring.ValueStringConverterFactoryProvider;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.PropertyMetadataEncoder;
+import io.agrest.encoder.ValueEncoders;
+import io.agrest.encoder.ValueEncodersProvider;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.parser.IResourceParser;
@@ -28,10 +32,6 @@ import io.agrest.runtime.encoder.EncodablePropertyFactory;
 import io.agrest.runtime.encoder.EncoderService;
 import io.agrest.runtime.encoder.IEncodablePropertyFactory;
 import io.agrest.runtime.encoder.IEncoderService;
-import io.agrest.converter.valuestring.IValueStringConverterFactory;
-import io.agrest.converter.valuestring.ValueStringConverterFactoryProvider;
-import io.agrest.encoder.ValueEncoders;
-import io.agrest.encoder.ValueEncodersProvider;
 import io.agrest.runtime.entity.ChangeAuthorizer;
 import io.agrest.runtime.entity.ExcludeMerger;
 import io.agrest.runtime.entity.ExpMerger;
@@ -344,7 +344,7 @@ public class AgBuilder {
         return binder -> {
 
             binder.bindMap(JsonValueConverter.class);
-            binder.bind(IJsonValueConverterFactory.class).toProvider(JsonValueConverterFactoryProvider.class);
+            binder.bind(JsonValueConverters.class).toProvider(JsonValueConvertersProvider.class);
 
             binder.bind(AnnotationsAgEntityCompiler.class).to(AnnotationsAgEntityCompiler.class);
             binder.bindList(AgEntityCompiler.class).add(AnnotationsAgEntityCompiler.class);

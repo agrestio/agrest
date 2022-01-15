@@ -9,14 +9,14 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class JsonValueConverterFactory_PojoTest {
+public class JsonValueConverters_PojoTest {
 
-    IJsonValueConverterFactory converterFactory;
+    JsonValueConverters converterFactory;
     JsonNodeFactory nodeFactory;
 
     @BeforeEach
     public void before() {
-        converterFactory = new JsonValueConverterFactoryProvider(Collections.emptyMap()).get();
+        converterFactory = new JsonValueConvertersProvider(Collections.emptyMap()).get();
         nodeFactory = JsonNodeFactory.instance;
     }
 

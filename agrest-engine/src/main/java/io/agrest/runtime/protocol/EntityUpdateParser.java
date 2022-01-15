@@ -2,9 +2,9 @@ package io.agrest.runtime.protocol;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.EntityUpdate;
+import io.agrest.converter.jsonvalue.JsonValueConverters;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.jackson.IJacksonService;
-import io.agrest.converter.jsonvalue.IJsonValueConverterFactory;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 import org.apache.cayenne.di.Inject;
 
@@ -17,15 +17,15 @@ import java.util.Collection;
  */
 public class EntityUpdateParser implements IEntityUpdateParser {
 
-    protected IJacksonService jacksonService;
+    protected final IJacksonService jacksonService;
+    private final EntityUpdateJsonTraverser entityUpdateJsonTraverser;
 
-    private EntityUpdateJsonTraverser entityUpdateJsonTraverser;
-
-    public EntityUpdateParser(@Inject IRelationshipMapper relationshipMapper,
-                              @Inject IJacksonService jacksonService,
-                              @Inject IJsonValueConverterFactory converterFactory) {
+    public EntityUpdateParser(
+            @Inject IRelationshipMapper relationshipMapper,
+            @Inject IJacksonService jacksonService,
+            @Inject JsonValueConverters converters) {
         this.jacksonService = jacksonService;
-        this.entityUpdateJsonTraverser = new EntityUpdateJsonTraverser(relationshipMapper, converterFactory);
+        this.entityUpdateJsonTraverser = new EntityUpdateJsonTraverser(relationshipMapper, converters);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class EntityUpdateParser implements IEntityUpdateParser {
 
         @Override
         public void visitRelationship(String name, Object relatedId) {
-		    currentUpdate.addRelatedId(name, relatedId);
+            currentUpdate.addRelatedId(name, relatedId);
         }
 
         @Override

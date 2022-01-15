@@ -1,18 +1,17 @@
 package io.agrest.encoder;
 
-import io.agrest.encoder.Encoder;
-
 import java.util.Map;
 
 /**
- * Provides access to value encoders for different Java types. Can be preconfigured to use custom encoders via DI.
+ * Provides access to encoders of simple values for different Java types. Can be preconfigured to use custom encoders
+ * via DI.
  *
  * @since 3.3
  */
 public class ValueEncoders {
 
-    private Map<Class<?>, Encoder> encodersByJavaType;
-    private Encoder defaultEncoder;
+    private final Map<Class<?>, Encoder> encodersByJavaType;
+    private final Encoder defaultEncoder;
 
     public ValueEncoders(Map<Class<?>, Encoder> encodersByJavaType, Encoder defaultEncoder) {
         this.encodersByJavaType = encodersByJavaType;

@@ -12,14 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 
-public class JsonValueConverterFactoryProviderTest {
+public class JsonValueConvertersProviderTest {
 
-    public IJsonValueConverterFactory createFactory() {
-        return createFactory(Collections.emptyMap());
+    public JsonValueConverters createConverters() {
+        return createConverters(Collections.emptyMap());
     }
 
-    public IJsonValueConverterFactory createFactory(Map<String, JsonValueConverter<?>> injected) {
-        return new JsonValueConverterFactoryProvider(injected).get();
+    public JsonValueConverters createConverters(Map<String, JsonValueConverter<?>> injected) {
+        return new JsonValueConvertersProvider(injected).get();
     }
 
     @Test
@@ -27,60 +27,60 @@ public class JsonValueConverterFactoryProviderTest {
 
         JsonValueConverter<?> customConverter = mock(JsonValueConverter.class);
         Map<String, JsonValueConverter<?>> injected = Collections.singletonMap(CustomType.class.getName(), customConverter);
-        assertSame(customConverter, createFactory(injected).converter(CustomType.class));
+        assertSame(customConverter, createConverters(injected).converter(CustomType.class));
     }
 
     @Test
     public void testConverter_Generic() {
-        assertSame(GenericConverter.converter(), createFactory().converter(this.getClass()));
-        assertSame(GenericConverter.converter(), createFactory().converter(Object.class));
+        assertSame(GenericConverter.converter(), createConverters().converter(this.getClass()));
+        assertSame(GenericConverter.converter(), createConverters().converter(Object.class));
     }
 
     @Test
     public void testConverter_LongKnown() {
-        assertSame(LongConverter.converter(), createFactory().converter(Long.class));
-        assertSame(LongConverter.converter(), createFactory().converter(Long.TYPE));
+        assertSame(LongConverter.converter(), createConverters().converter(Long.class));
+        assertSame(LongConverter.converter(), createConverters().converter(Long.TYPE));
     }
 
     @Test
     public void testConverter_LocalDateKnown() {
-        JsonValueConverter<?> converter = createFactory().converter(LocalDate.class);
+        JsonValueConverter<?> converter = createConverters().converter(LocalDate.class);
         assertEquals(ISOLocalDateConverter.class, converter.getClass());
     }
 
     @Test
     public void testConverter_LocalTimeKnown() {
-        JsonValueConverter<?> converter = createFactory().converter(LocalTime.class);
+        JsonValueConverter<?> converter = createConverters().converter(LocalTime.class);
         assertEquals(ISOLocalTimeConverter.class, converter.getClass());
     }
 
     @Test
     public void testConverter_LocalDateTimeKnown() {
-        JsonValueConverter<?> converter = createFactory().converter(LocalDateTime.class);
+        JsonValueConverter<?> converter = createConverters().converter(LocalDateTime.class);
         assertEquals(ISOLocalDateTimeConverter.class, converter.getClass());
     }
 
     @Test
     public void testConverter_javaUtilDateKnown() {
-        JsonValueConverter<?> converter = createFactory().converter(java.util.Date.class);
+        JsonValueConverter<?> converter = createConverters().converter(java.util.Date.class);
         assertEquals(UtcDateConverter.class, converter.getClass());
     }
 
     @Test
     public void testConverter_javaSqlDateKnown() {
-        JsonValueConverter<?> converter = createFactory().converter(java.sql.Date.class);
+        JsonValueConverter<?> converter = createConverters().converter(java.sql.Date.class);
         assertEquals(UtcDateConverter.class, converter.getClass());
     }
 
     @Test
     public void testConverter_javaSqlTimeKnown() {
-        JsonValueConverter<?> converter = createFactory().converter(java.sql.Time.class);
+        JsonValueConverter<?> converter = createConverters().converter(java.sql.Time.class);
         assertEquals(UtcDateConverter.class, converter.getClass());
     }
 
     @Test
     public void testConverter_javaSqlTimestampKnown() {
-        JsonValueConverter<?> converter = createFactory().converter(java.sql.Timestamp.class);
+        JsonValueConverter<?> converter = createConverters().converter(java.sql.Timestamp.class);
         assertEquals(UtcDateConverter.class, converter.getClass());
     }
 

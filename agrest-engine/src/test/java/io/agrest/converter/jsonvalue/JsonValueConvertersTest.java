@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class JsonValueConverterFactoryTest {
+public class JsonValueConvertersTest {
 
     @Test
     public void testConverter() {
@@ -16,8 +16,8 @@ public class JsonValueConverterFactoryTest {
         JsonValueConverter<?> c1 = mock(JsonValueConverter.class);
         JsonValueConverter<?> c2 = mock(JsonValueConverter.class);
 
-        JsonValueConverterFactory factory =
-                new JsonValueConverterFactory(Collections.singletonMap(Long.class, c1), c2);
+        JsonValueConverters factory =
+                new JsonValueConverters(Collections.singletonMap(Long.class, c1), c2);
 
         assertSame(c1, factory.converter(Long.class));
         assertSame(c2, factory.converter(Long.TYPE));
@@ -32,8 +32,8 @@ public class JsonValueConverterFactoryTest {
         JsonValueConverter<?> c1 = mock(JsonValueConverter.class);
         JsonValueConverter<?> c2 = mock(JsonValueConverter.class);
 
-        JsonValueConverterFactory factory =
-                new JsonValueConverterFactory(Collections.emptyMap(), c2);
+        JsonValueConverters factory =
+                new JsonValueConverters(Collections.emptyMap(), c2);
 
         assertSame(c2, factory.converter(Object.class));
 

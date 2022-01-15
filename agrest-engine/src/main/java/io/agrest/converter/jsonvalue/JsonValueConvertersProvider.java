@@ -19,22 +19,22 @@ import static io.agrest.reflect.Types.typeForName;
 /**
  * @since 5.0
  */
-public class JsonValueConverterFactoryProvider implements Provider<IJsonValueConverterFactory> {
+public class JsonValueConvertersProvider implements Provider<JsonValueConverters> {
 
     private static final JsonValueConverter<JsonNode> DO_NOTHING_CONVERTER = node -> node;
 
     private final Map<String, JsonValueConverter<?>> injectedConverters;
 
-    public JsonValueConverterFactoryProvider(@Inject Map<String, JsonValueConverter<?>> injectedConverters) {
+    public JsonValueConvertersProvider(@Inject Map<String, JsonValueConverter<?>> injectedConverters) {
         this.injectedConverters = injectedConverters;
     }
 
     @Override
-    public IJsonValueConverterFactory get() throws DIRuntimeException {
+    public JsonValueConverters get() throws DIRuntimeException {
         Map<Class<?>, JsonValueConverter<?>> converters = new HashMap<>();
         appendKnownConverters(converters);
         appendInjectedConverters(converters);
-        return new JsonValueConverterFactory(converters, defaultConverter());
+        return new JsonValueConverters(converters, defaultConverter());
     }
 
     protected JsonValueConverter<?> defaultConverter() {

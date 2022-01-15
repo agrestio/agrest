@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.agrest.AgException;
 import io.agrest.PathConstants;
-import io.agrest.converter.jsonvalue.IJsonValueConverterFactory;
 import io.agrest.converter.jsonvalue.JsonValueConverter;
+import io.agrest.converter.jsonvalue.JsonValueConverters;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
@@ -22,12 +22,12 @@ public class EntityUpdateJsonTraverser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EntityUpdateJsonTraverser.class);
 
-    private IRelationshipMapper relationshipMapper;
-    private IJsonValueConverterFactory converterFactory;
+    private final IRelationshipMapper relationshipMapper;
+    private final JsonValueConverters converters;
 
-    public EntityUpdateJsonTraverser(IRelationshipMapper relationshipMapper, IJsonValueConverterFactory converterFactory) {
+    public EntityUpdateJsonTraverser(IRelationshipMapper relationshipMapper, JsonValueConverters converters) {
         this.relationshipMapper = relationshipMapper;
-        this.converterFactory = converterFactory;
+        this.converters = converters;
     }
 
     public void traverse(AgEntity<?> entity, JsonNode json, EntityUpdateJsonVisitor visitor) {
@@ -141,11 +141,11 @@ public class EntityUpdateJsonTraverser {
     }
 
     private JsonValueConverter<?> converter(AgIdPart idPart) {
-        return converterFactory.converter(idPart.getType());
+        return converters.converter(idPart.getType());
     }
 
     private JsonValueConverter<?> converter(AgAttribute attribute) {
-        return converterFactory.converter(attribute.getType());
+        return converters.converter(attribute.getType());
     }
 
     private JsonValueConverter<?> converter(AgRelationship relationship) {
@@ -157,6 +157,6 @@ public class EntityUpdateJsonTraverser {
             throw new IllegalArgumentException("Entity '" + target.getName() +
                     "' has unexpected number of ID attributes: " + ids);
         }
-        return converterFactory.converter(target.getIdParts().iterator().next().getType());
+        return converters.converter(target.getIdParts().iterator().next().getType());
     }
 }

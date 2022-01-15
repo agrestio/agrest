@@ -20,15 +20,18 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
+ *  Provides access to encoders of simple values for different Java types. Can be preconfigured to use custom encoders
+ *  via DI.
+ *
  * @since 5.0
  */
-public class JsonValueConverterFactory implements IJsonValueConverterFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonValueConverterFactory.class);
+public class JsonValueConverters {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonValueConverters.class);
 
     protected final Map<Type, JsonValueConverter<?>> convertersByJavaType;
     private final JsonValueConverter<?> defaultConverter;
 
-    public JsonValueConverterFactory(
+    public JsonValueConverters(
             Map<Class<?>, JsonValueConverter<?>> knownConverters,
             JsonValueConverter<?> defaultConverter) {
 
@@ -38,13 +41,11 @@ public class JsonValueConverterFactory implements IJsonValueConverterFactory {
         this.convertersByJavaType = new ConcurrentHashMap<>(knownConverters);
     }
 
-    @Override
     public JsonValueConverter<?> converter(Type valueType) {
         return convertersByJavaType.computeIfAbsent(valueType, this::buildOrDefault);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public <T> JsonValueConverter<T> typedConverter(Class<T> valueType) {
         return (JsonValueConverter<T>) convertersByJavaType.computeIfAbsent(valueType, this::buildOrDefault);
     }
