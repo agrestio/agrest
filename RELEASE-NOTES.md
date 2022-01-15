@@ -13,6 +13,7 @@
 * #527 Remove "agrest-client"
 * #529 Remove "agrest-openapi-designfirst"
 * #530 JAX-RS free exception mapper
+* #531 JAX-RS free "agrest-cayenne"
 * #532 Encoder.willEncode can be removed
 * #533 Look up converters by type, not by entity or attribute; value Encoders based on known converters
 * #534 Remove "Encoder.visit()" / "DataResponse.getIncludedObjects()"
