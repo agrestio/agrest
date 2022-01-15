@@ -17,12 +17,10 @@ public class EntityNoIdEncoder extends AbstractEncoder {
     }
 
     @Override
-    protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
-
+    protected void encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
         out.writeStartObject();
         encodeProperties(object, out);
         out.writeEndObject();
-        return true;
     }
 
     protected void encodeProperties(Object object, JsonGenerator out) throws IOException {

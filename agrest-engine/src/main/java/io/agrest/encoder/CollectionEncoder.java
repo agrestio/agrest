@@ -12,9 +12,7 @@ public interface CollectionEncoder extends Encoder {
     int encodeAndGetTotal(String propertyName, Object object, JsonGenerator out) throws IOException;
 
     @Override
-    default boolean encode(String propertyName, Object object, JsonGenerator out) throws IOException {
+    default void encode(String propertyName, Object object, JsonGenerator out) throws IOException {
         encodeAndGetTotal(propertyName, object, out);
-        // regardless of the collection contents, our encoding has succeeded...
-        return true;
     }
 }

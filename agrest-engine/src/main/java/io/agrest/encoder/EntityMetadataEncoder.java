@@ -34,7 +34,7 @@ public class EntityMetadataEncoder extends AbstractEncoder {
     }
 
     @Override
-    protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
+    protected void encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
         // sanity check
         if (!entity.equals(object)) {
             throw new IllegalArgumentException(
@@ -64,8 +64,6 @@ public class EntityMetadataEncoder extends AbstractEncoder {
         out.writeEndArray();
 
         out.writeEndObject();
-
-        return true;
     }
 
     private static abstract class PropertyHelper {

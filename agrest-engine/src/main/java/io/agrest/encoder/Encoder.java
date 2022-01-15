@@ -19,5 +19,5 @@ public interface Encoder {
      * @param object       object to encode
      * @param out          output object where encoded JSON should be written.
      */
-    boolean encode(String propertyName, Object object, JsonGenerator out) throws IOException;
+    void encode(String propertyName, Object object, JsonGenerator out) throws IOException;
 }

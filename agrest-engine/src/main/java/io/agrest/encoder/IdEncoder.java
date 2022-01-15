@@ -26,38 +26,39 @@ public class IdEncoder implements Encoder {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean encode(String propertyName, Object object, JsonGenerator out) throws IOException {
+    public void encode(String propertyName, Object object, JsonGenerator out) throws IOException {
         if (object == null) {
 
             if (propertyName != null) {
                 out.writeFieldName(propertyName);
             }
             out.writeNull();
-            return true;
         } else {
-            return encodeId(propertyName, (Map<String, Object>) object, out);
+            encodeId(propertyName, (Map<String, Object>) object, out);
         }
     }
 
-    protected boolean encodeId(String propertyName, Map<String, Object> id, JsonGenerator out) throws IOException {
-        return isCompoundId
-                ? encodeCompoundId(propertyName, id, valueEncoders, out)
-                : encodeSingleId(propertyName, id, valueEncoder, out);
+    protected void encodeId(String propertyName, Map<String, Object> id, JsonGenerator out) throws IOException {
+        if (isCompoundId) {
+            encodeCompoundId(propertyName, id, valueEncoders, out);
+        } else {
+            encodeSingleId(propertyName, id, valueEncoder, out);
+        }
     }
 
-    private boolean encodeSingleId(String propertyName, Map<String, Object> values,
-                                   Encoder valueEncoder, JsonGenerator out) throws IOException {
+    private void encodeSingleId(String propertyName, Map<String, Object> values,
+                                Encoder valueEncoder, JsonGenerator out) throws IOException {
 
         if (values.size() != 1) {
             throw new IllegalArgumentException("Can't serialize multi-value ObjectId: " + values);
         }
 
         Object value = values.entrySet().iterator().next().getValue();
-        return valueEncoder.encode(propertyName, value, out);
+        valueEncoder.encode(propertyName, value, out);
     }
 
-    private boolean encodeCompoundId(String propertyName, Map<String, Object> values,
-                                     Map<String, Encoder> valueEncoders, JsonGenerator out) throws IOException {
+    private void encodeCompoundId(String propertyName, Map<String, Object> values,
+                                  Map<String, Encoder> valueEncoders, JsonGenerator out) throws IOException {
 
         if (propertyName != null) {
             out.writeFieldName(propertyName);
@@ -75,6 +76,5 @@ public class IdEncoder implements Encoder {
         }
 
         out.writeEndObject();
-        return true;
     }
 }

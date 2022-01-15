@@ -485,11 +485,10 @@ public class PUT_IT extends DbTest {
 
             Encoder encoder = new Encoder() {
                 @Override
-                public boolean encode(String propertyName, Object object, JsonGenerator out) throws IOException {
+                public void encode(String propertyName, Object object, JsonGenerator out) throws IOException {
                     out.writeStartObject();
                     out.writeObjectField("encoder", "custom");
                     out.writeEndObject();
-                    return true;
                 }
             };
 

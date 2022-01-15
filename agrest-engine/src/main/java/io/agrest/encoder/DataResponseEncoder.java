@@ -27,18 +27,15 @@ public class DataResponseEncoder implements Encoder {
     }
 
     @Override
-    public boolean encode(String propertyName, Object object, JsonGenerator out) throws IOException {
+    public void encode(String propertyName, Object object, JsonGenerator out) throws IOException {
 
         if (propertyName != null) {
             out.writeFieldName(propertyName);
         }
 
         out.writeStartObject();
-
         encodeObjectBody(object, out);
-
         out.writeEndObject();
-        return true;
     }
 
     protected void encodeObjectBody(Object object, JsonGenerator out) throws IOException {

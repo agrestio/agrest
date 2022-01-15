@@ -30,12 +30,9 @@ public class ResourceEncoder<T> extends AbstractEncoder {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
+    protected void encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
         writeEntity(entity, out);
-
         writeResources((Collection<AgResource<?>>) object, out);
-
-        return true;
     }
 
     private void writeResources(Collection<AgResource<?>> resources, JsonGenerator out) throws IOException {

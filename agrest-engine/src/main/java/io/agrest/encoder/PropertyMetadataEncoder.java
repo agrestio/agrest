@@ -115,9 +115,9 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
     }
 
     @Override
-    protected boolean encodeNonNullObject(Object property, JsonGenerator out) throws IOException {
+    protected void encodeNonNullObject(Object property, JsonGenerator out) throws IOException {
         if (property == null) {
-            return false;
+            return;
         }
 
         out.writeStartObject();
@@ -136,8 +136,6 @@ public abstract class PropertyMetadataEncoder extends AbstractEncoder {
         doEncode(property, out);
 
         out.writeEndObject();
-
-        return true;
     }
 
     protected abstract String getPropertyName(Object property);

@@ -80,10 +80,8 @@ public class ListEncoder implements CollectionEncoder {
 
         int length = objects.size();
 
-        for (; c.position < length && c.encoded < limit; c.position++) {
-            if (elementEncoder.encode(null, objects.get(c.position), out)) {
-                c.encoded++;
-            }
+        for (; c.position < length && c.encoded < limit; c.position++, c.encoded++) {
+            elementEncoder.encode(null, objects.get(c.position), out);
         }
     }
 

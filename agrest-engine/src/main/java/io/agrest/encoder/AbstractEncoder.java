@@ -6,19 +6,18 @@ import java.io.IOException;
 
 public abstract class AbstractEncoder implements Encoder {
 
-	@Override
-	public boolean encode(String propertyName, Object object, JsonGenerator out) throws IOException {
-		if (propertyName != null) {
-			out.writeFieldName(propertyName);
-		}
+    @Override
+    public void encode(String propertyName, Object object, JsonGenerator out) throws IOException {
+        if (propertyName != null) {
+            out.writeFieldName(propertyName);
+        }
 
-		if (object == null) {
-			out.writeNull();
-			return true;
-		} else {
-			return encodeNonNullObject(object, out);
-		}
-	}
+        if (object == null) {
+            out.writeNull();
+        } else {
+            encodeNonNullObject(object, out);
+        }
+    }
 
-	protected abstract boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException;
+    protected abstract void encodeNonNullObject(Object object, JsonGenerator out) throws IOException;
 }
