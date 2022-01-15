@@ -8,7 +8,7 @@ import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.converter.jsonvalue.DefaultJsonValueConverterFactoryProvider;
+import io.agrest.converter.jsonvalue.JsonValueConverterFactoryProvider;
 import io.agrest.converter.jsonvalue.IJsonValueConverterFactory;
 import io.agrest.converter.jsonvalue.JsonValueConverter;
 import io.agrest.converter.valuejson.ValueJsonConverter;
@@ -28,8 +28,8 @@ import io.agrest.runtime.encoder.EncodablePropertyFactory;
 import io.agrest.runtime.encoder.EncoderService;
 import io.agrest.runtime.encoder.IEncodablePropertyFactory;
 import io.agrest.runtime.encoder.IEncoderService;
-import io.agrest.runtime.encoder.IStringConverterFactory;
-import io.agrest.runtime.encoder.StringConverterFactoryProvider;
+import io.agrest.runtime.encoder.IValueJsonConverterFactory;
+import io.agrest.runtime.encoder.ValueJsonConverterFactoryProvider;
 import io.agrest.runtime.encoder.ValueEncoders;
 import io.agrest.runtime.encoder.ValueEncodersProvider;
 import io.agrest.runtime.entity.ChangeAuthorizer;
@@ -344,7 +344,7 @@ public class AgBuilder {
         return binder -> {
 
             binder.bindMap(JsonValueConverter.class);
-            binder.bind(IJsonValueConverterFactory.class).toProvider(DefaultJsonValueConverterFactoryProvider.class);
+            binder.bind(IJsonValueConverterFactory.class).toProvider(JsonValueConverterFactoryProvider.class);
 
             binder.bind(AnnotationsAgEntityCompiler.class).to(AnnotationsAgEntityCompiler.class);
             binder.bindList(AgEntityCompiler.class).add(AnnotationsAgEntityCompiler.class);
@@ -408,7 +408,7 @@ public class AgBuilder {
 
             // a map of custom converters
             binder.bindMap(ValueJsonConverter.class);
-            binder.bind(IStringConverterFactory.class).toProvider(StringConverterFactoryProvider.class);
+            binder.bind(IValueJsonConverterFactory.class).toProvider(ValueJsonConverterFactoryProvider.class);
 
             binder.bind(IEncoderService.class).to(EncoderService.class);
             binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);

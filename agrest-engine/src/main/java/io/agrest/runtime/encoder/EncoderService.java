@@ -13,22 +13,22 @@ import java.util.Map;
 
 public class EncoderService implements IEncoderService {
 
-    protected IEncodablePropertyFactory attributeEncoderFactory;
-    protected IRelationshipMapper relationshipMapper;
-    protected IStringConverterFactory stringConverterFactory;
+    protected final IEncodablePropertyFactory attributeEncoderFactory;
+    protected final IRelationshipMapper relationshipMapper;
+    protected final IValueJsonConverterFactory converterFactory;
 
     @Deprecated
     protected Map<String, PropertyMetadataEncoder> propertyMetadataEncoders;
 
     public EncoderService(
             @Inject IEncodablePropertyFactory attributeEncoderFactory,
-            @Inject IStringConverterFactory stringConverterFactory,
+            @Inject IValueJsonConverterFactory converterFactory,
             @Inject IRelationshipMapper relationshipMapper,
             @Inject Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
 
         this.attributeEncoderFactory = attributeEncoderFactory;
         this.relationshipMapper = relationshipMapper;
-        this.stringConverterFactory = stringConverterFactory;
+        this.converterFactory = converterFactory;
         this.propertyMetadataEncoders = propertyMetadataEncoders;
     }
 
@@ -47,7 +47,7 @@ public class EncoderService implements IEncoderService {
     }
 
     protected DataEncoderFactory dataEncoderFactory() {
-        return new DataEncoderFactory(attributeEncoderFactory, stringConverterFactory, relationshipMapper);
+        return new DataEncoderFactory(attributeEncoderFactory, converterFactory, relationshipMapper);
     }
 
     @Deprecated

@@ -20,15 +20,15 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
- * @since 1.10
+ * @since 5.0
  */
-public class DefaultJsonValueConverterFactory implements IJsonValueConverterFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultJsonValueConverterFactory.class);
+public class JsonValueConverterFactory implements IJsonValueConverterFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonValueConverterFactory.class);
 
     protected final Map<Type, JsonValueConverter<?>> convertersByJavaType;
     private final JsonValueConverter<?> defaultConverter;
 
-    public DefaultJsonValueConverterFactory(
+    public JsonValueConverterFactory(
             Map<Class<?>, JsonValueConverter<?>> knownConverters,
             JsonValueConverter<?> defaultConverter) {
 

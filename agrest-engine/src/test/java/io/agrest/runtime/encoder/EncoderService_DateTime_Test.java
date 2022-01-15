@@ -3,23 +3,26 @@ package io.agrest.runtime.encoder;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.annotation.AgAttribute;
+import io.agrest.compiler.AgEntityCompiler;
+import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.encoder.Encoder;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazyAgDataMap;
-import io.agrest.compiler.AgEntityCompiler;
-import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.unit.ResourceEntityUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class EncoderService_DateTime_Test {
 
@@ -32,9 +35,12 @@ public class EncoderService_DateTime_Test {
 
     @BeforeEach
     public void before() {
+
+        IValueJsonConverterFactory converterFactory = new ValueJsonConverterFactoryProvider(Collections.emptyMap()).get();
+
         this.encoderService = new EncoderService(
-                new EncodablePropertyFactory(new ValueEncodersProvider(Collections.emptyMap()).get()),
-                mock(IStringConverterFactory.class),
+                new EncodablePropertyFactory(new ValueEncodersProvider(converterFactory, Collections.emptyMap()).get()),
+                converterFactory,
                 new RelationshipMapper(),
                 Collections.emptyMap());
 

@@ -1,14 +1,5 @@
 package io.agrest.converter.jsonvalue;
 
-import io.agrest.converter.jsonvalue.DefaultJsonValueConverterFactoryProvider;
-import io.agrest.converter.jsonvalue.GenericConverter;
-import io.agrest.converter.jsonvalue.IJsonValueConverterFactory;
-import io.agrest.converter.jsonvalue.ISOLocalDateConverter;
-import io.agrest.converter.jsonvalue.ISOLocalDateTimeConverter;
-import io.agrest.converter.jsonvalue.ISOLocalTimeConverter;
-import io.agrest.converter.jsonvalue.JsonValueConverter;
-import io.agrest.converter.jsonvalue.LongConverter;
-import io.agrest.converter.jsonvalue.UtcDateConverter;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -21,14 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 
-public class DefaultJsonValueConverterFactoryProviderTest {
+public class JsonValueConverterFactoryProviderTest {
 
     public IJsonValueConverterFactory createFactory() {
         return createFactory(Collections.emptyMap());
     }
 
     public IJsonValueConverterFactory createFactory(Map<String, JsonValueConverter<?>> injected) {
-        return new DefaultJsonValueConverterFactoryProvider(injected).get();
+        return new JsonValueConverterFactoryProvider(injected).get();
     }
 
     @Test

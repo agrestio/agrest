@@ -14,8 +14,9 @@ import io.agrest.encoder.Encoder;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
 import io.agrest.runtime.encoder.EncoderService;
 import io.agrest.runtime.encoder.IEncodablePropertyFactory;
-import io.agrest.runtime.encoder.IStringConverterFactory;
+import io.agrest.runtime.encoder.IValueJsonConverterFactory;
 import io.agrest.runtime.encoder.ValueEncodersProvider;
+import io.agrest.runtime.encoder.ValueJsonConverterFactoryProvider;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.runtime.semantics.RelationshipMapper;
@@ -31,7 +32,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class EncoderServiceTest extends CayenneNoDbTest {
 
@@ -40,12 +40,14 @@ public class EncoderServiceTest extends CayenneNoDbTest {
 
     @BeforeEach
     public void before() {
-        IEncodablePropertyFactory epf = new EncodablePropertyFactory(new ValueEncodersProvider(Collections.emptyMap()).get());
-        IStringConverterFactory stringConverterFactory = mock(IStringConverterFactory.class);
+        IValueJsonConverterFactory converterFactory = new ValueJsonConverterFactoryProvider(Collections.emptyMap()).get();
+
+        IEncodablePropertyFactory epf = new EncodablePropertyFactory(
+                new ValueEncodersProvider(converterFactory, Collections.emptyMap()).get());
 
         encoderService = new EncoderService(
                 epf,
-                stringConverterFactory,
+                converterFactory,
                 new RelationshipMapper(),
                 Collections.emptyMap());
     }

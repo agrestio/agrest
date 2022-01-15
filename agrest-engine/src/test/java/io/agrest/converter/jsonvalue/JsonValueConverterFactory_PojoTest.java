@@ -2,9 +2,6 @@ package io.agrest.converter.jsonvalue;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.agrest.converter.jsonvalue.DefaultJsonValueConverterFactoryProvider;
-import io.agrest.converter.jsonvalue.IJsonValueConverterFactory;
-import io.agrest.converter.jsonvalue.JsonValueConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,14 +9,14 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DefaultJsonValueConverterFactory_PojoTest {
+public class JsonValueConverterFactory_PojoTest {
 
     IJsonValueConverterFactory converterFactory;
     JsonNodeFactory nodeFactory;
 
     @BeforeEach
     public void before() {
-        converterFactory = new DefaultJsonValueConverterFactoryProvider(Collections.emptyMap()).get();
+        converterFactory = new JsonValueConverterFactoryProvider(Collections.emptyMap()).get();
         nodeFactory = JsonNodeFactory.instance;
     }
 

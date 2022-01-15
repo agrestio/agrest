@@ -3,13 +3,12 @@ package io.agrest.runtime.encoder;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.annotation.AgAttribute;
+import io.agrest.compiler.AgEntityCompiler;
+import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.ISODateTimeEncoder;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazyAgDataMap;
-import io.agrest.compiler.AgEntityCompiler;
-import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.unit.ResourceEntityUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +21,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class EncoderService_UtilDate_Test {
 
@@ -36,9 +34,11 @@ public class EncoderService_UtilDate_Test {
     @BeforeEach
     public void before() {
 
+        IValueJsonConverterFactory converterFactory = new ValueJsonConverterFactoryProvider(Collections.emptyMap()).get();
+
         this.encoderService = new EncoderService(
-                new EncodablePropertyFactory(new ValueEncodersProvider(Collections.emptyMap()).get()),
-                mock(IStringConverterFactory.class),
+                new EncodablePropertyFactory(new ValueEncodersProvider(converterFactory, Collections.emptyMap()).get()),
+                converterFactory,
                 new RelationshipMapper(),
                 Collections.emptyMap());
 
@@ -54,8 +54,6 @@ public class EncoderService_UtilDate_Test {
      * {@code yyyy-MM-dd'T'HH:mm:ss[.SSS]}, e.g. 2017-01-01T10:00:00
      * <p>
      * See https://github.com/nhl/link-rest/issues/275
-     *
-     * @see ISODateTimeEncoder
      */
     @Test
     public void testUtilDate() {
@@ -84,7 +82,7 @@ public class EncoderService_UtilDate_Test {
         return Encoders.toJson(encoder, Collections.singletonList(object));
     }
 
-    public class PUtilDate {
+    public static class PUtilDate {
         private java.util.Date date;
 
         @AgAttribute

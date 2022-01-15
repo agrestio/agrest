@@ -38,9 +38,11 @@ public class EncoderService_SqlDateTime_Test {
     @BeforeEach
     public void before() {
 
+        IValueJsonConverterFactory converterFactory = new ValueJsonConverterFactoryProvider(Collections.emptyMap()).get();
+
         this.encoderService = new EncoderService(
-                new EncodablePropertyFactory(new ValueEncodersProvider(Collections.emptyMap()).get()),
-                mock(IStringConverterFactory.class),
+                new EncodablePropertyFactory(new ValueEncodersProvider(converterFactory, Collections.emptyMap()).get()),
+                converterFactory,
                 new RelationshipMapper(),
                 Collections.emptyMap());
 

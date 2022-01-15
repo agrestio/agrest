@@ -1,9 +1,9 @@
 package io.agrest.converter.valuejson;
 
+import io.agrest.encoder.DateTimeFormatters;
+
 import java.time.Instant;
 import java.util.Date;
-
-import static io.agrest.encoder.DateTimeFormatters.isoLocalDateTime;
 
 public class ISODateTimeConverter extends AbstractConverter {
 
@@ -19,6 +19,6 @@ public class ISODateTimeConverter extends AbstractConverter {
 	@Override
 	protected String asStringNonNull(Object object) {
 		Date date = (Date) object;
-		return isoLocalDateTime().format(Instant.ofEpochMilli(date.getTime()));
+		return DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(date.getTime()));
 	}
 }

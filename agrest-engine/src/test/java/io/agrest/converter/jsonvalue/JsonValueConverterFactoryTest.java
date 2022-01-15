@@ -1,8 +1,5 @@
 package io.agrest.converter.jsonvalue;
 
-import io.agrest.converter.jsonvalue.DefaultJsonValueConverterFactory;
-import io.agrest.converter.jsonvalue.EnumConverter;
-import io.agrest.converter.jsonvalue.JsonValueConverter;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -11,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class DefaultJsonValueConverterFactoryTest {
+public class JsonValueConverterFactoryTest {
 
     @Test
     public void testConverter() {
@@ -19,8 +16,8 @@ public class DefaultJsonValueConverterFactoryTest {
         JsonValueConverter<?> c1 = mock(JsonValueConverter.class);
         JsonValueConverter<?> c2 = mock(JsonValueConverter.class);
 
-        DefaultJsonValueConverterFactory factory =
-                new DefaultJsonValueConverterFactory(Collections.singletonMap(Long.class, c1), c2);
+        JsonValueConverterFactory factory =
+                new JsonValueConverterFactory(Collections.singletonMap(Long.class, c1), c2);
 
         assertSame(c1, factory.converter(Long.class));
         assertSame(c2, factory.converter(Long.TYPE));
@@ -35,8 +32,8 @@ public class DefaultJsonValueConverterFactoryTest {
         JsonValueConverter<?> c1 = mock(JsonValueConverter.class);
         JsonValueConverter<?> c2 = mock(JsonValueConverter.class);
 
-        DefaultJsonValueConverterFactory factory =
-                new DefaultJsonValueConverterFactory(Collections.emptyMap(), c2);
+        JsonValueConverterFactory factory =
+                new JsonValueConverterFactory(Collections.emptyMap(), c2);
 
         assertSame(c2, factory.converter(Object.class));
 

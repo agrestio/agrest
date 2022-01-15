@@ -9,21 +9,34 @@ import io.agrest.meta.AgEntity;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class StringConverterFactory implements IStringConverterFactory {
+/**
+ * @since 5.0
+ */
+public class ValueJsonConverterFactory implements IValueJsonConverterFactory {
 
-    private Map<Class<?>, ValueJsonConverter> convertersByJavaType;
-    private ValueJsonConverter defaultConverter;
+    private final Map<Class<?>, ValueJsonConverter> convertersByJavaType;
+    private final ValueJsonConverter defaultConverter;
 
     // these are explicit overrides for named attributes
-    private Map<String, ValueJsonConverter> convertersByPath;
+    private final Map<String, ValueJsonConverter> convertersByPath;
 
-    public StringConverterFactory(
+    public ValueJsonConverterFactory(
             Map<Class<?>, ValueJsonConverter> knownConverters,
             ValueJsonConverter defaultConverter) {
 
         this.convertersByJavaType = knownConverters;
         this.defaultConverter = defaultConverter;
         this.convertersByPath = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public Map<Class<?>, ValueJsonConverter> getConverters() {
+        return convertersByJavaType;
+    }
+
+    @Override
+    public ValueJsonConverter getConverter(Class<?> type) {
+        return convertersByJavaType.getOrDefault(type, defaultConverter);
     }
 
     @Override
@@ -53,17 +66,7 @@ public class StringConverterFactory implements IStringConverterFactory {
         return buildConverter(attribute);
     }
 
-    /**
-     * @since 2.11
-     */
     protected ValueJsonConverter buildConverter(AgAttribute attribute) {
-        return buildConverter(attribute.getType());
-    }
-
-    /**
-     * @since 2.11
-     */
-    protected ValueJsonConverter buildConverter(Class<?> javaType) {
-        return convertersByJavaType.getOrDefault(javaType, defaultConverter);
+        return getConverter(attribute.getType());
     }
 }

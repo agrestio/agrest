@@ -1,8 +1,8 @@
 package io.agrest.converter.valuejson;
 
-import java.time.LocalTime;
+import io.agrest.encoder.DateTimeFormatters;
 
-import static io.agrest.encoder.DateTimeFormatters.isoLocalTime;
+import java.time.LocalTime;
 
 public class ISOLocalTimeConverter extends AbstractConverter {
 
@@ -18,6 +18,6 @@ public class ISOLocalTimeConverter extends AbstractConverter {
 	@Override
 	protected String asStringNonNull(Object object) {
 		LocalTime time = (LocalTime) object;
-		return isoLocalTime().format(time);
+		return DateTimeFormatters.isoLocalTime().format(time);
 	}
 }

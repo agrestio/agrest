@@ -18,16 +18,16 @@ public class DataEncoderFactory {
 
     protected final IEncodablePropertyFactory encodablePropertyFactory;
     protected final IRelationshipMapper relationshipMapper;
-    protected final IStringConverterFactory stringConverterFactory;
+    protected final IValueJsonConverterFactory jsonConverterFactory;
 
     public DataEncoderFactory(
             IEncodablePropertyFactory encodablePropertyFactory,
-            IStringConverterFactory stringConverterFactory,
+            IValueJsonConverterFactory jsonConverterFactory,
             IRelationshipMapper relationshipMapper) {
 
         this.encodablePropertyFactory = encodablePropertyFactory;
         this.relationshipMapper = relationshipMapper;
-        this.stringConverterFactory = stringConverterFactory;
+        this.jsonConverterFactory = jsonConverterFactory;
     }
 
     public <T> Encoder encoder(ResourceEntity<T> entity) {
@@ -136,7 +136,7 @@ public class DataEncoderFactory {
                     readerChain,
                     encoder,
                     true,
-                    stringConverterFactory.getConverter(mapBy.getAgEntity()));
+                    jsonConverterFactory.getConverter(mapBy.getAgEntity()));
         }
 
         // map by property
@@ -149,7 +149,7 @@ public class DataEncoderFactory {
                     readerChain,
                     encoder,
                     false,
-                    stringConverterFactory.getConverter(mapBy.getAgEntity(), attribute.getKey()));
+                    jsonConverterFactory.getConverter(mapBy.getAgEntity(), attribute.getKey()));
         }
 
         // descend into relationship
@@ -172,7 +172,7 @@ public class DataEncoderFactory {
                 readerChain,
                 encoder,
                 true,
-                stringConverterFactory.getConverter(mapBy.getAgEntity()));
+                jsonConverterFactory.getConverter(mapBy.getAgEntity()));
     }
 
     protected void validateLeafMapBy(ResourceEntity<?> mapBy, String mapByPath) {
