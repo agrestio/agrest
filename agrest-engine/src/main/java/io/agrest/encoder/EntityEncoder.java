@@ -8,14 +8,10 @@ import java.util.Map;
 
 public class EntityEncoder extends EntityNoIdEncoder {
 
-    private EncodableProperty idProperty;
+    private final EncodableProperty idProperty;
 
-    public EntityEncoder(
-            EncodableProperty idProperty,
-            Map<String, EncodableProperty> attributeEncoders,
-            Map<String, EncodableProperty> relationshipEncoders) {
-
-        super(attributeEncoders, relationshipEncoders);
+    public EntityEncoder(EncodableProperty idProperty, Map<String, EncodableProperty> encoders) {
+        super(encoders);
         this.idProperty = idProperty;
     }
 

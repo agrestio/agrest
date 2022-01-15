@@ -4,26 +4,16 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * @since 3.4
  */
 public class EntityNoIdEncoder extends AbstractEncoder {
 
-    private Map<String, EncodableProperty> relationshipEncoders;
-    private Map<String, EncodableProperty> combinedEncoders;
+    private final Map<String, EncodableProperty> encoders;
 
-    public EntityNoIdEncoder(
-            Map<String, EncodableProperty> attributeEncoders,
-            Map<String, EncodableProperty> relationshipEncoders) {
-
-        // tracking relationship encoders separately for the sake of the visitors
-        this.relationshipEncoders = relationshipEncoders;
-
-        this.combinedEncoders = new TreeMap<>();
-        combinedEncoders.putAll(attributeEncoders);
-        combinedEncoders.putAll(relationshipEncoders);
+    public EntityNoIdEncoder(Map<String, EncodableProperty> encoders) {
+        this.encoders = encoders;
     }
 
     @Override
@@ -37,44 +27,11 @@ public class EntityNoIdEncoder extends AbstractEncoder {
 
     protected void encodeProperties(Object object, JsonGenerator out) throws IOException {
 
-        for (Map.Entry<String, EncodableProperty> e : combinedEncoders.entrySet()) {
+        for (Map.Entry<String, EncodableProperty> e : encoders.entrySet()) {
             EncodableProperty p = e.getValue();
             String propertyName = e.getKey();
             Object v = object == null ? null : p.getReader().value(object);
             p.getEncoder().encode(propertyName, v, out);
         }
-    }
-
-    @Override
-    public int visitEntities(Object object, EncoderVisitor visitor) {
-
-        if (object == null) {
-            return VISIT_CONTINUE;
-        }
-
-        int bitmask = visitor.visit(object);
-
-        if ((bitmask & VISIT_SKIP_ALL) != 0) {
-            return VISIT_SKIP_ALL;
-        }
-
-        if ((bitmask & VISIT_SKIP_CHILDREN) == 0) {
-
-            for (Map.Entry<String, EncodableProperty> e : relationshipEncoders.entrySet()) {
-
-                visitor.push(e.getKey());
-
-                int propBitmask = e.getValue().visit(object, visitor);
-
-                if ((propBitmask & VISIT_SKIP_ALL) != 0) {
-                    return VISIT_SKIP_ALL;
-                }
-
-                visitor.pop();
-            }
-
-        }
-
-        return VISIT_CONTINUE;
     }
 }

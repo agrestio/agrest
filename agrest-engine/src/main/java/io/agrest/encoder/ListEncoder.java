@@ -16,20 +16,6 @@ public class ListEncoder implements CollectionEncoder {
         this.elementEncoder = elementEncoder;
     }
 
-    @Override
-    public int visitEntities(Object root, EncoderVisitor visitor) {
-        if (root == null) {
-            return 0;
-        }
-
-        List<?> objects = toList(root);
-
-        Counter counter = new Counter();
-
-        rewind(counter, objects, offset);
-        return visit(counter, objects, limit > 0 ? limit : Integer.MAX_VALUE, visitor);
-    }
-
     public ListEncoder withOffset(int offset) {
         this.offset = offset;
         return this;
@@ -99,22 +85,6 @@ public class ListEncoder implements CollectionEncoder {
                 c.encoded++;
             }
         }
-    }
-
-    private int visit(Counter c, List<?> objects, int limit, EncoderVisitor visitor) {
-        int length = objects.size();
-
-        for (; c.position < length && c.encoded < limit; c.position++) {
-            Object o = objects.get(c.position);
-            int bitmask = elementEncoder.visitEntities(o, visitor);
-            c.encoded++;
-
-            if ((bitmask & VISIT_SKIP_ALL) != 0) {
-                return VISIT_SKIP_ALL;
-            }
-        }
-
-        return VISIT_CONTINUE;
     }
 
     final class Counter {

@@ -31,15 +31,6 @@ public class MapByEncoder implements CollectionEncoder {
         this.fieldNameConverter = fieldNameConverter;
     }
 
-    /**
-     * @since 2.0
-     */
-    @Override
-    public int visitEntities(Object object, EncoderVisitor visitor) {
-        // a "flat" visit method that ignores mapping property
-        return collectionEncoder.visitEntities(object, visitor);
-    }
-
     @Override
     public int encodeAndGetTotal(String propertyName, Object object, JsonGenerator out) throws IOException {
         if (propertyName != null) {

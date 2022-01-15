@@ -19,10 +19,12 @@ import io.agrest.property.PropertyReader;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
+import static java.util.Map.entry;
 
 /**
  * @since 3.4
@@ -92,42 +94,60 @@ public class DataEncoderFactory {
     /**
      * Recursively builds an Encoder for the ResourceEntity tree.
      *
-     * @param resourceEntity root entity to be encoded
+     * @param entity root entity to be encoded
      * @return a new Encoder for the provided ResourceEntity tree
      */
-    protected Encoder entityEncoder(ResourceEntity<?> resourceEntity) {
+    protected Encoder entityEncoder(ResourceEntity<?> entity) {
 
-        Map<String, EncodableProperty> attributeEncoders = new HashMap<>();
+        Map<String, EncodableProperty> encoders = propertyEncoders(entity);
 
-        for (AgAttribute attribute : resourceEntity.getAttributes().values()) {
-            EncodableProperty property = encodablePropertyFactory.getAttributeProperty(resourceEntity, attribute);
-            attributeEncoders.put(attribute.getName(), property);
+        EncodableProperty ide = entity.isIdIncluded()
+                ? encodablePropertyFactory.getIdProperty(entity).orElse(null)
+                : null;
+
+        return ide != null
+                ? new EntityEncoder(ide, encoders)
+                : new EntityNoIdEncoder(encoders);
+    }
+
+    protected Map<String, EncodableProperty> propertyEncoders(ResourceEntity<?> entity) {
+        List<Map.Entry<String, EncodableProperty>> entries = new ArrayList<>();
+
+        for (AgAttribute attribute : entity.getAttributes().values()) {
+            EncodableProperty property = encodablePropertyFactory.getAttributeProperty(entity, attribute);
+            entries.add(entry(attribute.getName(), property));
         }
 
-        Map<String, EncodableProperty> relationshipEncoders = new HashMap<>();
-        for (Map.Entry<String, NestedResourceEntity<?>> e : resourceEntity.getChildren().entrySet()) {
+        for (Map.Entry<String, NestedResourceEntity<?>> e : entity.getChildren().entrySet()) {
 
             // read relationship vis child entity to account for overlays
-            AgRelationship relationship = resourceEntity.getChild(e.getKey()).getIncoming();
+            AgRelationship relationship = entity.getChild(e.getKey()).getIncoming();
 
             Encoder encoder = relationship.isToMany()
                     ? nestedToManyEncoder(e.getValue())
                     : toOneEncoder(e.getValue());
 
             EncodableProperty property = encodablePropertyFactory.getRelationshipProperty(
-                    resourceEntity,
+                    entity,
                     relationship,
                     encoder);
 
-            relationshipEncoders.put(e.getKey(), property);
+            entries.add(entry(e.getKey(), property));
         }
+        
+        switch (entries.size()) {
+            case 0:
+                return Collections.emptyMap();
+            case 1:
+                return Map.ofEntries(entries.get(0));
+            default:
+                // sort properties alphabetically to ensure predictable and user-friendly JSON
+                entries.sort(Map.Entry.comparingByKey());
+                Map<String, EncodableProperty> sorted = new LinkedHashMap<>((int) Math.ceil(entries.size() / 0.75));
+                entries.forEach(e -> sorted.put(e.getKey(), e.getValue()));
 
-        Optional<EncodableProperty> idEncoder = resourceEntity.isIdIncluded()
-                ? encodablePropertyFactory.getIdProperty(resourceEntity)
-                : Optional.empty();
-        return idEncoder
-                .map(ide -> (Encoder) new EntityEncoder(ide, attributeEncoders, relationshipEncoders))
-                .orElseGet(() -> new EntityNoIdEncoder(attributeEncoders, relationshipEncoders));
+                return sorted;
+        }
     }
 
     protected MapByEncoder mapByEncoder(ResourceEntity<?> entity, CollectionEncoder encoder) {

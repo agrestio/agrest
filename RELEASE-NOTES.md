@@ -15,6 +15,7 @@
 * #530 JAX-RS free exception mapper
 * #532 Encoder.willEncode can be removed
 * #533 Look up converters by type, not by entity or attribute; value Encoders based on known converters
+* #534 Remove "Encoder.visit()" / "DataResponse.getIncludedObjects()"
 
 ## Release 4.9
 
