@@ -30,13 +30,6 @@ public interface Encoder {
 	boolean encode(String propertyName, Object object, JsonGenerator out) throws IOException;
 
 	/**
-	 * Allows to check whether a given object will be encoded or skipped by the current encoder. This is the same as
-	 * {@link #encode(String, Object, JsonGenerator)}, only without actually encoding the object. Used e.g. in
-	 * {@link ListEncoder} to properly calculate offsets.
-	 */
-	boolean willEncode(String propertyName, Object object);
-
-	/**
 	 * A graph traversal method that recursively visits all entity nodes
 	 * starting with provided object, but only including those nodes that will
 	 * be encoded with this encoder.
@@ -49,7 +42,7 @@ public interface Encoder {
 	 * @since 2.0
 	 */
 	default int visitEntities(Object object, EncoderVisitor visitor) {
-		if (object != null && willEncode(null, object)) {
+		if (object != null) {
 			int bitmask = visitor.visit(object);
 			return (bitmask & VISIT_SKIP_ALL) != 0 ? VISIT_SKIP_ALL : VISIT_CONTINUE;
 		}

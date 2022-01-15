@@ -13,6 +13,7 @@
 * #527 Remove "agrest-client"
 * #529 Remove "agrest-openapi-designfirst"
 * #530 JAX-RS free exception mapper
+* #532 Encoder.willEncode can be removed
 
 ## Release 4.9
 

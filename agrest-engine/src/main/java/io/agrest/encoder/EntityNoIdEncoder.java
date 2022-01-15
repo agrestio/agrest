@@ -48,7 +48,7 @@ public class EntityNoIdEncoder extends AbstractEncoder {
     @Override
     public int visitEntities(Object object, EncoderVisitor visitor) {
 
-        if (object == null || !willEncode(null, object)) {
+        if (object == null) {
             return VISIT_CONTINUE;
         }
 

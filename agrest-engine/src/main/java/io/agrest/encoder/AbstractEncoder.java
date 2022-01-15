@@ -1,8 +1,8 @@
 package io.agrest.encoder;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonGenerator;
+
+import java.io.IOException;
 
 public abstract class AbstractEncoder implements Encoder {
 
@@ -18,14 +18,6 @@ public abstract class AbstractEncoder implements Encoder {
 		} else {
 			return encodeNonNullObject(object, out);
 		}
-	}
-
-	/**
-	 * Always returns true.
-	 */
-	@Override
-	public boolean willEncode(String propertyName, Object object) {
-		return true;
 	}
 
 	protected abstract boolean encodeNonNullObject(Object object, JsonGenerator out) throws IOException;

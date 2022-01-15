@@ -491,11 +491,6 @@ public class PUT_IT extends DbTest {
                     out.writeEndObject();
                     return true;
                 }
-
-                @Override
-                public boolean willEncode(String propertyName, Object object) {
-                    return true;
-                }
             };
 
             return Ag.idempotentFullSync(E7.class, config).uri(uriInfo)

@@ -7,12 +7,10 @@ import java.util.List;
 
 public class ListEncoder implements CollectionEncoder {
 
-    private Encoder elementEncoder;
+    private final Encoder elementEncoder;
 
     private int offset;
     private int limit;
-
-    private boolean shouldFilter;
 
     public ListEncoder(Encoder elementEncoder) {
         this.elementEncoder = elementEncoder;
@@ -39,19 +37,6 @@ public class ListEncoder implements CollectionEncoder {
 
     public ListEncoder withLimit(int limit) {
         this.limit = limit;
-        return this;
-    }
-
-    public ListEncoder shouldFilter() {
-        shouldFilter = true;
-        return this;
-    }
-
-    /**
-     * @since 2.1
-     */
-    public ListEncoder shouldFilter(boolean filter) {
-        shouldFilter = filter;
         return this;
     }
 
@@ -99,21 +84,10 @@ public class ListEncoder implements CollectionEncoder {
 
         int length = objects.size();
 
-        if (shouldFilter) {
-			for (; c.position < length && c.rewound < limit; c.position++) {
-				Object o = objects.get(c.position);
-				if (elementEncoder.willEncode(null, o)) {
-					c.rewound++;
-				}
-			}
-		}
-        else {
-
-        	// if no filtering is in effect, "position" and "rewound" would increment together
-			int delta = Math.min(length - c.position, limit - c.rewound);
-			c.rewound += delta;
-			c.position += delta;
-		}
+        // if no filtering is in effect, "position" and "rewound" would increment together
+        int delta = Math.min(length - c.position, limit - c.rewound);
+        c.rewound += delta;
+        c.position += delta;
     }
 
     private void encode(Counter c, List<?> objects, int limit, JsonGenerator out) throws IOException {
@@ -141,11 +115,6 @@ public class ListEncoder implements CollectionEncoder {
         }
 
         return VISIT_CONTINUE;
-    }
-
-    @Override
-    public boolean willEncode(String propertyName, Object object) {
-        return true;
     }
 
     final class Counter {

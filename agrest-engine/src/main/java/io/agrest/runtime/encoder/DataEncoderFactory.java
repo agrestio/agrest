@@ -44,8 +44,7 @@ public class DataEncoderFactory {
 
         CollectionEncoder encoder = new ListEncoder(elementEncoder)
                 .withOffset(entity.getFetchOffset())
-                .withLimit(entity.getFetchLimit())
-                .shouldFilter(entity.isFiltered());
+                .withLimit(entity.getFetchLimit());
 
         return isMapBy ? mapByEncoder(entity, encoder) : encoder;
     }
@@ -59,10 +58,6 @@ public class DataEncoderFactory {
         ListEncoder encoder = new ListEncoder(elementEncoder)
                 .withOffset(entity.getFetchOffset())
                 .withLimit(entity.getFetchLimit());
-
-        if (entity.isFiltered()) {
-            encoder.shouldFilter();
-        }
 
         return isMapBy ? mapByEncoder(entity, encoder) : encoder;
     }

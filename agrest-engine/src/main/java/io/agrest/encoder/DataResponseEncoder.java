@@ -42,11 +42,6 @@ public class DataResponseEncoder implements Encoder {
     }
 
     @Override
-    public boolean willEncode(String propertyName, Object object) {
-        return true;
-    }
-
-    @Override
     public int visitEntities(Object object, EncoderVisitor visitor) {
         return resultEncoder.visitEntities(object, visitor);
     }

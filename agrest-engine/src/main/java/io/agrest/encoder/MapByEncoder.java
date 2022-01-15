@@ -31,11 +31,6 @@ public class MapByEncoder implements CollectionEncoder {
         this.fieldNameConverter = fieldNameConverter;
     }
 
-    @Override
-    public boolean willEncode(String propertyName, Object object) {
-        return true;
-    }
-
     /**
      * @since 2.0
      */

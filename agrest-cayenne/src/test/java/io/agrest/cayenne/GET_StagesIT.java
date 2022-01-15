@@ -80,11 +80,6 @@ public class GET_StagesIT extends DbTest {
     static class NoIdEncoder implements Encoder {
 
         @Override
-        public boolean willEncode(String propertyName, Object object) {
-            return true;
-        }
-
-        @Override
         public boolean encode(String propertyName, Object object, JsonGenerator out) throws IOException {
 
             out.writeStartObject();

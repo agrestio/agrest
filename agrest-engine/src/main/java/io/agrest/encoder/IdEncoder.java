@@ -39,11 +39,6 @@ public class IdEncoder implements Encoder {
         }
     }
 
-    @Override
-    public boolean willEncode(String propertyName, Object object) {
-        return true;
-    }
-
     protected boolean encodeId(String propertyName, Map<String, Object> id, JsonGenerator out) throws IOException {
         return isCompoundId
                 ? encodeCompoundId(propertyName, id, valueEncoders, out)
