@@ -23,7 +23,7 @@ public abstract class BaseRootDataResolver<T> extends BaseDataResolver implement
     public void fetchData(SelectContext<T> context) {
         RootResourceEntity<T> entity = context.getEntity();
         List<T> result = doFetchData(context);
-        entity.setResult(result);
+        entity.setData(result);
         afterDataFetched(entity, result, context);
     }
 

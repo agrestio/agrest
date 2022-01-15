@@ -407,7 +407,7 @@ public class CreateResourceEntityStageTest {
         stage.execute(context);
 
         ResourceEntity<Ts> resourceEntity = context.getEntity();
-        assertEquals(Exp.simple("m = 'John Smith'"), resourceEntity.getQualifier());
+        assertEquals(Exp.simple("m = 'John Smith'"), resourceEntity.getExp());
     }
 
     public static class Tr {

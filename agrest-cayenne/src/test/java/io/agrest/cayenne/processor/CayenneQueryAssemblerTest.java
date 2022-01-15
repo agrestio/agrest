@@ -35,8 +35,8 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
     public void testCreateRootQuery_Pagination() {
 
         RootResourceEntity<E1> entity = new RootResourceEntity<>(getAgEntity(E1.class));
-        entity.setFetchLimit(10);
-        entity.setFetchOffset(0);
+        entity.setLimit(10);
+        entity.setStart(0);
 
         SelectContext<E1> c = new SelectContext<>(E1.class);
         c.setEntity(entity);
@@ -47,8 +47,8 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
         assertEquals(0, q1.getOffset());
         assertEquals(0, q1.getLimit());
 
-        entity.setFetchLimit(0);
-        entity.setFetchOffset(0);
+        entity.setLimit(0);
+        entity.setStart(0);
         CayenneProcessor.getOrCreateRootEntity(entity).setSelect(null);
 
         ObjectSelect<E1> q2 = queryAssembler.createRootQuery(c);
@@ -56,8 +56,8 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
         assertEquals(0, q2.getOffset());
         assertEquals(0, q2.getLimit());
 
-        entity.setFetchLimit(0);
-        entity.setFetchOffset(5);
+        entity.setLimit(0);
+        entity.setStart(5);
 
         ObjectSelect<E1> q3 = queryAssembler.createRootQuery(c);
         assertEquals(0, q3.getPageSize());
@@ -72,11 +72,11 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
         SelectContext<E1> c = new SelectContext<>(E1.class);
         c.setEntity(entity);
 
-        entity.andQualifier(Exp.simple("name = 'X'"));
+        entity.andExp(Exp.simple("name = 'X'"));
         ObjectSelect<E1> q1 = queryAssembler.createRootQuery(c);
         assertEquals(E1.NAME.eq("X"), q1.getWhere());
 
-        entity.andQualifier(Exp.simple("name in ('a', 'b')"));
+        entity.andExp(Exp.simple("name in ('a', 'b')"));
         ObjectSelect<E1> q2 = queryAssembler.createRootQuery(c);
         assertEquals(E1.NAME.eq("X").andExp(E1.NAME.in("a", "b")), q2.getWhere());
     }

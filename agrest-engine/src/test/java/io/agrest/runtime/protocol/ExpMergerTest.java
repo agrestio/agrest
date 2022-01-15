@@ -41,14 +41,14 @@ public class ExpMergerTest {
     @Test
     public void testMerge_Empty() {
         merger.merge(entity, Exp.simple("a = 12345 and b = 'John Smith'"));
-        assertEquals(Exp.simple("a = 12345 and b = 'John Smith'"), entity.getQualifier());
+        assertEquals(Exp.simple("a = 12345 and b = 'John Smith'"), entity.getExp());
     }
 
     @Test
     public void testMerge_OverExisting() {
-        entity.andQualifier(Exp.simple("c = true"));
+        entity.andExp(Exp.simple("c = true"));
         merger.merge(entity, Exp.simple("a = 12345 and b = 'John Smith'"));
-        assertEquals(Exp.simple("c = true").and(Exp.simple("a = 12345 and b = 'John Smith'")), entity.getQualifier());
+        assertEquals(Exp.simple("c = true").and(Exp.simple("a = 12345 and b = 'John Smith'")), entity.getExp());
     }
 
     public static class Tr {

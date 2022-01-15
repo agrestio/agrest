@@ -20,11 +20,15 @@ public class ResultFilter implements IResultFilter {
     @Override
     public <T> void filterTree(RootResourceEntity<T> entity) {
         ReadFilter<T> filter = entity.getAgEntity().getReadFilter();
-        if (!filter.allowsAll() && !entity.getResult().isEmpty()) {
+        if (!filter.allowsAll() && !entity.getData().isEmpty()) {
+
+            // TODO: if pagination is in effect, we may significantly reduce the number of checks by only applying the
+            //  filter to the displayed "window". Not trivial, as we need to filter first to be able to calculate offsets
+            //  and limits... Looks like offset will need to be filtered, while limit may be skipped
 
             // replacing the list to avoid messing up possible data source caches, and also
             // it is likely faster to create a new list than to remove entries from an existing ArrayList
-            entity.setResult(filterList(entity.getResult(), filter));
+            entity.setData(filterList(entity.getData(), filter));
         }
 
         filterChildren(entity);
@@ -43,10 +47,10 @@ public class ResultFilter implements IResultFilter {
     protected <T> void filterToOne(ToOneResourceEntity<T> entity) {
 
         ReadFilter<T> filter = entity.getAgEntity().getReadFilter();
-        if (!filter.allowsAll() && !entity.getResultsByParent().isEmpty()) {
+        if (!filter.allowsAll() && !entity.getDataByParent().isEmpty()) {
 
             // filter the map in place - key removal should be fast
-            entity.getResultsByParent().entrySet().removeIf(e -> !filter.isAllowed(e.getValue()));
+            entity.getDataByParent().entrySet().removeIf(e -> !filter.isAllowed(e.getValue()));
         }
 
         filterChildren(entity);
@@ -55,12 +59,12 @@ public class ResultFilter implements IResultFilter {
     protected <T> void filterToMany(ToManyResourceEntity<T> entity) {
 
         ReadFilter<T> filter = entity.getAgEntity().getReadFilter();
-        if (!filter.allowsAll() && !entity.getResultsByParent().isEmpty()) {
+        if (!filter.allowsAll() && !entity.getDataByParent().isEmpty()) {
 
             // Filter the map in place;
             // Replace relationship lists to avoid messing up possible data source caches, and also
             // it is likely faster to create a new list than to remove entries from an existing ArrayList
-            for (Map.Entry<AgObjectId, List<T>> e : entity.getResultsByParent().entrySet()) {
+            for (Map.Entry<AgObjectId, List<T>> e : entity.getDataByParent().entrySet()) {
                 e.setValue(filterList(e.getValue(), filter));
             }
         }

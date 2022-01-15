@@ -203,7 +203,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         ObjRelationship objRelationship = parentObjEntity.getRelationship(entity.getIncoming().getName());
         String reversePath = objRelationship.getReverseDbRelationshipPath();
 
-        consumeRange(parentData, entity.getParent().getFetchOffset(), entity.getParent().getFetchLimit(),
+        consumeRange(parentData, entity.getParent().getStart(), entity.getParent().getLimit(),
                 // TODO: this only works for single column ids
                 p -> qualifiers.add(ExpressionFactory.matchDbExp(reversePath, p)));
 
@@ -236,13 +236,13 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         ObjectSelect<T> query = ObjectSelect.query(entity.getType());
 
         if (!entity.isFiltered()) {
-            int limit = entity.getFetchLimit();
+            int limit = entity.getLimit();
             if (limit > 0) {
                 query.pageSize(limit);
             }
         }
 
-        Expression parsedExp = qualifierParser.parse(entity.getQualifier());
+        Expression parsedExp = qualifierParser.parse(entity.getExp());
         Expression finalExp = qualifierPostProcessor.process(entity.getAgEntity(), parsedExp);
         query.where(finalExp);
 

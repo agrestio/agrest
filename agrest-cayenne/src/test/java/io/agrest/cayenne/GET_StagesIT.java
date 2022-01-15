@@ -68,7 +68,7 @@ public class GET_StagesIT extends DbTest {
                     .orderBy(E27Nopk.NAME.asc())
                     .select(AgRuntime.service(ICayennePersister.class, config).sharedContext());
 
-            context.getEntity().setResult(names);
+            context.getEntity().setData(names);
 
             Encoder rowEncoder = new NoIdEncoder();
             ListEncoder listEncoder = new ListEncoder(rowEncoder);

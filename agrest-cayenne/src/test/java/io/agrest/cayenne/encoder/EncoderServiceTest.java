@@ -104,9 +104,9 @@ public class EncoderServiceTest extends CayenneNoDbTest {
         e2.addToE3s(e32);
 
         // saves result set in ResourceEntity
-        descriptor.setResult(Collections.singletonList(e2));
-        e3Descriptor.addResult(new SimpleObjectId(7), e31);
-        e3Descriptor.addResult(new SimpleObjectId(7), e32);
+        descriptor.setData(Collections.singletonList(e2));
+        e3Descriptor.addData(new SimpleObjectId(7), e31);
+        e3Descriptor.addData(new SimpleObjectId(7), e32);
 
         assertEquals("{\"data\":[{\"id\":7,\"e3s\":[{\"id\":5,\"name\":\"31\"},{\"id\":6,\"name\":\"32\"}]}],\"total\":1}",
                 toJson(e2, descriptor));

@@ -85,7 +85,6 @@ public class DataResponse<T> extends AgResponse {
         return data;
     }
 
-
     public Encoder getEncoder() {
         return encoder;
     }

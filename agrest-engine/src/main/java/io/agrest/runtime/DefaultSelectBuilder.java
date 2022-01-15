@@ -58,13 +58,13 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     }
 
     @Override
-    public SelectBuilder<T> fetchLimit(int limit) {
+    public SelectBuilder<T> limit(int limit) {
         getOrCreateSizeConstraints().fetchLimit(limit);
         return this;
     }
 
     @Override
-    public SelectBuilder<T> fetchOffset(int offset) {
+    public SelectBuilder<T> start(int offset) {
         getOrCreateSizeConstraints().fetchOffset(offset);
         return this;
     }
@@ -171,7 +171,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     }
 
     private void processEmpty(SelectContext<T> context) {
-        context.getEntity().setResult(Collections.emptyList());
+        context.getEntity().setData(Collections.emptyList());
         processorFactory.getStageProcessor(SelectStage.ENCODE).execute(context);
     }
 }

@@ -15,6 +15,6 @@ public class ToOneEntityResultReader extends NestedEntityResultReader<ToOneResou
     @Override
     public Object value(Object root) {
         AgObjectId id = readId(root);
-        return entity.getResult(id);
+        return entity.getData(id);
     }
 }

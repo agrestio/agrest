@@ -83,18 +83,18 @@ public class DefaultUpdateBuilderTest {
     }
 
     private void doSomething2(UpdateContext<I1> c) {
-        c.getEntity().setResult(new ArrayList<>());
-        List<I1> objects = c.getEntity().getResult();
+        c.getEntity().setData(new ArrayList<>());
+        List<I1> objects = c.getEntity().getData();
         objects.add(new T1());
     }
 
     private void doSomething3(UpdateContext<Object> c) {
-        c.getEntity().setResult(new ArrayList<>());
+        c.getEntity().setData(new ArrayList<>());
     }
 
     private void doSomething4(UpdateContext<X> c) {
-        c.getEntity().setResult(new ArrayList<>());
-        c.getEntity().setResult(new ArrayList<X>());
+        c.getEntity().setData(new ArrayList<>());
+        c.getEntity().setData(new ArrayList<X>());
     }
 
     private ProcessorOutcome doSomethingAndReturn0(UpdateContext<?> c) {
@@ -106,18 +106,18 @@ public class DefaultUpdateBuilderTest {
     }
 
     private ProcessorOutcome doSomethingAndReturn2(UpdateContext<I1> c) {
-        c.getEntity().setResult(new ArrayList<>());
+        c.getEntity().setData(new ArrayList<>());
         return ProcessorOutcome.CONTINUE;
     }
 
     private ProcessorOutcome doSomethingAndReturn3(UpdateContext<Object> c) {
-        c.getEntity().setResult(new ArrayList<>());
+        c.getEntity().setData(new ArrayList<>());
         return ProcessorOutcome.CONTINUE;
     }
 
     private ProcessorOutcome doSomethingAndReturn4(UpdateContext<X> c) {
-        c.getEntity().setResult(new ArrayList<>());
-        c.getEntity().setResult(new ArrayList<X>());
+        c.getEntity().setData(new ArrayList<>());
+        c.getEntity().setData(new ArrayList<X>());
         return ProcessorOutcome.CONTINUE;
     }
 

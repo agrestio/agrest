@@ -259,7 +259,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         for (Object[] row : objects) {
 
             if (row.length == 2) {
-                entity.addResult(new SimpleObjectId(row[1]), (T) row[0]);
+                entity.addData(new SimpleObjectId(row[1]), (T) row[0]);
             } else if (row.length > 2) {
 
                 Map<String, Object> compoundKeys = new LinkedHashMap<>();
@@ -269,7 +269,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
                         compoundKeys.put(idAttributes[i - 1].getName(), row[i]);
                     }
                 }
-                entity.addResult(new CompoundObjectId(compoundKeys), (T) row[0]);
+                entity.addData(new CompoundObjectId(compoundKeys), (T) row[0]);
             }
         }
     }

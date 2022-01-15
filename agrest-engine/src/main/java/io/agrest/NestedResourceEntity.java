@@ -3,7 +3,6 @@ package io.agrest;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.resolver.NestedDataResolver;
-import io.agrest.runtime.processor.select.SelectContext;
 
 /**
  * @param <T>
@@ -27,7 +26,17 @@ public abstract class NestedResourceEntity<T> extends ResourceEntity<T> {
         this.resolver = (NestedDataResolver<T>) incoming.getResolver();
     }
 
-    public abstract void addResult(AgObjectId parentId, T object);
+    /**
+     * @since 5.0
+     */
+    public abstract void addData(AgObjectId parentId, T object);
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #addData(AgObjectId, Object)}
+     */
+    public void addResult(AgObjectId parentId, T object) {
+        addData(parentId, object);
+    }
 
     public ResourceEntity<?> getParent() {
         return parent;

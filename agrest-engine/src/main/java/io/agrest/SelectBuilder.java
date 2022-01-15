@@ -110,14 +110,32 @@ public interface SelectBuilder<T> {
     SelectBuilder<T> parent(EntityParent<?> parent);
 
     /**
-     * @since 1.2
+     * Defines an offset for the result. Used to provide server-side pagination.
+     *
+     * @since 5.0
      */
-    SelectBuilder<T> fetchOffset(int offset);
+    SelectBuilder<T> start(int start);
 
     /**
      * @since 1.2
      */
-    SelectBuilder<T> fetchLimit(int limit);
+    SelectBuilder<T> limit(int limit);
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #start(int)} to match the name of the Ag protocol parameter.
+     */
+    @Deprecated
+    default SelectBuilder<T> fetchOffset(int offset) {
+        return start(offset);
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #limit(int)} to match the name of the Ag protocol parameter.
+     */
+    @Deprecated
+    default SelectBuilder<T> fetchLimit(int limit) {
+        return limit(limit);
+    }
 
     /**
      * Registers a consumer to be executed after a specified standard execution stage. The consumer can inspect and

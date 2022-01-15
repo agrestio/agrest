@@ -7,10 +7,10 @@ public class SizeMerger implements ISizeMerger {
     @Override
     public void merge(ResourceEntity<?> resourceEntity, Integer start, Integer limit) {
         if (start != null) {
-            resourceEntity.setFetchOffset(start);
+            resourceEntity.setStart(start);
         }
         if (limit != null) {
-            resourceEntity.setFetchLimit(limit);
+            resourceEntity.setLimit(limit);
         }
     }
 }

@@ -86,7 +86,7 @@ public class GET_PersistentWithExtraAnnotatedPropertiesIT extends DbTest {
         }
 
         void afterE14Fetched(SelectContext<E14> context) {
-            for (E14 e14 : context.getEntity().getResult()) {
+            for (E14 e14 : context.getEntity().getData()) {
                 P7 p7 = new P7();
                 p7.setId(Cayenne.intPKForObject(e14) * 100);
                 p7.setString("p7_" + e14.getName());

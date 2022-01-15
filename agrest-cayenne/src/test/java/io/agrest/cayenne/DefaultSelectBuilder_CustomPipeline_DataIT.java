@@ -36,7 +36,7 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT extends DbTest {
                 .values(2, "yyy").exec();
 
         DataResponse<E2> dr = createBuilder(E2.class)
-                .stage(SelectStage.CREATE_ENTITY, c -> c.getEntity().andQualifier(Exp.simple("name = 'yyy'")))
+                .stage(SelectStage.CREATE_ENTITY, c -> c.getEntity().andExp(Exp.simple("name = 'yyy'")))
                 .get();
 
         assertEquals(1, dr.getData().size());

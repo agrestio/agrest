@@ -80,7 +80,7 @@ public class GET_SizeConstraintsIT extends DbTest {
         @Path("e4/limit")
         public DataResponse<E4> limit(@Context UriInfo uriInfo) {
             return Ag.select(E4.class, config).uri(uriInfo)
-                    .fetchLimit(2)
+                    .limit(2)
                     .get();
         }
     }

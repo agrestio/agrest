@@ -17,7 +17,6 @@ import io.agrest.property.ToOneEntityResultReader;
 import io.agrest.resolver.BaseNestedDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
-import org.apache.cayenne.Persistent;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -94,7 +93,7 @@ public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseNes
             T object = (T) row[0];
 
             if (row.length == 2) {
-                entity.addResult(new SimpleObjectId(row[1]), object);
+                entity.addData(new SimpleObjectId(row[1]), object);
             } else {
 
                 Map<String, Object> idParts = new LinkedHashMap<>();
@@ -102,7 +101,7 @@ public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseNes
                     idParts.put(idAttributes[i - 1].getName(), row[i]);
                 }
 
-                entity.addResult(new CompoundObjectId(idParts), object);
+                entity.addData(new CompoundObjectId(idParts), object);
             }
         }
     }

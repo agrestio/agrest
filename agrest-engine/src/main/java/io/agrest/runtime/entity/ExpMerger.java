@@ -11,7 +11,7 @@ public class ExpMerger implements IExpMerger {
     @Override
     public void merge(ResourceEntity<?> resourceEntity, Exp exp) {
         if (exp != null) {
-            resourceEntity.andQualifier(exp);
+            resourceEntity.andExp(exp);
         }
     }
 }

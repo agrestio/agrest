@@ -62,7 +62,7 @@ public abstract class CayenneFillResponseStage implements Processor<UpdateContex
                 }
             }
 
-            context.getEntity().setResult(objects);
+            context.getEntity().setData(objects);
         }
     }
 
@@ -90,13 +90,13 @@ public abstract class CayenneFillResponseStage implements Processor<UpdateContex
                 if (childEntity instanceof ToManyResourceEntity) {
                     List r = (List) result;
 
-                    ((ToManyResourceEntity) childEntity).addResultList(id, r);
+                    ((ToManyResourceEntity) childEntity).setData(id, r);
                     for (Object ro : r) {
                         assignChildrenToParent((DataObject) ro, childEntity);
                     }
 
                 } else {
-                    childEntity.addResult(id, result);
+                    childEntity.addData(id, result);
                     assignChildrenToParent((DataObject) result, childEntity);
                 }
             }

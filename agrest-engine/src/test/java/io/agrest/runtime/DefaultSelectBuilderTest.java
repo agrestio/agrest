@@ -84,19 +84,17 @@ public class DefaultSelectBuilderTest {
     }
 
     private void doSomething2(SelectContext<I1> c) {
-        c.getEntity().setResult(new ArrayList<>());
-
-        List<I1> objects = c.getEntity().getResult();
-        objects.add(new T1());
+        List<I1> data = new ArrayList<>();
+        data.add(new T1());
+        c.getEntity().setData(data);
     }
 
     private void doSomething3(SelectContext<Object> c) {
-        c.getEntity().setResult(new ArrayList<>());
+        c.getEntity().setData(new ArrayList<>());
     }
 
     private void doSomething4(SelectContext<P1> c) {
-        c.getEntity().setResult(new ArrayList<>());
-        c.getEntity().setResult(new ArrayList<P1>());
+        c.getEntity().setData(new ArrayList<>());
     }
 
     private ProcessorOutcome doSomethingAndReturn0(SelectContext<?> c) {
@@ -108,18 +106,18 @@ public class DefaultSelectBuilderTest {
     }
 
     private ProcessorOutcome doSomethingAndReturn2(SelectContext<I1> c) {
-        c.getEntity().setResult(new ArrayList<>());
+        c.getEntity().setData(new ArrayList<>());
         return ProcessorOutcome.CONTINUE;
     }
 
     private ProcessorOutcome doSomethingAndReturn3(SelectContext<Object> c) {
-        c.getEntity().setResult(new ArrayList<>());
+        c.getEntity().setData(new ArrayList<>());
         return ProcessorOutcome.CONTINUE;
     }
 
     private ProcessorOutcome doSomethingAndReturn4(SelectContext<P1> c) {
-        c.getEntity().setResult(new ArrayList<>());
-        c.getEntity().setResult(new ArrayList<P1>());
+        c.getEntity().setData(new ArrayList<>());
+        c.getEntity().setData(new ArrayList<P1>());
         return ProcessorOutcome.CONTINUE;
     }
 

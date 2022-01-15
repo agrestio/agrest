@@ -90,6 +90,6 @@ public class AgEntityOverlayTest {
         context.setEntity(new RootResourceEntity<>(mock(AgEntity.class)));
         eo.getDataResolver().fetchData(context);
 
-        assertSame(p1s, context.getEntity().getResult());
+        assertSame(p1s, context.getEntity().getData());
     }
 }

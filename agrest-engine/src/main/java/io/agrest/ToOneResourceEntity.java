@@ -11,24 +11,46 @@ import java.util.Map;
  */
 public class ToOneResourceEntity<T> extends NestedResourceEntity<T> {
 
-    private final Map<AgObjectId, T> resultsByParent;
+    private final Map<AgObjectId, T> dataByParent;
 
     public ToOneResourceEntity(AgEntity<T> agEntity, ResourceEntity<?> parent, AgRelationship incoming) {
         super(agEntity, parent, incoming);
-        this.resultsByParent = new LinkedHashMap<>();
+        this.dataByParent = new LinkedHashMap<>();
     }
 
+    /**
+     * @since 5.0
+     */
+    public Map<AgObjectId, T> getDataByParent() {
+        return dataByParent;
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #getDataByParent()}
+     */
+    @Deprecated
     public Map<AgObjectId, T> getResultsByParent() {
-        return resultsByParent;
+        return getDataByParent();
     }
 
-    public T getResult(AgObjectId parentId) {
+    /**
+     * @since 5.0
+     */
+    public T getData(AgObjectId parentId) {
         // TODO: apply offset/limit like ToManyResourceEntity does, only to a single object?
-        return resultsByParent.get(parentId);
+        return dataByParent.get(parentId);
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #getData(AgObjectId)}
+     */
+    @Deprecated
+    public T getResult(AgObjectId parentId) {
+        return getData(parentId);
     }
 
     @Override
-    public void addResult(AgObjectId parentId, T object) {
-        resultsByParent.put(parentId, object);
+    public void addData(AgObjectId parentId, T object) {
+        dataByParent.put(parentId, object);
     }
 }

@@ -22,7 +22,7 @@ public class ToManyEntityResultReader extends NestedEntityResultReader<ToManyRes
     @Override
     public List<?> value(Object root) {
         AgObjectId id = readId(root);
-        List<?> value = entity.getDataWindow(id);
-        return value != null ? value : Collections.emptyList();
+        List<?> data = entity.getDataWindow(id);
+        return data != null ? data : Collections.emptyList();
     }
 }

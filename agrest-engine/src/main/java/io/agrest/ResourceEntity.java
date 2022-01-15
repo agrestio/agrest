@@ -27,15 +27,14 @@ public abstract class ResourceEntity<T> {
     private final Map<String, AgAttribute> attributes;
     private final Set<String> defaultAttributes;
     private final Map<String, NestedResourceEntity<?>> children;
+    private final Map<String, Object> requestProperties;
 
     private String mapByPath;
     private ResourceEntity<?> mapBy;
     private final List<Sort> orderings;
-    private Exp qualifier;
-    private int fetchOffset;
-    private int fetchLimit;
-
-    private final Map<String, Object> requestProperties;
+    private Exp exp;
+    private int start;
+    private int limit;
 
     public ResourceEntity(AgEntity<T> agEntity) {
 
@@ -64,17 +63,33 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * @since 4.4
+     * @since 5.0
      */
-    public Exp getQualifier() {
-        return qualifier;
+    public Exp getExp() {
+        return exp;
     }
 
     /**
-     * @since 4.4
+     * @deprecated since 5.0 in favor of {@link #getExp()}
      */
+    @Deprecated
+    public Exp getQualifier() {
+        return getExp();
+    }
+
+    /**
+     * @since 5.0
+     */
+    public void andExp(Exp exp) {
+        this.exp = this.exp != null ? this.exp.and(exp) : exp;
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #andExp(Exp)}
+     */
+    @Deprecated
     public void andQualifier(Exp qualifier) {
-        this.qualifier = this.qualifier != null ? this.qualifier.and(qualifier) : qualifier;
+        andExp(qualifier);
     }
 
     public List<Sort> getOrderings() {
@@ -187,31 +202,63 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * @since 1.20
+     * @since 5.0
      */
+    public int getStart() {
+        return start;
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #getStart()}
+     */
+    @Deprecated
     public int getFetchOffset() {
-        return fetchOffset;
+        return getStart();
     }
 
     /**
-     * @since 1.20
+     * @since 5.0
      */
+    public void setStart(int start) {
+        this.start = start;
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #setStart(int)}
+     */
+    @Deprecated
     public void setFetchOffset(int fetchOffset) {
-        this.fetchOffset = fetchOffset;
+        setStart(fetchOffset);
     }
 
     /**
-     * @since 1.20
+     * @since 5.0
      */
+    public int getLimit() {
+        return limit;
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #getLimit()}
+     */
+    @Deprecated
     public int getFetchLimit() {
-        return fetchLimit;
+        return getLimit();
     }
 
     /**
-     * @since 1.20
+     * @since 5.0
      */
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #setLimit(int)}
+     */
+    @Deprecated
     public void setFetchLimit(int fetchLimit) {
-        this.fetchLimit = fetchLimit;
+        setLimit(fetchLimit);
     }
 
     /**
@@ -255,16 +302,16 @@ public abstract class ResourceEntity<T> {
 
         int total = dataUnlimited.size();
 
-        if (total == 0 || (fetchOffset <= 0 && fetchLimit <= 0)) {
+        if (total == 0 || (start <= 0 && limit <= 0)) {
             return dataUnlimited;
         }
 
-        int i0 = Math.max(fetchOffset, 0);
+        int i0 = Math.max(start, 0);
         if (i0 >= total) {
             return Collections.emptyList();
         }
 
-        int i1 = fetchLimit > 0 ? Math.min(i0 + fetchLimit, total) : total;
+        int i1 = limit > 0 ? Math.min(i0 + limit, total) : total;
 
         return dataUnlimited.subList(i0, i1);
     }

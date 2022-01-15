@@ -3,7 +3,7 @@ package io.agrest;
 import io.agrest.meta.AgEntity;
 import io.agrest.resolver.RootDataResolver;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -12,16 +12,13 @@ import java.util.List;
  */
 public class RootResourceEntity<T> extends ResourceEntity<T> {
 
+    @Deprecated
     private String applicationBase;
-    private List<T> result;
+    private List<T> data;
 
     public RootResourceEntity(AgEntity<T> agEntity) {
         super(agEntity);
-        this.result = new ArrayList<>();
-    }
-
-    public List<T> getResult() {
-        return result;
+        this.data = Collections.emptyList();
     }
 
     /**
@@ -30,23 +27,53 @@ public class RootResourceEntity<T> extends ResourceEntity<T> {
      * @since 5.0
      */
     public List<T> getDataWindow() {
-        return getDataWindow(result);
+        return getDataWindow(data);
     }
 
-    public void setResult(List<T> result) {
-        this.result = result;
+    /**
+     * @since 5.0
+     */
+    public List<T> getData() {
+        return data;
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #getData()}
+     */
+    @Deprecated
+    public List<T> getResult() {
+        return data;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public void setData(List<T> data) {
+        this.data = data;
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #setData(List)}
+     */
+    @Deprecated
+    public void setResult(List<T> data) {
+        this.data = data;
     }
 
     /**
      * @since 1.20
+     * @deprecated since 5.0 as metadata encoding that uses this will soon be removed from Agrest
      */
+    @Deprecated
     public String getApplicationBase() {
         return applicationBase;
     }
 
     /**
      * @since 1.20
+     * @deprecated since 5.0 as metadata encoding that uses this will soon be removed from Agrest
      */
+    @Deprecated
     public void setApplicationBase(String applicationBase) {
         this.applicationBase = applicationBase;
     }

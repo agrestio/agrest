@@ -13,36 +13,69 @@ import java.util.Map;
  */
 public class ToManyResourceEntity<T> extends NestedResourceEntity<T> {
 
-    private final Map<AgObjectId, List<T>> resultsByParent;
+    private final Map<AgObjectId, List<T>> dataByParent;
 
     public ToManyResourceEntity(AgEntity<T> agEntity, ResourceEntity<?> parent, AgRelationship incoming) {
         super(agEntity, parent, incoming);
-        this.resultsByParent = new LinkedHashMap<>();
+        this.dataByParent = new LinkedHashMap<>();
     }
 
+    /**
+     * @since 5.0
+     */
+    public Map<AgObjectId, List<T>> getDataByParent() {
+        return dataByParent;
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #getDataByParent()}
+     */
+    @Deprecated
     public Map<AgObjectId, List<T>> getResultsByParent() {
-        return resultsByParent;
+        return getDataByParent();
     }
 
+    /**
+     * @since 5.0
+     */
+    public List<T> getData(AgObjectId parentId) {
+        return dataByParent.get(parentId);
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #getData(AgObjectId)}
+     */
+    @Deprecated
     public List<T> getResult(AgObjectId parentId) {
-        return resultsByParent.get(parentId);
+        return getData(parentId);
     }
 
     /**
      * @since 5.0
      */
     public List<T> getDataWindow(AgObjectId parentId) {
-        // TODO: since we don't (yet) care to track the totals of the truncated relationship lists,
+        // TODO: since we don't (yet) care to track totals of the truncated relationship lists,
         //  instead of filtering a full list, we may add limits to "addResult"
-        return getDataWindow(getResult(parentId));
+        return getDataWindow(getData(parentId));
     }
 
     @Override
-    public void addResult(AgObjectId parentId, T object) {
-        resultsByParent.computeIfAbsent(parentId, k -> new ArrayList<>()).add(object);
+    public void addData(AgObjectId parentId, T object) {
+        dataByParent.computeIfAbsent(parentId, k -> new ArrayList<>()).add(object);
     }
 
+    /**
+     * @since 5.0
+     */
+    public void setData(AgObjectId parentId, List<T> data) {
+        dataByParent.put(parentId, data);
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #setData(AgObjectId, List)}
+     */
+    @Deprecated
     public void addResultList(AgObjectId parentId, List<T> objects) {
-        resultsByParent.put(parentId, objects);
+        setData(parentId, objects);
     }
 }
