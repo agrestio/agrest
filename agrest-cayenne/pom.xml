@@ -31,14 +31,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- Provided dependencies -->
-        <!-- Either JAX RS or Jakarta RS versions of Jersey will provide this -->
-        <dependency>
-            <groupId>jakarta.ws.rs</groupId>
-            <artifactId>jakarta.ws.rs-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- unit test deps -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
