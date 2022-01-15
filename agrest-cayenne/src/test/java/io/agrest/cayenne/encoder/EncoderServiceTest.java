@@ -140,6 +140,6 @@ public class EncoderServiceTest extends CayenneNoDbTest {
             throw new RuntimeException("Encoding error: " + e.getMessage());
         }
 
-        return new String(out.toByteArray());
+        return out.toString();
     }
 }

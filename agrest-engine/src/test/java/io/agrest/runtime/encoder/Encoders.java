@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class Encoders {
 
-    private static IJacksonService JACKSON = new JacksonService();
+    private static final IJacksonService JACKSON = new JacksonService();
 
     public static String toJson(Encoder encoder, Object value) {
 
@@ -21,6 +21,6 @@ public class Encoders {
             throw new RuntimeException("Encoding error: " + e.getMessage());
         }
 
-        return new String(out.toByteArray());
+        return out.toString();
     }
 }
