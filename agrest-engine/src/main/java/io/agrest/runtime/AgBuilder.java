@@ -116,7 +116,9 @@ public class AgBuilder {
 
     @Deprecated
     private final Map<String, PropertyMetadataEncoder> metadataEncoders;
+    @Deprecated
     private String baseUrl;
+
     private boolean autoLoadModules;
     private boolean autoLoadFeatures;
 
