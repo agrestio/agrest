@@ -1,6 +1,7 @@
 package io.agrest.runtime.processor.unrelate;
 
 import io.agrest.processor.BaseProcessingContext;
+import org.apache.cayenne.di.Injector;
 
 public class UnrelateContext<T> extends BaseProcessingContext<T> {
 
@@ -8,8 +9,8 @@ public class UnrelateContext<T> extends BaseProcessingContext<T> {
     private String relationship;
     private Object targetId;
 
-    public UnrelateContext(Class<T> type) {
-        super(type);
+    public UnrelateContext(Class<T> type, Injector injector) {
+        super(type, injector);
     }
 
     public Object getSourceId() {

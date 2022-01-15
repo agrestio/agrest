@@ -17,15 +17,12 @@ import javax.ws.rs.core.Configuration;
  */
 public class CayenneResolvers {
 
-    public static CayenneRootDataResolverBuilder root(Configuration config) {
-        return new CayenneRootDataResolverBuilder(persister(config), queryAssembler(config));
-    }
 
     /**
-     * @since 3.7
+     * @since 5.0
      */
-    public static CayenneRootDataResolverBuilder root(ICayennePersister persister, ICayenneQueryAssembler queryAssembler) {
-        return new CayenneRootDataResolverBuilder(persister, queryAssembler);
+    public static CayenneRootDataResolverBuilder root() {
+        return new CayenneRootDataResolverBuilder();
     }
 
     public static CayenneNestedDataResolverBuilder nested(Configuration config) {

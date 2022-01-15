@@ -12,6 +12,7 @@ import io.agrest.SizeConstraints;
 import io.agrest.encoder.Encoder;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.BaseProcessingContext;
+import org.apache.cayenne.di.Injector;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collections;
@@ -37,8 +38,8 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     private AgRequest request;
     private Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
 
-    public SelectContext(Class<T> type) {
-        super(type);
+    public SelectContext(Class<T> type, Injector injector) {
+        super(type, injector);
     }
 
     /**

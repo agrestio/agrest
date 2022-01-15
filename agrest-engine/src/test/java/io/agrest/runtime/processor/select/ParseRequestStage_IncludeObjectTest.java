@@ -8,6 +8,7 @@ import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.runtime.protocol.*;
 import io.agrest.runtime.request.DefaultRequestBuilderFactory;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
+import org.apache.cayenne.di.Injector;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -70,7 +71,7 @@ public class ParseRequestStage_IncludeObjectTest {
     }
 
     protected <T> SelectContext<T> prepareContext(Class<T> type, MultivaluedMap<String, String> params) {
-        SelectContext<T> context = new SelectContext<>(type);
+        SelectContext<T> context = new SelectContext<>(type, mock(Injector.class));
 
         UriInfo uriInfo = mock(UriInfo.class);
         when(uriInfo.getQueryParameters()).thenReturn(params);

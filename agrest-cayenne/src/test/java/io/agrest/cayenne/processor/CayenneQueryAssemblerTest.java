@@ -7,11 +7,13 @@ import io.agrest.protocol.Sort;
 import io.agrest.cayenne.cayenne.main.E1;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.runtime.processor.select.SelectContext;
+import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.query.ObjectSelect;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
 
@@ -20,7 +22,7 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
 
         RootResourceEntity<E1> entity = getResourceEntity(E1.class);
         entity.getOrderings().add(new Sort("name", Dir.ASC));
-        SelectContext<E1> c = new SelectContext<>(E1.class);
+        SelectContext<E1> c = new SelectContext<>(E1.class, mock(Injector.class));
         c.setEntity(entity);
 
         ObjectSelect<E1> q1 = queryAssembler.createRootQuery(c);
@@ -38,7 +40,7 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
         entity.setLimit(10);
         entity.setStart(0);
 
-        SelectContext<E1> c = new SelectContext<>(E1.class);
+        SelectContext<E1> c = new SelectContext<>(E1.class, mock(Injector.class));
         c.setEntity(entity);
 
         ObjectSelect<E1> q1 = queryAssembler.createRootQuery(c);
@@ -69,7 +71,7 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
     public void testCreateRootQuery_Qualifier() {
         RootResourceEntity<E1> entity = getResourceEntity(E1.class);
 
-        SelectContext<E1> c = new SelectContext<>(E1.class);
+        SelectContext<E1> c = new SelectContext<>(E1.class, mock(Injector.class));
         c.setEntity(entity);
 
         entity.andExp(Exp.simple("name = 'X'"));
@@ -84,7 +86,7 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
     @Test
     public void testCreateRootQuery_ById() {
 
-        SelectContext<E1> c = new SelectContext<>(E1.class);
+        SelectContext<E1> c = new SelectContext<>(E1.class, mock(Injector.class));
         c.setId(1);
         c.setEntity(getResourceEntity(E1.class));
 
@@ -97,7 +99,7 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
     public void testCreateRootQuery_ById_WithQuery() {
         ObjectSelect<E1> select = ObjectSelect.query(E1.class);
 
-        SelectContext<E1> c = new SelectContext<>(E1.class);
+        SelectContext<E1> c = new SelectContext<>(E1.class, mock(Injector.class));
         c.setId(1);
         c.setEntity(getResourceEntity(E1.class));
 

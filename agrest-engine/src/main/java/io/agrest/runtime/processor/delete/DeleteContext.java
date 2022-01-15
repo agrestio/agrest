@@ -8,6 +8,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.BaseProcessingContext;
 import io.agrest.runtime.processor.update.ChangeOperation;
+import org.apache.cayenne.di.Injector;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,8 +27,8 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
     protected AgEntityOverlay<T> entityOverlay;
     private List<ChangeOperation<T>> deleteOperations;
 
-    public DeleteContext(Class<T> type) {
-        super(type);
+    public DeleteContext(Class<T> type, Injector injector) {
+        super(type, injector);
         this.deleteOperations = Collections.emptyList();
     }
 

@@ -8,6 +8,7 @@ import io.agrest.access.UpdateAuthorizer;
 import io.agrest.pojo.model.P1;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
+import org.apache.cayenne.di.Injector;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -86,7 +87,7 @@ public class AgEntityOverlayTest {
         AgEntityOverlay<P1> resolverOnly = AgEntity.overlay(P1.class).redefineDataResolver(c -> p1s);
         AgEntity<P1> eo = resolverOnly.resolve(mock(AgDataMap.class), e);
 
-        SelectContext<P1> context = new SelectContext<>(P1.class);
+        SelectContext<P1> context = new SelectContext<>(P1.class, mock(Injector.class));
         context.setEntity(new RootResourceEntity<>(mock(AgEntity.class)));
         eo.getDataResolver().fetchData(context);
 

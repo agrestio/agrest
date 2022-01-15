@@ -14,6 +14,7 @@ import io.agrest.SimpleObjectId;
 import io.agrest.encoder.Encoder;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.BaseProcessingContext;
+import org.apache.cayenne.di.Injector;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
@@ -46,8 +47,8 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     private Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
     private final Map<ChangeOperationType, List<ChangeOperation<T>>> changeOperations;
 
-    public UpdateContext(Class<T> type) {
-        super(type);
+    public UpdateContext(Class<T> type, Injector injector) {
+        super(type, injector);
         this.changeOperations = new EnumMap<>(ChangeOperationType.class);
         changeOperations.put(ChangeOperationType.CREATE, Collections.emptyList());
         changeOperations.put(ChangeOperationType.UPDATE, Collections.emptyList());

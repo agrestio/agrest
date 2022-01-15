@@ -6,6 +6,7 @@ import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
+import org.apache.cayenne.di.Injector;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import static org.mockito.Mockito.when;
 public class DefaultSelectBuilderTest {
 
     private <T> DefaultSelectBuilder<T> createBuilder(Class<T> type) {
-        SelectContext<T> context = new SelectContext<>(type);
+        SelectContext<T> context = new SelectContext<>(type, mock(Injector.class));
         SelectProcessorFactory processorFactory = mock(SelectProcessorFactory.class);
         when(processorFactory.createProcessor(any())).thenReturn(mock(Processor.class));
 

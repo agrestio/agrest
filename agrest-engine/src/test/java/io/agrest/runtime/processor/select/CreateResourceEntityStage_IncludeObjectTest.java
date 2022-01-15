@@ -16,6 +16,7 @@ import io.agrest.runtime.protocol.IIncludeParser;
 import io.agrest.runtime.protocol.ISortParser;
 import io.agrest.runtime.request.DefaultRequestBuilderFactory;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
+import org.apache.cayenne.di.Injector;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -67,7 +68,7 @@ public class CreateResourceEntityStage_IncludeObjectTest {
     @Test
     public void testExecute_IncludeObject_Path() {
 
-        SelectContext<Tr> context = new SelectContext<>(Tr.class);
+        SelectContext<Tr> context = new SelectContext<>(Tr.class, mock(Injector.class));
         context.setMergedRequest(requestBuilderFactory.builder().addInclude(new Include("rtss")).build());
 
         stage.execute(context);
@@ -86,7 +87,7 @@ public class CreateResourceEntityStage_IncludeObjectTest {
         MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
         when(params.get("include")).thenReturn(Arrays.asList("{\"path\":\"rtss\",\"mapBy\":\"rtt\"}"));
 
-        SelectContext<Tr> context = new SelectContext<>(Tr.class);
+        SelectContext<Tr> context = new SelectContext<>(Tr.class, mock(Injector.class));
 
         Include include = new Include("rtss", null, Collections.emptyList(), "rtt", null, null);
         context.setMergedRequest(requestBuilderFactory.builder().addInclude(include).build());

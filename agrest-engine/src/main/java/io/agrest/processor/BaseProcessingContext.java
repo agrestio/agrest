@@ -1,6 +1,8 @@
 package io.agrest.processor;
 
 import io.agrest.SimpleResponse;
+import org.apache.cayenne.di.Injector;
+import org.apache.cayenne.di.Key;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,12 +12,32 @@ import java.util.Map;
  */
 public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
 
-    private Class<T> type;
+    private final Class<T> type;
+    private final Injector injector;
     private Map<String, Object> attributes;
     private int status;
 
-    public BaseProcessingContext(Class<T> type) {
+    public BaseProcessingContext(Class<T> type, Injector injector) {
         this.type = type;
+        this.injector = injector;
+    }
+
+    /**
+     * Provides access to a desired service from the Agrest stack that created the current context.
+     *
+     * @since 5.0
+     */
+    public <T> T service(Class<T> type) {
+        return injector.getInstance(type);
+    }
+
+    /**
+     * Provides access to a desired service from the Agrest stack that created the current context.
+     *
+     * @since 5.0
+     */
+    public <T> T service(Key<T> key) {
+        return injector.getInstance(key);
     }
 
     /**

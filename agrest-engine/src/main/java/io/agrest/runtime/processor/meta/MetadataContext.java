@@ -4,6 +4,7 @@ import io.agrest.MetadataResponse;
 import io.agrest.encoder.Encoder;
 import io.agrest.meta.AgResource;
 import io.agrest.processor.BaseProcessingContext;
+import org.apache.cayenne.di.Injector;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
@@ -20,8 +21,8 @@ public class MetadataContext<T> extends BaseProcessingContext<T> {
     private Encoder encoder;
     private Collection<AgResource<T>> resources;
 
-    public MetadataContext(Class<T> type) {
-        super(type);
+    public MetadataContext(Class<T> type, Injector injector) {
+        super(type, injector);
     }
 
     /**

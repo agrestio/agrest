@@ -25,6 +25,7 @@ import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.map.ObjEntity;
 import org.junit.jupiter.api.AfterAll;
@@ -116,7 +117,7 @@ public abstract class CayenneNoDbTest {
     }
 
     protected <T> SelectContext<T> prepareContext(MultivaluedMap<String, String> params, Class<T> type) {
-        SelectContext<T> context = new SelectContext<>(type);
+        SelectContext<T> context = new SelectContext<>(type, mock(Injector.class));
 
         UriInfo uriInfo = mock(UriInfo.class);
         when(uriInfo.getQueryParameters()).thenReturn(params);

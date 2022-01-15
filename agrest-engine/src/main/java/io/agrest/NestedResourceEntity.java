@@ -34,6 +34,7 @@ public abstract class NestedResourceEntity<T> extends ResourceEntity<T> {
     /**
      * @deprecated since 5.0 in favor of {@link #addData(AgObjectId, Object)}
      */
+    @Deprecated
     public void addResult(AgObjectId parentId, T object) {
         addData(parentId, object);
     }
