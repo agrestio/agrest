@@ -20,8 +20,8 @@ public class JaxrsAgExceptionMapper implements ExceptionMapper<AgException> {
     public Response toResponse(AgException exception) {
 
         String message = exception.getMessage();
-        String causeMessage = exception.getCause() != null && exception.getCause() != exception
-                ? exception.getCause().getMessage() : null;
+        Throwable cause = exception.getCause() != null && exception.getCause() != exception ? exception.getCause() : null;
+        String causeMessage = cause != null ? cause.getMessage() : null;
         int status = exception.getStatus();
 
         if (LOGGER.isInfoEnabled()) {
@@ -37,6 +37,8 @@ public class JaxrsAgExceptionMapper implements ExceptionMapper<AgException> {
 
             if (causeMessage != null) {
                 log.append(" [cause: ").append(causeMessage).append("]");
+            } else if (cause != null) {
+                log.append(" [cause: ").append(cause.getClass().getName()).append("]");
             }
 
             // include stack trace in debug mode...
