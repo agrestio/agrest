@@ -25,8 +25,8 @@ public class AgRuntime implements Feature {
 
     public static final String BODY_WRITERS_MAP = "agrest.jaxrs.bodywriters";
 
-    private Injector injector;
-    private Collection<Feature> extraFeatures;
+    private final Injector injector;
+    private final Collection<Feature> extraFeatures;
 
     /**
      * Returns a service of a specified type present in Agrest container that
@@ -82,7 +82,6 @@ public class AgRuntime implements Feature {
         // this gives everyone access to the Agrest services
         context.property(AgRuntime.AGREST_CONTAINER_PROPERTY, injector);
 
-        @SuppressWarnings("unchecked")
         Map<String, Class> bodyWriters =
                 injector.getInstance(Key.getMapOf(String.class, Class.class, AgRuntime.BODY_WRITERS_MAP));
 
@@ -91,7 +90,6 @@ public class AgRuntime implements Feature {
         }
 
         context.register(ResponseStatusDynamicFeature.class);
-
         context.register(EntityUpdateReader.class);
         context.register(EntityUpdateCollectionReader.class);
 
