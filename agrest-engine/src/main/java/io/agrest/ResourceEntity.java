@@ -1,11 +1,12 @@
 package io.agrest;
 
-import io.agrest.protocol.Exp;
-import io.agrest.protocol.Sort;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
+import io.agrest.protocol.Exp;
+import io.agrest.protocol.Sort;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -238,6 +239,34 @@ public abstract class ResourceEntity<T> {
      */
     public void setRequestProperty(String name, Object value) {
         requestProperties.put(name, value);
+    }
+
+    /**
+     * Returns a sublist of the data collection with "start" and "limit" constraints applied if present.
+     *
+     * @since 5.0
+     */
+    protected List<T> getDataWindow(List<T> dataUnlimited) {
+
+        // not all resolvers
+        if (dataUnlimited == null) {
+            return null;
+        }
+
+        int total = dataUnlimited.size();
+
+        if (total == 0 || (fetchOffset <= 0 && fetchLimit <= 0)) {
+            return dataUnlimited;
+        }
+
+        int i0 = Math.max(fetchOffset, 0);
+        if (i0 >= total) {
+            return Collections.emptyList();
+        }
+
+        int i1 = fetchLimit > 0 ? Math.min(i0 + fetchLimit, total) : total;
+
+        return dataUnlimited.subList(i0, i1);
     }
 
     @Override

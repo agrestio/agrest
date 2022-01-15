@@ -23,6 +23,7 @@ public class ToOneResourceEntity<T> extends NestedResourceEntity<T> {
     }
 
     public T getResult(AgObjectId parentId) {
+        // TODO: apply offset/limit like ToManyResourceEntity does, only to a single object?
         return resultsByParent.get(parentId);
     }
 

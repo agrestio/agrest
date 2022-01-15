@@ -17,6 +17,7 @@
 * #533 Look up converters by type, not by entity or attribute; value Encoders based on known converters
 * #534 Remove "Encoder.visit()" / "DataResponse.getIncludedObjects()"
 * #535 Immutable SimpleResponse/DataResponse
+* #536 DataResponse object should resemble its encoded version
 
 ## Release 4.9
 

@@ -1,6 +1,7 @@
 package io.agrest.encoder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import io.agrest.DataResponse;
 
 import java.io.IOException;
 
@@ -9,21 +10,22 @@ import java.io.IOException;
  */
 public class DataResponseEncoder implements Encoder {
 
-    private final CollectionEncoder resultEncoder;
-    private final Encoder totalEncoder;
-    private final String resultProperty;
+    private final String dataProperty;
+    private final Encoder dataEncoder;
+
     private final String totalProperty;
+    private final Encoder totalEncoder;
 
     public DataResponseEncoder(
-            String resultProperty,
-            CollectionEncoder resultEncoder,
+            String dataProperty,
+            Encoder dataEncoder,
             String totalProperty,
             Encoder totalEncoder) {
 
         this.totalProperty = totalProperty;
-        this.resultEncoder = resultEncoder;
+        this.dataEncoder = dataEncoder;
         this.totalEncoder = totalEncoder;
-        this.resultProperty = resultProperty;
+        this.dataProperty = dataProperty;
     }
 
     @Override
@@ -34,12 +36,12 @@ public class DataResponseEncoder implements Encoder {
         }
 
         out.writeStartObject();
-        encodeObjectBody(object, out);
+        encodeObjectBody((DataResponse<?>) object, out);
         out.writeEndObject();
     }
 
-    protected void encodeObjectBody(Object object, JsonGenerator out) throws IOException {
-        int count = resultEncoder.encodeAndGetTotal(resultProperty, object, out);
-        totalEncoder.encode(totalProperty, count, out);
+    protected void encodeObjectBody(DataResponse<?> response, JsonGenerator out) throws IOException {
+        dataEncoder.encode(dataProperty, response.getData(), out);
+        totalEncoder.encode(totalProperty, response.getTotal(), out);
     }
 }

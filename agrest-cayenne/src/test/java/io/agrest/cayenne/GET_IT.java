@@ -221,6 +221,9 @@ public class GET_IT extends DbTest {
     @Test
     public void testRelationshipStartLimit() {
 
+        // TODO: run this test with different combinations of Resolvers.
+        //  Suspect that not all resolvers would support limits filtering of the result
+
         tester.e2().insertColumns("id_", "name")
                 .values(1, "zzz")
                 .values(2, "yyy").exec();

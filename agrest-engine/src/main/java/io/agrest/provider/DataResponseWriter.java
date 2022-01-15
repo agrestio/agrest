@@ -62,6 +62,6 @@ public class DataResponseWriter implements MessageBodyWriter<DataResponse<?>> {
     }
 
     protected void writeData(DataResponse<?> t, JsonGenerator out) throws IOException {
-        t.getEncoder().encode(null, t.getObjects(), out);
+        t.getEncoder().encode(null, t, out);
     }
 }

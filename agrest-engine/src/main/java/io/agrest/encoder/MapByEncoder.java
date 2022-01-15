@@ -9,18 +9,18 @@ import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class MapByEncoder implements CollectionEncoder {
+public class MapByEncoder implements Encoder {
 
     private final String mapByPath;
     private final List<PropertyReader> mapByReaders;
-    private final CollectionEncoder collectionEncoder;
+    private final Encoder collectionEncoder;
     private final boolean byId;
     private final ValueStringConverter fieldNameConverter;
 
     public MapByEncoder(
             String mapByPath,
             List<PropertyReader> mapByReaders,
-            CollectionEncoder collectionEncoder,
+            Encoder collectionEncoder,
             boolean byId,
             ValueStringConverter fieldNameConverter) {
 
@@ -32,14 +32,15 @@ public class MapByEncoder implements CollectionEncoder {
     }
 
     @Override
-    public int encodeAndGetTotal(String propertyName, Object object, JsonGenerator out) throws IOException {
+    public void encode(String propertyName, Object object, JsonGenerator out) throws IOException {
+
         if (propertyName != null) {
             out.writeFieldName(propertyName);
         }
 
         if (object == null) {
             out.writeNull();
-            return 0;
+            return;
         }
 
         List<?> objects = (List<?>) object;
@@ -47,15 +48,12 @@ public class MapByEncoder implements CollectionEncoder {
 
         out.writeStartObject();
 
-        int total = 0;
         for (Entry<String, List<Object>> e : map.entrySet()) {
             out.writeFieldName(e.getKey());
-            total += collectionEncoder.encodeAndGetTotal(null, e.getValue(), out);
+            collectionEncoder.encode(null, e.getValue(), out);
         }
 
         out.writeEndObject();
-
-        return total;
     }
 
     private Object mapByValue(Object object) {

@@ -4,7 +4,6 @@ import io.agrest.AgException;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.converter.valuestring.ValueStringConverters;
-import io.agrest.encoder.CollectionEncoder;
 import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.EncodableProperty;
 import io.agrest.encoder.Encoder;
@@ -46,48 +45,27 @@ public class DataEncoderFactory {
     }
 
     public <T> Encoder encoder(ResourceEntity<T> entity) {
-        CollectionEncoder dataEncoder = dataEncoder(entity);
+        Encoder dataEncoder = dataEncoder(entity);
         return new DataResponseEncoder("data", dataEncoder, "total", GenericEncoder.encoder());
     }
 
-    protected CollectionEncoder dataEncoder(ResourceEntity<?> entity) {
+    protected Encoder dataEncoder(ResourceEntity<?> entity) {
         Encoder elementEncoder = collectionElementEncoder(entity);
-        boolean isMapBy = entity.getMapBy() != null;
-
-        // notice that we are not passing either qualifier or ordering to the encoder, as those are presumably applied
-        // at the query level.. (unlike with #nestedToManyEncoder)
-
-        CollectionEncoder encoder = new ListEncoder(elementEncoder)
-                .withOffset(entity.getFetchOffset())
-                .withLimit(entity.getFetchLimit());
-
-        return isMapBy ? mapByEncoder(entity, encoder) : encoder;
-    }
-
-    protected Encoder nestedToManyEncoder(ResourceEntity<?> entity) {
-
-        Encoder elementEncoder = collectionElementEncoder(entity);
-        boolean isMapBy = entity.getMapBy() != null;
-
-        // if mapBy is involved, apply filters at MapBy level, not inside sublists...
-        ListEncoder encoder = new ListEncoder(elementEncoder)
-                .withOffset(entity.getFetchOffset())
-                .withLimit(entity.getFetchLimit());
-
-        return isMapBy ? mapByEncoder(entity, encoder) : encoder;
-    }
-
-    protected Encoder collectionElementEncoder(ResourceEntity<?> resourceEntity) {
-        return entityEncoder(resourceEntity);
+        Encoder listEncoder = new ListEncoder(elementEncoder);
+        return entity.getMapBy() != null ? mapByEncoder(entity, listEncoder) : listEncoder;
     }
 
     protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity) {
+        return entityEncoder(resourceEntity);
+    }
 
-        // to-one encoder is made of the following decorator layers (from outer to inner):
-        // (1) custom filters ->
-        // (2) value encoder
-        // different structure from to-many, so building it differently
+    protected Encoder nestedToManyEncoder(ResourceEntity<?> entity) {
+        Encoder elementEncoder = collectionElementEncoder(entity);
+        ListEncoder listEncoder = new ListEncoder(elementEncoder);
+        return entity.getMapBy() != null ? mapByEncoder(entity, listEncoder) : listEncoder;
+    }
 
+    protected Encoder collectionElementEncoder(ResourceEntity<?> resourceEntity) {
         return entityEncoder(resourceEntity);
     }
 
@@ -134,7 +112,7 @@ public class DataEncoderFactory {
 
             entries.add(entry(e.getKey(), property));
         }
-        
+
         switch (entries.size()) {
             case 0:
                 return Collections.emptyMap();
@@ -150,14 +128,14 @@ public class DataEncoderFactory {
         }
     }
 
-    protected MapByEncoder mapByEncoder(ResourceEntity<?> entity, CollectionEncoder encoder) {
+    protected MapByEncoder mapByEncoder(ResourceEntity<?> entity, Encoder encoder) {
         return mapByEncoder(entity.getMapBy(), new ArrayList<>(), encoder, entity.getMapByPath());
     }
 
     protected MapByEncoder mapByEncoder(
             ResourceEntity<?> mapBy,
             List<PropertyReader> readerChain,
-            CollectionEncoder encoder,
+            Encoder encoder,
             String mapByPath) {
 
         // map by id

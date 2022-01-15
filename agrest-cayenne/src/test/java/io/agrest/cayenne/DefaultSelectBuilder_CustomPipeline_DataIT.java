@@ -19,7 +19,6 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester()
-
             .entities(E2.class, E3.class)
             .build();
 
@@ -40,8 +39,8 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT extends DbTest {
                 .stage(SelectStage.CREATE_ENTITY, c -> c.getEntity().andQualifier(Exp.simple("name = 'yyy'")))
                 .get();
 
-        assertEquals(1, dr.getObjects().size());
-        assertEquals("yyy", dr.getObjects().get(0).getName());
+        assertEquals(1, dr.getData().size());
+        assertEquals("yyy", dr.getData().get(0).getName());
     }
 
     @Test
@@ -54,6 +53,6 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT extends DbTest {
                 })
                 .get();
 
-        assertTrue(dr.getObjects().isEmpty());
+        assertTrue(dr.getData().isEmpty());
     }
 }

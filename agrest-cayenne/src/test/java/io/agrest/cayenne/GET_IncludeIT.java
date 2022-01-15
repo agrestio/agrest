@@ -99,24 +99,10 @@ public class GET_IncludeIT extends DbTest {
                 "{\"id\":9,\"e2\":{\"id\":1}}",
                 "{\"id\":10,\"e2\":{\"id\":1}}");
 
-        tester.assertQueryCount(3);
+        // There are 3 queries, while our counter catches only 2 (the last query in paginated result is not reported).
+        tester.assertQueryCount(2);
 
-        // TODO: while the query counter is correct, the queries are suspect:
-        //  1. There are 4 queries, while our counter catches only 3 (the last query in paginated result is not reported).
-        //  2. e2 is fetched via a join.. If we have lots of E2s, this will be problematic
-
-// SELECT t0.id FROM utest.e3 t0 ORDER BY t0.id
-//  === returned 4 rows. - took 5 ms.
-//
-// SELECT DISTINCT t0.address, t0.name, t0.id, t1.id FROM utest.e2 t0 JOIN utest.e3 t1 ON (t0.id = t1.e2_id)
-//  === returned 4 rows. - took 1 ms.
-//
-// SELECT t0.name, t0.phone_number, t0.e2_id, t0.e5_id, t0.id FROM utest.e3 t0 WHERE (t0.id = ?) OR (t0.id = ?) [bind: 1->id:8, 2->id:9]
-//=== returned 2 rows. - took 11 ms.
-//
-// SELECT t0.name, t0.phone_number, t0.e2_id, t0.e5_id, t0.id FROM utest.e3 t0 WHERE (t0.id = ?) OR (t0.id = ?) [bind: 1->id:10, 2->id:11]
-//=== returned 2 rows. - took 1 ms.
-
+        // TODO: e2 is fetched via a join.. If we have lots of E2s, this will be problematic
     }
 
 

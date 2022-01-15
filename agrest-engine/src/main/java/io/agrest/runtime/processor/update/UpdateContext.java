@@ -61,8 +61,10 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
      * @since 1.24
      */
     public DataResponse<T> createDataResponse() {
-        List<? extends T> objects = this.entity != null ? this.entity.getResult() : Collections.emptyList();
-        return DataResponse.of(getStatus(), objects, encoder);
+        // support null ResourceEntity for cases with custom terminal stages
+        return entity != null
+                ? DataResponse.of(getStatus(), entity.getDataWindow(), entity.getResult().size(), encoder)
+                : DataResponse.of(getStatus());
     }
 
     /**

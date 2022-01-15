@@ -28,6 +28,15 @@ public class ToManyResourceEntity<T> extends NestedResourceEntity<T> {
         return resultsByParent.get(parentId);
     }
 
+    /**
+     * @since 5.0
+     */
+    public List<T> getDataWindow(AgObjectId parentId) {
+        // TODO: since we don't (yet) care to track the totals of the truncated relationship lists,
+        //  instead of filtering a full list, we may add limits to "addResult"
+        return getDataWindow(getResult(parentId));
+    }
+
     @Override
     public void addResult(AgObjectId parentId, T object) {
         resultsByParent.computeIfAbsent(parentId, k -> new ArrayList<>()).add(object);

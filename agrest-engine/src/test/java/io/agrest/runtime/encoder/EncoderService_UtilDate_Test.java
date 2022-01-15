@@ -1,5 +1,7 @@
 package io.agrest.runtime.encoder;
 
+import io.agrest.DataResponse;
+import io.agrest.HttpStatus;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.annotation.AgAttribute;
@@ -82,7 +84,7 @@ public class EncoderService_UtilDate_Test {
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
         Encoder encoder = encoderService.dataEncoder(resourceEntity);
-        return Encoders.toJson(encoder, Collections.singletonList(object));
+        return Encoders.toJson(encoder, DataResponse.of(HttpStatus.OK, Collections.singletonList(object)));
     }
 
     public static class PUtilDate {

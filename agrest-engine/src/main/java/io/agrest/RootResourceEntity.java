@@ -24,6 +24,15 @@ public class RootResourceEntity<T> extends ResourceEntity<T> {
         return result;
     }
 
+    /**
+     * Returns a sublist of the data collection with "start" and "limit" constraints applied if present.
+     *
+     * @since 5.0
+     */
+    public List<T> getDataWindow() {
+        return getDataWindow(result);
+    }
+
     public void setResult(List<T> result) {
         this.result = result;
     }
