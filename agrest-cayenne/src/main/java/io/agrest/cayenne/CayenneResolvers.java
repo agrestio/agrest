@@ -16,8 +16,7 @@ import javax.ws.rs.core.Configuration;
  * @since 3.4
  */
 public class CayenneResolvers {
-
-
+    
     /**
      * @since 5.0
      */

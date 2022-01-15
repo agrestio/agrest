@@ -28,7 +28,7 @@ public class ContextAwareRootDataResolver<T> implements RootDataResolver<T> {
 
     private RootDataResolver<T> delegate(SelectContext<T> context) {
         if (delegate == null) {
-            synchronized (delegate) {
+            synchronized (this) {
                 if (delegate == null) {
                     delegate = resolverFactory.apply(context);
                     resolverFactory = null;
