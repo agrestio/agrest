@@ -432,15 +432,13 @@ public class AgBuilder {
 
             binder.bind(IEntityUpdateParser.class).to(EntityUpdateParser.class);
 
-            Optional<String> maybeBaseUrl = Optional.ofNullable(baseUrl);
-
             // deprecated services
             binder.bindMap(PropertyMetadataEncoder.class).putAll(metadataEncoders);
             binder.bind(MetadataProcessorFactory.class).toProvider(MetadataProcessorFactoryProvider.class);
             binder.bind(CollectMetadataStage.class).to(CollectMetadataStage.class);
             binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
             binder.bind(IResourceParser.class).to(ResourceParser.class);
-            binder.bind(BaseUrlProvider.class).toInstance(BaseUrlProvider.forUrl(maybeBaseUrl));
+            binder.bind(BaseUrlProvider.class).toInstance(BaseUrlProvider.forUrl(Optional.ofNullable(baseUrl)));
             binder.bindMap(Class.class, AgRuntime.BODY_WRITERS_MAP)
                     .put(MetadataResponse.class.getName(), MetadataResponseWriter.class);
         };
