@@ -11,6 +11,7 @@ import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
+import io.agrest.processor.ProcessingContext;
 import io.agrest.property.PropertyReader;
 import io.agrest.property.ToManyEntityResultReader;
 import io.agrest.property.ToOneEntityResultReader;
@@ -71,7 +72,7 @@ public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseNes
     }
 
     @Override
-    public PropertyReader reader(NestedResourceEntity<T> entity) {
+    public PropertyReader reader(NestedResourceEntity<T> entity, ProcessingContext<?> context) {
 
         AgEntity<?> parentEntity = entity.getParent().getAgEntity();
 

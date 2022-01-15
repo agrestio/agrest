@@ -91,7 +91,7 @@ public class GET_Resolvers_Nested_ToManyIT extends DbTest {
 
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineRelationshipResolver("e3s", CayenneResolvers.nested(config).viaParentPrefetch());
+                    .redefineRelationshipResolver("e3s", CayenneResolvers.nestedViaParentPrefetch());
 
             return Ag.select(E2.class, config)
                     .entityOverlay(e2Overlay)
@@ -105,7 +105,7 @@ public class GET_Resolvers_Nested_ToManyIT extends DbTest {
 
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineRelationshipResolver("e3s", CayenneResolvers.nested(config).viaQueryWithParentIds());
+                    .redefineRelationshipResolver("e3s", CayenneResolvers.nestedViaQueryWithParentIds());
 
             return Ag.select(E2.class, config)
                     .entityOverlay(e2Overlay)

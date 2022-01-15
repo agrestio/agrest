@@ -7,6 +7,7 @@ import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityMetadataEncoder;
 import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.encoder.ResourceEncoder;
+import io.agrest.processor.ProcessingContext;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 import org.apache.cayenne.di.Inject;
 
@@ -43,8 +44,8 @@ public class EncoderService implements IEncoderService {
     }
 
     @Override
-    public <T> Encoder dataEncoder(ResourceEntity<T> entity) {
-        return dataEncoderFactory().encoder(entity);
+    public <T> Encoder dataEncoder(ResourceEntity<T> entity, ProcessingContext<T> context) {
+        return dataEncoderFactory().encoder(entity, context);
     }
 
     protected DataEncoderFactory dataEncoderFactory() {

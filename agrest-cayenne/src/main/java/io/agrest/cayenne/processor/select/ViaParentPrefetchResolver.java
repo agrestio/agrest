@@ -8,6 +8,7 @@ import io.agrest.cayenne.compiler.DataObjectPropertyReader;
 import io.agrest.cayenne.processor.CayenneNestedResourceEntityExt;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.CayenneRootResourceEntityExt;
+import io.agrest.processor.ProcessingContext;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.BaseNestedDataResolver;
 import io.agrest.resolver.ToManyFlattenedIterator;
@@ -49,7 +50,7 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
             NestedResourceEntity<DataObject> entity,
             Iterable<?> parentData,
             SelectContext<?> context) {
-        return iterableData(entity, (Iterable<DataObject>) parentData);
+        return iterableData(entity, (Iterable<DataObject>) parentData, context);
     }
 
     protected void addNestedPrefetch(NestedResourceEntity<?> entity, String path, int prefetchSemantics) {
@@ -100,7 +101,7 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
 
 
     @Override
-    public PropertyReader reader(NestedResourceEntity<DataObject> entity) {
+    public PropertyReader reader(NestedResourceEntity<DataObject> entity, ProcessingContext<?> context) {
 
         // TODO: what about multi-step prefetches? How do we locate parent then?
 
@@ -108,8 +109,11 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
         return DataObjectPropertyReader.reader(entity.getIncoming().getName());
     }
 
-    protected Iterable<DataObject> iterableData(NestedResourceEntity<DataObject> entity, Iterable<? extends DataObject> parentData) {
-        PropertyReader reader = reader(entity);
+    protected Iterable<DataObject> iterableData(
+            NestedResourceEntity<DataObject> entity,
+            Iterable<? extends DataObject> parentData,
+            ProcessingContext<?> context) {
+        PropertyReader reader = reader(entity, context);
         return entity.getIncoming().isToMany()
                 ? () -> new ToManyFlattenedIterator<>(parentData.iterator(), reader)
                 : () -> new ToOneFlattenedIterator<>(parentData.iterator(), reader);

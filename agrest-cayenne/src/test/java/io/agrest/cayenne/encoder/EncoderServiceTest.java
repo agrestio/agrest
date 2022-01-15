@@ -15,6 +15,7 @@ import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.converter.valuestring.ValueStringConvertersProvider;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.ValueEncodersProvider;
+import io.agrest.processor.ProcessingContext;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
 import io.agrest.runtime.encoder.EncoderService;
 import io.agrest.runtime.encoder.IEncodablePropertyFactory;
@@ -33,6 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class EncoderServiceTest extends CayenneNoDbTest {
 
@@ -127,7 +129,7 @@ public class EncoderServiceTest extends CayenneNoDbTest {
     }
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
-        Encoder encoder = encoderService.dataEncoder(resourceEntity);
+        Encoder encoder = encoderService.dataEncoder(resourceEntity, mock(ProcessingContext.class));
         return toJson(encoder, DataResponse.of(200, Collections.singletonList(object)));
     }
 

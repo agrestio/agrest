@@ -4,6 +4,7 @@ import io.agrest.AgException;
 import io.agrest.NestedResourceEntity;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.CayenneResourceEntityExt;
+import io.agrest.processor.ProcessingContext;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -35,8 +36,8 @@ public class ContextualCayenneNestedDataResolver<T> implements NestedDataResolve
     }
 
     @Override
-    public PropertyReader reader(NestedResourceEntity<T> entity) {
-        return pickResolver(entity).reader(entity);
+    public PropertyReader reader(NestedResourceEntity<T> entity, ProcessingContext<?> context) {
+        return pickResolver(entity).reader(entity, context);
     }
 
     protected NestedDataResolver<T> pickResolver(NestedResourceEntity<T> entity) {

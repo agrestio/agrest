@@ -9,6 +9,7 @@ import io.agrest.encoder.ValueEncoders;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
+import io.agrest.processor.ProcessingContext;
 import io.agrest.property.PropertyReader;
 import org.apache.cayenne.di.Inject;
 
@@ -36,10 +37,14 @@ public class EncodablePropertyFactory implements IEncodablePropertyFactory {
     }
 
     @Override
-    public EncodableProperty getRelationshipProperty(ResourceEntity<?> entity, AgRelationship relationship, Encoder relatedEncoder) {
+    public EncodableProperty getRelationshipProperty(
+            ResourceEntity<?> entity,
+            AgRelationship relationship,
+            Encoder relatedEncoder,
+            ProcessingContext<?> context) {
 
         NestedResourceEntity childEntity = entity.getChild(relationship.getName());
-        PropertyReader reader = relationship.getResolver().reader(childEntity);
+        PropertyReader reader = relationship.getResolver().reader(childEntity, context);
 
         return EncodableProperty
                 .property(reader)

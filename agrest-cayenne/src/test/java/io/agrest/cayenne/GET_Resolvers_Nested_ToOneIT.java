@@ -156,7 +156,7 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
             // non-standard nested resolver
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
-                    .redefineRelationshipResolver("e2", CayenneResolvers.nested(config).viaParentPrefetch());
+                    .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaParentPrefetch());
 
             return Ag.select(E3.class, config)
                     .entityOverlay(e3Overlay)
@@ -171,7 +171,7 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
             // non-standard nested resolver
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
-                    .redefineRelationshipResolver("e2", CayenneResolvers.nested(config).viaQueryWithParentIds());
+                    .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaQueryWithParentIds());
 
             return Ag.select(E3.class, config)
                     .entityOverlay(e3Overlay)
@@ -187,7 +187,7 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
                     // this is actually the standard strategy, but let's see how it works if installed via a request-scoped overlay
-                    .redefineRelationshipResolver("e2", CayenneResolvers.nested(config).viaQueryWithParentExp());
+                    .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaQueryWithParentExp());
 
             return Ag.select(E3.class, config)
                     .entityOverlay(e3Overlay)

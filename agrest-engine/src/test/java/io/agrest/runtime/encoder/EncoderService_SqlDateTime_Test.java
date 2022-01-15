@@ -14,6 +14,7 @@ import io.agrest.encoder.ValueEncodersProvider;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazyAgDataMap;
+import io.agrest.processor.ProcessingContext;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.unit.ResourceEntityUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +30,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class EncoderService_SqlDateTime_Test {
 
@@ -117,7 +119,7 @@ public class EncoderService_SqlDateTime_Test {
     }
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
-        Encoder encoder = encoderService.dataEncoder(resourceEntity);
+        Encoder encoder = encoderService.dataEncoder(resourceEntity, mock(ProcessingContext.class));
         return Encoders.toJson(encoder, DataResponse.of(HttpStatus.OK, Collections.singletonList(object)));
     }
 

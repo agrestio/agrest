@@ -1,6 +1,7 @@
 package io.agrest.resolver;
 
 import io.agrest.NestedResourceEntity;
+import io.agrest.processor.ProcessingContext;
 import io.agrest.property.PropertyReader;
 import io.agrest.runtime.processor.select.SelectContext;
 
@@ -27,16 +28,16 @@ public class ReaderFactoryBasedResolver<T> extends BaseNestedDataResolver<T> {
     @Override
     protected Iterable<T> doOnParentDataResolved(NestedResourceEntity<T> entity, Iterable<?> parentData, SelectContext<?> context) {
         // do nothing .. parent entity will carry our data for us
-        return iterableData(entity, parentData);
+        return iterableData(entity, parentData, context);
     }
 
     @Override
-    public PropertyReader reader(NestedResourceEntity<T> entity) {
+    public PropertyReader reader(NestedResourceEntity<T> entity, ProcessingContext<?> context) {
         return readerFactory.apply(entity);
     }
 
-    protected Iterable<T> iterableData(NestedResourceEntity<T> entity, Iterable<?> parentData) {
-        PropertyReader reader = reader(entity);
+    protected Iterable<T> iterableData(NestedResourceEntity<T> entity, Iterable<?> parentData, ProcessingContext<?> context) {
+        PropertyReader reader = reader(entity, context);
         return entity.getIncoming().isToMany()
                 ? () -> new ToManyFlattenedIterator<>(parentData.iterator(), reader)
                 : () -> new ToOneFlattenedIterator<>(parentData.iterator(), reader);

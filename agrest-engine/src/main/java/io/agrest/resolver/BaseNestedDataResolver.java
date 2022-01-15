@@ -1,6 +1,7 @@
 package io.agrest.resolver;
 
 import io.agrest.NestedResourceEntity;
+import io.agrest.processor.ProcessingContext;
 import io.agrest.property.PropertyReader;
 import io.agrest.runtime.processor.select.SelectContext;
 
@@ -26,7 +27,7 @@ public abstract class BaseNestedDataResolver<T> extends BaseDataResolver impleme
     }
 
     @Override
-    public abstract PropertyReader reader(NestedResourceEntity<T> entity);
+    public abstract PropertyReader reader(NestedResourceEntity<T> entity, ProcessingContext<?> context);
 
     protected abstract void doOnParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context);
 

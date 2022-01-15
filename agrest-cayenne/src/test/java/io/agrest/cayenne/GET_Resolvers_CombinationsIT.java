@@ -205,11 +205,11 @@ public class GET_Resolvers_CombinationsIT extends DbTest {
         NestedDataResolverFactory resolverFactory(Overlay o) {
             switch (o) {
                 case joint:
-                    return CayenneResolvers.nested(config).viaParentPrefetch();
+                    return CayenneResolvers.nestedViaParentPrefetch();
                 case parentExp:
-                    return CayenneResolvers.nested(config).viaQueryWithParentExp();
+                    return CayenneResolvers.nestedViaQueryWithParentExp();
                 case parentId:
-                    return CayenneResolvers.nested(config).viaQueryWithParentIds();
+                    return CayenneResolvers.nestedViaQueryWithParentIds();
                 default:
                     throw new IllegalStateException("?");
             }

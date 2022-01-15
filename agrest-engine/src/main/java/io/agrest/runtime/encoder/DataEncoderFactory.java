@@ -14,6 +14,7 @@ import io.agrest.encoder.ListEncoder;
 import io.agrest.encoder.MapByEncoder;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
+import io.agrest.processor.ProcessingContext;
 import io.agrest.property.PropertyReader;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 
@@ -30,43 +31,43 @@ import static java.util.Map.entry;
  */
 public class DataEncoderFactory {
 
-    protected final IEncodablePropertyFactory encodablePropertyFactory;
+    protected final IEncodablePropertyFactory propertyFactory;
     protected final IRelationshipMapper relationshipMapper;
     protected final ValueStringConverters converters;
 
     public DataEncoderFactory(
-            IEncodablePropertyFactory encodablePropertyFactory,
+            IEncodablePropertyFactory propertyFactory,
             ValueStringConverters converters,
             IRelationshipMapper relationshipMapper) {
 
-        this.encodablePropertyFactory = encodablePropertyFactory;
+        this.propertyFactory = propertyFactory;
         this.relationshipMapper = relationshipMapper;
         this.converters = converters;
     }
 
-    public <T> Encoder encoder(ResourceEntity<T> entity) {
-        Encoder dataEncoder = dataEncoder(entity);
+    public <T> Encoder encoder(ResourceEntity<T> entity, ProcessingContext<T> context) {
+        Encoder dataEncoder = dataEncoder(entity, context);
         return new DataResponseEncoder("data", dataEncoder, "total", GenericEncoder.encoder());
     }
 
-    protected Encoder dataEncoder(ResourceEntity<?> entity) {
-        Encoder elementEncoder = collectionElementEncoder(entity);
+    protected Encoder dataEncoder(ResourceEntity<?> entity, ProcessingContext<?> context) {
+        Encoder elementEncoder = collectionElementEncoder(entity, context);
         Encoder listEncoder = new ListEncoder(elementEncoder);
-        return entity.getMapBy() != null ? mapByEncoder(entity, listEncoder) : listEncoder;
+        return entity.getMapBy() != null ? mapByEncoder(entity, listEncoder, context) : listEncoder;
     }
 
-    protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity) {
-        return entityEncoder(resourceEntity);
+    protected Encoder toOneEncoder(ResourceEntity<?> resourceEntity, ProcessingContext<?> context) {
+        return entityEncoder(resourceEntity, context);
     }
 
-    protected Encoder nestedToManyEncoder(ResourceEntity<?> entity) {
-        Encoder elementEncoder = collectionElementEncoder(entity);
+    protected Encoder nestedToManyEncoder(ResourceEntity<?> entity, ProcessingContext<?> context) {
+        Encoder elementEncoder = collectionElementEncoder(entity, context);
         ListEncoder listEncoder = new ListEncoder(elementEncoder);
-        return entity.getMapBy() != null ? mapByEncoder(entity, listEncoder) : listEncoder;
+        return entity.getMapBy() != null ? mapByEncoder(entity, listEncoder, context) : listEncoder;
     }
 
-    protected Encoder collectionElementEncoder(ResourceEntity<?> resourceEntity) {
-        return entityEncoder(resourceEntity);
+    protected Encoder collectionElementEncoder(ResourceEntity<?> resourceEntity, ProcessingContext<?> context) {
+        return entityEncoder(resourceEntity, context);
     }
 
     /**
@@ -75,12 +76,12 @@ public class DataEncoderFactory {
      * @param entity root entity to be encoded
      * @return a new Encoder for the provided ResourceEntity tree
      */
-    protected Encoder entityEncoder(ResourceEntity<?> entity) {
+    protected Encoder entityEncoder(ResourceEntity<?> entity, ProcessingContext<?> context) {
 
-        Map<String, EncodableProperty> encoders = propertyEncoders(entity);
+        Map<String, EncodableProperty> encoders = propertyEncoders(entity, context);
 
         EncodableProperty ide = entity.isIdIncluded()
-                ? encodablePropertyFactory.getIdProperty(entity).orElse(null)
+                ? propertyFactory.getIdProperty(entity).orElse(null)
                 : null;
 
         return ide != null
@@ -88,11 +89,11 @@ public class DataEncoderFactory {
                 : new EntityNoIdEncoder(encoders);
     }
 
-    protected Map<String, EncodableProperty> propertyEncoders(ResourceEntity<?> entity) {
+    protected Map<String, EncodableProperty> propertyEncoders(ResourceEntity<?> entity, ProcessingContext<?> context) {
         List<Map.Entry<String, EncodableProperty>> entries = new ArrayList<>();
 
         for (AgAttribute attribute : entity.getAttributes().values()) {
-            EncodableProperty property = encodablePropertyFactory.getAttributeProperty(entity, attribute);
+            EncodableProperty property = propertyFactory.getAttributeProperty(entity, attribute);
             entries.add(entry(attribute.getName(), property));
         }
 
@@ -102,13 +103,14 @@ public class DataEncoderFactory {
             AgRelationship relationship = entity.getChild(e.getKey()).getIncoming();
 
             Encoder encoder = relationship.isToMany()
-                    ? nestedToManyEncoder(e.getValue())
-                    : toOneEncoder(e.getValue());
+                    ? nestedToManyEncoder(e.getValue(), context)
+                    : toOneEncoder(e.getValue(), context);
 
-            EncodableProperty property = encodablePropertyFactory.getRelationshipProperty(
+            EncodableProperty property = propertyFactory.getRelationshipProperty(
                     entity,
                     relationship,
-                    encoder);
+                    encoder,
+                    context);
 
             entries.add(entry(e.getKey(), property));
         }
@@ -128,15 +130,16 @@ public class DataEncoderFactory {
         }
     }
 
-    protected MapByEncoder mapByEncoder(ResourceEntity<?> entity, Encoder encoder) {
-        return mapByEncoder(entity.getMapBy(), new ArrayList<>(), encoder, entity.getMapByPath());
+    protected MapByEncoder mapByEncoder(ResourceEntity<?> entity, Encoder encoder, ProcessingContext<?> context) {
+        return mapByEncoder(entity.getMapBy(), new ArrayList<>(), encoder, entity.getMapByPath(), context);
     }
 
     protected MapByEncoder mapByEncoder(
             ResourceEntity<?> mapBy,
             List<PropertyReader> readerChain,
             Encoder encoder,
-            String mapByPath) {
+            String mapByPath,
+            ProcessingContext<?> context) {
 
         // map by id
         if (mapBy.isIdIncluded()) {
@@ -155,7 +158,7 @@ public class DataEncoderFactory {
             validateLeafMapBy(mapBy, mapByPath);
 
             Map.Entry<String, AgAttribute> attribute = mapBy.getAttributes().entrySet().iterator().next();
-            readerChain.add(encodablePropertyFactory.getAttributeProperty(mapBy, attribute.getValue()).getReader());
+            readerChain.add(propertyFactory.getAttributeProperty(mapBy, attribute.getValue()).getReader());
             return new MapByEncoder(mapByPath,
                     readerChain,
                     encoder,
@@ -171,9 +174,9 @@ public class DataEncoderFactory {
             // TODO: to account for overlaid relationships (and avoid NPEs), we should not access agEntity...
             //  instead should look for incoming rel of a child ResourceEntity.. Is is present in MapBy case?
             AgRelationship relationship = mapBy.getChild(child.getKey()).getIncoming();
-            readerChain.add(encodablePropertyFactory.getRelationshipProperty(mapBy, relationship, null).getReader());
+            readerChain.add(propertyFactory.getRelationshipProperty(mapBy, relationship, null, context).getReader());
 
-            return mapByEncoder(mapBy.getChildren().get(child.getKey()), readerChain, encoder, mapByPath);
+            return mapByEncoder(mapBy.getChildren().get(child.getKey()), readerChain, encoder, mapByPath, context);
         }
 
         // map by relationship (implicitly by id)

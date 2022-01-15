@@ -1,10 +1,11 @@
 package io.agrest.runtime.encoder;
 
-import io.agrest.encoder.EncodableProperty;
 import io.agrest.ResourceEntity;
+import io.agrest.encoder.EncodableProperty;
 import io.agrest.encoder.Encoder;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
+import io.agrest.processor.ProcessingContext;
 
 import java.util.Optional;
 
@@ -23,7 +24,11 @@ public interface IEncodablePropertyFactory {
     /**
      * @since 1.23
      */
-    EncodableProperty getRelationshipProperty(ResourceEntity<?> entity, AgRelationship relationship, Encoder relatedEncoder);
+    EncodableProperty getRelationshipProperty(
+            ResourceEntity<?> entity,
+            AgRelationship relationship,
+            Encoder relatedEncoder,
+            ProcessingContext<?> context);
 
     /**
      * Returns a property to read and encode entity ID. The id may have one more more attributes (all hidden bihind

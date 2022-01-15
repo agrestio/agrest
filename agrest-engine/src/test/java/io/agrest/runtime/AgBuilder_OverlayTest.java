@@ -6,6 +6,7 @@ import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.pojo.model.P1;
+import io.agrest.processor.ProcessingContext;
 import io.agrest.property.PropertyReader;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.ReaderBasedResolver;
@@ -190,7 +191,7 @@ public class AgBuilder_OverlayTest {
         }
 
         @Override
-        public PropertyReader reader(NestedResourceEntity<T> entity) {
+        public PropertyReader reader(NestedResourceEntity<T> entity, ProcessingContext<?> context) {
             throw new UnsupportedOperationException();
         }
     }
