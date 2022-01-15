@@ -10,13 +10,13 @@ import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
+import io.agrest.converter.valuestring.ValueStringConverters;
+import io.agrest.converter.valuestring.ValueStringConvertersProvider;
 import io.agrest.encoder.Encoder;
+import io.agrest.encoder.ValueEncodersProvider;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
 import io.agrest.runtime.encoder.EncoderService;
 import io.agrest.runtime.encoder.IEncodablePropertyFactory;
-import io.agrest.converter.valuestring.IValueStringConverterFactory;
-import io.agrest.encoder.ValueEncodersProvider;
-import io.agrest.converter.valuestring.ValueStringConverterFactoryProvider;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.runtime.semantics.RelationshipMapper;
@@ -40,14 +40,14 @@ public class EncoderServiceTest extends CayenneNoDbTest {
 
     @BeforeEach
     public void before() {
-        IValueStringConverterFactory converterFactory = new ValueStringConverterFactoryProvider(Collections.emptyMap()).get();
+        ValueStringConverters converters = new ValueStringConvertersProvider(Collections.emptyMap()).get();
 
         IEncodablePropertyFactory epf = new EncodablePropertyFactory(
-                new ValueEncodersProvider(converterFactory, Collections.emptyMap()).get());
+                new ValueEncodersProvider(converters, Collections.emptyMap()).get());
 
         encoderService = new EncoderService(
                 epf,
-                converterFactory,
+                converters,
                 new RelationshipMapper(),
                 Collections.emptyMap());
     }

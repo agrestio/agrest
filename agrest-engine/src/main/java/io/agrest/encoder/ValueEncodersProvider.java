@@ -1,6 +1,6 @@
 package io.agrest.encoder;
 
-import io.agrest.converter.valuestring.IValueStringConverterFactory;
+import io.agrest.converter.valuestring.ValueStringConverters;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.di.Provider;
 
@@ -12,13 +12,13 @@ import static io.agrest.reflect.Types.typeForName;
 public class ValueEncodersProvider implements Provider<ValueEncoders> {
 
     private final Map<String, Encoder> injectedEncoders;
-    private final IValueStringConverterFactory converterFactory;
+    private final ValueStringConverters converters;
 
     public ValueEncodersProvider(
-            @Inject IValueStringConverterFactory converterFactory,
+            @Inject ValueStringConverters converters,
             @Inject Map<String, Encoder> injectedEncoders) {
 
-        this.converterFactory = converterFactory;
+        this.converters = converters;
         this.injectedEncoders = injectedEncoders;
     }
 
@@ -43,7 +43,7 @@ public class ValueEncodersProvider implements Provider<ValueEncoders> {
     }
 
     protected void appendKnownEncoders(Map<Class<?>, Encoder> encoders) {
-        converterFactory.getConverters().forEach((t, c) -> encoders.put(t, new ValueEncoder(c)));
+        converters.getConverters().forEach((t, c) -> encoders.put(t, new ValueEncoder(c)));
     }
 
     protected void appendInjectedEncoders(Map<Class<?>, Encoder> encoders) {

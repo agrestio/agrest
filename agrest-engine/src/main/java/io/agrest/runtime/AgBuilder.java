@@ -11,9 +11,9 @@ import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.converter.jsonvalue.JsonValueConverter;
 import io.agrest.converter.jsonvalue.JsonValueConverters;
 import io.agrest.converter.jsonvalue.JsonValueConvertersProvider;
-import io.agrest.converter.valuestring.IValueStringConverterFactory;
 import io.agrest.converter.valuestring.ValueStringConverter;
-import io.agrest.converter.valuestring.ValueStringConverterFactoryProvider;
+import io.agrest.converter.valuestring.ValueStringConverters;
+import io.agrest.converter.valuestring.ValueStringConvertersProvider;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.encoder.ValueEncoders;
@@ -402,7 +402,7 @@ public class AgBuilder {
 
             // a map of custom converters
             binder.bindMap(ValueStringConverter.class);
-            binder.bind(IValueStringConverterFactory.class).toProvider(ValueStringConverterFactoryProvider.class);
+            binder.bind(ValueStringConverters.class).toProvider(ValueStringConvertersProvider.class);
 
             binder.bind(IEncoderService.class).to(EncoderService.class);
             binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);

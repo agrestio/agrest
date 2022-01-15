@@ -2,15 +2,15 @@ package io.agrest.runtime.encoder;
 
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
-import io.agrest.converter.valuestring.IValueStringConverterFactory;
-import io.agrest.converter.valuestring.ValueStringConverterFactoryProvider;
+import io.agrest.compiler.AgEntityCompiler;
+import io.agrest.compiler.AnnotationsAgEntityBuilder;
+import io.agrest.compiler.AnnotationsAgEntityCompiler;
+import io.agrest.converter.valuestring.ValueStringConverters;
+import io.agrest.converter.valuestring.ValueStringConvertersProvider;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.ValueEncodersProvider;
 import io.agrest.meta.AgEntity;
-import io.agrest.compiler.AnnotationsAgEntityBuilder;
 import io.agrest.meta.LazyAgDataMap;
-import io.agrest.compiler.AgEntityCompiler;
-import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.pojo.model.P1;
 import io.agrest.pojo.model.P6;
 import io.agrest.runtime.semantics.RelationshipMapper;
@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class EncoderService_Pojo_Test {
 
@@ -41,12 +40,12 @@ public class EncoderService_Pojo_Test {
     @BeforeEach
     public void setUp() {
 
-        IValueStringConverterFactory converterFactory = new ValueStringConverterFactoryProvider(Collections.emptyMap()).get();
-        IEncodablePropertyFactory epf = new EncodablePropertyFactory(new ValueEncodersProvider(converterFactory, Collections.emptyMap()).get());
+        ValueStringConverters converters = new ValueStringConvertersProvider(Collections.emptyMap()).get();
+        IEncodablePropertyFactory epf = new EncodablePropertyFactory(new ValueEncodersProvider(converters, Collections.emptyMap()).get());
 
         this.encoderService = new EncoderService(
                 epf,
-                converterFactory,
+                converters,
                 new RelationshipMapper(),
                 Collections.emptyMap());
     }

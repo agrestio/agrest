@@ -5,8 +5,8 @@ import io.agrest.RootResourceEntity;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.converter.valuestring.IValueStringConverterFactory;
-import io.agrest.converter.valuestring.ValueStringConverterFactoryProvider;
+import io.agrest.converter.valuestring.ValueStringConverters;
+import io.agrest.converter.valuestring.ValueStringConvertersProvider;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.ValueEncodersProvider;
 import io.agrest.meta.AgDataMap;
@@ -37,11 +37,11 @@ public class EncoderService_UtilDate_Test {
     @BeforeEach
     public void before() {
 
-        IValueStringConverterFactory converterFactory = new ValueStringConverterFactoryProvider(Collections.emptyMap()).get();
+        ValueStringConverters converters = new ValueStringConvertersProvider(Collections.emptyMap()).get();
 
         this.encoderService = new EncoderService(
-                new EncodablePropertyFactory(new ValueEncodersProvider(converterFactory, Collections.emptyMap()).get()),
-                converterFactory,
+                new EncodablePropertyFactory(new ValueEncodersProvider(converters, Collections.emptyMap()).get()),
+                converters,
                 new RelationshipMapper(),
                 Collections.emptyMap());
 

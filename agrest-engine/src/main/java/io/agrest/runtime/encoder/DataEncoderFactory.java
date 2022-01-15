@@ -3,7 +3,7 @@ package io.agrest.runtime.encoder;
 import io.agrest.AgException;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
-import io.agrest.converter.valuestring.IValueStringConverterFactory;
+import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.encoder.CollectionEncoder;
 import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.EncodableProperty;
@@ -31,16 +31,16 @@ public class DataEncoderFactory {
 
     protected final IEncodablePropertyFactory encodablePropertyFactory;
     protected final IRelationshipMapper relationshipMapper;
-    protected final IValueStringConverterFactory converterFactory;
+    protected final ValueStringConverters converters;
 
     public DataEncoderFactory(
             IEncodablePropertyFactory encodablePropertyFactory,
-            IValueStringConverterFactory converterFactory,
+            ValueStringConverters converters,
             IRelationshipMapper relationshipMapper) {
 
         this.encodablePropertyFactory = encodablePropertyFactory;
         this.relationshipMapper = relationshipMapper;
-        this.converterFactory = converterFactory;
+        this.converters = converters;
     }
 
     public <T> Encoder encoder(ResourceEntity<T> entity) {
@@ -149,7 +149,7 @@ public class DataEncoderFactory {
                     readerChain,
                     encoder,
                     true,
-                    converterFactory.getConverter(Object.class));
+                    converters.getConverter(Object.class));
         }
 
         // map by property
@@ -162,7 +162,7 @@ public class DataEncoderFactory {
                     readerChain,
                     encoder,
                     false,
-                    converterFactory.getConverter(attribute.getValue().getType()));
+                    converters.getConverter(attribute.getValue().getType()));
         }
 
         // descend into relationship
@@ -185,7 +185,7 @@ public class DataEncoderFactory {
                 readerChain,
                 encoder,
                 true,
-                converterFactory.getConverter(Object.class));
+                converters.getConverter(Object.class));
     }
 
     protected void validateLeafMapBy(ResourceEntity<?> mapBy, String mapByPath) {

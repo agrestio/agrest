@@ -3,15 +3,15 @@ package io.agrest.runtime.encoder;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.annotation.AgAttribute;
-import io.agrest.converter.valuestring.IValueStringConverterFactory;
-import io.agrest.converter.valuestring.ValueStringConverterFactoryProvider;
+import io.agrest.compiler.AgEntityCompiler;
+import io.agrest.compiler.AnnotationsAgEntityCompiler;
+import io.agrest.converter.valuestring.ValueStringConverters;
+import io.agrest.converter.valuestring.ValueStringConvertersProvider;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.ValueEncodersProvider;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazyAgDataMap;
-import io.agrest.compiler.AgEntityCompiler;
-import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.unit.ResourceEntityUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class EncoderService_SqlDateTime_Test {
 
@@ -41,11 +40,11 @@ public class EncoderService_SqlDateTime_Test {
     @BeforeEach
     public void before() {
 
-        IValueStringConverterFactory converterFactory = new ValueStringConverterFactoryProvider(Collections.emptyMap()).get();
+        ValueStringConverters converters = new ValueStringConvertersProvider(Collections.emptyMap()).get();
 
         this.encoderService = new EncoderService(
-                new EncodablePropertyFactory(new ValueEncodersProvider(converterFactory, Collections.emptyMap()).get()),
-                converterFactory,
+                new EncodablePropertyFactory(new ValueEncodersProvider(converters, Collections.emptyMap()).get()),
+                converters,
                 new RelationshipMapper(),
                 Collections.emptyMap());
 

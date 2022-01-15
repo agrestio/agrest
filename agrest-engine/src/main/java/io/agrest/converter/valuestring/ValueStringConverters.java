@@ -3,14 +3,17 @@ package io.agrest.converter.valuestring;
 import java.util.Map;
 
 /**
+ * Provides access to {@link ValueStringConverter} objects by Java type. Can be preconfigured to use custom converters
+ * via DI.
+ *
  * @since 5.0
  */
-public class ValueStringConverterFactory implements IValueStringConverterFactory {
+public class ValueStringConverters {
 
     private final Map<Class<?>, ValueStringConverter> convertersByJavaType;
     private final ValueStringConverter defaultConverter;
 
-    public ValueStringConverterFactory(
+    public ValueStringConverters(
             Map<Class<?>, ValueStringConverter> knownConverters,
             ValueStringConverter defaultConverter) {
 
@@ -18,12 +21,10 @@ public class ValueStringConverterFactory implements IValueStringConverterFactory
         this.defaultConverter = defaultConverter;
     }
 
-    @Override
     public Map<Class<?>, ValueStringConverter> getConverters() {
         return convertersByJavaType;
     }
 
-    @Override
     public ValueStringConverter getConverter(Class<?> type) {
         return convertersByJavaType.getOrDefault(type, defaultConverter);
     }

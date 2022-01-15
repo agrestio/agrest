@@ -18,28 +18,28 @@ import static io.agrest.reflect.Types.typeForName;
 /**
  * @since 2.11
  */
-public class ValueStringConverterFactoryProvider implements Provider<IValueStringConverterFactory> {
+public class ValueStringConvertersProvider implements Provider<ValueStringConverters> {
 
     private Map<String, ValueStringConverter> injectedConverters;
 
-    public ValueStringConverterFactoryProvider(@Inject Map<String, ValueStringConverter> injectedConverters) {
+    public ValueStringConvertersProvider(@Inject Map<String, ValueStringConverter> injectedConverters) {
         this.injectedConverters = injectedConverters;
     }
 
     @Override
-    public IValueStringConverterFactory get() throws DIRuntimeException {
+    public ValueStringConverters get() throws DIRuntimeException {
         Map<Class<?>, ValueStringConverter> converters = new HashMap<>();
         appendKnownConverters(converters);
         appendInjectedConverters(converters);
-        return createFactory(converters, defaultConverter());
+        return createConverters(converters, defaultConverter());
     }
 
     /**
      * @since 2.11
      */
-    protected IValueStringConverterFactory createFactory(
+    protected ValueStringConverters createConverters(
             Map<Class<?>, ValueStringConverter> converters, ValueStringConverter defaultConverter) {
-        return new ValueStringConverterFactory(converters, defaultConverter);
+        return new ValueStringConverters(converters, defaultConverter);
     }
 
     /**

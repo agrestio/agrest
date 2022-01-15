@@ -2,7 +2,7 @@ package io.agrest.runtime.encoder;
 
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
-import io.agrest.converter.valuestring.IValueStringConverterFactory;
+import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityMetadataEncoder;
 import io.agrest.encoder.PropertyMetadataEncoder;
@@ -16,20 +16,20 @@ public class EncoderService implements IEncoderService {
 
     protected final IEncodablePropertyFactory attributeEncoderFactory;
     protected final IRelationshipMapper relationshipMapper;
-    protected final IValueStringConverterFactory converterFactory;
+    protected final ValueStringConverters converters;
 
     @Deprecated
     protected Map<String, PropertyMetadataEncoder> propertyMetadataEncoders;
 
     public EncoderService(
             @Inject IEncodablePropertyFactory attributeEncoderFactory,
-            @Inject IValueStringConverterFactory converterFactory,
+            @Inject ValueStringConverters converters,
             @Inject IRelationshipMapper relationshipMapper,
             @Inject Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
 
         this.attributeEncoderFactory = attributeEncoderFactory;
         this.relationshipMapper = relationshipMapper;
-        this.converterFactory = converterFactory;
+        this.converters = converters;
         this.propertyMetadataEncoders = propertyMetadataEncoders;
     }
 
@@ -48,7 +48,7 @@ public class EncoderService implements IEncoderService {
     }
 
     protected DataEncoderFactory dataEncoderFactory() {
-        return new DataEncoderFactory(attributeEncoderFactory, converterFactory, relationshipMapper);
+        return new DataEncoderFactory(attributeEncoderFactory, converters, relationshipMapper);
     }
 
     @Deprecated
