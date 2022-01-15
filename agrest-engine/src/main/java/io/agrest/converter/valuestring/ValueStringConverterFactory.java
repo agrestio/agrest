@@ -1,8 +1,6 @@
-package io.agrest.runtime.encoder;
+package io.agrest.converter.valuestring;
 
 import io.agrest.AgException;
-import io.agrest.converter.valuejson.GenericConverter;
-import io.agrest.converter.valuejson.ValueJsonConverter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 
@@ -12,17 +10,17 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @since 5.0
  */
-public class ValueJsonConverterFactory implements IValueJsonConverterFactory {
+public class ValueStringConverterFactory implements IValueStringConverterFactory {
 
-    private final Map<Class<?>, ValueJsonConverter> convertersByJavaType;
-    private final ValueJsonConverter defaultConverter;
+    private final Map<Class<?>, ValueStringConverter> convertersByJavaType;
+    private final ValueStringConverter defaultConverter;
 
     // these are explicit overrides for named attributes
-    private final Map<String, ValueJsonConverter> convertersByPath;
+    private final Map<String, ValueStringConverter> convertersByPath;
 
-    public ValueJsonConverterFactory(
-            Map<Class<?>, ValueJsonConverter> knownConverters,
-            ValueJsonConverter defaultConverter) {
+    public ValueStringConverterFactory(
+            Map<Class<?>, ValueStringConverter> knownConverters,
+            ValueStringConverter defaultConverter) {
 
         this.convertersByJavaType = knownConverters;
         this.defaultConverter = defaultConverter;
@@ -30,27 +28,27 @@ public class ValueJsonConverterFactory implements IValueJsonConverterFactory {
     }
 
     @Override
-    public Map<Class<?>, ValueJsonConverter> getConverters() {
+    public Map<Class<?>, ValueStringConverter> getConverters() {
         return convertersByJavaType;
     }
 
     @Override
-    public ValueJsonConverter getConverter(Class<?> type) {
+    public ValueStringConverter getConverter(Class<?> type) {
         return convertersByJavaType.getOrDefault(type, defaultConverter);
     }
 
     @Override
-    public ValueJsonConverter getConverter(AgEntity<?> entity) {
+    public ValueStringConverter getConverter(AgEntity<?> entity) {
         return getConverter(entity, null);
     }
 
     @Override
-    public ValueJsonConverter getConverter(AgEntity<?> entity, String attributeName) {
+    public ValueStringConverter getConverter(AgEntity<?> entity, String attributeName) {
         String key = attributeName != null ? entity.getName() + "." + attributeName : entity.getName();
         return convertersByPath.computeIfAbsent(key, k -> buildConverter(entity, attributeName));
     }
 
-    protected ValueJsonConverter buildConverter(AgEntity<?> entity, String attributeName) {
+    protected ValueStringConverter buildConverter(AgEntity<?> entity, String attributeName) {
 
         if (attributeName == null) {
             // root object encoder... assuming we'll get ID as number
@@ -66,7 +64,7 @@ public class ValueJsonConverterFactory implements IValueJsonConverterFactory {
         return buildConverter(attribute);
     }
 
-    protected ValueJsonConverter buildConverter(AgAttribute attribute) {
+    protected ValueStringConverter buildConverter(AgAttribute attribute) {
         return getConverter(attribute.getType());
     }
 }

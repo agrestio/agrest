@@ -2,7 +2,10 @@ package io.agrest.runtime.encoder;
 
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
+import io.agrest.converter.valuestring.IValueStringConverterFactory;
+import io.agrest.converter.valuestring.ValueStringConverterFactoryProvider;
 import io.agrest.encoder.Encoder;
+import io.agrest.encoder.ValueEncodersProvider;
 import io.agrest.meta.AgEntity;
 import io.agrest.compiler.AnnotationsAgEntityBuilder;
 import io.agrest.meta.LazyAgDataMap;
@@ -38,7 +41,7 @@ public class EncoderService_Pojo_Test {
     @BeforeEach
     public void setUp() {
 
-        IValueJsonConverterFactory converterFactory = new ValueJsonConverterFactoryProvider(Collections.emptyMap()).get();
+        IValueStringConverterFactory converterFactory = new ValueStringConverterFactoryProvider(Collections.emptyMap()).get();
         IEncodablePropertyFactory epf = new EncodablePropertyFactory(new ValueEncodersProvider(converterFactory, Collections.emptyMap()).get());
 
         this.encoderService = new EncoderService(

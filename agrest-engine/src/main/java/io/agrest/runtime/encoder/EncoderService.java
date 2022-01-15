@@ -2,6 +2,7 @@ package io.agrest.runtime.encoder;
 
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
+import io.agrest.converter.valuestring.IValueStringConverterFactory;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityMetadataEncoder;
 import io.agrest.encoder.PropertyMetadataEncoder;
@@ -15,14 +16,14 @@ public class EncoderService implements IEncoderService {
 
     protected final IEncodablePropertyFactory attributeEncoderFactory;
     protected final IRelationshipMapper relationshipMapper;
-    protected final IValueJsonConverterFactory converterFactory;
+    protected final IValueStringConverterFactory converterFactory;
 
     @Deprecated
     protected Map<String, PropertyMetadataEncoder> propertyMetadataEncoders;
 
     public EncoderService(
             @Inject IEncodablePropertyFactory attributeEncoderFactory,
-            @Inject IValueJsonConverterFactory converterFactory,
+            @Inject IValueStringConverterFactory converterFactory,
             @Inject IRelationshipMapper relationshipMapper,
             @Inject Map<String, PropertyMetadataEncoder> propertyMetadataEncoders) {
 

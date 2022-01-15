@@ -1,4 +1,4 @@
-package io.agrest.converter.valuejson;
+package io.agrest.converter.valuestring;
 
 import io.agrest.encoder.DateTimeFormatters;
 
@@ -7,9 +7,9 @@ import java.util.Date;
 
 public class ISODateConverter extends AbstractConverter {
 
-	private static final ValueJsonConverter instance = new ISODateConverter();
+	private static final ValueStringConverter instance = new ISODateConverter();
 
-	public static ValueJsonConverter converter() {
+	public static ValueStringConverter converter() {
 		return instance;
 	}
 

@@ -3,6 +3,7 @@ package io.agrest.runtime.encoder;
 import io.agrest.AgException;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
+import io.agrest.converter.valuestring.IValueStringConverterFactory;
 import io.agrest.encoder.*;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
@@ -18,11 +19,11 @@ public class DataEncoderFactory {
 
     protected final IEncodablePropertyFactory encodablePropertyFactory;
     protected final IRelationshipMapper relationshipMapper;
-    protected final IValueJsonConverterFactory jsonConverterFactory;
+    protected final IValueStringConverterFactory jsonConverterFactory;
 
     public DataEncoderFactory(
             IEncodablePropertyFactory encodablePropertyFactory,
-            IValueJsonConverterFactory jsonConverterFactory,
+            IValueStringConverterFactory jsonConverterFactory,
             IRelationshipMapper relationshipMapper) {
 
         this.encodablePropertyFactory = encodablePropertyFactory;

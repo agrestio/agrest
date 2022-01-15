@@ -5,6 +5,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.encoder.EncodableProperty;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.IdEncoder;
+import io.agrest.encoder.ValueEncoders;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;

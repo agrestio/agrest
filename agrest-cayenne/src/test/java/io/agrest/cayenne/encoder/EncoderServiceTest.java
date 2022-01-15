@@ -14,9 +14,9 @@ import io.agrest.encoder.Encoder;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
 import io.agrest.runtime.encoder.EncoderService;
 import io.agrest.runtime.encoder.IEncodablePropertyFactory;
-import io.agrest.runtime.encoder.IValueJsonConverterFactory;
-import io.agrest.runtime.encoder.ValueEncodersProvider;
-import io.agrest.runtime.encoder.ValueJsonConverterFactoryProvider;
+import io.agrest.converter.valuestring.IValueStringConverterFactory;
+import io.agrest.encoder.ValueEncodersProvider;
+import io.agrest.converter.valuestring.ValueStringConverterFactoryProvider;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.runtime.semantics.RelationshipMapper;
@@ -40,7 +40,7 @@ public class EncoderServiceTest extends CayenneNoDbTest {
 
     @BeforeEach
     public void before() {
-        IValueJsonConverterFactory converterFactory = new ValueJsonConverterFactoryProvider(Collections.emptyMap()).get();
+        IValueStringConverterFactory converterFactory = new ValueStringConverterFactoryProvider(Collections.emptyMap()).get();
 
         IEncodablePropertyFactory epf = new EncodablePropertyFactory(
                 new ValueEncodersProvider(converterFactory, Collections.emptyMap()).get());

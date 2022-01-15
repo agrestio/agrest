@@ -1,7 +1,7 @@
-package io.agrest.converter.valuejson;
+package io.agrest.converter.valuestring;
 
-import io.agrest.converter.valuejson.ISOLocalDateTimeConverter;
-import io.agrest.converter.valuejson.ValueJsonConverter;
+import io.agrest.converter.valuestring.ISOLocalDateTimeConverter;
+import io.agrest.converter.valuestring.ValueStringConverter;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ISOLocalDateTimeConverterTest {
 
-    private ValueJsonConverter converter = ISOLocalDateTimeConverter.converter();
+    private ValueStringConverter converter = ISOLocalDateTimeConverter.converter();
 
     @Test
     public void testISOLocalDateTimeConverter() {

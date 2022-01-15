@@ -1,7 +1,7 @@
-package io.agrest.converter.valuejson;
+package io.agrest.converter.valuestring;
 
 
-public abstract class AbstractConverter implements ValueJsonConverter {
+public abstract class AbstractConverter implements ValueStringConverter {
 
 	@Override
 	public String asString(Object object) {

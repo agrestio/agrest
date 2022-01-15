@@ -1,11 +1,11 @@
-package io.agrest.converter.valuejson;
+package io.agrest.converter.valuestring;
 
 
 public class GenericConverter extends AbstractConverter {
 
-	private static final ValueJsonConverter instance = new GenericConverter();
+	private static final ValueStringConverter instance = new GenericConverter();
 
-	public static ValueJsonConverter converter() {
+	public static ValueStringConverter converter() {
 		return instance;
 	}
 

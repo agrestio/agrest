@@ -11,7 +11,7 @@ import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.converter.jsonvalue.JsonValueConverterFactoryProvider;
 import io.agrest.converter.jsonvalue.IJsonValueConverterFactory;
 import io.agrest.converter.jsonvalue.JsonValueConverter;
-import io.agrest.converter.valuejson.ValueJsonConverter;
+import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.meta.AgDataMap;
@@ -28,10 +28,10 @@ import io.agrest.runtime.encoder.EncodablePropertyFactory;
 import io.agrest.runtime.encoder.EncoderService;
 import io.agrest.runtime.encoder.IEncodablePropertyFactory;
 import io.agrest.runtime.encoder.IEncoderService;
-import io.agrest.runtime.encoder.IValueJsonConverterFactory;
-import io.agrest.runtime.encoder.ValueJsonConverterFactoryProvider;
-import io.agrest.runtime.encoder.ValueEncoders;
-import io.agrest.runtime.encoder.ValueEncodersProvider;
+import io.agrest.converter.valuestring.IValueStringConverterFactory;
+import io.agrest.converter.valuestring.ValueStringConverterFactoryProvider;
+import io.agrest.encoder.ValueEncoders;
+import io.agrest.encoder.ValueEncodersProvider;
 import io.agrest.runtime.entity.ChangeAuthorizer;
 import io.agrest.runtime.entity.ExcludeMerger;
 import io.agrest.runtime.entity.ExpMerger;
@@ -407,8 +407,8 @@ public class AgBuilder {
             binder.bind(ValueEncoders.class).toProvider(ValueEncodersProvider.class);
 
             // a map of custom converters
-            binder.bindMap(ValueJsonConverter.class);
-            binder.bind(IValueJsonConverterFactory.class).toProvider(ValueJsonConverterFactoryProvider.class);
+            binder.bindMap(ValueStringConverter.class);
+            binder.bind(IValueStringConverterFactory.class).toProvider(ValueStringConverterFactoryProvider.class);
 
             binder.bind(IEncoderService.class).to(EncoderService.class);
             binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);

@@ -1,4 +1,4 @@
-package io.agrest.runtime.encoder;
+package io.agrest.encoder;
 
 import io.agrest.encoder.Encoder;
 
