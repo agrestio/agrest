@@ -25,9 +25,7 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
      * @since 1.24
      */
     public SimpleResponse createSimpleResponse() {
-        SimpleResponse response = new SimpleResponse(true);
-        response.setStatus(getStatus());
-        return response;
+        return SimpleResponse.of(getStatus(), true);
     }
 
     @Override

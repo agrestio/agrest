@@ -23,6 +23,7 @@ public class CompoundObjectId extends BaseObjectId {
         return id.get(attributeName);
     }
 
+    @Deprecated
     @Override
     public Object get() {
         return id;

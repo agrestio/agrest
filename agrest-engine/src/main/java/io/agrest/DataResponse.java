@@ -5,81 +5,68 @@ import io.agrest.encoder.GenericEncoder;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A response object that represents a 'Collection Document' from Agrest protocol.
  */
 public class DataResponse<T> extends AgResponse {
 
-    private final Class<T> type;
-    private List objects;
-    private Encoder encoder;
+    private final List<? extends T> objects;
+    private final Encoder encoder;
 
+    /**
+     * @since 5.0
+     */
+    public static <T> DataResponse<T> of(int status) {
+        return of(status, Collections.emptyList(), GenericEncoder.encoder());
+    }
+
+    /**
+     * @since 5.0
+     */
+    public static <T> DataResponse<T> of(int status, List<? extends T> objects) {
+        return of(status, objects, GenericEncoder.encoder());
+    }
+
+    /**
+     * @since 5.0
+     */
+    public static <T> DataResponse<T> of(int status, List<? extends T> objects, Encoder encoder) {
+        return new DataResponse<>(status, objects, encoder);
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #of(int, List)}, and other "of" methods.
+     */
+    @Deprecated
     public static <T> DataResponse<T> forObject(T object) {
-
-        if (object == null) {
-            throw new NullPointerException("Null object");
-        }
-
-        return forObjects(Collections.singletonList(object));
+        Objects.requireNonNull(object);
+        return of(HttpStatus.OK, Collections.singletonList(object));
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    /**
+     * @deprecated since 5.0 in favor of {@link #of(int, List)}, and other "of" methods.
+     */
+    @Deprecated
     public static <T> DataResponse<T> forObjects(List<T> objects) {
-
-        if (objects.isEmpty()) {
-            return new DataResponse(Object.class);
-        } else {
-            Class<T> type = (Class<T>) objects.get(0).getClass();
-            DataResponse<T> response = new DataResponse<>(type);
-            response.setObjects(objects);
-            return response;
-        }
+        return of(HttpStatus.OK, objects);
     }
 
-    public static <T> DataResponse<T> forType(Class<T> type) {
-        return new DataResponse<>(type);
-    }
-
-    DataResponse(Class<T> type) {
-        this.type = type;
-        this.encoder = GenericEncoder.encoder();
-        this.objects = Collections.emptyList();
-    }
-
-    public Class<T> getType() {
-        return type;
-    }
-
-    /**
-     * @since 1.24
-     */
-    public void setObjects(List<? extends T> objects) {
+    protected DataResponse(int status, List<? extends T> objects, Encoder encoder) {
+        super(status);
         this.objects = objects;
-    }
-
-    /**
-     * @since 1.24
-     */
-    public void setObject(T object) {
-        setObjects(Collections.singletonList(object));
+        this.encoder = encoder;
     }
 
     /**
      * Returns all objects returned from DB.
      */
-    public List<T> getObjects() {
+    public List<? extends T> getObjects() {
         return objects;
     }
 
     public Encoder getEncoder() {
         return encoder;
-    }
-
-    /**
-     * @since 1.24
-     */
-    public void setEncoder(Encoder encoder) {
-        this.encoder = encoder;
     }
 }

@@ -47,7 +47,9 @@ public class JaxrsAgExceptionMapper implements ExceptionMapper<AgException> {
             }
         }
 
-        SimpleResponse body = new SimpleResponse(false, message);
-        return Response.status(status).entity(body).type(MediaType.APPLICATION_JSON_TYPE).build();
+        return Response
+                .status(status)
+                .entity(SimpleResponse.of(status, false, message))
+                .type(MediaType.APPLICATION_JSON_TYPE).build();
     }
 }

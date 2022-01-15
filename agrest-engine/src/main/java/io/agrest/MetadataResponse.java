@@ -22,7 +22,8 @@ public class MetadataResponse<T> extends AgResponse {
 	private Encoder encoder;
 	private Collection<AgResource<T>> resources;
 
-	public MetadataResponse(Class<T> type) {
+	public MetadataResponse(int status, Class<T> type) {
+		super(status);
 		this.encoder = GenericEncoder.encoder();
 		this.type = type;
 		this.resources = Collections.emptyList();

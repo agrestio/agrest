@@ -49,11 +49,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
      */
     public DataResponse<T> createDataResponse() {
         List<? extends T> objects = this.entity != null ? this.entity.getResult() : Collections.emptyList();
-        DataResponse<T> response = DataResponse.forType(getType());
-        response.setObjects(objects);
-        response.setEncoder(encoder);
-        response.setStatus(getStatus());
-        return response;
+        return DataResponse.of(getStatus(), objects, encoder);
     }
 
     public boolean isById() {

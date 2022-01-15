@@ -30,13 +30,13 @@ public class GET_SimpleResponseIT extends PojoTest {
 
         @GET
         public SimpleResponse get() {
-            return new SimpleResponse(true, "Hi!");
+            return SimpleResponse.of(200, true, "Hi!");
         }
 
         @GET
         @Path("2")
         public SimpleResponse get2() {
-            return new SimpleResponse(false, "Hi2!");
+            return SimpleResponse.of(200, false, "Hi2!");
         }
     }
 }

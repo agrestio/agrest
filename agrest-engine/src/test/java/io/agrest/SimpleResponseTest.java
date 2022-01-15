@@ -1,17 +1,18 @@
 package io.agrest;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.Test;
 
 public class SimpleResponseTest {
 
 	@Test
-	public void testConstructor() {
+	public void testOf() {
 
-		SimpleResponse response = new SimpleResponse(true, "YYYY");
+		SimpleResponse response = SimpleResponse.of(201, true, "YYYY");
 
+		assertEquals(201, response.getStatus());
 		assertTrue(response.isSuccess());
 		assertEquals("YYYY", response.getMessage());
 	}

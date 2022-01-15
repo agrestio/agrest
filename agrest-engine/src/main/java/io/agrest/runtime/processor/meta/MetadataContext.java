@@ -31,7 +31,7 @@ public class MetadataContext<T> extends BaseProcessingContext<T> {
      * @since 1.24
      */
     public MetadataResponse<T> createMetadataResponse() {
-        MetadataResponse<T> response = new MetadataResponse<>(getType());
+        MetadataResponse<T> response = new MetadataResponse<>(getStatus(), getType());
         response.setEncoder(encoder);
         response.setResources(resources);
 
