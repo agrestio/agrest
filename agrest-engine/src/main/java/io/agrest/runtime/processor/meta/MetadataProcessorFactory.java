@@ -3,7 +3,7 @@ package io.agrest.runtime.processor.meta;
 import io.agrest.MetadataStage;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorFactory;
-import io.agrest.runtime.ExceptionMappers;
+import io.agrest.runtime.AgExceptionMappers;
 
 import java.util.EnumMap;
 
@@ -16,7 +16,7 @@ public class MetadataProcessorFactory extends ProcessorFactory<MetadataStage, Me
 
     public MetadataProcessorFactory(
             EnumMap<MetadataStage, Processor<MetadataContext<?>>> defaultStages,
-            ExceptionMappers exceptionMappers) {
+            AgExceptionMappers exceptionMappers) {
         super(defaultStages, exceptionMappers);
     }
 }

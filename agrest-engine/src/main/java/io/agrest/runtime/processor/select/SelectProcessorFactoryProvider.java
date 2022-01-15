@@ -2,7 +2,7 @@ package io.agrest.runtime.processor.select;
 
 import io.agrest.SelectStage;
 import io.agrest.processor.Processor;
-import io.agrest.runtime.ExceptionMappers;
+import io.agrest.runtime.AgExceptionMappers;
 import org.apache.cayenne.di.DIRuntimeException;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.di.Provider;
@@ -15,7 +15,7 @@ import java.util.EnumMap;
 public class SelectProcessorFactoryProvider implements Provider<SelectProcessorFactory> {
 
     private final EnumMap<SelectStage, Processor<SelectContext<?>>> stages;
-    private final ExceptionMappers exceptionMappers;
+    private final AgExceptionMappers exceptionMappers;
 
     public SelectProcessorFactoryProvider(
             @Inject StartStage startStage,
@@ -26,7 +26,7 @@ public class SelectProcessorFactoryProvider implements Provider<SelectProcessorF
             @Inject FetchDataStage fetchDataStage,
             @Inject FilterResultStage filterResultStage,
             @Inject EncoderInstallStage encoderInstallStage,
-            @Inject ExceptionMappers exceptionMappers) {
+            @Inject AgExceptionMappers exceptionMappers) {
 
         this.exceptionMappers = exceptionMappers;
 

@@ -3,7 +3,7 @@ package io.agrest.pojo.runtime;
 import io.agrest.SelectStage;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.runtime.ExceptionMappers;
+import io.agrest.runtime.AgExceptionMappers;
 import io.agrest.runtime.processor.select.ApplyServerParamsStage;
 import io.agrest.runtime.processor.select.CreateResourceEntityStage;
 import io.agrest.runtime.processor.select.EncoderInstallStage;
@@ -19,7 +19,7 @@ import java.util.EnumMap;
 
 public class PojoSelectProcessorFactoryProvider implements Provider<SelectProcessorFactory> {
 
-    private final ExceptionMappers exceptionMappers;
+    private final AgExceptionMappers exceptionMappers;
     private final EnumMap<SelectStage, Processor<SelectContext<?>>> stages;
 
     public PojoSelectProcessorFactoryProvider(
@@ -30,7 +30,7 @@ public class PojoSelectProcessorFactoryProvider implements Provider<SelectProces
             @Inject PojoFetchStage pojoFetchStage,
             @Inject EncoderInstallStage encoderStage,
 
-            @Inject ExceptionMappers exceptionMappers) {
+            @Inject AgExceptionMappers exceptionMappers) {
 
         this.exceptionMappers = exceptionMappers;
 

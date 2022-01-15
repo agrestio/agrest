@@ -2,7 +2,7 @@ package io.agrest.cayenne.processor.update;
 
 import io.agrest.UpdateStage;
 import io.agrest.processor.Processor;
-import io.agrest.runtime.ExceptionMappers;
+import io.agrest.runtime.AgExceptionMappers;
 import io.agrest.runtime.UpdateOperation;
 import io.agrest.runtime.processor.update.AuthorizeChangesStage;
 import io.agrest.runtime.processor.update.CreateResourceEntityStage;
@@ -23,7 +23,7 @@ import java.util.EnumMap;
  */
 public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<UpdateProcessorFactoryFactory> {
 
-    private final ExceptionMappers exceptionMappers;
+    private final AgExceptionMappers exceptionMappers;
     private final EnumMap<UpdateStage, Processor<UpdateContext<?>>> createStages;
     private final EnumMap<UpdateStage, Processor<UpdateContext<?>>> updateStages;
     private final EnumMap<UpdateStage, Processor<UpdateContext<?>>> createOrUpdateStages;
@@ -54,7 +54,7 @@ public class CayenneUpdateProcessorFactoryFactoryProvider implements Provider<Up
             @Inject FilterResultStage filterResultStage,
             @Inject EncoderInstallStage encoderInstallStage,
 
-            @Inject ExceptionMappers exceptionMappers
+            @Inject AgExceptionMappers exceptionMappers
     ) {
 
         this.exceptionMappers = exceptionMappers;

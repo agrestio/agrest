@@ -2,7 +2,7 @@ package io.agrest.cayenne.processor.unrelate;
 
 import io.agrest.UnrelateStage;
 import io.agrest.processor.Processor;
-import io.agrest.runtime.ExceptionMappers;
+import io.agrest.runtime.AgExceptionMappers;
 import io.agrest.runtime.processor.unrelate.UnrelateContext;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
 import org.apache.cayenne.di.DIRuntimeException;
@@ -16,14 +16,14 @@ import java.util.EnumMap;
  */
 public class CayenneUnrelateProcessorFactoryProvider implements Provider<UnrelateProcessorFactory> {
 
-    private final ExceptionMappers exceptionMappers;
+    private final AgExceptionMappers exceptionMappers;
     private final EnumMap<UnrelateStage, Processor<UnrelateContext<?>>> stages;
 
     public CayenneUnrelateProcessorFactoryProvider(
             @Inject CayenneUnrelateStartStage startStage,
             @Inject CayenneUnrelateDataStoreStage dataStoreStage,
 
-            @Inject ExceptionMappers exceptionMappers
+            @Inject AgExceptionMappers exceptionMappers
     ) {
 
         this.exceptionMappers = exceptionMappers;

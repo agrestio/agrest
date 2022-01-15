@@ -3,7 +3,7 @@ package io.agrest.runtime.processor.delete;
 import io.agrest.DeleteStage;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorFactory;
-import io.agrest.runtime.ExceptionMappers;
+import io.agrest.runtime.AgExceptionMappers;
 
 import java.util.EnumMap;
 
@@ -14,7 +14,7 @@ public class DeleteProcessorFactory extends ProcessorFactory<DeleteStage, Delete
 
     public DeleteProcessorFactory(
             EnumMap<DeleteStage, Processor<DeleteContext<?>>> defaultStages,
-            ExceptionMappers exceptionMappers) {
+            AgExceptionMappers exceptionMappers) {
         super(defaultStages, exceptionMappers);
     }
 }

@@ -1,6 +1,6 @@
 package io.agrest.processor;
 
-import io.agrest.runtime.ExceptionMappers;
+import io.agrest.runtime.AgExceptionMappers;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -14,10 +14,10 @@ import java.util.Objects;
 public class ProcessorFactory<E extends Enum<E>, C extends ProcessingContext<?>> {
 
     private final EnumMap<E, Processor<C>> defaultStages;
-    private final ExceptionMappers exceptionMappers;
+    private final AgExceptionMappers exceptionMappers;
     private final Processor<C> defaultProcessor;
 
-    public ProcessorFactory(EnumMap<E, Processor<C>> defaultStages, ExceptionMappers exceptionMappers) {
+    public ProcessorFactory(EnumMap<E, Processor<C>> defaultStages, AgExceptionMappers exceptionMappers) {
         this.exceptionMappers = Objects.requireNonNull(exceptionMappers);
         this.defaultStages = Objects.requireNonNull(defaultStages);
         this.defaultProcessor = composeStages(defaultStages);

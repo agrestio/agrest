@@ -366,7 +366,7 @@ public class AgBuilder {
                     .put(AgException.class.getName(), AgExceptionDefaultMapper.class);
             exceptionMappers.forEach(mapperBuilder::put);
 
-            binder.bind(ExceptionMappers.class).to(ExceptionMappers.class);
+            binder.bind(AgExceptionMappers.class).to(AgExceptionMappers.class);
 
             // select stages
             binder.bind(SelectProcessorFactory.class).toProvider(SelectProcessorFactoryProvider.class);

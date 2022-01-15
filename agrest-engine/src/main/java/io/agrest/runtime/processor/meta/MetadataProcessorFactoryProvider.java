@@ -2,7 +2,7 @@ package io.agrest.runtime.processor.meta;
 
 import io.agrest.MetadataStage;
 import io.agrest.processor.Processor;
-import io.agrest.runtime.ExceptionMappers;
+import io.agrest.runtime.AgExceptionMappers;
 import org.apache.cayenne.di.DIRuntimeException;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.di.Provider;
@@ -17,10 +17,10 @@ import java.util.EnumMap;
 public class MetadataProcessorFactoryProvider implements Provider<MetadataProcessorFactory> {
 
     private final EnumMap<MetadataStage, Processor<MetadataContext<?>>> stages;
-    private final ExceptionMappers exceptionMappers;
+    private final AgExceptionMappers exceptionMappers;
 
     public MetadataProcessorFactoryProvider(
-            @Inject ExceptionMappers exceptionMappers,
+            @Inject AgExceptionMappers exceptionMappers,
             @Inject CollectMetadataStage collectMetadataStage) {
 
         this.stages = new EnumMap<>(MetadataStage.class);
