@@ -60,7 +60,7 @@ public class DataResponse<T> extends AgResponse {
     }
 
     /**
-     * Returns all objects returned from DB.
+     * Returns root objects of the response.
      */
     public List<? extends T> getObjects() {
         return objects;
