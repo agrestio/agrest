@@ -17,10 +17,11 @@ public class PojoConverter<T> extends AbstractConverter<T> {
     private final JsonValueConverter<?> defaultConverter;
 
     // TODO: get rid of two maps (combine setter and converter in some interface, e.g. PropertyWriter)
-    public PojoConverter(Class<T> type,
-                         Map<String, PropertySetter> setters,
-                         Map<String, JsonValueConverter<?>> propertyConverters,
-                         JsonValueConverter defaultConverter) {
+    public PojoConverter(
+            Class<T> type,
+            Map<String, PropertySetter> setters,
+            Map<String, JsonValueConverter<?>> propertyConverters,
+            JsonValueConverter defaultConverter) {
         this.type = type;
         this.setters = setters;
         this.propertyConverters = propertyConverters;
@@ -29,7 +30,7 @@ public class PojoConverter<T> extends AbstractConverter<T> {
 
     private static <T> T newInstance(Class<T> type) {
         try {
-            return type.newInstance();
+            return type.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new RuntimeException("Failed to instantiate type: " + type.getName(), e);
         }
