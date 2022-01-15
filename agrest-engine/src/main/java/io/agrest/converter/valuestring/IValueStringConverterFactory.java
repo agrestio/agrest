@@ -1,7 +1,5 @@
 package io.agrest.converter.valuestring;
 
-import io.agrest.meta.AgEntity;
-
 import java.util.Map;
 
 /**
@@ -18,16 +16,4 @@ public interface IValueStringConverterFactory {
     Map<Class<?>, ValueStringConverter> getConverters();
 
     ValueStringConverter getConverter(Class<?> type);
-
-    /**
-     * Returns a {@link ValueStringConverter} for a given entity object. Normally the returned converter is some kind of
-     * ID converter.
-     */
-    ValueStringConverter getConverter(AgEntity<?> entity);
-
-    /**
-     * Returns a {@link ValueStringConverter} for a given attribute.
-     */
-    ValueStringConverter getConverter(AgEntity<?> entity, String attributeName);
-
 }

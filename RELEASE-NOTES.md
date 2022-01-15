@@ -14,6 +14,7 @@
 * #529 Remove "agrest-openapi-designfirst"
 * #530 JAX-RS free exception mapper
 * #532 Encoder.willEncode can be removed
+* #533 Look up converters by type, not by entity or attribute; value Encoders based on known converters
 
 ## Release 4.9
 

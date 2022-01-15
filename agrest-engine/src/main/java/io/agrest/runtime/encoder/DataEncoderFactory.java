@@ -4,13 +4,25 @@ import io.agrest.AgException;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.converter.valuestring.IValueStringConverterFactory;
-import io.agrest.encoder.*;
+import io.agrest.encoder.CollectionEncoder;
+import io.agrest.encoder.DataResponseEncoder;
+import io.agrest.encoder.EncodableProperty;
+import io.agrest.encoder.Encoder;
+import io.agrest.encoder.EntityEncoder;
+import io.agrest.encoder.EntityNoIdEncoder;
+import io.agrest.encoder.GenericEncoder;
+import io.agrest.encoder.ListEncoder;
+import io.agrest.encoder.MapByEncoder;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
 import io.agrest.property.PropertyReader;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @since 3.4
@@ -19,16 +31,16 @@ public class DataEncoderFactory {
 
     protected final IEncodablePropertyFactory encodablePropertyFactory;
     protected final IRelationshipMapper relationshipMapper;
-    protected final IValueStringConverterFactory jsonConverterFactory;
+    protected final IValueStringConverterFactory converterFactory;
 
     public DataEncoderFactory(
             IEncodablePropertyFactory encodablePropertyFactory,
-            IValueStringConverterFactory jsonConverterFactory,
+            IValueStringConverterFactory converterFactory,
             IRelationshipMapper relationshipMapper) {
 
         this.encodablePropertyFactory = encodablePropertyFactory;
         this.relationshipMapper = relationshipMapper;
-        this.jsonConverterFactory = jsonConverterFactory;
+        this.converterFactory = converterFactory;
     }
 
     public <T> Encoder encoder(ResourceEntity<T> entity) {
@@ -137,7 +149,7 @@ public class DataEncoderFactory {
                     readerChain,
                     encoder,
                     true,
-                    jsonConverterFactory.getConverter(mapBy.getAgEntity()));
+                    converterFactory.getConverter(Object.class));
         }
 
         // map by property
@@ -150,7 +162,7 @@ public class DataEncoderFactory {
                     readerChain,
                     encoder,
                     false,
-                    jsonConverterFactory.getConverter(mapBy.getAgEntity(), attribute.getKey()));
+                    converterFactory.getConverter(attribute.getValue().getType()));
         }
 
         // descend into relationship
@@ -173,7 +185,7 @@ public class DataEncoderFactory {
                 readerChain,
                 encoder,
                 true,
-                jsonConverterFactory.getConverter(mapBy.getAgEntity()));
+                converterFactory.getConverter(Object.class));
     }
 
     protected void validateLeafMapBy(ResourceEntity<?> mapBy, String mapByPath) {
