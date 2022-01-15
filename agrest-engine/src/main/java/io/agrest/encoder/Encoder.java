@@ -30,14 +30,10 @@ public interface Encoder {
 	boolean encode(String propertyName, Object object, JsonGenerator out) throws IOException;
 
 	/**
-	 * A graph traversal method that recursively visits all entity nodes
-	 * starting with provided object, but only including those nodes that will
-	 * be encoded with this encoder.
+	 * A graph traversal method that recursively visits all entity nodes starting with provided object.
 	 * <p>
-	 * Visitor can control ongoing graph traversal by returning a code from each
-	 * visit callback. Code is a bitmask combining one of
-	 * {@link #VISIT_CONTINUE}, {@link #VISIT_SKIP_ALL},
-	 * {@link #VISIT_SKIP_CHILDREN}.
+	 * Visitor can control ongoing graph traversal by returning a code from each visit callback. Code is a bitmask
+	 * combining one of {@link #VISIT_CONTINUE}, {@link #VISIT_SKIP_ALL}, {@link #VISIT_SKIP_CHILDREN}.
 	 * 
 	 * @since 2.0
 	 */
