@@ -352,10 +352,8 @@ public class AgBuilder {
             binder.bindMap(AgEntityOverlay.class).putAll(entityOverlays);
             binder.bindMap(Class.class, AgRuntime.BODY_WRITERS_MAP)
                     .put(SimpleResponse.class.getName(), SimpleResponseWriter.class)
-                    .put(DataResponse.class.getName(), DataResponseWriter.class)
-                    .put(MetadataResponse.class.getName(), MetadataResponseWriter.class);
+                    .put(DataResponse.class.getName(), DataResponseWriter.class);
 
-            binder.bindMap(PropertyMetadataEncoder.class).putAll(metadataEncoders);
 
             if (agServiceType != null) {
                 binder.bind(IAgService.class).to(agServiceType);
@@ -397,10 +395,6 @@ public class AgBuilder {
             binder.bind(io.agrest.runtime.processor.delete.AuthorizeChangesStage.class)
                     .to(io.agrest.runtime.processor.delete.AuthorizeChangesStage.class);
 
-            // metadata stages
-            binder.bind(MetadataProcessorFactory.class).toProvider(MetadataProcessorFactoryProvider.class);
-            binder.bind(CollectMetadataStage.class).to(CollectMetadataStage.class);
-
             // a map of custom encoders
             binder.bindMap(Encoder.class);
             binder.bind(IEncodablePropertyFactory.class).to(EncodablePropertyFactory.class);
@@ -413,7 +407,6 @@ public class AgBuilder {
             binder.bind(IEncoderService.class).to(EncoderService.class);
             binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);
             binder.bind(AgDataMap.class).toProvider(LazyAgDataMapProvider.class);
-            binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
             binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
 
             binder.bind(IJacksonService.class).to(JacksonService.class);
@@ -436,11 +429,20 @@ public class AgBuilder {
             binder.bind(IResultFilter.class).to(ResultFilter.class);
             binder.bind(IChangeAuthorizer.class).to(ChangeAuthorizer.class);
 
-            binder.bind(IResourceParser.class).to(ResourceParser.class);
+
             binder.bind(IEntityUpdateParser.class).to(EntityUpdateParser.class);
 
             Optional<String> maybeBaseUrl = Optional.ofNullable(baseUrl);
+
+            // deprecated services
+            binder.bindMap(PropertyMetadataEncoder.class).putAll(metadataEncoders);
+            binder.bind(MetadataProcessorFactory.class).toProvider(MetadataProcessorFactoryProvider.class);
+            binder.bind(CollectMetadataStage.class).to(CollectMetadataStage.class);
+            binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
+            binder.bind(IResourceParser.class).to(ResourceParser.class);
             binder.bind(BaseUrlProvider.class).toInstance(BaseUrlProvider.forUrl(maybeBaseUrl));
+            binder.bindMap(Class.class, AgRuntime.BODY_WRITERS_MAP)
+                    .put(MetadataResponse.class.getName(), MetadataResponseWriter.class);
         };
     }
 }
