@@ -93,12 +93,12 @@ public interface UpdateBuilder<T> {
      * I.e. which entity attributes, relationships and ids a client is allowed to see. Can be called multiple times to add
      * multiple rules for same entity or different entities. The "entityType" parameter can match the root entity or
      * can be any other entity in the model. This method is a shortcut for
-     * <code>entityOverlay(AgEntity.overlay(entityType).writeablePropFilter(filter))</code>
+     * <code>entityOverlay(AgEntity.overlay(entityType).writablePropFilter(filter))</code>
      *
      * @return this builder instance
-     * @since 4.8
+     * @since 4.10
      */
-    default <A> UpdateBuilder<T> writeablePropFilter(Class<A> entityType, PropertyFilter rules) {
+    default <A> UpdateBuilder<T> writablePropFilter(Class<A> entityType, PropertyFilter rules) {
         return entityOverlay(AgEntity.overlay(entityType).writablePropFilter(rules));
     }
 
