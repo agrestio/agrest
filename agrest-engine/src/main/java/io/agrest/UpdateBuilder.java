@@ -77,7 +77,7 @@ public interface UpdateBuilder<T> {
      *
      * @param constraint an instance of Constraint function.
      * @return this builder instance
-     * @deprecated since 4.8 in favor of {@link #writeablePropFilter(Class, PropertyFilter)}
+     * @deprecated since 4.8 in favor of {@link #writablePropFilter(Class, PropertyFilter)}
      */
     @Deprecated
     UpdateBuilder<T> writeConstraint(Constraint<T> constraint);
@@ -97,16 +97,24 @@ public interface UpdateBuilder<T> {
     }
 
     /**
+     * @deprecated since 4.10 renamed for consistency to {@link #writablePropFilter(Class, PropertyFilter)}.
+     */
+    @Deprecated
+    default <A> UpdateBuilder<T> writeablePropFilter(Class<A> entityType, PropertyFilter rules) {
+        return writablePropFilter(entityType, rules);
+    }
+
+    /**
      * Adds a {@link PropertyFilter} that define property write access rules for the current request and a given entity.
      * I.e. which entity attributes, relationships and ids a client is allowed to see. Can be called multiple times to add
      * multiple rules for same entity or different entities. The "entityType" parameter can match the root entity or
      * can be any other entity in the model. This method is a shortcut for
-     * <code>entityOverlay(AgEntity.overlay(entityType).writeablePropFilter(filter))</code>
+     * <code>entityOverlay(AgEntity.overlay(entityType).writablePropFilter(filter))</code>
      *
      * @return this builder instance
-     * @since 4.8
+     * @since 4.10
      */
-    default <A> UpdateBuilder<T> writeablePropFilter(Class<A> entityType, PropertyFilter rules) {
+    default <A> UpdateBuilder<T> writablePropFilter(Class<A> entityType, PropertyFilter rules) {
         return entityOverlay(AgEntity.overlay(entityType).writablePropFilter(rules));
     }
 
