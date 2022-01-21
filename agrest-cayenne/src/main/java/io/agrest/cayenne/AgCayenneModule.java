@@ -1,7 +1,6 @@
 package io.agrest.cayenne;
 
 import io.agrest.cayenne.compiler.CayenneAgEntityCompiler;
-import io.agrest.cayenne.converter.JsonConverter;
 import io.agrest.cayenne.encoder.JsonEncoder;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.path.PathResolver;
@@ -36,6 +35,7 @@ import io.agrest.cayenne.qualifier.QualifierPostProcessor;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.converter.jsonvalue.JsonValueConverter;
+import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.encoder.Encoder;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.select.ApplyServerParamsStage;
@@ -63,8 +63,12 @@ public class AgCayenneModule implements Module {
 
     @Override
     public void configure(Binder binder) {
+        binder.bindMap(JsonValueConverter.class).put(Json.class.getName(), io.agrest.cayenne.converter.jsonvalue.JsonConverter.converter());
+        binder.bindMap(ValueStringConverter.class).put(Json.class.getName(), io.agrest.cayenne.converter.valuestring.JsonConverter.converter());
+
+        // note that despite having a io.agrest.cayenne.converter.valuestring.JsonConverter, we still need an JsonEncoder,
+        // as unlike generic ValueEncoder it must write its content with no escaping
         binder.bindMap(Encoder.class).put(Json.class.getName(), JsonEncoder.encoder());
-        binder.bindMap(JsonValueConverter.class).put(Json.class.getName(), JsonConverter.converter());
 
         binder.bind(CayenneAgEntityCompiler.class).to(CayenneAgEntityCompiler.class);
         binder.bindList(AgEntityCompiler.class).insertBefore(CayenneAgEntityCompiler.class, AnnotationsAgEntityCompiler.class);

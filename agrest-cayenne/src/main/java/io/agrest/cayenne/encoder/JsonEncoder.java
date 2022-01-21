@@ -24,6 +24,9 @@ public class JsonEncoder extends AbstractEncoder {
     @Override
     protected void encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
         Json json = (Json) object;
+
+        // note that we can't use ValueEncoder for rg.apache.cayenne.value.Json, as it needs to write a raw value
+        // without string escaping
         out.writeRawValue(json.getRawJson());
     }
 }

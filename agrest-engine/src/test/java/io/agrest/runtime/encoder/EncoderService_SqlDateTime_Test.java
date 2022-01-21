@@ -7,8 +7,12 @@ import io.agrest.RootResourceEntity;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
+import io.agrest.converter.valuestring.GenericConverter;
+import io.agrest.converter.valuestring.ISODateConverter;
+import io.agrest.converter.valuestring.ISODateTimeConverter;
+import io.agrest.converter.valuestring.ISOTimeConverter;
+import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.converter.valuestring.ValueStringConverters;
-import io.agrest.converter.valuestring.ValueStringConvertersProvider;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.ValueEncodersProvider;
 import io.agrest.meta.AgDataMap;
@@ -28,6 +32,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -44,7 +49,13 @@ public class EncoderService_SqlDateTime_Test {
     @BeforeEach
     public void before() {
 
-        ValueStringConverters converters = new ValueStringConvertersProvider(Collections.emptyMap()).get();
+        Map<Class<?>, ValueStringConverter> converterMap = Map.of(
+                Timestamp.class, ISODateTimeConverter.converter(),
+                java.sql.Date.class, ISODateConverter.converter(),
+                Time.class, ISOTimeConverter.converter()
+        );
+
+        ValueStringConverters converters = new ValueStringConverters(converterMap, GenericConverter.converter());
 
         this.encoderService = new EncoderService(
                 new EncodablePropertyFactory(new ValueEncodersProvider(converters, Collections.emptyMap()).get()),

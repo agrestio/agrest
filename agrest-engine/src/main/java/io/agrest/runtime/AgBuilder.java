@@ -11,6 +11,13 @@ import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.converter.jsonvalue.JsonValueConverter;
 import io.agrest.converter.jsonvalue.JsonValueConverters;
 import io.agrest.converter.jsonvalue.JsonValueConvertersProvider;
+import io.agrest.converter.valuestring.ISODateConverter;
+import io.agrest.converter.valuestring.ISODateTimeConverter;
+import io.agrest.converter.valuestring.ISOLocalDateConverter;
+import io.agrest.converter.valuestring.ISOLocalDateTimeConverter;
+import io.agrest.converter.valuestring.ISOLocalTimeConverter;
+import io.agrest.converter.valuestring.ISOOffsetDateTimeConverter;
+import io.agrest.converter.valuestring.ISOTimeConverter;
 import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.converter.valuestring.ValueStringConvertersProvider;
@@ -92,6 +99,12 @@ import org.apache.cayenne.di.Module;
 import org.apache.cayenne.di.spi.ModuleLoader;
 
 import javax.ws.rs.core.Feature;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -402,7 +415,16 @@ public class AgBuilder {
             binder.bind(ValueEncoders.class).toProvider(ValueEncodersProvider.class);
 
             // a map of custom converters
-            binder.bindMap(ValueStringConverter.class);
+            binder.bindMap(ValueStringConverter.class)
+                    .put(LocalDate.class.getName(), ISOLocalDateConverter.converter())
+                    .put(LocalTime.class.getName(), ISOLocalTimeConverter.converter())
+                    .put(LocalDateTime.class.getName(), ISOLocalDateTimeConverter.converter())
+                    .put(OffsetDateTime.class.getName(), ISOOffsetDateTimeConverter.converter())
+                    .put(java.util.Date.class.getName(), ISODateTimeConverter.converter())
+                    .put(Timestamp.class.getName(), ISODateTimeConverter.converter())
+                    .put(java.sql.Date.class.getName(), ISODateConverter.converter())
+                    .put(Time.class.getName(), ISOTimeConverter.converter());
+
             binder.bind(ValueStringConverters.class).toProvider(ValueStringConvertersProvider.class);
 
             binder.bind(IEncoderService.class).to(EncoderService.class);
