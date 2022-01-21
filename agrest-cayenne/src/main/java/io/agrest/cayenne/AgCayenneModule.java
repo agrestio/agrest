@@ -66,8 +66,8 @@ public class AgCayenneModule implements Module {
         binder.bindMap(JsonValueConverter.class).put(Json.class.getName(), io.agrest.cayenne.converter.jsonvalue.JsonConverter.converter());
         binder.bindMap(ValueStringConverter.class).put(Json.class.getName(), io.agrest.cayenne.converter.valuestring.JsonConverter.converter());
 
-        // note that despite having a io.agrest.cayenne.converter.valuestring.JsonConverter, we still need an JsonEncoder,
-        // as unlike generic ValueEncoder it must write its content with no escaping
+        // Despite the presence of "io.agrest.cayenne.converter.valuestring.JsonConverter", we still need an explicit
+        // JsonEncoder, as unlike a generic ValueEncoder it must write its content with no escaping
         binder.bindMap(Encoder.class).put(Json.class.getName(), JsonEncoder.encoder());
 
         binder.bind(CayenneAgEntityCompiler.class).to(CayenneAgEntityCompiler.class);
