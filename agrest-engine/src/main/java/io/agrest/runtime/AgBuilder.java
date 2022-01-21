@@ -1,5 +1,6 @@
 package io.agrest.runtime;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
 import io.agrest.AgFeatureProvider;
 import io.agrest.AgModuleProvider;
@@ -8,9 +9,17 @@ import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
+import io.agrest.converter.jsonvalue.Base64Converter;
+import io.agrest.converter.jsonvalue.BigDecimalConverter;
+import io.agrest.converter.jsonvalue.DoubleConverter;
+import io.agrest.converter.jsonvalue.FloatConverter;
+import io.agrest.converter.jsonvalue.GenericConverter;
+import io.agrest.converter.jsonvalue.JsonNodeConverter;
 import io.agrest.converter.jsonvalue.JsonValueConverter;
 import io.agrest.converter.jsonvalue.JsonValueConverters;
 import io.agrest.converter.jsonvalue.JsonValueConvertersProvider;
+import io.agrest.converter.jsonvalue.LongConverter;
+import io.agrest.converter.jsonvalue.UtcDateConverter;
 import io.agrest.converter.valuestring.ISODateConverter;
 import io.agrest.converter.valuestring.ISODateTimeConverter;
 import io.agrest.converter.valuestring.ISOLocalDateConverter;
@@ -99,6 +108,7 @@ import org.apache.cayenne.di.Module;
 import org.apache.cayenne.di.spi.ModuleLoader;
 
 import javax.ws.rs.core.Feature;
+import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -107,6 +117,7 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -357,9 +368,6 @@ public class AgBuilder {
 
         return binder -> {
 
-            binder.bindMap(JsonValueConverter.class);
-            binder.bind(JsonValueConverters.class).toProvider(JsonValueConvertersProvider.class);
-
             binder.bind(AnnotationsAgEntityCompiler.class).to(AnnotationsAgEntityCompiler.class);
             binder.bindList(AgEntityCompiler.class).add(AnnotationsAgEntityCompiler.class);
 
@@ -414,7 +422,30 @@ public class AgBuilder {
             binder.bind(IEncodablePropertyFactory.class).to(EncodablePropertyFactory.class);
             binder.bind(ValueEncoders.class).toProvider(ValueEncodersProvider.class);
 
-            // a map of custom converters
+            // custom from JSON converters
+            binder.bindMap(JsonValueConverter.class)
+                    .put(Object.class.getName(), GenericConverter.converter())
+                    .put("byte[]", Base64Converter.converter())
+                    .put(BigDecimal.class.getName(), BigDecimalConverter.converter())
+                    .put(Float.class.getName(), FloatConverter.converter())
+                    .put("float", FloatConverter.converter())
+                    .put(Double.class.getName(), DoubleConverter.converter())
+                    .put("double", DoubleConverter.converter())
+                    .put(Long.class.getName(), LongConverter.converter())
+                    .put("long", LongConverter.converter())
+                    .put(Date.class.getName(), UtcDateConverter.converter())
+                    .put(java.sql.Date.class.getName(), UtcDateConverter.converter(java.sql.Date.class))
+                    .put(java.sql.Time.class.getName(), UtcDateConverter.converter(java.sql.Time.class))
+                    .put(java.sql.Timestamp.class.getName(), UtcDateConverter.converter(java.sql.Timestamp.class))
+                    .put(LocalDate.class.getName(), io.agrest.converter.jsonvalue.ISOLocalDateConverter.converter())
+                    .put(LocalTime.class.getName(), io.agrest.converter.jsonvalue.ISOLocalTimeConverter.converter())
+                    .put(LocalDateTime.class.getName(), io.agrest.converter.jsonvalue.ISOLocalDateTimeConverter.converter())
+                    .put(OffsetDateTime.class.getName(), io.agrest.converter.jsonvalue.ISOOffsetDateTimeConverter.converter())
+                    .put(JsonNode.class.getName(), JsonNodeConverter.converter());
+
+            binder.bind(JsonValueConverters.class).toProvider(JsonValueConvertersProvider.class);
+
+            // custom to String converters
             binder.bindMap(ValueStringConverter.class)
                     .put(LocalDate.class.getName(), ISOLocalDateConverter.converter())
                     .put(LocalTime.class.getName(), ISOLocalTimeConverter.converter())
