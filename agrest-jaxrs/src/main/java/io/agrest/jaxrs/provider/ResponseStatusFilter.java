@@ -1,4 +1,4 @@
-package io.agrest.provider;
+package io.agrest.jaxrs.provider;
 
 import io.agrest.AgResponse;
 
@@ -6,7 +6,6 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
 
 /**
  * Ensures correct default response status for Agrest responses.
@@ -17,8 +16,7 @@ import java.io.IOException;
 public class ResponseStatusFilter implements ContainerResponseFilter {
 
 	@Override
-	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
-			throws IOException {
+	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
 
 		Object entity = responseContext.getEntity();
 		if (entity instanceof AgResponse) {

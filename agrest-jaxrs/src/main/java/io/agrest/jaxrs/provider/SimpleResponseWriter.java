@@ -1,8 +1,8 @@
-package io.agrest.provider;
+package io.agrest.jaxrs.provider;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.DataResponse;
-import io.agrest.runtime.AgRuntime;
+import io.agrest.SimpleResponse;
+import io.agrest.jaxrs.AgJaxrsModule;
 import io.agrest.runtime.jackson.IJacksonService;
 
 import javax.ws.rs.core.Configuration;
@@ -17,12 +17,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 @Provider
-public class DataResponseWriter implements MessageBodyWriter<DataResponse<?>> {
-
-    @Override
-    public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return DataResponse.class.isAssignableFrom(type);
-    }
+public class SimpleResponseWriter implements MessageBodyWriter<SimpleResponse> {
 
     private IJacksonService jacksonService;
 
@@ -30,38 +25,45 @@ public class DataResponseWriter implements MessageBodyWriter<DataResponse<?>> {
     private Configuration configuration;
 
     @Override
-    public long getSize(
-            DataResponse<?> t,
-            Class<?> type,
-            Type genericType,
-            Annotation[] annotations,
-            MediaType mediaType) {
+    public long getSize(SimpleResponse t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return -1;
     }
 
     @Override
+    public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        return SimpleResponse.class.isAssignableFrom(type);
+    }
+
+    @Override
     public void writeTo(
-            DataResponse<?> t,
+            SimpleResponse t,
             Class<?> type,
             Type genericType,
             Annotation[] annotations,
             MediaType mediaType,
             MultivaluedMap<String, Object> httpHeaders,
-            OutputStream entityStream)
-            throws IOException {
+            OutputStream entityStream) throws IOException {
 
         getJacksonService().outputJson(out -> writeData(t, out), entityStream);
     }
 
     private IJacksonService getJacksonService() {
         if (jacksonService == null) {
-            jacksonService = AgRuntime.service(IJacksonService.class, configuration);
+            jacksonService = AgJaxrsModule.service(IJacksonService.class, configuration);
         }
 
         return jacksonService;
     }
 
-    protected void writeData(DataResponse<?> t, JsonGenerator out) throws IOException {
-        t.getEncoder().encode(null, t, out);
+    protected void writeData(SimpleResponse t, JsonGenerator out) throws IOException {
+        out.writeStartObject();
+        out.writeBooleanField("success", t.isSuccess());
+
+        if (t.getMessage() != null) {
+            out.writeStringField("message", t.getMessage());
+        }
+
+        out.writeEndObject();
     }
+
 }

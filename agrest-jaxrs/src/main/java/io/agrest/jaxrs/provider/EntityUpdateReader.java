@@ -1,9 +1,9 @@
-package io.agrest.provider;
+package io.agrest.jaxrs.provider;
 
 import io.agrest.AgException;
 import io.agrest.EntityUpdate;
+import io.agrest.jaxrs.AgJaxrsModule;
 import io.agrest.meta.AgDataMap;
-import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.protocol.IEntityUpdateParser;
 
 import javax.ws.rs.Consumes;
@@ -12,7 +12,6 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
@@ -34,8 +33,8 @@ public class EntityUpdateReader implements MessageBodyReader<EntityUpdate<?>> {
 
     public EntityUpdateReader(@Context Configuration config) {
         this.reader = new EntityUpdateReaderProcessor(
-                AgRuntime.service(IEntityUpdateParser.class, config),
-                AgRuntime.service(AgDataMap.class, config));
+                AgJaxrsModule.service(IEntityUpdateParser.class, config),
+                AgJaxrsModule.service(AgDataMap.class, config));
     }
 
     @Override

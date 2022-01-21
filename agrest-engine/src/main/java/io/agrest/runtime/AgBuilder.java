@@ -2,11 +2,7 @@ package io.agrest.runtime;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
-import io.agrest.AgFeatureProvider;
 import io.agrest.AgModuleProvider;
-import io.agrest.DataResponse;
-import io.agrest.MetadataResponse;
-import io.agrest.SimpleResponse;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.converter.jsonvalue.Base64Converter;
@@ -38,10 +34,6 @@ import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.parser.IResourceParser;
 import io.agrest.meta.parser.ResourceParser;
-import io.agrest.provider.DataResponseWriter;
-import io.agrest.provider.JaxrsAgExceptionMapper;
-import io.agrest.provider.MetadataResponseWriter;
-import io.agrest.provider.SimpleResponseWriter;
 import io.agrest.runtime.constraints.ConstraintsHandler;
 import io.agrest.runtime.constraints.IConstraintsHandler;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
@@ -106,7 +98,6 @@ import org.apache.cayenne.di.MapBuilder;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.di.spi.ModuleLoader;
 
-import javax.ws.rs.core.Feature;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -121,10 +112,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.ServiceLoader;
 
 /**
- * A builder of Agrest runtime that can be loaded into JAX-RS 2 container as a {@link Feature}.
+ * A builder of Agrest runtime.
  */
 public class AgBuilder {
 
@@ -132,8 +122,7 @@ public class AgBuilder {
     private IAgService agService;
     private final List<AgModuleProvider> moduleProviders;
     private final List<Module> modules;
-    private final List<AgFeatureProvider> featureProviders;
-    private final List<Feature> features;
+
     private final Map<String, AgEntityOverlay> entityOverlays;
     private final Map<String, Class<? extends AgExceptionMapper>> exceptionMappers;
 
@@ -143,32 +132,15 @@ public class AgBuilder {
     private String baseUrl;
 
     private boolean autoLoadModules;
-    private boolean autoLoadFeatures;
 
     public AgBuilder() {
         this.autoLoadModules = true;
-        this.autoLoadFeatures = true;
         this.entityOverlays = new HashMap<>();
         this.agServiceType = DefaultAgService.class;
         this.exceptionMappers = new HashMap<>();
         this.metadataEncoders = new HashMap<>();
         this.moduleProviders = new ArrayList<>(5);
         this.modules = new ArrayList<>(5);
-        this.featureProviders = new ArrayList<>(5);
-        this.features = new ArrayList<>(5);
-    }
-
-    /**
-     * Suppresses JAX-RS Feature auto-loading. By default features are auto-loaded based on the service descriptors under
-     * "META-INF/services/io.agrest.AgFeatureProvider". Calling this method would suppress auto-loading behavior,
-     * letting the programmer explicitly pick which extensions need to be loaded.
-     *
-     * @return this builder instance.
-     * @since 2.10
-     */
-    public AgBuilder doNotAutoLoadFeatures() {
-        this.autoLoadFeatures = false;
-        return this;
     }
 
     /**
@@ -233,30 +205,6 @@ public class AgBuilder {
     }
 
     /**
-     * Registers a JAX-RS feature extending Agrest JAX-RS integration.
-     *
-     * @param feature a custom JAX-RS feature.
-     * @return this builder instance.
-     * @since 2.10
-     */
-    public AgBuilder feature(Feature feature) {
-        features.add(feature);
-        return this;
-    }
-
-    /**
-     * Registers a provider of a custom JAX-RS feature extending Agrest JAX-RS integration.
-     *
-     * @param featureProvider a provider of a custom JAX-RS feature.
-     * @return this builder instance.
-     * @since 2.10
-     */
-    public AgBuilder feature(AgFeatureProvider featureProvider) {
-        featureProviders.add(featureProvider);
-        return this;
-    }
-
-    /**
      * Registers a DI extension module for {@link AgRuntime}.
      *
      * @param module an extension DI module for {@link AgRuntime}.
@@ -290,24 +238,7 @@ public class AgBuilder {
     }
 
     public AgRuntime build() {
-
-        Injector i = createInjector();
-        return new AgRuntime(i, createExtraFeatures(i));
-    }
-
-    private Collection<Feature> createExtraFeatures(Injector injector) {
-
-        Collection<Feature> featureCollector = new ArrayList<>();
-
-        if (autoLoadFeatures) {
-            loadAutoLoadableFeatures(featureCollector, injector);
-        }
-
-        loadExceptionMapperFeature(featureCollector, injector);
-
-        loadBuilderFeatures(featureCollector, injector);
-
-        return featureCollector;
+        return new AgRuntime(createInjector());
     }
 
     private Injector createInjector() {
@@ -329,22 +260,8 @@ public class AgBuilder {
         return DIBootstrap.createInjector(moduleCollector);
     }
 
-    private void loadAutoLoadableFeatures(Collection<Feature> collector, Injector i) {
-        ServiceLoader.load(AgFeatureProvider.class).forEach(fp -> collector.add(fp.feature(i)));
-    }
 
-    private void loadExceptionMapperFeature(Collection<Feature> collector, Injector i) {
 
-        collector.add(c -> {
-            c.register(new JaxrsAgExceptionMapper());
-            return true;
-        });
-    }
-
-    private void loadBuilderFeatures(Collection<Feature> collector, Injector i) {
-        collector.addAll(this.features);
-        featureProviders.forEach(fp -> collector.add(fp.feature(i)));
-    }
 
     private void loadAutoLoadableModules(Collection<Module> collector) {
         collector.addAll(new ModuleLoader().load(AgModuleProvider.class));
@@ -371,9 +288,7 @@ public class AgBuilder {
             binder.bindList(AgEntityCompiler.class).add(AnnotationsAgEntityCompiler.class);
 
             binder.bindMap(AgEntityOverlay.class).putAll(entityOverlays);
-            binder.bindMap(Class.class, AgRuntime.BODY_WRITERS_MAP)
-                    .put(SimpleResponse.class.getName(), SimpleResponseWriter.class)
-                    .put(DataResponse.class.getName(), DataResponseWriter.class);
+
 
 
             if (agServiceType != null) {
@@ -491,8 +406,6 @@ public class AgBuilder {
             binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
             binder.bind(IResourceParser.class).to(ResourceParser.class);
             binder.bind(BaseUrlProvider.class).toInstance(BaseUrlProvider.forUrl(Optional.ofNullable(baseUrl)));
-            binder.bindMap(Class.class, AgRuntime.BODY_WRITERS_MAP)
-                    .put(MetadataResponse.class.getName(), MetadataResponseWriter.class);
         };
     }
 }

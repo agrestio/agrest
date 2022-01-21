@@ -1,4 +1,4 @@
-package io.agrest.provider;
+package io.agrest.jaxrs.provider;
 
 import io.agrest.EntityUpdate;
 import io.agrest.reflect.Types;
