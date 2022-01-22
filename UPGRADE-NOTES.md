@@ -57,3 +57,8 @@ In addition to changing the API above, if your code throws `CayenneRuntimeExcept
 custom exception other than `AgException` explicitly outside of Agrest processing chain, you will need to replace 
 those exceptions with `AgException` to ensure it is rendered cleanly in the response. Throwing within custom "stages"
 works the same way as before and requires no changes.
+
+
+### SelectStage.PARSE_REQUEST is gone [#537](https://github.com/agrestio/agrest/issues/537)
+`SelectStage.PARSE_REQUEST` is no longer needed, as protocol parameter parsing happens outside of a stage, right in
+the context. If you had stage callbacks referencing this stage, you may instead reference `SelectStage.START`.
