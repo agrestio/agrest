@@ -83,7 +83,7 @@ public class GET_Metadata_EmptyPath_IT extends DbTest {
         @Path("metadata")
         @AgResource(entityClass = E5.class, type = LinkType.METADATA)
         public MetadataResponse<E5> getMetadata(@Context UriInfo uriInfo) {
-            return Ag.metadata(E5.class, config).forResource(Resource.class).uri(uriInfo).process();
+            return Ag.metadata(E5.class, config).forResource(Resource.class).baseUri(uriInfo.getBaseUri()).process();
         }
     }
 }

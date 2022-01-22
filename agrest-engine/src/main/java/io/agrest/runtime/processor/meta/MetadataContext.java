@@ -6,7 +6,6 @@ import io.agrest.meta.AgResource;
 import io.agrest.processor.BaseProcessingContext;
 import org.apache.cayenne.di.Injector;
 
-import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 
 /**
@@ -17,7 +16,7 @@ import java.util.Collection;
 public class MetadataContext<T> extends BaseProcessingContext<T> {
 
     private Class<?> resourceType;
-    private UriInfo uriInfo;
+    private String baseUri;
     private Encoder encoder;
     private Collection<AgResource<T>> resources;
 
@@ -75,11 +74,18 @@ public class MetadataContext<T> extends BaseProcessingContext<T> {
         this.resources = resources;
     }
 
-    public UriInfo getUriInfo() {
-        return uriInfo;
+
+    /**
+     * @since 5.0
+     */
+    public String getBaseUri() {
+        return baseUri;
     }
 
-    public void setUriInfo(UriInfo uriInfo) {
-        this.uriInfo = uriInfo;
+    /**
+     * @since 5.0
+     */
+    public void setBaseUri(String baseUri) {
+        this.baseUri = baseUri;
     }
 }

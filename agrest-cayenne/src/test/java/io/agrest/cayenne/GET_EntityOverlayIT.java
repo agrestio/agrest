@@ -248,7 +248,7 @@ public class GET_EntityOverlayIT extends DbTest {
         @GET
         @Path("e4/meta")
         public MetadataResponse<E4> getMetaE4(@Context UriInfo uriInfo) {
-            return Ag.metadata(E4.class, config).forResource(Resource.class).uri(uriInfo).process();
+            return Ag.metadata(E4.class, config).forResource(Resource.class).baseUri(uriInfo.getBaseUri()).process();
         }
 
         @GET

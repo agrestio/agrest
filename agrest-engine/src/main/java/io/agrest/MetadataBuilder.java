@@ -1,6 +1,6 @@
 package io.agrest;
 
-import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 
 /**
  * @since 1.18
@@ -11,7 +11,17 @@ public interface MetadataBuilder<T> {
 
     MetadataBuilder<T> forResource(Class<?> resourceClass);
 
-    MetadataBuilder<T> uri(UriInfo uriInfo);
+    /**
+     * @since 5.0
+     */
+    default MetadataBuilder<T> baseUri(URI baseUri) {
+        return baseUri(baseUri.toString());
+    }
+
+    /**
+     * @since 5.0
+     */
+    MetadataBuilder<T> baseUri(String baseUri);
 
     MetadataResponse<T> process();
 }

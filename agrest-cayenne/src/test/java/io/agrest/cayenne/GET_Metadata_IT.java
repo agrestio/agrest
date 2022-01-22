@@ -119,7 +119,7 @@ public class GET_Metadata_IT extends DbTest {
         @Path("metadata")
         @AgResource(entityClass = E5.class, type = LinkType.METADATA)
         public MetadataResponse<E5> getMetadata(@Context UriInfo uriInfo) {
-            return Ag.metadata(E5.class, config).forResource(E5Resource.class).uri(uriInfo).process();
+            return Ag.metadata(E5.class, config).forResource(E5Resource.class).baseUri(uriInfo.getBaseUri()).process();
         }
     }
 
@@ -135,7 +135,7 @@ public class GET_Metadata_IT extends DbTest {
         public MetadataResponse<E19> getMetadata(@Context UriInfo uriInfo) {
             return Ag.metadata(E19.class, config)
                     .forResource(E19Resource.class)
-                    .uri(uriInfo)
+                    .baseUri(uriInfo.getBaseUri())
                     .process();
         }
     }

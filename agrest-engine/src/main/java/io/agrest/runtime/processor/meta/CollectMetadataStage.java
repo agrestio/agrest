@@ -26,10 +26,10 @@ import java.util.Collection;
 @Deprecated
 public class CollectMetadataStage implements Processor<MetadataContext<?>> {
 
-    private AgDataMap dataMap;
-    private IResourceMetadataService resourceMetadataService;
-    private IEncoderService encoderService;
-    private IConstraintsHandler constraintsHandler;
+    private final AgDataMap dataMap;
+    private final IResourceMetadataService resourceMetadataService;
+    private final IEncoderService encoderService;
+    private final IConstraintsHandler constraintsHandler;
 
     public CollectMetadataStage(
             @Inject AgDataMap dataMap,
@@ -71,10 +71,7 @@ public class CollectMetadataStage implements Processor<MetadataContext<?>> {
     }
 
     private <T> String getBaseUrl(MetadataContext<T> context) {
-        return resourceMetadataService.getBaseUrl().orElseGet(() ->
-                context.getUriInfo() != null
-                        ? context.getUriInfo().getBaseUri().toString() : null
-        );
+        return resourceMetadataService.getBaseUrl().orElseGet(context::getBaseUri);
     }
 
     private <T> RootResourceEntity<T> createDefaultResourceEntity(AgEntity<T> entity) {

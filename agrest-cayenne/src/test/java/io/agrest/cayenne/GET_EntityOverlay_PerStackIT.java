@@ -114,7 +114,7 @@ public class GET_EntityOverlay_PerStackIT extends DbTest {
         @GET
         @Path("e22/meta")
         public MetadataResponse<E22> getMetaE22(@Context UriInfo uriInfo) {
-            return Ag.metadata(E22.class, config).forResource(Resource.class).uri(uriInfo).process();
+            return Ag.metadata(E22.class, config).forResource(Resource.class).baseUri(uriInfo.getBaseUri()).process();
         }
 
         @GET
