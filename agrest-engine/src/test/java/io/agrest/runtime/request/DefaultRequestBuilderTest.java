@@ -20,9 +20,8 @@ import io.agrest.runtime.protocol.SortParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
-import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,8 +62,7 @@ public class DefaultRequestBuilderTest {
     @Test
     public void testBuild_Include() {
 
-        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.put("include", Arrays.asList("a", "b"));
+        Map<String, List<String>> params = Map.of("include", List.of("a", "b"));
 
         AgRequest request = builder
                 .mergeClientParams(params)
@@ -78,8 +76,7 @@ public class DefaultRequestBuilderTest {
     @Test
     public void testBuild_Include_Array() {
 
-        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("include", "[\"a\", \"b\"]");
+        Map<String, List<String>> params = Map.of("include", List.of("[\"a\", \"b\"]"));
         AgRequest request = builder.mergeClientParams(params).build();
 
         assertEquals(2, request.getIncludes().size());
@@ -90,8 +87,7 @@ public class DefaultRequestBuilderTest {
     @Test
     public void testBuild_Exclude() {
 
-        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.put("exclude", Arrays.asList("a", "b"));
+        Map<String, List<String>> params = Map.of("exclude", List.of("a", "b"));
         AgRequest request = builder.mergeClientParams(params).build();
 
         assertEquals(2, request.getExcludes().size());
@@ -102,8 +98,7 @@ public class DefaultRequestBuilderTest {
     @Test
     public void testBuild_Exclude_Array() {
 
-        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("exclude", "[\"a\", \"b\"]");
+        Map<String, List<String>> params = Map.of("exclude", List.of("[\"a\", \"b\"]"));
         AgRequest request = builder.mergeClientParams(params).build();
 
         assertEquals(2, request.getExcludes().size());
@@ -114,9 +109,9 @@ public class DefaultRequestBuilderTest {
     @Test
     public void testBuild_IncludeExclude() {
 
-        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.put("include", Arrays.asList("a", "b", "id"));
-        params.put("exclude", Arrays.asList("a", "c"));
+        Map<String, List<String>> params = Map.of(
+                "include", List.of("a", "b", "id"),
+                "exclude", List.of("a", "c"));
         AgRequest request = builder.mergeClientParams(params).build();
 
         assertEquals(3, request.getIncludes().size());
@@ -132,8 +127,7 @@ public class DefaultRequestBuilderTest {
     @Test
     public void testBuild_IncludeRels() {
 
-        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("include", "rtss");
+        Map<String, List<String>> params = Map.of("include", List.of("rtss"));
         AgRequest request = builder.mergeClientParams(params).build();
 
         assertEquals(1, request.getIncludes().size());
@@ -143,8 +137,7 @@ public class DefaultRequestBuilderTest {
     @Test
     public void testBuild_SortSimple_NoDir() {
 
-        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("sort", "rtss");
+        Map<String, List<String>> params = Map.of("sort", List.of("rtss"));
         AgRequest request = builder.mergeClientParams(params).build();
 
         assertNotNull(request.getOrderings());
@@ -155,9 +148,10 @@ public class DefaultRequestBuilderTest {
     @Test
     public void testBuild_SortSimple_ASC() {
 
-        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("sort", "rtss");
-        params.putSingle("dir", "ASC");
+        Map<String, List<String>> params = Map.of(
+                "sort", List.of("rtss"),
+                "dir", List.of("ASC"));
+
         AgRequest request = builder.mergeClientParams(params).build();
 
         assertNotNull(request.getOrderings());
@@ -170,9 +164,10 @@ public class DefaultRequestBuilderTest {
     @Test
     public void testBuild_SortSimple_DESC() {
 
-        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("sort", "rtss");
-        params.putSingle("dir", "DESC");
+        Map<String, List<String>> params = Map.of(
+                "sort", List.of("rtss"),
+                "dir", List.of("DESC"));
+
         AgRequest request = builder.mergeClientParams(params).build();
 
         assertNotNull(request.getOrderings());
@@ -185,9 +180,9 @@ public class DefaultRequestBuilderTest {
     @Test
     public void testBuild_SortSimple_Garbage() {
 
-        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("sort", "xx");
-        params.putSingle("dir", "XYZ");
+        Map<String, List<String>> params = Map.of(
+                "sort", List.of("xx"),
+                "dir", List.of("XYZ"));
 
         assertThrows(AgException.class, () -> builder.mergeClientParams(params).build());
     }
@@ -195,8 +190,9 @@ public class DefaultRequestBuilderTest {
     @Test
     public void testBuild_Sort() {
 
-        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("sort", "[{\"property\":\"a\",\"direction\":\"DESC\"},{\"property\":\"b\",\"direction\":\"ASC\"}]");
+        Map<String, List<String>> params = Map.of(
+                "sort", List.of("[{\"property\":\"a\",\"direction\":\"DESC\"},{\"property\":\"b\",\"direction\":\"ASC\"}]"));
+
         AgRequest request = builder.mergeClientParams(params).build();
 
         assertNotNull(request.getOrderings());
@@ -214,8 +210,9 @@ public class DefaultRequestBuilderTest {
     @Test
     public void testBuild_Sort_Dupes() {
 
-        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("sort", "[{\"property\":\"a\",\"direction\":\"DESC\"},{\"property\":\"a\",\"direction\":\"ASC\"}]");
+        Map<String, List<String>> params = Map.of(
+                "sort", List.of("[{\"property\":\"a\",\"direction\":\"DESC\"},{\"property\":\"a\",\"direction\":\"ASC\"}]"));
+
         AgRequest request = builder.mergeClientParams(params).build();
 
         assertNotNull(request.getOrderings());
@@ -232,18 +229,14 @@ public class DefaultRequestBuilderTest {
 
     @Test
     public void testBuild_Sort_BadSpec() {
-
-        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("sort", "[{\"property\":\"p1\",\"direction\":\"DESC\"},{\"property\":\"p2\",\"direction\":\"XXX\"}]");
-
+        Map<String, List<String>> params = Map.of("sort", List.of("[{\"property\":\"p1\",\"direction\":\"DESC\"},{\"property\":\"p2\",\"direction\":\"XXX\"}]"));
         assertThrows(AgException.class, () -> builder.mergeClientParams(params).build());
     }
 
     @Test
     public void testBuild_Exp_BadSpec() {
-
-        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("exp", "{exp : \"numericProp = 12345 and stringProp = 'John Smith' and booleanProp = true\"}");
+        Map<String, List<String>> params = Map.of(
+                "exp", List.of("{exp : \"numericProp = 12345 and stringProp = 'John Smith' and booleanProp = true\"}"));
 
         assertThrows(AgException.class, () -> builder.mergeClientParams(params).build());
     }
@@ -251,8 +244,7 @@ public class DefaultRequestBuilderTest {
     @Test
     public void testBuild_Exp() {
 
-        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("exp", "{\"exp\" : \"a = 'John Smith'\"}");
+        Map<String, List<String>> params = Map.of("exp", List.of("{\"exp\" : \"a = 'John Smith'\"}"));
         AgRequest request = builder.mergeClientParams(params).build();
 
         assertNotNull(request.getExp());

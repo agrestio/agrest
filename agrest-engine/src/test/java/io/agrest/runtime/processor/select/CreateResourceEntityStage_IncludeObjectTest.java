@@ -4,14 +4,25 @@ import io.agrest.ResourceEntity;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
-import io.agrest.protocol.Include;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.LazyAgDataMap;
-import io.agrest.runtime.entity.*;
-import io.agrest.runtime.protocol.IExpParser;
+import io.agrest.protocol.Include;
+import io.agrest.runtime.entity.ExcludeMerger;
+import io.agrest.runtime.entity.ExpMerger;
+import io.agrest.runtime.entity.IExcludeMerger;
+import io.agrest.runtime.entity.IExpMerger;
+import io.agrest.runtime.entity.IIncludeMerger;
+import io.agrest.runtime.entity.IMapByMerger;
+import io.agrest.runtime.entity.ISizeMerger;
+import io.agrest.runtime.entity.ISortMerger;
+import io.agrest.runtime.entity.IncludeMerger;
+import io.agrest.runtime.entity.MapByMerger;
+import io.agrest.runtime.entity.SizeMerger;
+import io.agrest.runtime.entity.SortMerger;
 import io.agrest.runtime.protocol.IExcludeParser;
+import io.agrest.runtime.protocol.IExpParser;
 import io.agrest.runtime.protocol.IIncludeParser;
 import io.agrest.runtime.protocol.ISortParser;
 import io.agrest.runtime.request.DefaultRequestBuilderFactory;
@@ -20,14 +31,13 @@ import org.apache.cayenne.di.Injector;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.core.MultivaluedMap;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class CreateResourceEntityStage_IncludeObjectTest {
 
@@ -86,9 +96,6 @@ public class CreateResourceEntityStage_IncludeObjectTest {
 
     @Test
     public void testExecute_IncludeObject_MapBy() {
-
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-        when(params.get("include")).thenReturn(Arrays.asList("{\"path\":\"rtss\",\"mapBy\":\"rtt\"}"));
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
                 requestBuilderFactory.builder(),

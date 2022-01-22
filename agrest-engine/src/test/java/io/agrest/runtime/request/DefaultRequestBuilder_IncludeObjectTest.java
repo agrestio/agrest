@@ -16,7 +16,8 @@ import io.agrest.runtime.protocol.SortParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.core.MultivaluedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,9 +44,7 @@ public class DefaultRequestBuilder_IncludeObjectTest {
     @Test
     public void testExecute_IncludeObject_Path() {
 
-        MultivaluedHashMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("include", "{\"path\":\"rtt\"}");
-
+        Map<String, List<String>> params = Map.of("include", List.of("{\"path\":\"rtt\"}"));
         AgRequest request = builder
                 .mergeClientParams(params)
                 .build();
@@ -57,8 +56,7 @@ public class DefaultRequestBuilder_IncludeObjectTest {
     @Test
     public void testExecute_IncludeObject_MapBy() {
 
-        MultivaluedHashMap<String, String> params = new MultivaluedHashMap<>();
-        params.putSingle("include", "{\"path\":\"rtt\",\"mapBy\":\"rtu\"}");
+        Map<String, List<String>> params = Map.of("include", List.of("{\"path\":\"rtt\",\"mapBy\":\"rtu\"}"));
         AgRequest request = builder
                 .mergeClientParams(params)
                 .build();

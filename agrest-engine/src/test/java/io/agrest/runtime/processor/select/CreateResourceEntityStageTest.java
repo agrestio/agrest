@@ -35,8 +35,8 @@ import org.apache.cayenne.di.Injector;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.core.MultivaluedMap;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -81,13 +81,11 @@ public class CreateResourceEntityStageTest {
     @Test
     public void testExecute_Default() {
 
-        MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
-
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
                 requestBuilderFactory.builder(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory.builder().build());
-        context.mergeClientParameters(params);
+        context.mergeClientParameters(new HashMap<>());
 
         stage.execute(context);
 
