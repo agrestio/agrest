@@ -15,8 +15,12 @@ import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import io.agrest.runtime.processor.unrelate.UnrelateContext;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
+import io.agrest.runtime.processor.update.CreateOrUpdateProcessorFactory;
+import io.agrest.runtime.processor.update.CreateProcessorFactory;
+import io.agrest.runtime.processor.update.IdempotentCreateOrUpdateProcessorFactory;
+import io.agrest.runtime.processor.update.IdempotentFullSyncProcessorFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
-import io.agrest.runtime.processor.update.UpdateProcessorFactoryFactory;
+import io.agrest.runtime.processor.update.UpdateProcessorFactory;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.di.Injector;
 
@@ -31,24 +35,40 @@ public class DefaultAgService implements IAgService {
     private final Injector injector;
     private final SelectProcessorFactory selectProcessorFactory;
     private final DeleteProcessorFactory deleteProcessorFactory;
-    private final UpdateProcessorFactoryFactory updateProcessorFactoryFactory;
-    private final MetadataProcessorFactory metadataProcessorFactory;
+    private final CreateProcessorFactory createProcessorFactory;
+    private final UpdateProcessorFactory updateProcessorFactory;
+    private final CreateOrUpdateProcessorFactory createOrUpdateProcessorFactory;
+    private final IdempotentCreateOrUpdateProcessorFactory idempotentCreateOrUpdateProcessorFactory;
+    private final IdempotentFullSyncProcessorFactory idempotentFullSyncProcessorFactory;
     private final UnrelateProcessorFactory unrelateProcessorFactory;
+
+    @Deprecated
+    private final MetadataProcessorFactory metadataProcessorFactory;
 
     public DefaultAgService(
             @Inject Injector injector,
             @Inject SelectProcessorFactory selectProcessorFactory,
             @Inject DeleteProcessorFactory deleteProcessorFactory,
-            @Inject UpdateProcessorFactoryFactory updateProcessorFactoryFactory,
-            @Inject MetadataProcessorFactory metadataProcessorFactory,
-            @Inject UnrelateProcessorFactory unrelateProcessorFactory) {
+            @Inject CreateProcessorFactory createProcessorFactory,
+            @Inject UpdateProcessorFactory updateProcessorFactory,
+            @Inject CreateOrUpdateProcessorFactory createOrUpdateProcessorFactory,
+            @Inject IdempotentCreateOrUpdateProcessorFactory idempotentCreateOrUpdateProcessorFactory,
+            @Inject IdempotentFullSyncProcessorFactory idempotentFullSyncProcessorFactory,
+            @Inject UnrelateProcessorFactory unrelateProcessorFactory,
+            @Inject MetadataProcessorFactory metadataProcessorFactory) {
 
         this.injector = injector;
+
         this.selectProcessorFactory = selectProcessorFactory;
         this.deleteProcessorFactory = deleteProcessorFactory;
-        this.updateProcessorFactoryFactory = updateProcessorFactoryFactory;
-        this.metadataProcessorFactory = metadataProcessorFactory;
+        this.createProcessorFactory = createProcessorFactory;
+        this.updateProcessorFactory = updateProcessorFactory;
+        this.createOrUpdateProcessorFactory = createOrUpdateProcessorFactory;
+        this.idempotentCreateOrUpdateProcessorFactory = idempotentCreateOrUpdateProcessorFactory;
+        this.idempotentFullSyncProcessorFactory = idempotentFullSyncProcessorFactory;
         this.unrelateProcessorFactory = unrelateProcessorFactory;
+
+        this.metadataProcessorFactory = metadataProcessorFactory;
     }
 
     @Override
@@ -75,8 +95,7 @@ public class DefaultAgService implements IAgService {
     @Override
     public <T> UpdateBuilder<T> create(Class<T> type) {
         UpdateContext<T> context = new UpdateContext<>(type, injector);
-        return new DefaultUpdateBuilder<>(context,
-                updateProcessorFactoryFactory.getFactory(UpdateOperation.create));
+        return new DefaultUpdateBuilder<>(context, createProcessorFactory);
     }
 
     /**
@@ -85,8 +104,7 @@ public class DefaultAgService implements IAgService {
     @Override
     public <T> UpdateBuilder<T> createOrUpdate(Class<T> type) {
         UpdateContext<T> context = new UpdateContext<>(type, injector);
-        return new DefaultUpdateBuilder<>(context,
-                updateProcessorFactoryFactory.getFactory(UpdateOperation.createOrUpdate));
+        return new DefaultUpdateBuilder<>(context, createOrUpdateProcessorFactory);
     }
 
     /**
@@ -95,8 +113,7 @@ public class DefaultAgService implements IAgService {
     @Override
     public <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
         UpdateContext<T> context = new UpdateContext<>(type, injector);
-        return new DefaultUpdateBuilder<>(context,
-                updateProcessorFactoryFactory.getFactory(UpdateOperation.idempotentCreateOrUpdate));
+        return new DefaultUpdateBuilder<>(context, idempotentCreateOrUpdateProcessorFactory);
     }
 
     /**
@@ -105,8 +122,7 @@ public class DefaultAgService implements IAgService {
     @Override
     public <T> UpdateBuilder<T> idempotentFullSync(Class<T> type) {
         UpdateContext<T> context = new UpdateContext<>(type, injector);
-        return new DefaultUpdateBuilder<>(context,
-                updateProcessorFactoryFactory.getFactory(UpdateOperation.idempotentFullSync));
+        return new DefaultUpdateBuilder<>(context, idempotentFullSyncProcessorFactory);
     }
 
     /**
@@ -115,8 +131,7 @@ public class DefaultAgService implements IAgService {
     @Override
     public <T> UpdateBuilder<T> update(Class<T> type) {
         UpdateContext<T> context = new UpdateContext<>(type, injector);
-        return new DefaultUpdateBuilder<>(context,
-                updateProcessorFactoryFactory.getFactory(UpdateOperation.update));
+        return new DefaultUpdateBuilder<>(context, updateProcessorFactory);
     }
 
     /**

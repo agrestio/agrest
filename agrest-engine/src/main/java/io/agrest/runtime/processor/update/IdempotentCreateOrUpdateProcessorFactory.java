@@ -7,11 +7,11 @@ import io.agrest.runtime.AgExceptionMappers;
 import java.util.EnumMap;
 
 /**
- * @since 2.7
+ * @since 5.0
  */
-public class UpdateProcessorFactory extends BaseUpdateProcessorFactory {
+public class IdempotentCreateOrUpdateProcessorFactory extends BaseUpdateProcessorFactory {
 
-    public UpdateProcessorFactory(
+    public IdempotentCreateOrUpdateProcessorFactory(
             EnumMap<UpdateStage, Processor<UpdateContext<?>>> defaultStages,
             AgExceptionMappers exceptionMappers) {
         super(defaultStages, exceptionMappers);

@@ -2,7 +2,13 @@ package io.agrest.unit;
 
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
-import io.agrest.pojo.model.*;
+import io.agrest.pojo.model.P1;
+import io.agrest.pojo.model.P10;
+import io.agrest.pojo.model.P2;
+import io.agrest.pojo.model.P4;
+import io.agrest.pojo.model.P6;
+import io.agrest.pojo.model.P8;
+import io.agrest.pojo.model.P9;
 import io.agrest.pojo.runtime.PojoFetchStage;
 import io.agrest.pojo.runtime.PojoSelectProcessorFactoryProvider;
 import io.agrest.pojo.runtime.PojoStore;
@@ -12,7 +18,11 @@ import io.agrest.runtime.IAgService;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
-import io.agrest.runtime.processor.update.UpdateProcessorFactoryFactory;
+import io.agrest.runtime.processor.update.CreateOrUpdateProcessorFactory;
+import io.agrest.runtime.processor.update.CreateProcessorFactory;
+import io.agrest.runtime.processor.update.IdempotentCreateOrUpdateProcessorFactory;
+import io.agrest.runtime.processor.update.IdempotentFullSyncProcessorFactory;
+import io.agrest.runtime.processor.update.UpdateProcessorFactory;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.command.CommandOutcome;
@@ -31,7 +41,11 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 import javax.inject.Singleton;
 import javax.ws.rs.client.WebTarget;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static org.mockito.Mockito.mock;
@@ -221,7 +235,11 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         private void configureAg(org.apache.cayenne.di.Binder agBinder) {
             agBinder.bind(SelectProcessorFactory.class).toProvider(PojoSelectProcessorFactoryProvider.class);
             agBinder.bind(DeleteProcessorFactory.class).toInstance(mock(DeleteProcessorFactory.class));
-            agBinder.bind(UpdateProcessorFactoryFactory.class).toInstance(mock(UpdateProcessorFactoryFactory.class));
+            agBinder.bind(CreateProcessorFactory.class).toInstance(mock(CreateProcessorFactory.class));
+            agBinder.bind(UpdateProcessorFactory.class).toInstance(mock(UpdateProcessorFactory.class));
+            agBinder.bind(CreateOrUpdateProcessorFactory.class).toInstance(mock(CreateOrUpdateProcessorFactory.class));
+            agBinder.bind(IdempotentCreateOrUpdateProcessorFactory.class).toInstance(mock(IdempotentCreateOrUpdateProcessorFactory.class));
+            agBinder.bind(IdempotentFullSyncProcessorFactory.class).toInstance(mock(IdempotentFullSyncProcessorFactory.class));
             agBinder.bind(UnrelateProcessorFactory.class).toInstance(mock(UnrelateProcessorFactory.class));
             agBinder.bind(PojoFetchStage.class).to(PojoFetchStage.class);
             agBinder.bind(PojoStore.class).toInstance(pojoStore);

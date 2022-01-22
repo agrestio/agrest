@@ -11,9 +11,9 @@ import io.agrest.UpdateBuilder;
 import io.agrest.UpdateStage;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
+import io.agrest.runtime.processor.update.BaseUpdateProcessorFactory;
 import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
-import io.agrest.runtime.processor.update.UpdateProcessorFactory;
 
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
@@ -27,12 +27,12 @@ import java.util.Map;
 public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
     private final UpdateContext<T> context;
-    protected final UpdateProcessorFactory processorFactory;
+    protected final BaseUpdateProcessorFactory processorFactory;
     protected final EnumMap<UpdateStage, Processor<UpdateContext<?>>> processors;
 
     public DefaultUpdateBuilder(
             UpdateContext<T> context,
-            UpdateProcessorFactory processorFactory) {
+            BaseUpdateProcessorFactory processorFactory) {
 
         this.context = context;
         this.processorFactory = processorFactory;

@@ -24,8 +24,12 @@ import io.agrest.cayenne.processor.update.CayenneMapIdempotentFullSyncStage;
 import io.agrest.cayenne.processor.update.CayenneMapUpdateStage;
 import io.agrest.cayenne.processor.update.CayenneMergeChangesStage;
 import io.agrest.cayenne.processor.update.CayenneOkResponseStage;
-import io.agrest.cayenne.processor.update.CayenneUpdateProcessorFactoryFactoryProvider;
 import io.agrest.cayenne.processor.update.CayenneUpdateStartStage;
+import io.agrest.cayenne.processor.update.provider.CayenneCreateOrUpdateProcessorFactoryProvider;
+import io.agrest.cayenne.processor.update.provider.CayenneCreateProcessorFactoryProvider;
+import io.agrest.cayenne.processor.update.provider.CayenneIdempotentCreateOrUpdateProcessorFactoryProvider;
+import io.agrest.cayenne.processor.update.provider.CayenneIdempotentFullSyncProcessorFactoryProvider;
+import io.agrest.cayenne.processor.update.provider.CayenneUpdateProcessorFactoryProvider;
 import io.agrest.cayenne.provider.CayenneRuntimeExceptionMapper;
 import io.agrest.cayenne.provider.ValidationExceptionMapper;
 import io.agrest.cayenne.qualifier.IQualifierParser;
@@ -40,7 +44,11 @@ import io.agrest.encoder.Encoder;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.select.ApplyServerParamsStage;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
-import io.agrest.runtime.processor.update.UpdateProcessorFactoryFactory;
+import io.agrest.runtime.processor.update.CreateOrUpdateProcessorFactory;
+import io.agrest.runtime.processor.update.CreateProcessorFactory;
+import io.agrest.runtime.processor.update.IdempotentCreateOrUpdateProcessorFactory;
+import io.agrest.runtime.processor.update.IdempotentFullSyncProcessorFactory;
+import io.agrest.runtime.processor.update.UpdateProcessorFactory;
 import io.agrest.spi.AgExceptionMapper;
 import org.apache.cayenne.CayenneRuntimeException;
 import org.apache.cayenne.di.Binder;
@@ -83,12 +91,18 @@ public class AgCayenneModule implements Module {
 
         // delete stages
         binder.bind(DeleteProcessorFactory.class).toProvider(CayenneDeleteProcessorFactoryProvider.class);
+
         binder.bind(CayenneDeleteStartStage.class).to(CayenneDeleteStartStage.class);
         binder.bind(io.agrest.cayenne.processor.delete.CayenneMapChangesStage.class).to(io.agrest.cayenne.processor.delete.CayenneMapChangesStage.class);
         binder.bind(CayenneDeleteStage.class).to(CayenneDeleteStage.class);
 
-        // update stages
-        binder.bind(UpdateProcessorFactoryFactory.class).toProvider(CayenneUpdateProcessorFactoryFactoryProvider.class);
+        // update stages (multiple flavors)
+        binder.bind(CreateProcessorFactory.class).toProvider(CayenneCreateProcessorFactoryProvider.class);
+        binder.bind(UpdateProcessorFactory.class).toProvider(CayenneUpdateProcessorFactoryProvider.class);
+        binder.bind(CreateOrUpdateProcessorFactory.class).toProvider(CayenneCreateOrUpdateProcessorFactoryProvider.class);
+        binder.bind(IdempotentCreateOrUpdateProcessorFactory.class).toProvider(CayenneIdempotentCreateOrUpdateProcessorFactoryProvider.class);
+        binder.bind(IdempotentFullSyncProcessorFactory.class).toProvider(CayenneIdempotentFullSyncProcessorFactoryProvider.class);
+
         binder.bind(CayenneUpdateStartStage.class).to(CayenneUpdateStartStage.class);
         binder.bind(CayenneApplyServerParamsStage.class).to(CayenneApplyServerParamsStage.class);
         binder.bind(CayenneMapCreateStage.class).to(CayenneMapCreateStage.class);
