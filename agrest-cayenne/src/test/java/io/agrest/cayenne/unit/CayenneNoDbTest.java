@@ -21,19 +21,15 @@ import io.agrest.meta.parser.ResourceParser;
 import io.agrest.runtime.meta.BaseUrlProvider;
 import io.agrest.runtime.meta.IResourceMetadataService;
 import io.agrest.runtime.meta.ResourceMetadataService;
-import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
-import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.map.ObjEntity;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -114,16 +110,6 @@ public abstract class CayenneNoDbTest {
 
     protected IResourceMetadataService createResourceMetadataService() {
         return new ResourceMetadataService(resourceParser, BaseUrlProvider.forUrl(Optional.empty()));
-    }
-
-    protected <T> SelectContext<T> prepareContext(MultivaluedMap<String, String> params, Class<T> type) {
-        SelectContext<T> context = new SelectContext<>(type, mock(Injector.class));
-
-        UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getQueryParameters()).thenReturn(params);
-
-        context.setUriInfo(uriInfo);
-        return context;
     }
 
     protected <T> AgEntity<T> getAgEntity(Class<T> type) {

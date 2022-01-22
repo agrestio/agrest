@@ -3,12 +3,12 @@ package io.agrest.runtime.processor.update;
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
 import io.agrest.AgRequest;
+import io.agrest.AgRequestBuilder;
 import io.agrest.CompoundObjectId;
 import io.agrest.DataResponse;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapperFactory;
-import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.encoder.Encoder;
@@ -16,7 +16,6 @@ import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.BaseProcessingContext;
 import org.apache.cayenne.di.Injector;
 
-import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -33,7 +32,6 @@ import java.util.Map;
 public class UpdateContext<T> extends BaseProcessingContext<T> {
 
     private RootResourceEntity<T> entity;
-    private UriInfo uriInfo;
     private AgObjectId id;
     private EntityParent<?> parent;
     private boolean includingDataInResponse;
@@ -42,17 +40,20 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     private boolean idUpdatesDisallowed;
     private Collection<EntityUpdate<T>> updates;
     private Encoder encoder;
-    private AgRequest mergedRequest;
-    private AgRequest request;
     private Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
+
+    private final AgRequestBuilder requestBuilder;
     private final Map<ChangeOperationType, List<ChangeOperation<T>>> changeOperations;
 
-    public UpdateContext(Class<T> type, Injector injector) {
+    public UpdateContext(Class<T> type, AgRequestBuilder requestBuilder, Injector injector) {
         super(type, injector);
+
         this.changeOperations = new EnumMap<>(ChangeOperationType.class);
-        changeOperations.put(ChangeOperationType.CREATE, Collections.emptyList());
-        changeOperations.put(ChangeOperationType.UPDATE, Collections.emptyList());
-        changeOperations.put(ChangeOperationType.DELETE, Collections.emptyList());
+        this.changeOperations.put(ChangeOperationType.CREATE, Collections.emptyList());
+        this.changeOperations.put(ChangeOperationType.UPDATE, Collections.emptyList());
+        this.changeOperations.put(ChangeOperationType.DELETE, Collections.emptyList());
+
+        this.requestBuilder = requestBuilder;
     }
 
     /**
@@ -108,21 +109,6 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
         }
 
         return updates.iterator().next();
-    }
-
-    /**
-     * @since 2.13
-     */
-    public Map<String, List<String>> getProtocolParameters() {
-        return uriInfo != null ? uriInfo.getQueryParameters() : Collections.emptyMap();
-    }
-
-    public UriInfo getUriInfo() {
-        return uriInfo;
-    }
-
-    public void setUriInfo(UriInfo uriInfo) {
-        this.uriInfo = uriInfo;
     }
 
     public boolean isById() {
@@ -245,49 +231,6 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     }
 
     /**
-     * Returns AgRequest instance that is the source of request data for {@link io.agrest.UpdateStage#CREATE_ENTITY}
-     * stage that produces a tree of {@link ResourceEntity} instances. Usually merged request is a result of merging
-     * context AgRequest with URL parameters during {@link io.agrest.UpdateStage#PARSE_REQUEST} stage.
-     *
-     * @since 3.2
-     */
-    public AgRequest getMergedRequest() {
-        return mergedRequest;
-    }
-
-    /**
-     * Sets AgRequest instance that is the source of request data for {@link io.agrest.UpdateStage#CREATE_ENTITY} stage
-     * to create a tree of {@link ResourceEntity} instances.
-     *
-     * @since 3.2
-     */
-    public void setMergedRequest(AgRequest request) {
-        this.mergedRequest = request;
-    }
-
-    /**
-     * Returns a request object, previously explicitly passed to the select chain in the endpoint method. Depending on
-     * the calling chain configuration, this object is either used directly to serve the request, or is combined with
-     * URL parameters during {@link io.agrest.UpdateStage#PARSE_REQUEST}, producing a "mergedRequest".
-     *
-     * @since 2.13
-     */
-    public AgRequest getRequest() {
-        return request;
-    }
-
-    /**
-     * Sets a request object. Depending on the calling chain configuration, this object is either used directly to
-     * serve the request, or is combined with URL parameters during {@link io.agrest.SelectStage#PARSE_REQUEST},
-     * producing a "mergedRequest".
-     *
-     * @since 2.13
-     */
-    public void setRequest(AgRequest request) {
-        this.request = request;
-    }
-
-    /**
      * @since 4.8
      */
     public Map<ChangeOperationType, List<ChangeOperation<T>>> getChangeOperations() {
@@ -299,5 +242,32 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
      */
     public void setChangeOperations(ChangeOperationType type, List<ChangeOperation<T>> ops) {
         this.changeOperations.put(type, ops);
+    }
+
+    /**
+     * Returns an object encapsulating Ag protocol parameters of the current request.
+     *
+     * @since 2.13
+     */
+    public AgRequest getRequest() {
+        return requestBuilder.build();
+    }
+
+    /**
+     * Merges provided request object with any previously stored protocol parameters.
+     *
+     * @since 5.0
+     */
+    public void setRequest(AgRequest request) {
+        requestBuilder.setRequest(request);
+    }
+
+    /**
+     * Merges provided request object with any previously stored protocol parameters.
+     *
+     * @since 5.0
+     */
+    public void mergeClientParameters(Map<String, List<String>> params) {
+        requestBuilder.mergeClientParams(params);
     }
 }

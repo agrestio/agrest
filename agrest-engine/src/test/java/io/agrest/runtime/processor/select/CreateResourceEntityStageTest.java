@@ -13,9 +13,20 @@ import io.agrest.protocol.Exclude;
 import io.agrest.protocol.Exp;
 import io.agrest.protocol.Include;
 import io.agrest.protocol.Sort;
-import io.agrest.runtime.entity.*;
-import io.agrest.runtime.protocol.IExpParser;
+import io.agrest.runtime.entity.ExcludeMerger;
+import io.agrest.runtime.entity.ExpMerger;
+import io.agrest.runtime.entity.IExcludeMerger;
+import io.agrest.runtime.entity.IExpMerger;
+import io.agrest.runtime.entity.IIncludeMerger;
+import io.agrest.runtime.entity.IMapByMerger;
+import io.agrest.runtime.entity.ISizeMerger;
+import io.agrest.runtime.entity.ISortMerger;
+import io.agrest.runtime.entity.IncludeMerger;
+import io.agrest.runtime.entity.MapByMerger;
+import io.agrest.runtime.entity.SizeMerger;
+import io.agrest.runtime.entity.SortMerger;
 import io.agrest.runtime.protocol.IExcludeParser;
+import io.agrest.runtime.protocol.IExpParser;
 import io.agrest.runtime.protocol.IIncludeParser;
 import io.agrest.runtime.protocol.ISortParser;
 import io.agrest.runtime.request.DefaultRequestBuilderFactory;
@@ -25,13 +36,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class CreateResourceEntityStageTest {
 
@@ -74,12 +83,11 @@ public class CreateResourceEntityStageTest {
 
         MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
 
-        UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getQueryParameters()).thenReturn(params);
-
-        SelectContext<Tr> context = new SelectContext<>(Tr.class, mock(Injector.class));
-        context.setUriInfo(uriInfo);
-        context.setMergedRequest(requestBuilderFactory.builder().build());
+        SelectContext<Tr> context = new SelectContext<>(Tr.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
+        context.setRequest(requestBuilderFactory.builder().build());
+        context.mergeClientParameters(params);
 
         stage.execute(context);
 
@@ -94,8 +102,10 @@ public class CreateResourceEntityStageTest {
     @Test
     public void testExecute_Include() {
 
-        SelectContext<Tr> context = new SelectContext<>(Tr.class, mock(Injector.class));
-        context.setMergedRequest(requestBuilderFactory
+        SelectContext<Tr> context = new SelectContext<>(Tr.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
+        context.setRequest(requestBuilderFactory
                 .builder()
                 .addInclude(new Include("a"))
                 .addInclude(new Include("b")).build());
@@ -117,8 +127,10 @@ public class CreateResourceEntityStageTest {
     @Test
     public void testExecute_Exclude() {
 
-        SelectContext<Tr> context = new SelectContext<>(Tr.class, mock(Injector.class));
-        context.setMergedRequest(requestBuilderFactory
+        SelectContext<Tr> context = new SelectContext<>(Tr.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
+        context.setRequest(requestBuilderFactory
                 .builder()
                 .addExclude(new Exclude("a"))
                 .addExclude(new Exclude("b")).build());
@@ -138,7 +150,9 @@ public class CreateResourceEntityStageTest {
     @Test
     public void testExecute_IncludeExcludeAttrs() {
 
-        SelectContext<Tr> context = new SelectContext<>(Tr.class, mock(Injector.class));
+        SelectContext<Tr> context = new SelectContext<>(Tr.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
 
         Include include1 = new Include("a");
         Include include2 = new Include("b");
@@ -146,7 +160,7 @@ public class CreateResourceEntityStageTest {
         Exclude exclude1 = new Exclude("a");
         Exclude exclude2 = new Exclude("c");
 
-        context.setMergedRequest(requestBuilderFactory.builder()
+        context.setRequest(requestBuilderFactory.builder()
                 .addInclude(include1)
                 .addInclude(include2)
                 .addInclude(include3)
@@ -169,8 +183,10 @@ public class CreateResourceEntityStageTest {
     @Test
     public void testExecute_IncludeRels() {
 
-        SelectContext<Ts> context = new SelectContext<>(Ts.class, mock(Injector.class));
-        context.setMergedRequest(requestBuilderFactory.builder().addInclude(new Include("rtt")).build());
+        SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
+        context.setRequest(requestBuilderFactory.builder().addInclude(new Include("rtt")).build());
 
         stage.execute(context);
 
@@ -198,8 +214,10 @@ public class CreateResourceEntityStageTest {
     @Test
     public void testExecute_IncludeBothAttrs() {
 
-        SelectContext<Ts> context = new SelectContext<>(Ts.class, mock(Injector.class));
-        context.setMergedRequest(requestBuilderFactory.builder()
+        SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
+        context.setRequest(requestBuilderFactory.builder()
                 .addInclude(new Include("m"))
                 .addInclude(new Include("rtt.o")).build());
 
@@ -227,9 +245,11 @@ public class CreateResourceEntityStageTest {
     @Test
     public void testExecute_IncludeExcludeBothAttrs() {
 
-        SelectContext<Ts> context = new SelectContext<>(Ts.class, mock(Injector.class));
+        SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
 
-        context.setMergedRequest(requestBuilderFactory
+        context.setRequest(requestBuilderFactory
                 .builder()
                 .addInclude(new Include("rtt.o"))
                 .addExclude(new Exclude("m"))
@@ -259,8 +279,10 @@ public class CreateResourceEntityStageTest {
     @Test
     public void testExecute_IncludeExcludeBothAttrs2() {
 
-        SelectContext<Ts> context = new SelectContext<>(Ts.class, mock(Injector.class));
-        context.setMergedRequest(requestBuilderFactory
+        SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
+        context.setRequest(requestBuilderFactory
                 .builder()
                 .addInclude(new Include("rtt"))
                 .addExclude(new Exclude("n"))
@@ -291,8 +313,10 @@ public class CreateResourceEntityStageTest {
     @Test
     public void testExecute_IncludeRelationshipIds() {
 
-        SelectContext<Ts> context = new SelectContext<>(Ts.class, mock(Injector.class));
-        context.setMergedRequest(requestBuilderFactory
+        SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
+        context.setRequest(requestBuilderFactory
                 .builder()
                 .addInclude(new Include("id"))
                 .addInclude(new Include("rtt.id")).build());
@@ -318,8 +342,10 @@ public class CreateResourceEntityStageTest {
     @Test
     public void testExecute_SortSimple_NoDir() {
 
-        SelectContext<Ts> context = new SelectContext<>(Ts.class, mock(Injector.class));
-        context.setMergedRequest(requestBuilderFactory
+        SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
+        context.setRequest(requestBuilderFactory
                 .builder()
                 .addOrdering(new Sort("n")).build());
 
@@ -335,8 +361,10 @@ public class CreateResourceEntityStageTest {
     @Test
     public void testExecute_SortSimple_ASC() {
 
-        SelectContext<Ts> context = new SelectContext<>(Ts.class, mock(Injector.class));
-        context.setMergedRequest(requestBuilderFactory
+        SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
+        context.setRequest(requestBuilderFactory
                 .builder()
                 .addOrdering(new Sort("n", Dir.ASC))
                 .build());
@@ -353,8 +381,10 @@ public class CreateResourceEntityStageTest {
     @Test
     public void testExecute_SortSimple_DESC() {
 
-        SelectContext<Ts> context = new SelectContext<>(Ts.class, mock(Injector.class));
-        context.setMergedRequest(requestBuilderFactory
+        SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
+        context.setRequest(requestBuilderFactory
                 .builder()
                 .addOrdering(new Sort("n", Dir.DESC))
                 .build());
@@ -371,8 +401,10 @@ public class CreateResourceEntityStageTest {
     @Test
     public void testExecute_Sort() {
 
-        SelectContext<Ts> context = new SelectContext<>(Ts.class, mock(Injector.class));
-        context.setMergedRequest(requestBuilderFactory
+        SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
+        context.setRequest(requestBuilderFactory
                 .builder()
                 .addOrdering(new Sort("m", Dir.DESC))
                 .addOrdering(new Sort("n", Dir.ASC)).build());
@@ -389,8 +421,10 @@ public class CreateResourceEntityStageTest {
     @Test
     public void testExecute_Exp_BadSpec() {
 
-        SelectContext<Ts> context = new SelectContext<>(Ts.class, mock(Injector.class));
-        context.setMergedRequest(requestBuilderFactory
+        SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
+        context.setRequest(requestBuilderFactory
                 .builder()
                 .andExp(Exp.simple("x = 12345 and y = 'John Smith' and z = true")).build());
 
@@ -400,8 +434,10 @@ public class CreateResourceEntityStageTest {
     @Test
     public void testExecute_Exp() {
 
-        SelectContext<Ts> context = new SelectContext<>(Ts.class, mock(Injector.class));
-        context.setMergedRequest(requestBuilderFactory
+        SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
+        context.setRequest(requestBuilderFactory
                 .builder()
                 .andExp(Exp.simple("m = 'John Smith'")).build());
 

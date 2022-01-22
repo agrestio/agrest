@@ -40,7 +40,6 @@ public class DefaultSelectBuilder_CustomPipelineIT extends DbTest {
 
         createBuilder(E2.class)
                 // Order of registration across stages is not significant. Stage natural order will be preserved.
-                .stage(SelectStage.PARSE_REQUEST, c -> stageRecorder.accept(SelectStage.PARSE_REQUEST))
                 .stage(SelectStage.CREATE_ENTITY, c -> stageRecorder.accept(SelectStage.CREATE_ENTITY))
                 .stage(SelectStage.START, c -> stageRecorder.accept(SelectStage.START))
                 .stage(SelectStage.FETCH_DATA, c -> stageRecorder.accept(SelectStage.FETCH_DATA))
@@ -65,16 +64,16 @@ public class DefaultSelectBuilder_CustomPipelineIT extends DbTest {
 
         createBuilder(E2.class)
                 // Order of registration with stages is significant.
-                .stage(SelectStage.PARSE_REQUEST, c -> stageRecorder.accept(SelectStage.PARSE_REQUEST, "a"))
+                .stage(SelectStage.APPLY_SERVER_PARAMS, c -> stageRecorder.accept(SelectStage.APPLY_SERVER_PARAMS, "a"))
                 .stage(SelectStage.FETCH_DATA, c -> stageRecorder.accept(SelectStage.FETCH_DATA, "b"))
-                .stage(SelectStage.PARSE_REQUEST, c -> stageRecorder.accept(SelectStage.PARSE_REQUEST, "c"))
-                .stage(SelectStage.PARSE_REQUEST, c -> stageRecorder.accept(SelectStage.PARSE_REQUEST, "d"))
+                .stage(SelectStage.APPLY_SERVER_PARAMS, c -> stageRecorder.accept(SelectStage.APPLY_SERVER_PARAMS, "c"))
+                .stage(SelectStage.APPLY_SERVER_PARAMS, c -> stageRecorder.accept(SelectStage.APPLY_SERVER_PARAMS, "d"))
                 .stage(SelectStage.FETCH_DATA, c -> stageRecorder.accept(SelectStage.FETCH_DATA, "e"))
                 .stage(SelectStage.ENCODE, c -> stageRecorder.accept(SelectStage.ENCODE, "f"))
                 .get();
 
         assertEquals(3, stages.size());
-        assertEquals("_a_c_d", stages.get(SelectStage.PARSE_REQUEST));
+        assertEquals("_a_c_d", stages.get(SelectStage.APPLY_SERVER_PARAMS));
         assertEquals("_b_e", stages.get(SelectStage.FETCH_DATA));
         assertEquals("_f", stages.get(SelectStage.ENCODE));
     }

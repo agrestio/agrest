@@ -1,11 +1,12 @@
 package io.agrest;
 
-import io.agrest.protocol.Exp;
 import io.agrest.protocol.Exclude;
+import io.agrest.protocol.Exp;
 import io.agrest.protocol.Include;
 import io.agrest.protocol.Sort;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @since 3.2
@@ -59,4 +60,19 @@ public interface AgRequestBuilder {
     AgRequestBuilder start(Integer start);
 
     AgRequestBuilder limit(Integer limit);
+
+    /**
+     * Loads a map of parameters coming in the client request. Parameters will only be added if they are not already
+     * defined in the builder. This way parameters provided by the server take precedence over client parameters.
+     *
+     * @since 5.0
+     */
+    AgRequestBuilder mergeClientParams(Map<String, List<String>> params);
+
+    /**
+     * Overrides all collected protocol values with parameters from the provided request.
+     *
+     * @since 5.0
+     */
+    AgRequestBuilder setRequest(AgRequest request);
 }

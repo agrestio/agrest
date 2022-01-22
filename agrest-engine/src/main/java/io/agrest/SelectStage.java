@@ -12,8 +12,6 @@ public enum SelectStage {
 
     START,
 
-    PARSE_REQUEST,
-
     CREATE_ENTITY,
 
     APPLY_SERVER_PARAMS,

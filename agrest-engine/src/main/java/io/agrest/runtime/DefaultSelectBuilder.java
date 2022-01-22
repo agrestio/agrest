@@ -79,7 +79,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
     @Override
     public SelectBuilder<T> uri(UriInfo uriInfo) {
-        this.context.setUriInfo(uriInfo);
+        this.context.mergeClientParameters(uriInfo.getQueryParameters());
         return this;
     }
 
@@ -143,8 +143,8 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
      * @since 2.13
      */
     @Override
-    public SelectBuilder<T> request(AgRequest agRequest) {
-        this.context.setRequest(agRequest);
+    public SelectBuilder<T> request(AgRequest request) {
+        this.context.setRequest(request);
         return this;
     }
 

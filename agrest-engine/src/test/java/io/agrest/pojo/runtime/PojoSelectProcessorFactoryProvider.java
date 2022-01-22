@@ -7,7 +7,6 @@ import io.agrest.runtime.AgExceptionMappers;
 import io.agrest.runtime.processor.select.ApplyServerParamsStage;
 import io.agrest.runtime.processor.select.CreateResourceEntityStage;
 import io.agrest.runtime.processor.select.EncoderInstallStage;
-import io.agrest.runtime.processor.select.ParseRequestStage;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import io.agrest.runtime.processor.select.StartStage;
@@ -24,7 +23,6 @@ public class PojoSelectProcessorFactoryProvider implements Provider<SelectProces
 
     public PojoSelectProcessorFactoryProvider(
             @Inject StartStage startStage,
-            @Inject ParseRequestStage parseRequestStage,
             @Inject CreateResourceEntityStage createResourceEntityStage,
             @Inject ApplyServerParamsStage applyServerParamsStage,
             @Inject PojoFetchStage pojoFetchStage,
@@ -36,7 +34,6 @@ public class PojoSelectProcessorFactoryProvider implements Provider<SelectProces
 
         stages = new EnumMap<>(SelectStage.class);
         stages.put(SelectStage.START, startStage);
-        stages.put(SelectStage.PARSE_REQUEST, parseRequestStage);
         stages.put(SelectStage.CREATE_ENTITY, createResourceEntityStage);
         stages.put(SelectStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
         stages.put(SelectStage.ASSEMBLE_QUERY, c -> ProcessorOutcome.CONTINUE);

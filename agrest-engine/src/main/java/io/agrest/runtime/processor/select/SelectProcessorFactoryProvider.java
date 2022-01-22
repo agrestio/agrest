@@ -19,7 +19,6 @@ public class SelectProcessorFactoryProvider implements Provider<SelectProcessorF
 
     public SelectProcessorFactoryProvider(
             @Inject StartStage startStage,
-            @Inject ParseRequestStage parseRequestStage,
             @Inject CreateResourceEntityStage createResourceEntityStage,
             @Inject ApplyServerParamsStage applyServerParamsStage,
             @Inject AssembleQueryStage assembleQueryStage,
@@ -32,7 +31,6 @@ public class SelectProcessorFactoryProvider implements Provider<SelectProcessorF
 
         stages = new EnumMap<>(SelectStage.class);
         stages.put(SelectStage.START, startStage);
-        stages.put(SelectStage.PARSE_REQUEST, parseRequestStage);
         stages.put(SelectStage.CREATE_ENTITY, createResourceEntityStage);
         stages.put(SelectStage.APPLY_SERVER_PARAMS, applyServerParamsStage);
         stages.put(SelectStage.ASSEMBLE_QUERY, assembleQueryStage);

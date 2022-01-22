@@ -1,5 +1,6 @@
 package io.agrest.meta;
 
+import io.agrest.AgRequestBuilder;
 import io.agrest.RootResourceEntity;
 import io.agrest.access.CreateAuthorizer;
 import io.agrest.access.DeleteAuthorizer;
@@ -87,7 +88,10 @@ public class AgEntityOverlayTest {
         AgEntityOverlay<P1> resolverOnly = AgEntity.overlay(P1.class).redefineDataResolver(c -> p1s);
         AgEntity<P1> eo = resolverOnly.resolve(mock(AgDataMap.class), e);
 
-        SelectContext<P1> context = new SelectContext<>(P1.class, mock(Injector.class));
+        SelectContext<P1> context = new SelectContext<>(
+                P1.class,
+                mock(AgRequestBuilder.class),
+                mock(Injector.class));
         context.setEntity(new RootResourceEntity<>(mock(AgEntity.class)));
         eo.getDataResolver().fetchData(context);
 

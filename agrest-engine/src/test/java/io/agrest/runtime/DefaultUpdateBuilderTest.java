@@ -1,5 +1,6 @@
 package io.agrest.runtime;
 
+import io.agrest.AgRequestBuilder;
 import io.agrest.UpdateStage;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
@@ -18,7 +19,7 @@ import static org.mockito.Mockito.when;
 public class DefaultUpdateBuilderTest {
 
     private <T> DefaultUpdateBuilder<T> createBuilder(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, mock(Injector.class));
+        UpdateContext<T> context = new UpdateContext<>(type, mock(AgRequestBuilder.class), mock(Injector.class));
         UpdateProcessorFactory processorFactory = mock(UpdateProcessorFactory.class);
         when(processorFactory.createProcessor(any())).thenReturn(mock(Processor.class));
 

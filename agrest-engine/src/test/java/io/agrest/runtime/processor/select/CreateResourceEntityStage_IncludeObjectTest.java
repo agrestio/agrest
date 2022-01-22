@@ -39,7 +39,7 @@ public class CreateResourceEntityStage_IncludeObjectTest {
 
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
         AgDataMap dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
-        
+
         // prepare create entity stage
         IExpMerger expConstructor = new ExpMerger();
         ISortMerger sortConstructor = new SortMerger();
@@ -68,8 +68,11 @@ public class CreateResourceEntityStage_IncludeObjectTest {
     @Test
     public void testExecute_IncludeObject_Path() {
 
-        SelectContext<Tr> context = new SelectContext<>(Tr.class, mock(Injector.class));
-        context.setMergedRequest(requestBuilderFactory.builder().addInclude(new Include("rtss")).build());
+        SelectContext<Tr> context = new SelectContext<>(
+                Tr.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
+        context.setRequest(requestBuilderFactory.builder().addInclude(new Include("rtss")).build());
 
         stage.execute(context);
 
@@ -87,10 +90,12 @@ public class CreateResourceEntityStage_IncludeObjectTest {
         MultivaluedMap<String, String> params = mock(MultivaluedMap.class);
         when(params.get("include")).thenReturn(Arrays.asList("{\"path\":\"rtss\",\"mapBy\":\"rtt\"}"));
 
-        SelectContext<Tr> context = new SelectContext<>(Tr.class, mock(Injector.class));
+        SelectContext<Tr> context = new SelectContext<>(Tr.class,
+                requestBuilderFactory.builder(),
+                mock(Injector.class));
 
         Include include = new Include("rtss", null, Collections.emptyList(), "rtt", null, null);
-        context.setMergedRequest(requestBuilderFactory.builder().addInclude(include).build());
+        context.setRequest(requestBuilderFactory.builder().addInclude(include).build());
 
         stage.execute(context);
 

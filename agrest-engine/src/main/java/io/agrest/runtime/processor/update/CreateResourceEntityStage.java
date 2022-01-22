@@ -44,11 +44,10 @@ public class CreateResourceEntityStage implements Processor<UpdateContext<?>> {
                 overlay != null ? overlay.resolve(dataMap, entity) : entity
         );
 
-        AgRequest request = context.getMergedRequest();
-        if (request != null) {
-            includeMerger.merge(resourceEntity, request.getIncludes(), context.getEntityOverlays());
-            excludeMerger.merge(resourceEntity, request.getExcludes());
-        }
+        AgRequest request = context.getRequest();
+        includeMerger.merge(resourceEntity, request.getIncludes(), context.getEntityOverlays());
+        excludeMerger.merge(resourceEntity, request.getExcludes());
+
         context.setEntity(resourceEntity);
     }
 }

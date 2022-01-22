@@ -2,27 +2,36 @@ package io.agrest.runtime.request;
 
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
-import io.agrest.protocol.Exp;
+import io.agrest.protocol.AgProtocol;
 import io.agrest.protocol.Exclude;
+import io.agrest.protocol.Exp;
 import io.agrest.protocol.Include;
 import io.agrest.protocol.Sort;
-import io.agrest.runtime.protocol.IExpParser;
 import io.agrest.runtime.protocol.IExcludeParser;
+import io.agrest.runtime.protocol.IExpParser;
 import io.agrest.runtime.protocol.IIncludeParser;
 import io.agrest.runtime.protocol.ISortParser;
+import io.agrest.runtime.protocol.ParameterExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @since 3.2
  */
 public class DefaultRequestBuilder implements AgRequestBuilder {
 
-    private DefaultRequest request;
-    private IExpParser expParser;
-    private ISortParser sortParser;
-    private IIncludeParser includeParser;
-    private IExcludeParser excludeParser;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRequestBuilder.class);
+
+    private final IExpParser expParser;
+    private final ISortParser sortParser;
+    private final IIncludeParser includeParser;
+    private final IExcludeParser excludeParser;
+
+    private final DefaultRequest request;
+    private Map<String, List<String>> clientParams;
 
     public DefaultRequestBuilder(
             IExpParser expParser,
@@ -40,6 +49,8 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
 
     @Override
     public AgRequest build() {
+        // client parameters are applied last after all server-side settings are captured
+        applyClientParams();
         return request;
     }
 
@@ -171,5 +182,88 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
         }
 
         return this;
+    }
+
+    @Override
+    public AgRequestBuilder mergeClientParams(Map<String, List<String>> params) {
+        this.clientParams = params;
+        return this;
+    }
+
+    @Override
+    public AgRequestBuilder setRequest(AgRequest anotherRequest) {
+
+        // Replace existing builder values with the values from another request
+
+        request.exp = anotherRequest.getExp();
+
+        request.orderings.clear();
+        request.orderings.addAll(anotherRequest.getOrderings());
+
+        request.mapBy = anotherRequest.getMapBy();
+
+        request.includes.clear();
+        request.includes.addAll(anotherRequest.getIncludes());
+
+        request.excludes.clear();
+        request.excludes.addAll(anotherRequest.getExcludes());
+
+        request.start = anotherRequest.getStart();
+        request.limit = anotherRequest.getLimit();
+
+        return this;
+    }
+
+    private void applyClientParams() {
+        // Not overriding any existing builder values with (presumably URL-originating) parameters ...
+
+        if (request.exp == null) {
+            andExp(expFromParams(clientParams));
+        }
+
+        if (request.orderings.isEmpty()) {
+            addOrdering(
+                    ParameterExtractor.string(clientParams, AgProtocol.sort),
+                    ParameterExtractor.string(clientParams, AgProtocol.dir));
+        }
+
+        if (request.mapBy == null) {
+            mapBy(ParameterExtractor.string(clientParams, AgProtocol.mapBy));
+        }
+
+        if (request.includes.isEmpty()) {
+            addIncludes(ParameterExtractor.strings(clientParams, AgProtocol.include));
+        }
+
+        if (request.excludes.isEmpty()) {
+            addExcludes(ParameterExtractor.strings(clientParams, AgProtocol.exclude));
+        }
+
+        if (request.start == null) {
+            start(ParameterExtractor.integerObject(clientParams, AgProtocol.start));
+        }
+
+        if (request.limit == null) {
+            limit(ParameterExtractor.integerObject(clientParams, AgProtocol.limit));
+        }
+
+    }
+
+    private String expFromParams(Map<String, List<String>> params) {
+        String exp = ParameterExtractor.string(params, AgProtocol.exp);
+        String cayenneExp = ParameterExtractor.string(params, AgProtocol.cayenneExp);
+
+        // keep supporting deprecated "cayenneExp" key
+        // TODO: if we ever start supporting multiple "exp" keys, these two can be concatenated.
+        //  For now "exp" overrides "cayenneExp"
+        if (exp != null) {
+            return exp;
+        }
+
+        if (cayenneExp != null) {
+            LOGGER.info("*** 'cayenneExp' parameter is deprecated since Agrest 4.1. Consider replacing it with 'exp'");
+        }
+
+        return cayenneExp;
     }
 }

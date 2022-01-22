@@ -1,11 +1,12 @@
 package io.agrest.cayenne.processor;
 
+import io.agrest.AgRequestBuilder;
 import io.agrest.RootResourceEntity;
+import io.agrest.cayenne.cayenne.main.E1;
+import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.protocol.Dir;
 import io.agrest.protocol.Exp;
 import io.agrest.protocol.Sort;
-import io.agrest.cayenne.cayenne.main.E1;
-import io.agrest.cayenne.unit.CayenneNoDbTest;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.query.ObjectSelect;
@@ -22,7 +23,9 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
 
         RootResourceEntity<E1> entity = getResourceEntity(E1.class);
         entity.getOrderings().add(new Sort("name", Dir.ASC));
-        SelectContext<E1> c = new SelectContext<>(E1.class, mock(Injector.class));
+        SelectContext<E1> c = new SelectContext<>(E1.class,
+                mock(AgRequestBuilder.class),
+                mock(Injector.class));
         c.setEntity(entity);
 
         ObjectSelect<E1> q1 = queryAssembler.createRootQuery(c);
@@ -40,7 +43,10 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
         entity.setLimit(10);
         entity.setStart(0);
 
-        SelectContext<E1> c = new SelectContext<>(E1.class, mock(Injector.class));
+        SelectContext<E1> c = new SelectContext<>(
+                E1.class,
+                mock(AgRequestBuilder.class),
+                mock(Injector.class));
         c.setEntity(entity);
 
         ObjectSelect<E1> q1 = queryAssembler.createRootQuery(c);
@@ -71,7 +77,11 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
     public void testCreateRootQuery_Qualifier() {
         RootResourceEntity<E1> entity = getResourceEntity(E1.class);
 
-        SelectContext<E1> c = new SelectContext<>(E1.class, mock(Injector.class));
+        SelectContext<E1> c = new SelectContext<>(
+                E1.class,
+                mock(AgRequestBuilder.class),
+                mock(Injector.class));
+
         c.setEntity(entity);
 
         entity.andExp(Exp.simple("name = 'X'"));
@@ -86,7 +96,10 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
     @Test
     public void testCreateRootQuery_ById() {
 
-        SelectContext<E1> c = new SelectContext<>(E1.class, mock(Injector.class));
+        SelectContext<E1> c = new SelectContext<>(
+                E1.class,
+                mock(AgRequestBuilder.class),
+                mock(Injector.class));
         c.setId(1);
         c.setEntity(getResourceEntity(E1.class));
 
@@ -99,7 +112,10 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
     public void testCreateRootQuery_ById_WithQuery() {
         ObjectSelect<E1> select = ObjectSelect.query(E1.class);
 
-        SelectContext<E1> c = new SelectContext<>(E1.class, mock(Injector.class));
+        SelectContext<E1> c = new SelectContext<>(
+                E1.class,
+                mock(AgRequestBuilder.class),
+                mock(Injector.class));
         c.setId(1);
         c.setEntity(getResourceEntity(E1.class));
 

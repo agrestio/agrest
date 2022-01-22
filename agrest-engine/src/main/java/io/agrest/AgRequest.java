@@ -1,7 +1,7 @@
 package io.agrest;
 
-import io.agrest.protocol.Exp;
 import io.agrest.protocol.Exclude;
+import io.agrest.protocol.Exp;
 import io.agrest.protocol.Include;
 import io.agrest.protocol.Sort;
 

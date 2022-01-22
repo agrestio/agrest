@@ -21,6 +21,7 @@ import io.agrest.runtime.processor.update.IdempotentCreateOrUpdateProcessorFacto
 import io.agrest.runtime.processor.update.IdempotentFullSyncProcessorFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.UpdateProcessorFactory;
+import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.di.Injector;
 
@@ -33,6 +34,7 @@ import java.util.Collection;
 public class DefaultAgService implements IAgService {
 
     private final Injector injector;
+    private final IAgRequestBuilderFactory requestBuilderFactory;
     private final SelectProcessorFactory selectProcessorFactory;
     private final DeleteProcessorFactory deleteProcessorFactory;
     private final CreateProcessorFactory createProcessorFactory;
@@ -47,6 +49,7 @@ public class DefaultAgService implements IAgService {
 
     public DefaultAgService(
             @Inject Injector injector,
+            @Inject IAgRequestBuilderFactory requestBuilderFactory,
             @Inject SelectProcessorFactory selectProcessorFactory,
             @Inject DeleteProcessorFactory deleteProcessorFactory,
             @Inject CreateProcessorFactory createProcessorFactory,
@@ -58,6 +61,8 @@ public class DefaultAgService implements IAgService {
             @Inject MetadataProcessorFactory metadataProcessorFactory) {
 
         this.injector = injector;
+
+        this.requestBuilderFactory = requestBuilderFactory;
 
         this.selectProcessorFactory = selectProcessorFactory;
         this.deleteProcessorFactory = deleteProcessorFactory;
@@ -73,7 +78,7 @@ public class DefaultAgService implements IAgService {
 
     @Override
     public <T> SelectBuilder<T> select(Class<T> type) {
-        SelectContext<T> context = new SelectContext<>(type, injector);
+        SelectContext<T> context = new SelectContext<>(type, requestBuilderFactory.builder(), injector);
         return toSelectBuilder(context);
     }
 
@@ -94,7 +99,7 @@ public class DefaultAgService implements IAgService {
      */
     @Override
     public <T> UpdateBuilder<T> create(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, injector);
+        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), injector);
         return new DefaultUpdateBuilder<>(context, createProcessorFactory);
     }
 
@@ -103,7 +108,7 @@ public class DefaultAgService implements IAgService {
      */
     @Override
     public <T> UpdateBuilder<T> createOrUpdate(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, injector);
+        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), injector);
         return new DefaultUpdateBuilder<>(context, createOrUpdateProcessorFactory);
     }
 
@@ -112,7 +117,7 @@ public class DefaultAgService implements IAgService {
      */
     @Override
     public <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, injector);
+        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), injector);
         return new DefaultUpdateBuilder<>(context, idempotentCreateOrUpdateProcessorFactory);
     }
 
@@ -121,7 +126,7 @@ public class DefaultAgService implements IAgService {
      */
     @Override
     public <T> UpdateBuilder<T> idempotentFullSync(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, injector);
+        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), injector);
         return new DefaultUpdateBuilder<>(context, idempotentFullSyncProcessorFactory);
     }
 
@@ -130,7 +135,7 @@ public class DefaultAgService implements IAgService {
      */
     @Override
     public <T> UpdateBuilder<T> update(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, injector);
+        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), injector);
         return new DefaultUpdateBuilder<>(context, updateProcessorFactory);
     }
 

@@ -1,5 +1,6 @@
 package io.agrest.runtime;
 
+import io.agrest.AgRequestBuilder;
 import io.agrest.SelectStage;
 import io.agrest.pojo.model.P1;
 import io.agrest.processor.Processor;
@@ -19,7 +20,10 @@ import static org.mockito.Mockito.when;
 public class DefaultSelectBuilderTest {
 
     private <T> DefaultSelectBuilder<T> createBuilder(Class<T> type) {
-        SelectContext<T> context = new SelectContext<>(type, mock(Injector.class));
+        SelectContext<T> context = new SelectContext<>(
+                type,
+                mock(AgRequestBuilder.class),
+                mock(Injector.class));
         SelectProcessorFactory processorFactory = mock(SelectProcessorFactory.class);
         when(processorFactory.createProcessor(any())).thenReturn(mock(Processor.class));
 
@@ -33,14 +37,14 @@ public class DefaultSelectBuilderTest {
         // would compile without casting...
 
         createBuilder(P1.class)
-                .stage(SelectStage.PARSE_REQUEST, this::doSomething0)
-                .stage(SelectStage.PARSE_REQUEST, this::doSomething1)
-                .stage(SelectStage.PARSE_REQUEST, this::doSomething2)
-                .stage(SelectStage.PARSE_REQUEST, this::doSomething3)
-                .stage(SelectStage.PARSE_REQUEST, this::doSomething4)
-                .stage(SelectStage.PARSE_REQUEST, (SelectContext<P1> s) -> {
+                .stage(SelectStage.APPLY_SERVER_PARAMS, this::doSomething0)
+                .stage(SelectStage.APPLY_SERVER_PARAMS, this::doSomething1)
+                .stage(SelectStage.APPLY_SERVER_PARAMS, this::doSomething2)
+                .stage(SelectStage.APPLY_SERVER_PARAMS, this::doSomething3)
+                .stage(SelectStage.APPLY_SERVER_PARAMS, this::doSomething4)
+                .stage(SelectStage.APPLY_SERVER_PARAMS, (SelectContext<P1> s) -> {
                 })
-                .stage(SelectStage.PARSE_REQUEST, s -> {
+                .stage(SelectStage.APPLY_SERVER_PARAMS, s -> {
                 });
     }
 
@@ -51,14 +55,14 @@ public class DefaultSelectBuilderTest {
         // would compile without casting...
 
         createBuilder(P1.class)
-                .terminalStage(SelectStage.PARSE_REQUEST, this::doSomething0)
-                .terminalStage(SelectStage.PARSE_REQUEST, this::doSomething1)
-                .terminalStage(SelectStage.PARSE_REQUEST, this::doSomething2)
-                .terminalStage(SelectStage.PARSE_REQUEST, this::doSomething3)
-                .terminalStage(SelectStage.PARSE_REQUEST, this::doSomething4)
-                .terminalStage(SelectStage.PARSE_REQUEST, (SelectContext<P1> s) -> {
+                .terminalStage(SelectStage.APPLY_SERVER_PARAMS, this::doSomething0)
+                .terminalStage(SelectStage.APPLY_SERVER_PARAMS, this::doSomething1)
+                .terminalStage(SelectStage.APPLY_SERVER_PARAMS, this::doSomething2)
+                .terminalStage(SelectStage.APPLY_SERVER_PARAMS, this::doSomething3)
+                .terminalStage(SelectStage.APPLY_SERVER_PARAMS, this::doSomething4)
+                .terminalStage(SelectStage.APPLY_SERVER_PARAMS, (SelectContext<P1> s) -> {
                 })
-                .terminalStage(SelectStage.PARSE_REQUEST, s -> {
+                .terminalStage(SelectStage.APPLY_SERVER_PARAMS, s -> {
                 });
     }
 
@@ -69,13 +73,13 @@ public class DefaultSelectBuilderTest {
         // would compile without casting...
 
         createBuilder(P1.class)
-                .routingStage(SelectStage.PARSE_REQUEST, this::doSomethingAndReturn0)
-                .routingStage(SelectStage.PARSE_REQUEST, this::doSomethingAndReturn1)
-                .routingStage(SelectStage.PARSE_REQUEST, this::doSomethingAndReturn2)
-                .routingStage(SelectStage.PARSE_REQUEST, this::doSomethingAndReturn3)
-                .routingStage(SelectStage.PARSE_REQUEST, this::doSomethingAndReturn4)
-                .routingStage(SelectStage.PARSE_REQUEST, (SelectContext<P1> s) -> ProcessorOutcome.CONTINUE)
-                .routingStage(SelectStage.PARSE_REQUEST, s -> ProcessorOutcome.CONTINUE);
+                .routingStage(SelectStage.APPLY_SERVER_PARAMS, this::doSomethingAndReturn0)
+                .routingStage(SelectStage.APPLY_SERVER_PARAMS, this::doSomethingAndReturn1)
+                .routingStage(SelectStage.APPLY_SERVER_PARAMS, this::doSomethingAndReturn2)
+                .routingStage(SelectStage.APPLY_SERVER_PARAMS, this::doSomethingAndReturn3)
+                .routingStage(SelectStage.APPLY_SERVER_PARAMS, this::doSomethingAndReturn4)
+                .routingStage(SelectStage.APPLY_SERVER_PARAMS, (SelectContext<P1> s) -> ProcessorOutcome.CONTINUE)
+                .routingStage(SelectStage.APPLY_SERVER_PARAMS, s -> ProcessorOutcome.CONTINUE);
     }
 
     private void doSomething0(SelectContext<?> c) {

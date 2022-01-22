@@ -41,7 +41,7 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
     @Override
     public UpdateBuilder<T> uri(UriInfo uriInfo) {
-        context.setUriInfo(uriInfo);
+        context.mergeClientParameters(uriInfo.getQueryParameters());
         return this;
     }
 
@@ -116,8 +116,8 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
      * @since 2.13
      */
     @Override
-    public UpdateBuilder<T> request(AgRequest agRequest) {
-        this.context.setRequest(agRequest);
+    public UpdateBuilder<T> request(AgRequest request) {
+        this.context.setRequest(request);
         return this;
     }
 

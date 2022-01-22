@@ -49,7 +49,7 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT extends DbTest {
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
         DataResponse<E2> dr = createBuilder(E2.class)
-                .terminalStage(SelectStage.PARSE_REQUEST, c -> {
+                .terminalStage(SelectStage.APPLY_SERVER_PARAMS, c -> {
                 })
                 .get();
 

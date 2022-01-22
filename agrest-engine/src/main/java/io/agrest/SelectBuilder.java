@@ -240,9 +240,9 @@ public interface SelectBuilder<T> {
      *
      * }</pre>
      *
-     * @param agRequest an instance of AgRequest that holds all explicit query parameters.
+     * @param request an instance of AgRequest that holds all explicit query parameters.
      * @return this builder instance.
      * @since 2.13
      */
-    SelectBuilder<T> request(AgRequest agRequest);
+    SelectBuilder<T> request(AgRequest request);
 }
