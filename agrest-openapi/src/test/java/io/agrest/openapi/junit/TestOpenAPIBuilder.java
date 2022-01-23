@@ -1,7 +1,9 @@
-package io.agrest.openapi.unit;
+package io.agrest.openapi.junit;
 
+import io.agrest.jaxrs.AgJaxrsFeature;
 import io.agrest.openapi.AgSwaggerModule;
 import io.agrest.runtime.AgBuilder;
+import io.agrest.runtime.AgRuntime;
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContext;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
@@ -10,28 +12,28 @@ import io.swagger.v3.oas.models.OpenAPI;
 import java.util.HashSet;
 import java.util.Set;
 
-public class OpenAPIBuilder {
+public class TestOpenAPIBuilder {
 
     private static final String OAPI_TEST_CONTEXT_ID = "ag.test.context";
 
     private final Set<String> packages;
     private final Set<String> classes;
 
-    public OpenAPIBuilder() {
+    public TestOpenAPIBuilder() {
         this.packages = new HashSet<>();
         this.classes = new HashSet<>();
     }
 
-    public OpenAPIBuilder addClass(Class<?> type) {
+    public TestOpenAPIBuilder addClass(Class<?> type) {
         classes.add(type.getName());
         return this;
     }
 
-    public OpenAPIBuilder addPackage(Class<?> typeInPackage) {
+    public TestOpenAPIBuilder addPackage(Class<?> typeInPackage) {
         return addPackage(typeInPackage.getPackage().getName());
     }
 
-    public OpenAPIBuilder addPackage(String packageName) {
+    public TestOpenAPIBuilder addPackage(String packageName) {
         packages.add(packageName);
         return this;
     }
@@ -43,7 +45,11 @@ public class OpenAPIBuilder {
         // TODO: cleanup static vars after the test
         AgBuilder builder = new AgBuilder();
         packages.forEach(p -> builder.module(b -> AgSwaggerModule.contributeEntityPackages(b).add(p)));
-        builder.build();
+        AgRuntime runtime = builder.build();
+
+        // even though we don't start a JAX-RS runtime, the side effect of initializing AgJaxrsFeature is invoking
+        // AgSwaggerModuleInstaller
+        AgJaxrsFeature.builder().runtime(runtime).build();
 
         SwaggerConfiguration swaggerConfig = new SwaggerConfiguration()
                 .resourcePackages(packages)

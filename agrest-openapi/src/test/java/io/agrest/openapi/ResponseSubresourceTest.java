@@ -2,7 +2,7 @@ package io.agrest.openapi;
 
 import io.agrest.DataResponse;
 import io.agrest.annotation.AgAttribute;
-import io.agrest.openapi.unit.OpenAPIBuilder;
+import io.agrest.openapi.junit.TestOpenAPIBuilder;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.media.Schema;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ResponseSubresourceTest {
 
-    static final OpenAPI oapi = new OpenAPIBuilder()
+    static final OpenAPI oapi = new TestOpenAPIBuilder()
             .addClass(Resource.class)
             .addPackage(P1.class)
             .build();

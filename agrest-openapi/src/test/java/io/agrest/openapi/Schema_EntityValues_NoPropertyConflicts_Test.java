@@ -2,7 +2,7 @@ package io.agrest.openapi;
 
 import io.agrest.DataResponse;
 import io.agrest.annotation.AgAttribute;
-import io.agrest.openapi.unit.OpenAPIBuilder;
+import io.agrest.openapi.junit.TestOpenAPIBuilder;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class Schema_EntityValues_NoPropertyConflicts_Test {
 
-    static final OpenAPI oapi = new OpenAPIBuilder()
+    static final OpenAPI oapi = new TestOpenAPIBuilder()
             .addPackage(P7.class)
             .addClass(Resource.class)
             .build();

@@ -4,7 +4,7 @@ import io.agrest.EntityUpdate;
 import io.agrest.SimpleResponse;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
-import io.agrest.openapi.unit.OpenAPIBuilder;
+import io.agrest.openapi.junit.TestOpenAPIBuilder;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EntityUpdateTest {
 
-    static final OpenAPI oapi = new OpenAPIBuilder()
+    static final OpenAPI oapi = new TestOpenAPIBuilder()
             .addClass(Resource.class)
             .addPackage(P4.class)
             .build();

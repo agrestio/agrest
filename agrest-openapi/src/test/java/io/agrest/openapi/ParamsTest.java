@@ -2,7 +2,7 @@ package io.agrest.openapi;
 
 import io.agrest.DataResponse;
 import org.example.entity.NonAgP1;
-import io.agrest.openapi.unit.OpenAPIBuilder;
+import io.agrest.openapi.junit.TestOpenAPIBuilder;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ParamsTest {
 
-    static final OpenAPI oapi = new OpenAPIBuilder()
+    static final OpenAPI oapi = new TestOpenAPIBuilder()
             .addClass(Resource.class)
             .addPackage(NonAgP1.class)
             .build();
