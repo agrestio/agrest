@@ -4,7 +4,7 @@ import io.agrest.runtime.processor.select.SelectContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class ProcessorTest {
@@ -49,6 +49,6 @@ public class ProcessorTest {
 
         verify(shouldContinue1).execute(mockContext);
         verify(shouldStop).execute(mockContext);
-        verifyZeroInteractions(shouldContinue2);
+        verifyNoInteractions(shouldContinue2);
     }
 }

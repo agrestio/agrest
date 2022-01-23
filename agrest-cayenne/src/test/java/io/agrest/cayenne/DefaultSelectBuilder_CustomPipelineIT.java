@@ -27,7 +27,7 @@ public class DefaultSelectBuilder_CustomPipelineIT extends DbTest {
     static final AgCayenneTester tester = tester().build();
 
     private <T> DefaultSelectBuilder<T> createBuilder(Class<T> type) {
-        SelectBuilder<T> builder = tester.ag().select(type);
+        SelectBuilder<T> builder = tester.runtime().select(type);
         assertTrue(builder instanceof DefaultSelectBuilder);
         return (DefaultSelectBuilder<T>) builder;
     }

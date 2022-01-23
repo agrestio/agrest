@@ -9,7 +9,6 @@ import io.agrest.cayenne.cayenne.main.E8;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.jaxrs.AgJaxrs;
-import io.agrest.runtime.IAgService;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -137,7 +136,7 @@ public class DELETE_RelatedIT extends DbTest {
         @Deprecated
         @DELETE
         public SimpleResponse deleteE2_Batch(Collection<EntityDelete<E2>> deleted, @Context UriInfo uriInfo) {
-            return AgJaxrs.runtime(config).service(IAgService.class).delete(E2.class, deleted);
+            return AgJaxrs.runtime(config).delete(E2.class, deleted);
         }
 
         @DELETE

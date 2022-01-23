@@ -33,7 +33,8 @@ public class AgRuntimeBuilder_ExceptionMappersIT {
     public void testExceptionMapper_OverrideStandardMapper() {
 
         try {
-            tester.ag().select(P1.class)
+            tester.runtime()
+                    .select(P1.class)
                     .stage(SelectStage.APPLY_SERVER_PARAMS, c -> {
                         throw AgException.forbidden("_ag_exception_");
                     })
@@ -47,7 +48,8 @@ public class AgRuntimeBuilder_ExceptionMappersIT {
     public void testExceptionMapper_CustomExceptionMapper() {
 
         try {
-            tester.ag().select(P2.class)
+            tester.runtime()
+                    .select(P2.class)
                     .stage(SelectStage.APPLY_SERVER_PARAMS, c -> {
                         throw new TestException("_test_exception_");
                     })

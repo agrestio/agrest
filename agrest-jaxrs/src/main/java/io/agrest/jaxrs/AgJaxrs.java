@@ -7,8 +7,6 @@ import io.agrest.SelectBuilder;
 import io.agrest.UnrelateBuilder;
 import io.agrest.UpdateBuilder;
 import io.agrest.runtime.AgRuntime;
-import io.agrest.runtime.IAgService;
-import io.agrest.runtime.request.IAgRequestBuilderFactory;
 
 import javax.ws.rs.core.Configuration;
 
@@ -25,39 +23,39 @@ public class AgJaxrs {
      * @return a newly created builder of {@link io.agrest.AgRequest}.
      */
     public static AgRequestBuilder request(Configuration config) {
-        return runtime(config).service(IAgRequestBuilderFactory.class).builder();
+        return runtime(config).request();
     }
 
     public static <T> SelectBuilder<T> select(Class<T> root, Configuration config) {
-        return runtime(config).service(IAgService.class).select(root);
+        return runtime(config).select(root);
     }
 
     public static <T> UpdateBuilder<T> create(Class<T> type, Configuration config) {
-        return runtime(config).service(IAgService.class).create(type);
+        return runtime(config).create(type);
     }
 
     public static <T> UpdateBuilder<T> createOrUpdate(Class<T> type, Configuration config) {
-        return runtime(config).service(IAgService.class).createOrUpdate(type);
+        return runtime(config).createOrUpdate(type);
     }
 
     public static <T> DeleteBuilder<T> delete(Class<T> root, Configuration config) {
-        return runtime(config).service(IAgService.class).delete(root);
+        return runtime(config).delete(root);
     }
 
     public static <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type, Configuration config) {
-        return runtime(config).service(IAgService.class).idempotentCreateOrUpdate(type);
+        return runtime(config).idempotentCreateOrUpdate(type);
     }
 
     public static <T> UpdateBuilder<T> idempotentFullSync(Class<T> type, Configuration config) {
-        return runtime(config).service(IAgService.class).idempotentFullSync(type);
+        return runtime(config).idempotentFullSync(type);
     }
 
     public static <T> UpdateBuilder<T> update(Class<T> type, Configuration config) {
-        return runtime(config).service(IAgService.class).update(type);
+        return runtime(config).update(type);
     }
 
     public static <T> UnrelateBuilder<T> unrelate(Class<T> type, Configuration config) {
-        return runtime(config).service(IAgService.class).unrelate(type);
+        return runtime(config).unrelate(type);
     }
 
     /**
@@ -65,7 +63,7 @@ public class AgJaxrs {
      */
     @Deprecated
     public static <T> MetadataBuilder<T> metadata(Class<T> entityClass, Configuration config) {
-        return runtime(config).service(IAgService.class).metadata(entityClass);
+        return runtime(config).metadata(entityClass);
     }
 
     /**

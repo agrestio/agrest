@@ -5,9 +5,8 @@ import io.agrest.cayenne.persister.CayennePersister;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.jaxrs.junit.AgHttpTester;
 import io.agrest.jaxrs.junit.AgTestJaxrsFeature;
-import io.agrest.runtime.AgRuntimeBuilder;
 import io.agrest.runtime.AgRuntime;
-import io.agrest.runtime.IAgService;
+import io.agrest.runtime.AgRuntimeBuilder;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.cayenne.v42.CayenneModule;
@@ -91,8 +90,8 @@ public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallb
         return getJettyInScope().getTarget();
     }
 
-    public IAgService ag() {
-        return getAppInScope().getInstance(AgRuntime.class).service(IAgService.class);
+    public AgRuntime runtime() {
+        return getAppInScope().getInstance(AgRuntime.class);
     }
 
     public Table e1() {

@@ -23,7 +23,7 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT extends DbTest {
             .build();
 
     private <T> DefaultSelectBuilder<T> createBuilder(Class<T> type) {
-        SelectBuilder<T> builder = tester.ag().select(type);
+        SelectBuilder<T> builder = tester.runtime().select(type);
         assertTrue(builder instanceof DefaultSelectBuilder);
         return (DefaultSelectBuilder<T>) builder;
     }

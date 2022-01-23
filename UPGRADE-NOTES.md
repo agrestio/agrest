@@ -65,9 +65,16 @@ application dependencies.
 ### (JAX-RS) Starting the stack [#537](https://github.com/agrestio/agrest/issues/537)
 As JAX-RS is no longer a part of Agrest core, and comes from a separate module, Agrest runtime startup in a JAX-RS 
 environment looks different:
-
 ```java
+// assuming Agrest with JAX-RS and Cayenne
 
+ServerRuntime cayenneRuntime = ...;
+
+Module cayenneModule = AgCayenneBuilder.build(cayenneRuntime);
+AgRuntime runtime = AgRuntime.builder().module(cayenneModule).build();
+AgJaxrsFeature feature = AgJaxrsFeature.runtime(runtime).build();
+
+// register feature in a JAX-RS container
 ```
 
 ### (JAX-RS) Use of `Ag` [#537](https://github.com/agrestio/agrest/issues/537)

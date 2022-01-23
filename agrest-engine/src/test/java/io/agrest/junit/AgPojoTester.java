@@ -12,9 +12,8 @@ import io.agrest.pojo.model.P9;
 import io.agrest.pojo.runtime.PojoFetchStage;
 import io.agrest.pojo.runtime.PojoSelectProcessorFactoryProvider;
 import io.agrest.pojo.runtime.PojoStore;
-import io.agrest.runtime.AgRuntimeBuilder;
 import io.agrest.runtime.AgRuntime;
-import io.agrest.runtime.IAgService;
+import io.agrest.runtime.AgRuntimeBuilder;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
@@ -58,10 +57,6 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
     protected AgPojoTester() {
         this.agCustomizer = Function.identity();
         this.bqModules = new ArrayList<>();
-    }
-
-    public IAgService ag() {
-        return runtime().service(IAgService.class);
     }
 
     public AgRuntime runtime() {

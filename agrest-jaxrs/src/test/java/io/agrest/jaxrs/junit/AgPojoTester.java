@@ -12,9 +12,8 @@ import io.agrest.jaxrs.pojo.runtime.PojoSelectProcessorFactoryProvider;
 import io.agrest.jaxrs.pojo.runtime.PojoStore;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
-import io.agrest.runtime.AgRuntimeBuilder;
 import io.agrest.runtime.AgRuntime;
-import io.agrest.runtime.IAgService;
+import io.agrest.runtime.AgRuntimeBuilder;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
@@ -79,15 +78,11 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
     }
 
     /**
-     * Provides access to JAXRS WebTarget. Used in special cases, as normally you should call {@link #target()} and
+     * Provides access to JAX-RS WebTarget. Used in special cases, as normally you should call {@link #target()} and
      * use the returned {@link AgHttpTester} to manage web request and run result assertions.
      */
     public WebTarget internalTarget() {
         return getJettyInScope().getTarget();
-    }
-
-    public IAgService ag() {
-        return runtime().service(IAgService.class);
     }
 
     public AgRuntime runtime() {
