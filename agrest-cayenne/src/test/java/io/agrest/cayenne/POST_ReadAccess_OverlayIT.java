@@ -1,6 +1,6 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
+
 import io.agrest.DataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.cayenne.main.E2;

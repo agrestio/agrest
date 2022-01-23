@@ -1,6 +1,6 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
+
 import io.agrest.EntityUpdate;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.unit.AgCayenneTester;

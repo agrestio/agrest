@@ -1,7 +1,7 @@
 package io.agrest.cayenne;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.Ag;
+
 import io.agrest.DataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.UpdateStage;

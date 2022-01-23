@@ -15,6 +15,7 @@ import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.converter.valuestring.ValueStringConvertersProvider;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.ValueEncodersProvider;
+import io.agrest.meta.DefaultAgAttribute;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
 import io.agrest.runtime.encoder.EncoderService;
@@ -22,7 +23,6 @@ import io.agrest.runtime.encoder.IEncodablePropertyFactory;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.runtime.semantics.RelationshipMapper;
-import io.agrest.junit.ResourceEntityUtils;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,8 +80,7 @@ public class EncoderServiceTest extends CayenneNoDbTest {
         ToManyResourceEntity<E3> e3Descriptor = getToManyChildEntity(E3.class, descriptor, E2.E3S.getName());
         e3Descriptor.includeId();
         CayenneProcessor.getOrCreateNestedEntity(e3Descriptor);
-        ResourceEntityUtils.appendAttribute(e3Descriptor, "name", String.class, E3::getName);
-
+        e3Descriptor.addAttribute(new DefaultAgAttribute("name", String.class, true, true, o -> ((E3)o).getName()), false);
         descriptor.getChildren().put(E2.E3S.getName(), e3Descriptor);
 
         ObjectContext context = mockCayennePersister.newContext();

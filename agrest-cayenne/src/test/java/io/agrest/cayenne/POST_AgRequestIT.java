@@ -1,6 +1,6 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
+
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.unit.AgCayenneTester;

@@ -1,6 +1,6 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
+
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.*;
 import io.agrest.cayenne.unit.AgCayenneTester;
@@ -379,7 +379,7 @@ public class PUT_Related_IT extends DbTest {
         public DataResponse<E12E13> fullSync_Joins(@PathParam("id") int id, @Context UriInfo info, String entityData) {
             return AgJaxrs.idempotentFullSync(E12E13.class, config)
                     .parent(E12.class, id, E12.E1213.getName())
-                    .uri(info)
+                    .clientParams(info.getQueryParameters())
                     .syncAndSelect(entityData);
         }
 
@@ -388,14 +388,14 @@ public class PUT_Related_IT extends DbTest {
         public DataResponse<E15E1> createOrUpdate_Joins(@PathParam("id") long id, @Context UriInfo info, String entityData) {
             return AgJaxrs.createOrUpdate(E15E1.class, config)
                     .parent(E15.class, id, E15.E15E1.getName())
-                    .uri(info)
+                    .clientParams(info.getQueryParameters())
                     .syncAndSelect(entityData);
         }
 
         @PUT
         @Path("e15/{id}")
         public DataResponse<E15> createOrUpdate_Joins_FlattenedRel(@PathParam("id") long id, @Context UriInfo info, String entityData) {
-            return AgJaxrs.createOrUpdate(E15.class, config).byId(id).uri(info).syncAndSelect(entityData);
+            return AgJaxrs.createOrUpdate(E15.class, config).byId(id).clientParams(info.getQueryParameters()).syncAndSelect(entityData);
         }
     }
 }

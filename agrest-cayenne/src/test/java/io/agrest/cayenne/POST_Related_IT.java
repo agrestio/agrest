@@ -1,6 +1,6 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
+
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.*;
 import io.agrest.cayenne.unit.AgCayenneTester;
@@ -127,7 +127,7 @@ public class POST_Related_IT extends DbTest {
         @POST
         @Path("e2/{id}/e3s")
         public DataResponse<E3> createOrUpdateE3sOfE2(@PathParam("id") int id, @Context UriInfo uri,  String targetData) {
-            return AgJaxrs.createOrUpdate(E3.class, config).uri(uri)
+            return AgJaxrs.createOrUpdate(E3.class, config).clientParams(uri.getQueryParameters())
                     .parent(E2.class, id, E2.E3S.getName())
                     .syncAndSelect(targetData);
         }
@@ -137,7 +137,7 @@ public class POST_Related_IT extends DbTest {
         public DataResponse<E12E13> create_Joins(@PathParam("id") int id, @Context UriInfo info, String entityData) {
             return AgJaxrs.create(E12E13.class, config)
                     .parent(E12.class, id, E12.E1213.getName())
-                    .uri(info)
+                    .clientParams(info.getQueryParameters())
                     .syncAndSelect(entityData);
         }
 
