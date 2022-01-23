@@ -1,12 +1,12 @@
 package io.agrest.openapi;
 
-import io.agrest.AgFeatureProvider;
+import io.agrest.jaxrs.AgFeatureProvider;
 import io.agrest.openapi.modelconverter.AgEntityModelConverter;
 import io.agrest.openapi.modelconverter.AgProtocolModelConverter;
 import io.agrest.openapi.modelconverter.AgValueModelConverter;
+import io.agrest.runtime.AgRuntime;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverters;
-import org.apache.cayenne.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,13 +20,13 @@ public class AgSwaggerModuleInstaller implements AgFeatureProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(AgSwaggerModuleInstaller.class);
 
     @Override
-    public Feature feature(Injector injector) {
+    public Feature feature(AgRuntime runtime) {
 
         LOGGER.info("initializing Agrest Swagger model converters");
 
-        installConverter(injector.getInstance(AgValueModelConverter.class));
-        installConverter(injector.getInstance(AgProtocolModelConverter.class));
-        installConverter(injector.getInstance(AgEntityModelConverter.class));
+        installConverter(runtime.service(AgValueModelConverter.class));
+        installConverter(runtime.service(AgProtocolModelConverter.class));
+        installConverter(runtime.service(AgEntityModelConverter.class));
 
         // Return a dummy feature as we are using this method for its side effects for its Injector access
         return fc -> false;

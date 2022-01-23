@@ -29,7 +29,7 @@ import static java.util.Arrays.asList;
 public class AgProtocolModelConverter extends AgModelConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AgProtocolModelConverter.class);
-    private final static String BASE_AG_PACKAGE = Ag.class.getPackage().getName();
+    private final static String BASE_AG_PACKAGE = AgException.class.getPackage().getName();
 
     private final AgDataMap dataMap;
 
