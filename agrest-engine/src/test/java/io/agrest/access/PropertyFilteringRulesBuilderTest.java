@@ -3,6 +3,7 @@ package io.agrest.access;
 import io.agrest.junit.AgPojoTester;
 import io.agrest.meta.AgEntity;
 import io.agrest.pojo.model.P11;
+import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +13,7 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@BQTest
 public class PropertyFilteringRulesBuilderTest {
 
     @BQTestTool

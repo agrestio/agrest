@@ -3,7 +3,7 @@ package io.agrest.jaxrs.provider;
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.AgException;
 import io.agrest.MetadataResponse;
-import io.agrest.jaxrs.AgJaxrsModule;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JsonConvertable;
 
@@ -62,7 +62,7 @@ public class MetadataResponseWriter implements MessageBodyWriter<MetadataRespons
 
     private IJacksonService getJacksonService() {
         if (jacksonService == null) {
-            jacksonService = AgJaxrsModule.service(IJacksonService.class, configuration);
+            jacksonService = AgJaxrs.runtime(configuration).service(IJacksonService.class);
         }
 
         return jacksonService;

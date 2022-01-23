@@ -2,7 +2,7 @@ package io.agrest.jaxrs.provider;
 
 import io.agrest.AgException;
 import io.agrest.EntityUpdate;
-import io.agrest.jaxrs.AgJaxrsModule;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgDataMap;
 import io.agrest.runtime.protocol.IEntityUpdateParser;
 
@@ -33,8 +33,8 @@ public class EntityUpdateReader implements MessageBodyReader<EntityUpdate<?>> {
 
     public EntityUpdateReader(@Context Configuration config) {
         this.reader = new EntityUpdateReaderProcessor(
-                AgJaxrsModule.service(IEntityUpdateParser.class, config),
-                AgJaxrsModule.service(AgDataMap.class, config));
+                AgJaxrs.runtime(config).service(IEntityUpdateParser.class),
+                AgJaxrs.runtime(config).service(AgDataMap.class));
     }
 
     @Override

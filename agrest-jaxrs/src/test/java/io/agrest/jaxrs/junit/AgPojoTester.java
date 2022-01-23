@@ -1,6 +1,5 @@
 package io.agrest.jaxrs.junit;
 
-import io.agrest.jaxrs.AgJaxrsFeature;
 import io.agrest.jaxrs.pojo.model.P1;
 import io.agrest.jaxrs.pojo.model.P10;
 import io.agrest.jaxrs.pojo.model.P2;
@@ -151,7 +150,7 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         this.appInScope = createAppInScope(this.jettyInScope, this.pojoStoreInScope);
 
         CommandOutcome result = appInScope.run();
-        Assertions.assertTrue(result.isSuccess());
+        Assertions.assertTrue(result.isSuccess(), () -> result.toString());
         Assertions.assertTrue(result.forkedToBackground());
     }
 
@@ -222,7 +221,7 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         }
 
         private void configureJersey(JerseyModuleExtender extender) {
-            extender.addFeature(AgJaxrsFeature.class);
+            extender.addFeature(AgTestJaxrsFeature.class);
             resources.forEach(extender::addResource);
         }
 

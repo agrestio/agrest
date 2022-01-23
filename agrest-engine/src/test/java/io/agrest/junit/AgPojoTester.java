@@ -25,7 +25,6 @@ import io.agrest.runtime.processor.update.IdempotentFullSyncProcessorFactory;
 import io.agrest.runtime.processor.update.UpdateProcessorFactory;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
-import io.bootique.command.CommandOutcome;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
@@ -33,7 +32,6 @@ import io.bootique.junit5.BQTestScope;
 import io.bootique.junit5.scope.BQAfterScopeCallback;
 import io.bootique.junit5.scope.BQBeforeMethodCallback;
 import io.bootique.junit5.scope.BQBeforeScopeCallback;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import javax.inject.Singleton;
@@ -116,13 +114,8 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
 
     @Override
     public void beforeScope(BQTestScope scope, ExtensionContext context) {
-
         this.pojoStoreInScope = new PojoStore();
         this.appInScope = createAppInScope(this.pojoStoreInScope);
-
-        CommandOutcome result = appInScope.run();
-        Assertions.assertTrue(result.isSuccess());
-        Assertions.assertTrue(result.forkedToBackground());
     }
 
     @Override

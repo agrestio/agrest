@@ -32,6 +32,8 @@ import io.agrest.encoder.ValueEncoders;
 import io.agrest.encoder.ValueEncodersProvider;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntityOverlay;
+import io.agrest.meta.parser.IResourceParser;
+import io.agrest.meta.parser.ThrowingResourceParser;
 import io.agrest.runtime.constraints.ConstraintsHandler;
 import io.agrest.runtime.constraints.IConstraintsHandler;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
@@ -402,6 +404,8 @@ public class AgBuilder {
             binder.bind(MetadataProcessorFactory.class).toProvider(MetadataProcessorFactoryProvider.class);
             binder.bind(CollectMetadataStage.class).to(CollectMetadataStage.class);
             binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
+            // IResourceParser is implemented for real in "bootique-jaxrs". Here just use a placeholder
+            binder.bind(IResourceParser.class).to(ThrowingResourceParser.class);
             binder.bind(BaseUrlProvider.class).toInstance(BaseUrlProvider.forUrl(Optional.ofNullable(baseUrl)));
         };
     }

@@ -2,9 +2,9 @@ package io.agrest.jaxrs.provider;
 
 import io.agrest.AgException;
 import io.agrest.DataResponse;
-import io.agrest.pojo.model.P1;
-import io.agrest.junit.AgPojoTester;
-import io.agrest.junit.PojoTest;
+import io.agrest.jaxrs.junit.AgPojoTester;
+import io.agrest.jaxrs.junit.PojoTest;
+import io.agrest.jaxrs.pojo.model.P1;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 

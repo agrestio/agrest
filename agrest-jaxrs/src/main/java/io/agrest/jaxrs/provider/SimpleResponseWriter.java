@@ -2,7 +2,7 @@ package io.agrest.jaxrs.provider;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.SimpleResponse;
-import io.agrest.jaxrs.AgJaxrsModule;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.runtime.jackson.IJacksonService;
 
 import javax.ws.rs.core.Configuration;
@@ -22,7 +22,7 @@ public class SimpleResponseWriter implements MessageBodyWriter<SimpleResponse> {
     private IJacksonService jacksonService;
 
     @Context
-    private Configuration configuration;
+    private Configuration config;
 
     @Override
     public long getSize(SimpleResponse t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -49,7 +49,7 @@ public class SimpleResponseWriter implements MessageBodyWriter<SimpleResponse> {
 
     private IJacksonService getJacksonService() {
         if (jacksonService == null) {
-            jacksonService = AgJaxrsModule.service(IJacksonService.class, configuration);
+            jacksonService = AgJaxrs.runtime(config).service(IJacksonService.class);
         }
 
         return jacksonService;

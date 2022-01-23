@@ -6,12 +6,14 @@ import io.agrest.junit.AgPojoTester;
 import io.agrest.pojo.model.P1;
 import io.agrest.pojo.model.P2;
 import io.agrest.spi.AgExceptionMapper;
+import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.di.Module;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@BQTest
 public class AgBuilder_ExceptionMappersIT {
 
     @BQTestTool
@@ -37,7 +39,7 @@ public class AgBuilder_ExceptionMappersIT {
                     })
                     .get();
         } catch (AgException e) {
-            assertEquals("", e.getMessage());
+            assertEquals("_ag__ag_exception_", e.getMessage());
         }
     }
 
@@ -51,7 +53,7 @@ public class AgBuilder_ExceptionMappersIT {
                     })
                     .get();
         } catch (AgException e) {
-            assertEquals("", e.getMessage());
+            assertEquals("_test__test_exception_", e.getMessage());
         }
     }
 

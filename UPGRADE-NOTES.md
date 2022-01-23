@@ -58,12 +58,19 @@ custom exception other than `AgException` explicitly outside of Agrest processin
 those exceptions with `AgException` to ensure it is rendered cleanly in the response. Throwing within custom "stages"
 works the same way as before and requires no changes.
 
+### (JAX-RS) Dependencies [#537](https://github.com/agrestio/agrest/issues/537)
+All JAX-RS specific code is now moved to a new module - `agrest-jaxrs`. It will need to be explicitly added to the 
+application dependencies.
+
+### (JAX-RS) Use of `Ag` [#537](https://github.com/agrestio/agrest/issues/537)
+`Ag` class is no longer present in Agrest, as it was too tightly coupled with JAX-RS. You should replace it with 
+`AgJaxrs`.
+
+### (JAX-RS) SelectBuilder / UpdateBuilder "uri()" is replaced with "clientParams()" [#537](https://github.com/agrestio/agrest/issues/537)
+To remove a direct dependency oin JAX-RS API, `SelectBuilder.uri(UriInfo)` and `UpdateBuilder.uri(UriInfo)`are replaced
+with `SelectBuilder.clientParams(Map)` and `UpdateBuilder.clientParams(Map)`. Parameters map passed as an argument 
+corresponds to `UriInfo.getQueryParameters()`.
 
 ### SelectStage.PARSE_REQUEST is gone [#537](https://github.com/agrestio/agrest/issues/537)
 `SelectStage.PARSE_REQUEST` is no longer needed, as protocol parameter parsing happens outside of a stage, right in
 the context. If you had stage callbacks referencing this stage, you may instead reference `SelectStage.START`.
-
-### SelectBuilder / UpdateBuilder "uri()" is replaced with "clientParams()" [#537](https://github.com/agrestio/agrest/issues/537)
-To remove a direct dependency oin JAX-RS API, `SelectBuilder.uri(UriInfo)` and `UpdateBuilder.uri(UriInfo)`are replaced
-with `SelectBuilder.clientParams(Map)` and `UpdateBuilder.clientParams(Map)`. Parameters map passed as an argument 
-corresponds to `UriInfo.getQueryParameters()`.
