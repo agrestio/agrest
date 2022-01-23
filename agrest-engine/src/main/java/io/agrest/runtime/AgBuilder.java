@@ -32,8 +32,6 @@ import io.agrest.encoder.ValueEncoders;
 import io.agrest.encoder.ValueEncodersProvider;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.parser.IResourceParser;
-import io.agrest.meta.parser.ResourceParser;
 import io.agrest.runtime.constraints.ConstraintsHandler;
 import io.agrest.runtime.constraints.IConstraintsHandler;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
@@ -404,7 +402,6 @@ public class AgBuilder {
             binder.bind(MetadataProcessorFactory.class).toProvider(MetadataProcessorFactoryProvider.class);
             binder.bind(CollectMetadataStage.class).to(CollectMetadataStage.class);
             binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
-            binder.bind(IResourceParser.class).to(ResourceParser.class);
             binder.bind(BaseUrlProvider.class).toInstance(BaseUrlProvider.forUrl(Optional.ofNullable(baseUrl)));
         };
     }

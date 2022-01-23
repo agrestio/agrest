@@ -1,8 +1,10 @@
-package io.agrest.meta.parser;
+package io.agrest.jaxrs.meta.parser;
 
 import io.agrest.DataResponse;
 import io.agrest.annotation.LinkType;
 import io.agrest.meta.*;
+import io.agrest.meta.parser.EndpointMetadata;
+import io.agrest.meta.parser.IResourceParser;
 import org.apache.cayenne.di.Inject;
 
 import javax.ws.rs.*;

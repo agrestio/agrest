@@ -9,7 +9,7 @@ import io.agrest.annotation.LinkType;
 import io.agrest.meta.*;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.meta.parser.ResourceParser;
+import io.agrest.jaxrs.meta.parser.ResourceParser;
 import io.agrest.runtime.meta.BaseUrlProvider;
 import io.agrest.runtime.meta.IResourceMetadataService;
 import io.agrest.runtime.meta.ResourceMetadataService;

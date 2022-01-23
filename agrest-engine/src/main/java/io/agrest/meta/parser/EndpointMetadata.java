@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
  * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
  */
 @Deprecated
-class EndpointMetadata {
+public class EndpointMetadata {
 
     public static EndpointMetadata fromAnnotation(Method resourceMethod) {
         AgResource annotation = resourceMethod.getAnnotation(AgResource.class);

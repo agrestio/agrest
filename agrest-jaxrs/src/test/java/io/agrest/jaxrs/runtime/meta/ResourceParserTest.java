@@ -6,7 +6,7 @@ import io.agrest.meta.AgResource;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.meta.LazyAgDataMap;
-import io.agrest.meta.parser.ResourceParser;
+import io.agrest.jaxrs.meta.parser.ResourceParser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
