@@ -62,3 +62,8 @@ works the same way as before and requires no changes.
 ### SelectStage.PARSE_REQUEST is gone [#537](https://github.com/agrestio/agrest/issues/537)
 `SelectStage.PARSE_REQUEST` is no longer needed, as protocol parameter parsing happens outside of a stage, right in
 the context. If you had stage callbacks referencing this stage, you may instead reference `SelectStage.START`.
+
+### SelectBuilder / UpdateBuilder "uri()" is replaced with "clientParams()" [#537](https://github.com/agrestio/agrest/issues/537)
+To remove a direct dependency oin JAX-RS API, `SelectBuilder.uri(UriInfo)` and `UpdateBuilder.uri(UriInfo)`are replaced
+with `SelectBuilder.clientParams(Map)` and `UpdateBuilder.clientParams(Map)`. Parameters map passed as an argument 
+corresponds to `UriInfo.getQueryParameters()`.

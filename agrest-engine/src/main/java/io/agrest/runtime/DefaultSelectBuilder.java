@@ -14,9 +14,9 @@ import io.agrest.processor.Processor;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 
-import javax.ws.rs.core.UriInfo;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -78,8 +78,8 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     }
 
     @Override
-    public SelectBuilder<T> uri(UriInfo uriInfo) {
-        this.context.mergeClientParameters(uriInfo.getQueryParameters());
+    public SelectBuilder<T> clientParams(Map<String, List<String>> params) {
+        this.context.mergeClientParameters(params);
         return this;
     }
 

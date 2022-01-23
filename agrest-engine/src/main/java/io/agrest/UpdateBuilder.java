@@ -11,8 +11,8 @@ import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.update.UpdateContext;
 
-import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -68,11 +68,12 @@ public interface UpdateBuilder<T> {
     UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
 
     /**
-     * Sets request {@link UriInfo} that will be used to shape response.
+     * Sets client parameters for this request. Agrest would recognize the keys in the "params" that match the
+     * "Agrest Protocol" as defined in {@link io.agrest.protocol.AgProtocol} enum.
      *
-     * @since 1.14
+     * @since 5.0
      */
-    UpdateBuilder<T> uri(UriInfo uriInfo);
+    UpdateBuilder<T> clientParams(Map<String, List<String>> params);
 
     /**
      * Adds a {@link PropertyFilter} that define property read access rules for the current request and a given entity.

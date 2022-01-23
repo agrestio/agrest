@@ -15,10 +15,10 @@ import io.agrest.runtime.processor.update.BaseUpdateProcessorFactory;
 import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
 
-import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,8 +40,8 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     }
 
     @Override
-    public UpdateBuilder<T> uri(UriInfo uriInfo) {
-        context.mergeClientParameters(uriInfo.getQueryParameters());
+    public UpdateBuilder<T> clientParams(Map<String, List<String>> params) {
+        this.context.mergeClientParameters(params);
         return this;
     }
 

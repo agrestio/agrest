@@ -9,7 +9,7 @@ import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.select.SelectContext;
 
-import javax.ws.rs.core.UriInfo;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -22,11 +22,12 @@ import java.util.function.Function;
 public interface SelectBuilder<T> {
 
     /**
-     * Sets request {@link UriInfo} that is a source of various request parameters.
+     * Sets client parameters for this request. Agrest would recognize the keys in the "params" that match the
+     * "Agrest Protocol" as defined in {@link io.agrest.protocol.AgProtocol} enum.
      *
-     * @since 1.14
+     * @since 5.0
      */
-    SelectBuilder<T> uri(UriInfo uriInfo);
+    SelectBuilder<T> clientParams(Map<String, List<String>> params);
 
     /**
      * Sets the Encoder of the entire response, overriding framework-provided Encoder.
