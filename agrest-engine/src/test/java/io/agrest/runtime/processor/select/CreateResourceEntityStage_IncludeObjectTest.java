@@ -21,6 +21,7 @@ import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.entity.MapByMerger;
 import io.agrest.runtime.entity.SizeMerger;
 import io.agrest.runtime.entity.SortMerger;
+import io.agrest.runtime.processor.select.stage.SelectCreateResourceEntityStage;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IExpParser;
 import io.agrest.runtime.protocol.IIncludeParser;
@@ -31,17 +32,15 @@ import org.apache.cayenne.di.Injector;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 public class CreateResourceEntityStage_IncludeObjectTest {
 
-    private static CreateResourceEntityStage stage;
+    private static SelectCreateResourceEntityStage stage;
     private static IAgRequestBuilderFactory requestBuilderFactory;
 
     @BeforeAll
@@ -58,7 +57,7 @@ public class CreateResourceEntityStage_IncludeObjectTest {
         IIncludeMerger includeConstructor = new IncludeMerger(dataMap, expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
         IExcludeMerger excludeConstructor = new ExcludeMerger();
 
-        stage = new CreateResourceEntityStage(
+        stage = new SelectCreateResourceEntityStage(
                 dataMap,
                 expConstructor,
                 sortConstructor,

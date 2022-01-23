@@ -25,6 +25,7 @@ import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.entity.MapByMerger;
 import io.agrest.runtime.entity.SizeMerger;
 import io.agrest.runtime.entity.SortMerger;
+import io.agrest.runtime.processor.select.stage.SelectCreateResourceEntityStage;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IExpParser;
 import io.agrest.runtime.protocol.IIncludeParser;
@@ -44,7 +45,7 @@ import static org.mockito.Mockito.mock;
 
 public class CreateResourceEntityStageTest {
 
-    private static CreateResourceEntityStage stage;
+    private static SelectCreateResourceEntityStage stage;
     private static IAgRequestBuilderFactory requestBuilderFactory;
 
     @BeforeAll
@@ -61,7 +62,7 @@ public class CreateResourceEntityStageTest {
         IIncludeMerger includeMerger = new IncludeMerger(dataMap, expMerger, sortMerger, mapByMerger, sizeMerger);
         IExcludeMerger excludeMerger = new ExcludeMerger();
 
-        stage = new CreateResourceEntityStage(
+        stage = new SelectCreateResourceEntityStage(
                 dataMap,
                 expMerger,
                 sortMerger,

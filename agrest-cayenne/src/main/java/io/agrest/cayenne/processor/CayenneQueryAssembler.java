@@ -11,8 +11,8 @@ import io.agrest.protocol.Sort;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.path.PathOps;
 import io.agrest.cayenne.persister.ICayennePersister;
-import io.agrest.cayenne.qualifier.IQualifierParser;
-import io.agrest.cayenne.qualifier.IQualifierPostProcessor;
+import io.agrest.cayenne.exp.ICayenneExpParser;
+import io.agrest.cayenne.exp.ICayenneExpPostProcessor;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
@@ -48,8 +48,8 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
     private final Provider<AgDataMap> dataMap;
     private final EntityResolver entityResolver;
     private final IPathResolver pathResolver;
-    private final IQualifierParser qualifierParser;
-    private final IQualifierPostProcessor qualifierPostProcessor;
+    private final ICayenneExpParser qualifierParser;
+    private final ICayenneExpPostProcessor qualifierPostProcessor;
 
     public CayenneQueryAssembler(
 
@@ -59,8 +59,8 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
             @Inject ICayennePersister persister,
             @Inject IPathResolver pathResolver,
-            @Inject IQualifierParser qualifierParser,
-            @Inject IQualifierPostProcessor qualifierPostProcessor) {
+            @Inject ICayenneExpParser qualifierParser,
+            @Inject ICayenneExpPostProcessor qualifierPostProcessor) {
 
         this.dataMap = dataMap;
         this.entityResolver = persister.entityResolver();

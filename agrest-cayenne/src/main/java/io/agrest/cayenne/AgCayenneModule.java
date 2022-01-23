@@ -7,39 +7,41 @@ import io.agrest.cayenne.path.PathResolver;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneQueryAssembler;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
-import io.agrest.cayenne.processor.delete.CayenneDeleteInDataStoreStage;
-import io.agrest.cayenne.processor.delete.CayenneDeleteStartStage;
-import io.agrest.cayenne.processor.unrelate.CayenneUnrelateDataStoreStage;
-import io.agrest.cayenne.processor.unrelate.CayenneUnrelateStartStage;
-import io.agrest.cayenne.processor.update.CayenneCreatedOrOkResponseStage;
-import io.agrest.cayenne.processor.update.CayenneCreatedResponseStage;
-import io.agrest.cayenne.processor.update.CayenneMapCreateOrUpdateStage;
-import io.agrest.cayenne.processor.update.CayenneMapCreateStage;
-import io.agrest.cayenne.processor.update.CayenneMapIdempotentCreateOrUpdateStage;
-import io.agrest.cayenne.processor.update.CayenneMapIdempotentFullSyncStage;
-import io.agrest.cayenne.processor.update.CayenneMapUpdateStage;
-import io.agrest.cayenne.processor.update.CayenneMergeChangesStage;
-import io.agrest.cayenne.processor.update.CayenneOkResponseStage;
-import io.agrest.cayenne.processor.update.CayenneUpdateApplyServerParamsStage;
-import io.agrest.cayenne.processor.update.CayenneUpdateCommitStage;
-import io.agrest.cayenne.processor.update.CayenneUpdateStartStage;
-import io.agrest.cayenne.provider.CayenneRuntimeExceptionMapper;
-import io.agrest.cayenne.provider.ValidationExceptionMapper;
-import io.agrest.cayenne.qualifier.IQualifierParser;
-import io.agrest.cayenne.qualifier.IQualifierPostProcessor;
-import io.agrest.cayenne.qualifier.QualifierParser;
-import io.agrest.cayenne.qualifier.QualifierPostProcessor;
+import io.agrest.cayenne.processor.delete.stage.CayenneDeleteInDataStoreStage;
+import io.agrest.cayenne.processor.delete.stage.CayenneDeleteStartStage;
+import io.agrest.cayenne.processor.delete.stage.CayenneDeleteMapChangesStage;
+import io.agrest.cayenne.processor.select.stage.CayenneSelectApplyServerParamsStage;
+import io.agrest.cayenne.processor.unrelate.stage.CayenneUnrelateDataStoreStage;
+import io.agrest.cayenne.processor.unrelate.stage.CayenneUnrelateStartStage;
+import io.agrest.cayenne.processor.update.stage.CayenneCreatedOrOkResponseStage;
+import io.agrest.cayenne.processor.update.stage.CayenneCreatedResponseStage;
+import io.agrest.cayenne.processor.update.stage.CayenneMapCreateOrUpdateStage;
+import io.agrest.cayenne.processor.update.stage.CayenneMapCreateStage;
+import io.agrest.cayenne.processor.update.stage.CayenneMapIdempotentCreateOrUpdateStage;
+import io.agrest.cayenne.processor.update.stage.CayenneMapIdempotentFullSyncStage;
+import io.agrest.cayenne.processor.update.stage.CayenneMapUpdateStage;
+import io.agrest.cayenne.processor.update.stage.CayenneMergeChangesStage;
+import io.agrest.cayenne.processor.update.stage.CayenneOkResponseStage;
+import io.agrest.cayenne.processor.update.stage.CayenneUpdateApplyServerParamsStage;
+import io.agrest.cayenne.processor.update.stage.CayenneUpdateCommitStage;
+import io.agrest.cayenne.processor.update.stage.CayenneUpdateStartStage;
+import io.agrest.cayenne.spi.CayenneRuntimeExceptionMapper;
+import io.agrest.cayenne.spi.ValidationExceptionMapper;
+import io.agrest.cayenne.exp.ICayenneExpParser;
+import io.agrest.cayenne.exp.ICayenneExpPostProcessor;
+import io.agrest.cayenne.exp.CayenneExpParser;
+import io.agrest.cayenne.exp.CayenneExpPostProcessor;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.converter.jsonvalue.JsonValueConverter;
 import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.encoder.Encoder;
-import io.agrest.runtime.processor.delete.DeleteInDataStoreStage;
-import io.agrest.runtime.processor.delete.DeleteMapChangesStage;
-import io.agrest.runtime.processor.delete.DeleteStartStage;
-import io.agrest.runtime.processor.select.ApplyServerParamsStage;
-import io.agrest.runtime.processor.unrelate.UnrelateStartStage;
-import io.agrest.runtime.processor.unrelate.UnrelateUpdateDateStoreStage;
+import io.agrest.runtime.processor.delete.stage.DeleteInDataStoreStage;
+import io.agrest.runtime.processor.delete.stage.DeleteMapChangesStage;
+import io.agrest.runtime.processor.delete.stage.DeleteStartStage;
+import io.agrest.runtime.processor.select.stage.SelectApplyServerParamsStage;
+import io.agrest.runtime.processor.unrelate.stage.UnrelateStartStage;
+import io.agrest.runtime.processor.unrelate.stage.UnrelateUpdateDateStoreStage;
 import io.agrest.runtime.processor.update.UpdateFlavorDIKeys;
 import io.agrest.runtime.processor.update.stage.UpdateApplyServerParamsStage;
 import io.agrest.runtime.processor.update.stage.UpdateCommitStage;
@@ -80,8 +82,8 @@ public class AgCayenneModule implements Module {
         binder.bind(CayenneAgEntityCompiler.class).to(CayenneAgEntityCompiler.class);
         binder.bindList(AgEntityCompiler.class).insertBefore(CayenneAgEntityCompiler.class, AnnotationsAgEntityCompiler.class);
         binder.bind(ICayennePersister.class).toInstance(persister);
-        binder.bind(IQualifierParser.class).to(QualifierParser.class);
-        binder.bind(IQualifierPostProcessor.class).to(QualifierPostProcessor.class);
+        binder.bind(ICayenneExpParser.class).to(CayenneExpParser.class);
+        binder.bind(ICayenneExpPostProcessor.class).to(CayenneExpPostProcessor.class);
         binder.bind(ICayenneQueryAssembler.class).to(CayenneQueryAssembler.class);
         binder.bind(IPathResolver.class).to(PathResolver.class);
 
@@ -90,7 +92,7 @@ public class AgCayenneModule implements Module {
                 .put(ValidationException.class.getName(), ValidationExceptionMapper.class);
 
         // Cayenne overrides for select stages
-        binder.bind(ApplyServerParamsStage.class).to(io.agrest.cayenne.processor.select.CayenneApplyServerParamsStage.class);
+        binder.bind(SelectApplyServerParamsStage.class).to(CayenneSelectApplyServerParamsStage.class);
         
         // Cayenne overrides for update stages
         binder.bind(UpdateStartStage.class).to(CayenneUpdateStartStage.class);
@@ -112,7 +114,7 @@ public class AgCayenneModule implements Module {
 
         // Cayenne overrides for delete stages
         binder.bind(DeleteStartStage.class).to(CayenneDeleteStartStage.class);
-        binder.bind(DeleteMapChangesStage.class).to(io.agrest.cayenne.processor.delete.CayenneMapChangesStage.class);
+        binder.bind(DeleteMapChangesStage.class).to(CayenneDeleteMapChangesStage.class);
         binder.bind(DeleteInDataStoreStage.class).to(CayenneDeleteInDataStoreStage.class);
 
         // Cayenne overrides for unrelate stages

@@ -9,8 +9,8 @@ import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.path.PathResolver;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneQueryAssembler;
-import io.agrest.cayenne.qualifier.QualifierParser;
-import io.agrest.cayenne.qualifier.QualifierPostProcessor;
+import io.agrest.cayenne.exp.CayenneExpParser;
+import io.agrest.cayenne.exp.CayenneExpPostProcessor;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.jaxrs.meta.parser.ResourceParser;
@@ -92,8 +92,8 @@ public abstract class CayenneNoDbTest {
                 () -> dataMap,
                 mockCayennePersister,
                 pathDescriptorManager,
-                new QualifierParser(),
-                new QualifierPostProcessor(pathDescriptorManager));
+                new CayenneExpParser(),
+                new CayenneExpPostProcessor(pathDescriptorManager));
     }
 
     protected List<AgEntityCompiler> createEntityCompilers() {

@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>agrest-jaxrs-openapi</artifactId>
-    <name>agrest-jaxrs-openapi: OpenAPI 3 / Swagger integration with JAX-RS Agrest</name>
+    <name>agrest-jaxrs-openapi: OpenAPI3/Swagger for JAX-RS Agrest</name>
 
     <dependencies>
 

@@ -4,12 +4,12 @@ import io.agrest.SelectStage;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.AgExceptionMappers;
-import io.agrest.runtime.processor.select.ApplyServerParamsStage;
-import io.agrest.runtime.processor.select.CreateResourceEntityStage;
-import io.agrest.runtime.processor.select.EncoderInstallStage;
+import io.agrest.runtime.processor.select.stage.SelectApplyServerParamsStage;
+import io.agrest.runtime.processor.select.stage.SelectCreateResourceEntityStage;
+import io.agrest.runtime.processor.select.stage.SelectEncoderInstallStage;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
-import io.agrest.runtime.processor.select.StartStage;
+import io.agrest.runtime.processor.select.stage.SelectStartStage;
 import org.apache.cayenne.di.DIRuntimeException;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.di.Provider;
@@ -22,11 +22,11 @@ public class PojoSelectProcessorFactoryProvider implements Provider<SelectProces
     private final EnumMap<SelectStage, Processor<SelectContext<?>>> stages;
 
     public PojoSelectProcessorFactoryProvider(
-            @Inject StartStage startStage,
-            @Inject CreateResourceEntityStage createResourceEntityStage,
-            @Inject ApplyServerParamsStage applyServerParamsStage,
+            @Inject SelectStartStage startStage,
+            @Inject SelectCreateResourceEntityStage createResourceEntityStage,
+            @Inject SelectApplyServerParamsStage applyServerParamsStage,
             @Inject PojoFetchStage pojoFetchStage,
-            @Inject EncoderInstallStage encoderStage,
+            @Inject SelectEncoderInstallStage encoderStage,
 
             @Inject AgExceptionMappers exceptionMappers) {
 
