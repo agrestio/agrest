@@ -17,7 +17,7 @@ objects instead).
 
 ### "agrest-openapi-designfirst" was removed [#518](https://github.com/agrestio/agrest/issues/518)
 "agrest-openapi-designfirst" extensions module was removed. It wasn't well-maintained and didn't work that well. 
-Instead of endpoint geberation from the OpenAPI model, we offer code-first documentation approach via "agrest-openapi"
+Instead of endpoint generation from the OpenAPI model, we offer code-first documentation approach via "agrest-jaxrs-openapi"
 module.
 
 ### Multi-property ID format changed for Cayenne objects [#521](https://github.com/agrestio/agrest/issues/521)
@@ -59,8 +59,10 @@ those exceptions with `AgException` to ensure it is rendered cleanly in the resp
 works the same way as before and requires no changes.
 
 ### (JAX-RS) Dependencies [#537](https://github.com/agrestio/agrest/issues/537)
-All JAX-RS specific code is now moved to a new module - `agrest-jaxrs`. It will need to be explicitly added to the 
-application dependencies.
+* All JAX-RS specific code is now moved to a new module - `agrest-jaxrs`. It will need to be explicitly added to the 
+application dependencies. 
+* `agrest-openapi` got renamed to `agrest-jaxrs-openapi` and will require renaming in Maven
+pom.xml or Gradle scripts.
 
 ### (JAX-RS) Starting the stack [#537](https://github.com/agrestio/agrest/issues/537)
 As JAX-RS is no longer a part of Agrest core, and comes from a separate module, Agrest runtime startup in a JAX-RS 
