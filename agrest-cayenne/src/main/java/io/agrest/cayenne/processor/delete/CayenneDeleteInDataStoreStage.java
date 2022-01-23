@@ -1,8 +1,8 @@
 package io.agrest.cayenne.processor.delete;
 
-import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.delete.DeleteContext;
+import io.agrest.runtime.processor.delete.DeleteInDataStoreStage;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @since 2.7
+ * @since 5.0
  */
-public class CayenneDeleteStage implements Processor<DeleteContext<?>> {
+public class CayenneDeleteInDataStoreStage extends DeleteInDataStoreStage {
 
     @Override
     public ProcessorOutcome execute(DeleteContext<?> context) {

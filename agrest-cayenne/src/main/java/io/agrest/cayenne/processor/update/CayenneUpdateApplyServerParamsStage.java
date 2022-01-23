@@ -15,9 +15,9 @@ import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
-import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.constraints.IConstraintsHandler;
+import io.agrest.runtime.processor.update.stage.UpdateApplyServerParamsStage;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.parser.ASTDbPath;
@@ -38,14 +38,14 @@ import java.util.Set;
 /**
  * @since 2.7
  */
-public class CayenneApplyServerParamsStage implements Processor<UpdateContext<?>> {
+public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParamsStage {
 
     private final IConstraintsHandler constraintsHandler;
     private final EntityResolver entityResolver;
     private final IPathResolver pathResolver;
     private final AgDataMap dataMap;
 
-    public CayenneApplyServerParamsStage(
+    public CayenneUpdateApplyServerParamsStage(
             @Inject IPathResolver pathResolver,
             @Inject IConstraintsHandler constraintsHandler,
             @Inject ICayennePersister persister,

@@ -1,18 +1,19 @@
-package io.agrest.runtime.processor.update;
+package io.agrest.runtime.processor.update.stage;
 
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.entity.IResultFilter;
+import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.di.Inject;
 
 /**
- * @since 4.8
+ * @since 5.0
  */
-public class FilterResultStage implements Processor<UpdateContext<?>> {
+public class UpdateFilterResultStage implements Processor<UpdateContext<?>> {
 
     private final IResultFilter resultFilter;
 
-    public FilterResultStage(@Inject IResultFilter resultFilter) {
+    public UpdateFilterResultStage(@Inject IResultFilter resultFilter) {
         this.resultFilter = resultFilter;
     }
 

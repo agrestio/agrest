@@ -1,33 +1,27 @@
-package io.agrest.runtime.processor.update;
+package io.agrest.runtime.processor.update.stage;
 
 import io.agrest.EntityUpdate;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
+import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.protocol.IEntityUpdateParser;
-import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import org.apache.cayenne.di.Inject;
 
 import java.util.Collection;
 
 /**
- * @since 2.7
+ * @since 5.0
  */
-public class ParseRequestStage implements Processor<UpdateContext<?>> {
+public class UpdateParseRequestStage implements Processor<UpdateContext<?>> {
 
     private AgDataMap dataMap;
     private IEntityUpdateParser updateParser;
-    private IAgRequestBuilderFactory requestBuilderFactory;
 
-    public ParseRequestStage(
-            @Inject AgDataMap dataMap,
-            @Inject IEntityUpdateParser updateParser,
-            @Inject IAgRequestBuilderFactory requestBuilderFactory) {
-
+    public UpdateParseRequestStage(@Inject AgDataMap dataMap, @Inject IEntityUpdateParser updateParser) {
         this.updateParser = updateParser;
         this.dataMap = dataMap;
-        this.requestBuilderFactory = requestBuilderFactory;
     }
 
     @Override

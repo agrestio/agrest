@@ -7,9 +7,9 @@ import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
-import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.delete.DeleteContext;
+import io.agrest.runtime.processor.delete.DeleteMapChangesStage;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import org.apache.cayenne.DataObject;
@@ -27,7 +27,7 @@ import java.util.List;
  *
  * @since 4.8
  */
-public class CayenneMapChangesStage implements Processor<DeleteContext<?>> {
+public class CayenneMapChangesStage extends DeleteMapChangesStage {
 
     private final AgDataMap dataMap;
     private final IPathResolver pathResolver;

@@ -1,19 +1,20 @@
-package io.agrest.runtime.processor.update;
+package io.agrest.runtime.processor.update.stage;
 
 import io.agrest.encoder.Encoder;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.encoder.IEncoderService;
+import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.di.Inject;
 
 /**
  * @since 4.8
  */
-public class EncoderInstallStage implements Processor<UpdateContext<?>> {
+public class UpdateEncoderInstallStage implements Processor<UpdateContext<?>> {
 
     private final IEncoderService encoderService;
 
-    public EncoderInstallStage(@Inject IEncoderService encoderService) {
+    public UpdateEncoderInstallStage(@Inject IEncoderService encoderService) {
         this.encoderService = encoderService;
     }
 

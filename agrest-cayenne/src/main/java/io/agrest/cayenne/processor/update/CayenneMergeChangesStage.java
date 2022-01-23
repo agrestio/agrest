@@ -10,11 +10,11 @@ import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
-import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
+import io.agrest.runtime.processor.update.stage.UpdateMergeChangesStage;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.DataRow;
@@ -42,7 +42,7 @@ import java.util.Set;
  *
  * @since 2.7
  */
-public class CayenneMergeChangesStage implements Processor<UpdateContext<?>> {
+public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
 
     private final AgDataMap dataMap;
     private final EntityResolver entityResolver;

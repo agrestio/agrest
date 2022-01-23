@@ -1,15 +1,15 @@
 package io.agrest.cayenne.processor.update;
 
-import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
+import io.agrest.runtime.processor.update.stage.UpdateCommitStage;
 import io.agrest.runtime.processor.update.UpdateContext;
 
 /**
  * Handles {@link io.agrest.UpdateStage#COMMIT} stage of the update process.
  *
- * @since 3.6
+ * @since 5.0
  */
-public class CayenneCommitStage implements Processor<UpdateContext<?>> {
+public class CayenneUpdateCommitStage extends UpdateCommitStage {
 
     @Override
     public ProcessorOutcome execute(UpdateContext<?> context) {

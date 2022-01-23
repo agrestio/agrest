@@ -7,10 +7,10 @@ import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.ToManyResourceEntity;
-import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.property.PropertyReader;
 import io.agrest.runtime.processor.update.UpdateContext;
+import io.agrest.runtime.processor.update.stage.UpdateFillResponseStage;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.Fault;
 import org.apache.cayenne.ObjectId;
@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * @since 2.7
  */
-public abstract class CayenneFillResponseStage implements Processor<UpdateContext<?>> {
+public abstract class CayenneFillResponseStage extends UpdateFillResponseStage {
 
     @Override
     public ProcessorOutcome execute(UpdateContext<?> context) {

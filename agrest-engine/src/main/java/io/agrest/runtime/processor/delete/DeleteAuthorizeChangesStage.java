@@ -9,13 +9,13 @@ import org.apache.cayenne.di.Inject;
  * A processor associated with {@link io.agrest.DeleteStage#AUTHORIZE_CHANGES} that runs delete authorization filters
  * against request operations. It would fail the chain if at least one rule is not satisfied.
  *
- * @since 4.8
+ * @since 5.0
  */
-public class AuthorizeChangesStage implements Processor<DeleteContext<?>> {
+public class DeleteAuthorizeChangesStage implements Processor<DeleteContext<?>> {
 
     private final IChangeAuthorizer changeAuthorizer;
 
-    public AuthorizeChangesStage(@Inject IChangeAuthorizer changeAuthorizer) {
+    public DeleteAuthorizeChangesStage(@Inject IChangeAuthorizer changeAuthorizer) {
         this.changeAuthorizer = changeAuthorizer;
     }
 

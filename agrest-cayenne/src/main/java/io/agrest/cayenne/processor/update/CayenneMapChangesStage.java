@@ -1,8 +1,8 @@
 package io.agrest.cayenne.processor.update;
 
-import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.update.UpdateContext;
+import io.agrest.runtime.processor.update.stage.UpdateMapChangesStage;
 import org.apache.cayenne.DataObject;
 
 /**
@@ -11,7 +11,7 @@ import org.apache.cayenne.DataObject;
  *
  * @since 4.8
  */
-public abstract class CayenneMapChangesStage implements Processor<UpdateContext<?>> {
+public abstract class CayenneMapChangesStage extends UpdateMapChangesStage {
 
     @Override
     public ProcessorOutcome execute(UpdateContext<?> context) {

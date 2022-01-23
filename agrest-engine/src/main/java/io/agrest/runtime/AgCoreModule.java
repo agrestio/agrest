@@ -61,6 +61,12 @@ import io.agrest.runtime.meta.BaseUrlProvider;
 import io.agrest.runtime.meta.IResourceMetadataService;
 import io.agrest.runtime.meta.LazyAgDataMapProvider;
 import io.agrest.runtime.meta.ResourceMetadataService;
+import io.agrest.runtime.processor.delete.DeleteAuthorizeChangesStage;
+import io.agrest.runtime.processor.delete.DeleteInDataStoreStage;
+import io.agrest.runtime.processor.delete.DeleteMapChangesStage;
+import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
+import io.agrest.runtime.processor.delete.DeleteProcessorFactoryProvider;
+import io.agrest.runtime.processor.delete.DeleteStartStage;
 import io.agrest.runtime.processor.meta.CollectMetadataStage;
 import io.agrest.runtime.processor.meta.MetadataProcessorFactory;
 import io.agrest.runtime.processor.meta.MetadataProcessorFactoryProvider;
@@ -73,6 +79,32 @@ import io.agrest.runtime.processor.select.FilterResultStage;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import io.agrest.runtime.processor.select.SelectProcessorFactoryProvider;
 import io.agrest.runtime.processor.select.StartStage;
+import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
+import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactoryProvider;
+import io.agrest.runtime.processor.unrelate.UnrelateStartStage;
+import io.agrest.runtime.processor.unrelate.UnrelateUpdateDateStoreStage;
+import io.agrest.runtime.processor.update.CreateOrUpdateProcessorFactory;
+import io.agrest.runtime.processor.update.CreateProcessorFactory;
+import io.agrest.runtime.processor.update.IdempotentCreateOrUpdateProcessorFactory;
+import io.agrest.runtime.processor.update.IdempotentFullSyncProcessorFactory;
+import io.agrest.runtime.processor.update.UpdateFlavorDIKeys;
+import io.agrest.runtime.processor.update.UpdateProcessorFactory;
+import io.agrest.runtime.processor.update.provider.CreateOrUpdateProcessorFactoryProvider;
+import io.agrest.runtime.processor.update.provider.CreateProcessorFactoryProvider;
+import io.agrest.runtime.processor.update.provider.IdempotentCreateOrUpdateProcessorFactoryProvider;
+import io.agrest.runtime.processor.update.provider.IdempotentFullSyncProcessorFactoryProvider;
+import io.agrest.runtime.processor.update.provider.UpdateProcessorFactoryProvider;
+import io.agrest.runtime.processor.update.stage.UpdateApplyServerParamsStage;
+import io.agrest.runtime.processor.update.stage.UpdateAuthorizeChangesStage;
+import io.agrest.runtime.processor.update.stage.UpdateCommitStage;
+import io.agrest.runtime.processor.update.stage.UpdateCreateResourceEntityStage;
+import io.agrest.runtime.processor.update.stage.UpdateEncoderInstallStage;
+import io.agrest.runtime.processor.update.stage.UpdateFillResponseStage;
+import io.agrest.runtime.processor.update.stage.UpdateFilterResultStage;
+import io.agrest.runtime.processor.update.stage.UpdateMapChangesStage;
+import io.agrest.runtime.processor.update.stage.UpdateMergeChangesStage;
+import io.agrest.runtime.processor.update.stage.UpdateParseRequestStage;
+import io.agrest.runtime.processor.update.stage.UpdateStartStage;
 import io.agrest.runtime.protocol.EntityUpdateParser;
 import io.agrest.runtime.protocol.ExcludeParser;
 import io.agrest.runtime.protocol.ExpParser;
@@ -92,6 +124,7 @@ import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.spi.AgExceptionDefaultMapper;
 import io.agrest.spi.AgExceptionMapper;
 import org.apache.cayenne.di.Binder;
+import org.apache.cayenne.di.Key;
 import org.apache.cayenne.di.MapBuilder;
 import org.apache.cayenne.di.Module;
 
@@ -158,20 +191,45 @@ public class AgCoreModule implements Module {
         binder.bind(FilterResultStage.class).to(FilterResultStage.class);
 
         // update stages
-        binder.bind(io.agrest.runtime.processor.update.ParseRequestStage.class)
-                .to(io.agrest.runtime.processor.update.ParseRequestStage.class);
-        binder.bind(io.agrest.runtime.processor.update.CreateResourceEntityStage.class)
-                .to(io.agrest.runtime.processor.update.CreateResourceEntityStage.class);
-        binder.bind(io.agrest.runtime.processor.update.AuthorizeChangesStage.class)
-                .to(io.agrest.runtime.processor.update.AuthorizeChangesStage.class);
-        binder.bind(io.agrest.runtime.processor.update.FilterResultStage.class)
-                .to(io.agrest.runtime.processor.update.FilterResultStage.class);
-        binder.bind(io.agrest.runtime.processor.update.EncoderInstallStage.class)
-                .to(io.agrest.runtime.processor.update.EncoderInstallStage.class);
+        binder.bind(CreateProcessorFactory.class).toProvider(CreateProcessorFactoryProvider.class);
+        binder.bind(UpdateProcessorFactory.class).toProvider(UpdateProcessorFactoryProvider.class);
+        binder.bind(CreateOrUpdateProcessorFactory.class).toProvider(CreateOrUpdateProcessorFactoryProvider.class);
+        binder.bind(IdempotentCreateOrUpdateProcessorFactory.class).toProvider(IdempotentCreateOrUpdateProcessorFactoryProvider.class);
+        binder.bind(IdempotentFullSyncProcessorFactory.class).toProvider(IdempotentFullSyncProcessorFactoryProvider.class);
+
+        binder.bind(UpdateStartStage.class).to(UpdateStartStage.class);
+        binder.bind(UpdateApplyServerParamsStage.class).to(UpdateApplyServerParamsStage.class);
+        binder.bind(UpdateParseRequestStage.class).to(UpdateParseRequestStage.class);
+        binder.bind(UpdateCreateResourceEntityStage.class).to(UpdateCreateResourceEntityStage.class);
+        binder.bind(UpdateAuthorizeChangesStage.class).to(UpdateAuthorizeChangesStage.class);
+        binder.bind(UpdateFilterResultStage.class).to(UpdateFilterResultStage.class);
+        binder.bind(UpdateEncoderInstallStage.class).to(UpdateEncoderInstallStage.class);
+        binder.bind(UpdateMergeChangesStage.class).to(UpdateMergeChangesStage.class);
+        binder.bind(UpdateCommitStage.class).to(UpdateCommitStage.class);
+
+        binder.bind(Key.get(UpdateFillResponseStage.class, UpdateFlavorDIKeys.CREATE)).toInstance(UpdateFillResponseStage.getInstance());
+        binder.bind(Key.get(UpdateFillResponseStage.class, UpdateFlavorDIKeys.CREATE_OR_UPDATE)).toInstance(UpdateFillResponseStage.getInstance());
+        binder.bind(Key.get(UpdateFillResponseStage.class, UpdateFlavorDIKeys.IDEMPOTENT_CREATE_OR_UPDATE)).toInstance(UpdateFillResponseStage.getInstance());
+        binder.bind(Key.get(UpdateFillResponseStage.class, UpdateFlavorDIKeys.IDEMPOTENT_FULL_SYNC)).toInstance(UpdateFillResponseStage.getInstance());
+        binder.bind(Key.get(UpdateFillResponseStage.class, UpdateFlavorDIKeys.UPDATE)).toInstance(UpdateFillResponseStage.getInstance());
+
+        binder.bind(Key.get(UpdateMapChangesStage.class, UpdateFlavorDIKeys.CREATE)).toInstance(UpdateMapChangesStage.getInstance());
+        binder.bind(Key.get(UpdateMapChangesStage.class, UpdateFlavorDIKeys.CREATE_OR_UPDATE)).toInstance(UpdateMapChangesStage.getInstance());
+        binder.bind(Key.get(UpdateMapChangesStage.class, UpdateFlavorDIKeys.IDEMPOTENT_CREATE_OR_UPDATE)).toInstance(UpdateMapChangesStage.getInstance());
+        binder.bind(Key.get(UpdateMapChangesStage.class, UpdateFlavorDIKeys.IDEMPOTENT_FULL_SYNC)).toInstance(UpdateMapChangesStage.getInstance());
+        binder.bind(Key.get(UpdateMapChangesStage.class, UpdateFlavorDIKeys.UPDATE)).toInstance(UpdateMapChangesStage.getInstance());
 
         // delete stages
-        binder.bind(io.agrest.runtime.processor.delete.AuthorizeChangesStage.class)
-                .to(io.agrest.runtime.processor.delete.AuthorizeChangesStage.class);
+        binder.bind(DeleteProcessorFactory.class).toProvider(DeleteProcessorFactoryProvider.class);
+        binder.bind(DeleteStartStage.class).to(DeleteStartStage.class);
+        binder.bind(DeleteMapChangesStage.class).to(DeleteMapChangesStage.class);
+        binder.bind(DeleteAuthorizeChangesStage.class).to(DeleteAuthorizeChangesStage.class);
+        binder.bind(DeleteInDataStoreStage.class).to(DeleteInDataStoreStage.class);
+
+        // unrelate stages
+        binder.bind(UnrelateProcessorFactory.class).toProvider(UnrelateProcessorFactoryProvider.class);
+        binder.bind(UnrelateStartStage.class).to(UnrelateStartStage.class);
+        binder.bind(UnrelateUpdateDateStoreStage.class).to(UnrelateUpdateDateStoreStage.class);
 
         // a map of custom encoders
         binder.bindMap(Encoder.class);

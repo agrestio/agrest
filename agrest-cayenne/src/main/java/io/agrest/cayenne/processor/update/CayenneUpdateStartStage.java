@@ -2,16 +2,16 @@ package io.agrest.cayenne.processor.update;
 
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.processor.ProcessingContext;
-import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.update.UpdateContext;
+import io.agrest.runtime.processor.update.stage.UpdateStartStage;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.di.Inject;
 
 /**
  * @since 2.7
  */
-public class CayenneUpdateStartStage implements Processor<UpdateContext<?>> {
+public class CayenneUpdateStartStage extends UpdateStartStage {
 
     private static final String UPDATE_OBJECT_CONTEXT_ATTRIBUTE = "updateContext";
 

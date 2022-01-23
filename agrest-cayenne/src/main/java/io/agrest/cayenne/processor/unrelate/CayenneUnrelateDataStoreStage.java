@@ -3,9 +3,9 @@ package io.agrest.cayenne.processor.unrelate;
 import io.agrest.AgException;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgRelationship;
-import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.unrelate.UnrelateContext;
+import io.agrest.runtime.processor.unrelate.UnrelateUpdateDateStoreStage;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
@@ -20,7 +20,7 @@ import java.util.Collection;
 /**
  * @since 2.7
  */
-public class CayenneUnrelateDataStoreStage implements Processor<UnrelateContext<?>> {
+public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDateStoreStage {
 
     private final AgDataMap dataMap;
 

@@ -1,22 +1,24 @@
-package io.agrest.runtime.processor.update;
+package io.agrest.runtime.processor.update.stage;
 
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.entity.IChangeAuthorizer;
+import io.agrest.runtime.processor.update.ChangeOperationType;
+import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.di.Inject;
 
 /**
  * A processor associated with {@link io.agrest.UpdateStage#AUTHORIZE_CHANGES} that runs change authorization filters
  * against request data change operations. It would fail the chain if at least one rule is not satisfied.
  *
- * @since 4.8
+ * @since 5.0
  */
-public class AuthorizeChangesStage implements Processor<UpdateContext<?>> {
+public class UpdateAuthorizeChangesStage implements Processor<UpdateContext<?>> {
 
     private final IChangeAuthorizer changeAuthorizer;
 
-    public AuthorizeChangesStage(@Inject IChangeAuthorizer changeAuthorizer) {
+    public UpdateAuthorizeChangesStage(@Inject IChangeAuthorizer changeAuthorizer) {
         this.changeAuthorizer = changeAuthorizer;
     }
 

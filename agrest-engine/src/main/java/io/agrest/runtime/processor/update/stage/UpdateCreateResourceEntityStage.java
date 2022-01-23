@@ -1,4 +1,4 @@
-package io.agrest.runtime.processor.update;
+package io.agrest.runtime.processor.update.stage;
 
 import io.agrest.AgRequest;
 import io.agrest.RootResourceEntity;
@@ -9,18 +9,19 @@ import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.entity.IExcludeMerger;
 import io.agrest.runtime.entity.IIncludeMerger;
+import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.di.Inject;
 
 /**
- * @since 2.13
+ * @since 5.0
  */
-public class CreateResourceEntityStage implements Processor<UpdateContext<?>> {
+public class UpdateCreateResourceEntityStage implements Processor<UpdateContext<?>> {
 
-    private AgDataMap dataMap;
-    private IIncludeMerger includeMerger;
-    private IExcludeMerger excludeMerger;
+    private final AgDataMap dataMap;
+    private final IIncludeMerger includeMerger;
+    private final IExcludeMerger excludeMerger;
 
-    public CreateResourceEntityStage(
+    public UpdateCreateResourceEntityStage(
             @Inject AgDataMap dataMap,
             @Inject IIncludeMerger includeMerger,
             @Inject IExcludeMerger excludeMerger) {
