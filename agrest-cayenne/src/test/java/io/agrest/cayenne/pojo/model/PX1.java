@@ -1,4 +1,4 @@
-package io.agrest.pojo.model;
+package io.agrest.cayenne.pojo.model;
 
 import io.agrest.annotation.AgId;
 

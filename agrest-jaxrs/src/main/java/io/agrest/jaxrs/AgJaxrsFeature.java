@@ -56,4 +56,8 @@ public class AgJaxrsFeature implements Feature {
 
         return true;
     }
+
+    public AgRuntime getRuntime() {
+        return runtime;
+    }
 }

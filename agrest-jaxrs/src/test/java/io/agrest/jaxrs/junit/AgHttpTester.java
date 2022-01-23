@@ -1,4 +1,4 @@
-package io.agrest.unit;
+package io.agrest.jaxrs.junit;
 
 import org.glassfish.jersey.client.ClientProperties;
 

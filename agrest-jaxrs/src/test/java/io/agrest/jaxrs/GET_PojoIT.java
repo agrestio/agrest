@@ -1,8 +1,15 @@
-package io.agrest;
+package io.agrest.jaxrs;
 
-import io.agrest.pojo.model.*;
-import io.agrest.unit.AgPojoTester;
-import io.agrest.unit.PojoTest;
+import io.agrest.DataResponse;
+import io.agrest.jaxrs.junit.AgPojoTester;
+import io.agrest.jaxrs.junit.PojoTest;
+import io.agrest.jaxrs.pojo.model.P1;
+import io.agrest.jaxrs.pojo.model.P10;
+import io.agrest.jaxrs.pojo.model.P3;
+import io.agrest.jaxrs.pojo.model.P4;
+import io.agrest.jaxrs.pojo.model.P6;
+import io.agrest.jaxrs.pojo.model.P8;
+import io.agrest.jaxrs.pojo.model.P9;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -15,12 +22,14 @@ import javax.ws.rs.core.UriInfo;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class GET_PojoIT extends PojoTest {
 
     @BQTestTool
-    static final AgPojoTester tester = tester(Resource.class).build();
+    static final AgPojoTester tester = PojoTest.tester(Resource.class).build();
 
     @Test
     public void testById() {
@@ -190,49 +199,49 @@ public class GET_PojoIT extends PojoTest {
         @GET
         @Path("p1_empty")
         public DataResponse<P1> p1Empty(@Context UriInfo uriInfo) {
-            return Ag.select(P1.class, config).getEmpty();
+            return AgJaxrs.select(P1.class, config).getEmpty();
         }
 
         @GET
         @Path("p1")
         public DataResponse<P1> p1All(@Context UriInfo uriInfo) {
-            return Ag.select(P1.class, config).uri(uriInfo).get();
+            return AgJaxrs.select(P1.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
 
         @GET
         @Path("p4")
         public DataResponse<P4> p4All(@Context UriInfo uriInfo) {
-            return Ag.select(P4.class, config).uri(uriInfo).get();
+            return AgJaxrs.select(P4.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
 
         @GET
         @Path("p6")
         public DataResponse<P6> p6All(@Context UriInfo uriInfo) {
-            return Ag.select(P6.class, config).uri(uriInfo).get();
+            return AgJaxrs.select(P6.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
 
         @GET
         @Path("p6/{id}")
         public DataResponse<P6> p6ById(@PathParam("id") String id, @Context UriInfo uriInfo) {
-            return Ag.select(P6.class, config).uri(uriInfo).byId(id).get();
+            return AgJaxrs.select(P6.class, config).clientParams(uriInfo.getQueryParameters()).byId(id).get();
         }
 
         @GET
         @Path("p8/{id}")
         public DataResponse<P8> p8ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.select(P8.class, config).uri(uriInfo).byId(id).get();
+            return AgJaxrs.select(P8.class, config).clientParams(uriInfo.getQueryParameters()).byId(id).get();
         }
 
         @GET
         @Path("p9")
         public DataResponse<P9> p9All(@Context UriInfo uriInfo) {
-            return Ag.select(P9.class, config).uri(uriInfo).get();
+            return AgJaxrs.select(P9.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
 
         @GET
         @Path("p10/{id1}/{id2}")
         public DataResponse<P10> p10ById(@PathParam("id1") int id1, @PathParam("id2") String id2, @Context UriInfo uriInfo) {
-            return Ag.select(P10.class, config).uri(uriInfo).byId(P10.id(id1, id2)).get();
+            return AgJaxrs.select(P10.class, config).clientParams(uriInfo.getQueryParameters()).byId(P10.id(id1, id2)).get();
         }
     }
 }

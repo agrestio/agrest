@@ -1,4 +1,4 @@
-package io.agrest.runtime.meta;
+package io.agrest.jaxrs.runtime.meta;
 
 import io.agrest.annotation.LinkType;
 import io.agrest.meta.AgDataMap;

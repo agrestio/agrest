@@ -1,7 +1,8 @@
-package io.agrest;
+package io.agrest.jaxrs;
 
-import io.agrest.unit.AgPojoTester;
-import io.agrest.unit.PojoTest;
+import io.agrest.SimpleResponse;
+import io.agrest.jaxrs.junit.AgPojoTester;
+import io.agrest.jaxrs.junit.PojoTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +12,7 @@ import javax.ws.rs.Path;
 public class GET_SimpleResponseIT extends PojoTest {
 
     @BQTestTool
-    static final AgPojoTester tester = tester(Resource.class).build();
+    static final AgPojoTester tester = PojoTest.tester(Resource.class).build();
 
     @Test
     public void testWrite() {

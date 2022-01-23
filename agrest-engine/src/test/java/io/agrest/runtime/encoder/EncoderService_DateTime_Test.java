@@ -21,7 +21,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazyAgDataMap;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.runtime.semantics.RelationshipMapper;
-import io.agrest.unit.ResourceEntityUtils;
+import io.agrest.junit.ResourceEntityUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

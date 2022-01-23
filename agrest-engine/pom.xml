@@ -37,14 +37,6 @@
             <artifactId>cayenne-di</artifactId>
         </dependency>
 
-        <!-- Provided dependencies -->
-        <!-- Either JAX RS or Jakarta RS versions of Jersey will provide this -->
-        <dependency>
-            <groupId>jakarta.ws.rs</groupId>
-            <artifactId>jakarta.ws.rs-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- unit test deps -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -52,18 +44,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.bootique.jetty</groupId>
-            <artifactId>bootique-jetty-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.bootique.jersey</groupId>
-            <artifactId>bootique-jersey</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
+            <groupId>io.bootique</groupId>
+            <artifactId>bootique-junit5</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

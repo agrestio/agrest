@@ -1,9 +1,8 @@
 package io.agrest.access;
 
+import io.agrest.junit.AgPojoTester;
 import io.agrest.meta.AgEntity;
 import io.agrest.pojo.model.P11;
-import io.agrest.unit.AgPojoTester;
-import io.agrest.unit.PojoTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -13,10 +12,10 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PropertyFilteringRulesBuilderTest extends PojoTest {
+public class PropertyFilteringRulesBuilderTest {
 
     @BQTestTool
-    static final AgPojoTester tester = tester().build();
+    static final AgPojoTester tester = AgPojoTester.builder().build();
 
     @Test
     public void testDefault_AllAvailable() {

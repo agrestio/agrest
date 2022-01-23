@@ -1,4 +1,4 @@
-package io.agrest.unit;
+package io.agrest.junit;
 
 import io.agrest.ResourceEntity;
 import io.agrest.meta.DefaultAgAttribute;

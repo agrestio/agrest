@@ -1,10 +1,10 @@
-package io.agrest.provider;
+package io.agrest.jaxrs.provider;
 
 import io.agrest.AgException;
 import io.agrest.DataResponse;
 import io.agrest.pojo.model.P1;
-import io.agrest.unit.AgPojoTester;
-import io.agrest.unit.PojoTest;
+import io.agrest.junit.AgPojoTester;
+import io.agrest.junit.PojoTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ import javax.ws.rs.core.UriInfo;
 public class JaxrsAgExceptionMapperIT extends PojoTest {
 
     @BQTestTool
-    static final AgPojoTester tester = tester(Resource.class).build();
+    static final AgPojoTester tester = PojoTest.tester(Resource.class).build();
 
     @Test
     public void testException() {

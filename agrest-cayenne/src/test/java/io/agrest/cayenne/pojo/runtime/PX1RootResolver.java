@@ -1,6 +1,6 @@
-package io.agrest.pojo.runtime;
+package io.agrest.cayenne.pojo.runtime;
 
-import io.agrest.pojo.model.PX1;
+import io.agrest.cayenne.pojo.model.PX1;
 import io.agrest.resolver.BaseRootDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
 

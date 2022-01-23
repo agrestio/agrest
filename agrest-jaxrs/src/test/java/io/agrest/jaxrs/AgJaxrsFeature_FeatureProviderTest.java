@@ -1,8 +1,6 @@
-package io.agrest.runtime;
+package io.agrest.jaxrs;
 
-import io.agrest.AgFeatureProvider;
-import io.agrest.TestFeatureProvider;
-import org.apache.cayenne.di.Injector;
+import io.agrest.runtime.AgRuntime;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Feature;
@@ -11,59 +9,57 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AgBuilder_FeatureProviderTest {
+public class AgJaxrsFeature_FeatureProviderTest {
 
     @Test
     public void testFeature() {
         inRuntime(
-                new AgBuilder().feature(new LocalTestFeature()),
+                AgJaxrsFeature.builder().feature(new LocalTestFeature()),
                 this::assertLocalTestFeatureActive);
     }
 
     @Test
     public void testFeatureProvider() {
         inRuntime(
-                new AgBuilder().feature(new LocalTestFeatureProvider()),
+                AgJaxrsFeature.builder().feature(new LocalTestFeatureProvider()),
                 this::assertLocalTestFeatureActive);
     }
 
     @Test
     public void testAutoLoadFeaturesDefault() {
         inRuntime(
-                new AgBuilder(),
+                AgJaxrsFeature.builder(),
                 this::assertTestFeatureActive);
     }
 
     @Test
     public void testDoNotAutoLoadFeatures() {
         inRuntime(
-                new AgBuilder().doNotAutoLoadFeatures(),
+                AgJaxrsFeature.builder().doNotAutoLoadFeatures(),
                 this::assertTestFeatureNotActive);
     }
 
-    private void assertTestFeatureActive(AgRuntime runtime) {
-        Set<Object> registered = extractRegisteredInJaxRS(runtime);
+    private void assertTestFeatureActive(AgJaxrsFeature feature) {
+        Set<Object> registered = extractRegisteredInJaxRS(feature);
         assertTrue(registered.contains(TestFeatureProvider.RegisteredByFeature.class));
     }
 
-    private void assertTestFeatureNotActive(AgRuntime runtime) {
-        Set<Object> registered = extractRegisteredInJaxRS(runtime);
+    private void assertTestFeatureNotActive(AgJaxrsFeature feature) {
+        Set<Object> registered = extractRegisteredInJaxRS(feature);
         assertFalse(registered.contains(TestFeatureProvider.RegisteredByFeature.class), "Auto-loading was on");
     }
 
-    private void assertLocalTestFeatureActive(AgRuntime runtime) {
-        Set<Object> registered = extractRegisteredInJaxRS(runtime);
+    private void assertLocalTestFeatureActive(AgJaxrsFeature feature) {
+        Set<Object> registered = extractRegisteredInJaxRS(feature);
         assertTrue(registered.contains(LocalRegisteredByFeature.class), "Auto-loading was off");
     }
 
-    private Set<Object> extractRegisteredInJaxRS(AgRuntime runtime) {
+    private Set<Object> extractRegisteredInJaxRS(AgJaxrsFeature feature) {
         Set<Object> registered = new HashSet<>();
         FeatureContext fc = mock(FeatureContext.class);
         when(fc.register(any(Class.class))).then(i -> {
@@ -71,24 +67,24 @@ public class AgBuilder_FeatureProviderTest {
             return fc;
         });
 
-        runtime.configure(fc);
+        feature.configure(fc);
         return registered;
     }
 
-    private void inRuntime(AgBuilder builder, Consumer<AgRuntime> test) {
-        AgRuntime r = builder.build();
+    private void inRuntime(AgJaxrsFeatureBuilder builder, Consumer<AgJaxrsFeature> test) {
+        AgJaxrsFeature feature = builder.build();
         try {
-            test.accept(r);
+            test.accept(feature);
         } finally {
-            r.shutdown();
+            feature.getRuntime().shutdown();
         }
     }
 
     static class LocalTestFeatureProvider implements AgFeatureProvider {
 
         @Override
-        public Feature feature(Injector injector) {
-            assertNotNull(injector);
+        public Feature feature(AgRuntime runtime) {
+            assertNotNull(runtime);
             return new LocalTestFeature();
         }
     }

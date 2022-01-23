@@ -1,4 +1,4 @@
-package io.agrest.runtime.meta;
+package io.agrest.jaxrs.runtime.meta;
 
 import io.agrest.DataResponse;
 import io.agrest.MetadataResponse;
@@ -10,6 +10,9 @@ import io.agrest.meta.*;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.meta.parser.ResourceParser;
+import io.agrest.runtime.meta.BaseUrlProvider;
+import io.agrest.runtime.meta.IResourceMetadataService;
+import io.agrest.runtime.meta.ResourceMetadataService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +29,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@Deprecated
 public class ResourceMetadataServiceTest {
 
     private static AgDataMap metadata;

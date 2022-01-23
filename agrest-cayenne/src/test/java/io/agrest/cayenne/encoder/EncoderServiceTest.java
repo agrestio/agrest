@@ -22,7 +22,7 @@ import io.agrest.runtime.encoder.IEncodablePropertyFactory;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.runtime.semantics.RelationshipMapper;
-import io.agrest.unit.ResourceEntityUtils;
+import io.agrest.junit.ResourceEntityUtils;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.ObjectId;
 import org.junit.jupiter.api.BeforeEach;

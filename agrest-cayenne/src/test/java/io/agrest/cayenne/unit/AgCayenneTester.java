@@ -6,7 +6,7 @@ import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.IAgService;
-import io.agrest.unit.AgHttpTester;
+import io.agrest.junit.AgHttpTester;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.cayenne.v42.CayenneModule;

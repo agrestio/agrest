@@ -1,6 +1,5 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.AgException;
 import io.agrest.AgResponse;
 import io.agrest.SimpleResponse;
@@ -9,8 +8,8 @@ import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.pojo.model.PX1;
-import io.agrest.pojo.runtime.PX1RootResolver;
+import io.agrest.cayenne.pojo.model.PX1;
+import io.agrest.cayenne.pojo.runtime.PX1RootResolver;
 import io.agrest.resolver.NestedDataResolverFactory;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.params.ParameterizedTest;

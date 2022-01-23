@@ -1,4 +1,4 @@
-package io.agrest.unit;
+package io.agrest.jaxrs.junit;
 
 import io.bootique.junit5.BQTest;
 

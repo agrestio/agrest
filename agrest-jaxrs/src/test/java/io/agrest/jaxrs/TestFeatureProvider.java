@@ -1,6 +1,6 @@
-package io.agrest;
+package io.agrest.jaxrs;
 
-import org.apache.cayenne.di.Injector;
+import io.agrest.runtime.AgRuntime;
 
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
@@ -10,8 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class TestFeatureProvider implements AgFeatureProvider {
 
     @Override
-    public Feature feature(Injector injector) {
-        assertNotNull(injector);
+    public Feature feature(AgRuntime runtime) {
+        assertNotNull(runtime);
         return new TestFeature();
     }
 

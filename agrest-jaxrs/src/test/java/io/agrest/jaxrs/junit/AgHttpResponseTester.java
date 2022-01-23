@@ -1,4 +1,4 @@
-package io.agrest.unit;
+package io.agrest.jaxrs.junit;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

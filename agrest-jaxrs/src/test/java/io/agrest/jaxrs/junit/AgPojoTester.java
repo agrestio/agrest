@@ -1,17 +1,18 @@
-package io.agrest.unit;
+package io.agrest.jaxrs.junit;
 
+import io.agrest.jaxrs.AgJaxrsFeature;
+import io.agrest.jaxrs.pojo.model.P1;
+import io.agrest.jaxrs.pojo.model.P10;
+import io.agrest.jaxrs.pojo.model.P2;
+import io.agrest.jaxrs.pojo.model.P4;
+import io.agrest.jaxrs.pojo.model.P6;
+import io.agrest.jaxrs.pojo.model.P8;
+import io.agrest.jaxrs.pojo.model.P9;
+import io.agrest.jaxrs.pojo.runtime.PojoFetchStage;
+import io.agrest.jaxrs.pojo.runtime.PojoSelectProcessorFactoryProvider;
+import io.agrest.jaxrs.pojo.runtime.PojoStore;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
-import io.agrest.pojo.model.P1;
-import io.agrest.pojo.model.P10;
-import io.agrest.pojo.model.P2;
-import io.agrest.pojo.model.P4;
-import io.agrest.pojo.model.P6;
-import io.agrest.pojo.model.P8;
-import io.agrest.pojo.model.P9;
-import io.agrest.pojo.runtime.PojoFetchStage;
-import io.agrest.pojo.runtime.PojoSelectProcessorFactoryProvider;
-import io.agrest.pojo.runtime.PojoStore;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.IAgService;
@@ -221,7 +222,7 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         }
 
         private void configureJersey(JerseyModuleExtender extender) {
-            extender.addFeature(AgRuntime.class);
+            extender.addFeature(AgJaxrsFeature.class);
             resources.forEach(extender::addResource);
         }
 
