@@ -1,6 +1,5 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.cayenne.main.E17;
 import io.agrest.cayenne.cayenne.main.E2;
@@ -9,6 +8,7 @@ import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -158,19 +158,19 @@ public class DELETE_IT extends DbTest {
         @DELETE
         @Path("e2/{e2_id}/e3s")
         public SimpleResponse deleteByParent(@PathParam("e2_id") int e2Id) {
-            return Ag.delete(E3.class, config).parent(E2.class, e2Id, E2.E3S.getName()).sync();
+            return AgJaxrs.delete(E3.class, config).parent(E2.class, e2Id, E2.E3S.getName()).sync();
         }
 
         @DELETE
         @Path("e4")
         public SimpleResponse deleteAll() {
-            return Ag.delete(E4.class, config).sync();
+            return AgJaxrs.delete(E4.class, config).sync();
         }
 
         @DELETE
         @Path("e4/{id}")
         public SimpleResponse deleteById(@PathParam("id") int id) {
-            return Ag.service(config).delete(E4.class).byId(id).sync();
+            return AgJaxrs.delete(E4.class, config).byId(id).sync();
         }
 
         @DELETE
@@ -184,13 +184,13 @@ public class DELETE_IT extends DbTest {
             ids.put(E17.ID1.getName(), id1);
             ids.put(E17.ID2.getName(), id2);
 
-            return Ag.service(config).delete(E17.class).byId(ids).sync();
+            return AgJaxrs.delete(E17.class, config).byId(ids).sync();
         }
 
         @DELETE
         @Path("e24/{id}")
         public SimpleResponse deleteE24ById(@PathParam("id") int id) {
-            return Ag.delete(E24.class, config).byId(id).sync();
+            return AgJaxrs.delete(E24.class, config).byId(id).sync();
         }
     }
 }

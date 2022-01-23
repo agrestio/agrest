@@ -1,9 +1,9 @@
 package io.agrest.cayenne;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SelectStage;
+import io.agrest.cayenne.cayenne.main.E27Nopk;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
@@ -11,8 +11,7 @@ import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.GenericEncoder;
 import io.agrest.encoder.ListEncoder;
-import io.agrest.cayenne.cayenne.main.E27Nopk;
-import io.agrest.runtime.AgRuntime;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.query.ObjectSelect;
@@ -56,8 +55,8 @@ public class GET_StagesIT extends DbTest {
         public DataResponse<?> get(@Context UriInfo uriInfo) {
 
             // since Cayenne won't be able to fetch objects with no id, our only option is ColumnSelect and a custom encoder
-            return Ag.select(E27Nopk.class, config)
-                    .uri(uriInfo)
+            return AgJaxrs.select(E27Nopk.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
                     .terminalStage(SelectStage.APPLY_SERVER_PARAMS, this::fetchAll)
                     .get();
         }
@@ -66,7 +65,7 @@ public class GET_StagesIT extends DbTest {
 
             List names = ObjectSelect.columnQuery(E27Nopk.class, E27Nopk.NAME)
                     .orderBy(E27Nopk.NAME.asc())
-                    .select(AgRuntime.service(ICayennePersister.class, config).sharedContext());
+                    .select(AgJaxrs.runtime(config).service(ICayennePersister.class).sharedContext());
 
             context.getEntity().setData(names);
 

@@ -1,7 +1,6 @@
 package io.agrest.cayenne;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
@@ -11,6 +10,7 @@ import io.agrest.cayenne.cayenne.main.E19;
 import io.agrest.cayenne.cayenne.main.E5;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.jackson.JacksonService;
 import io.bootique.junit5.BQTestTool;
@@ -24,7 +24,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Deprecated
 public class GET_Metadata_IT extends DbTest {
@@ -119,7 +119,7 @@ public class GET_Metadata_IT extends DbTest {
         @Path("metadata")
         @AgResource(entityClass = E5.class, type = LinkType.METADATA)
         public MetadataResponse<E5> getMetadata(@Context UriInfo uriInfo) {
-            return Ag.metadata(E5.class, config).forResource(E5Resource.class).baseUri(uriInfo.getBaseUri()).process();
+            return AgJaxrs.metadata(E5.class, config).forResource(E5Resource.class).baseUri(uriInfo.getBaseUri()).process();
         }
     }
 
@@ -133,7 +133,7 @@ public class GET_Metadata_IT extends DbTest {
         @Path("metadata")
         @AgResource(entityClass = E19.class, type = LinkType.METADATA)
         public MetadataResponse<E19> getMetadata(@Context UriInfo uriInfo) {
-            return Ag.metadata(E19.class, config)
+            return AgJaxrs.metadata(E19.class, config)
                     .forResource(E19Resource.class)
                     .baseUri(uriInfo.getBaseUri())
                     .process();

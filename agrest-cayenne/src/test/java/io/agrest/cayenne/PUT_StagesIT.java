@@ -6,6 +6,7 @@ import io.agrest.UpdateStage;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,7 +82,7 @@ public class PUT_StagesIT extends DbTest {
         @PUT
         @Path("e3/callbackstage")
         public DataResponse<E3> syncWithCallbackStage(@Context UriInfo uriInfo, String requestBody) {
-            return Ag.idempotentFullSync(E3.class, config)
+            return AgJaxrs.idempotentFullSync(E3.class, config)
                     .stage(UpdateStage.START, this::onStart)
                     .stage(UpdateStage.PARSE_REQUEST, this::onParseRequest)
                     .stage(UpdateStage.CREATE_ENTITY, this::onCreateEntity)
@@ -90,7 +91,7 @@ public class PUT_StagesIT extends DbTest {
                     .stage(UpdateStage.MERGE_CHANGES, this::onMergeChanges)
                     .stage(UpdateStage.COMMIT, this::onCommit)
                     .stage(UpdateStage.FILL_RESPONSE, this::onFillResponse)
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .syncAndSelect(requestBody);
         }
 

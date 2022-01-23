@@ -1,12 +1,16 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.MetadataResponse;
 import io.agrest.annotation.AgAttribute;
-import io.agrest.cayenne.cayenne.main.*;
+import io.agrest.cayenne.cayenne.main.E2;
+import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.cayenne.main.E4;
+import io.agrest.cayenne.cayenne.main.E7;
+import io.agrest.cayenne.cayenne.main.E8;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.runtime.AgBuilder;
@@ -230,31 +234,32 @@ public class GET_EntityOverlayIT extends DbTest {
         @GET
         @Path("e2")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-            return Ag.service(config).select(E2.class).uri(uriInfo).get();
+            return AgJaxrs.select(E2.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
 
         @GET
         @Path("e3")
         public DataResponse<E3> getE3(@Context UriInfo uriInfo) {
-            return Ag.service(config).select(E3.class).uri(uriInfo).get();
+            return AgJaxrs.select(E3.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
 
         @GET
         @Path("e4")
         public DataResponse<E4> getE4(@Context UriInfo uriInfo) {
-            return Ag.service(config).select(E4.class).uri(uriInfo).get();
+            return AgJaxrs.select(E4.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
 
+        @Deprecated
         @GET
         @Path("e4/meta")
         public MetadataResponse<E4> getMetaE4(@Context UriInfo uriInfo) {
-            return Ag.metadata(E4.class, config).forResource(Resource.class).baseUri(uriInfo.getBaseUri()).process();
+            return AgJaxrs.metadata(E4.class, config).forResource(Resource.class).baseUri(uriInfo.getBaseUri()).process();
         }
 
         @GET
         @Path("e7")
         public DataResponse<E7> getE7(@Context UriInfo uriInfo) {
-            return Ag.service(config).select(E7.class).uri(uriInfo).get();
+            return AgJaxrs.select(E7.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
     }
 }

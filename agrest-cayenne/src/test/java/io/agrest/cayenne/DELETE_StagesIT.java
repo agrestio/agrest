@@ -1,12 +1,12 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DeleteStage;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.BeforeEach;
@@ -77,7 +77,7 @@ public class DELETE_StagesIT extends DbTest {
         @DELETE
         @Path("e3")
         public SimpleResponse delete() {
-            return Ag.delete(E3.class, config)
+            return AgJaxrs.delete(E3.class, config)
                     .stage(DeleteStage.START, this::onStart)
                     .stage(DeleteStage.MAP_CHANGES, this::onMapChanges)
                     .stage(DeleteStage.AUTHORIZE_CHANGES, this::onAuthorizeChanges)

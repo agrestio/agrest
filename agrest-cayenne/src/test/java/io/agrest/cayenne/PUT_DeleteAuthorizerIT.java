@@ -1,6 +1,5 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.EntityUpdate;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.cayenne.main.E2;
@@ -8,6 +7,7 @@ import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -101,7 +101,7 @@ public class PUT_DeleteAuthorizerIT extends DbTest {
         @PUT
         @Path("e2_stack_authorizer")
         public SimpleResponse putE2StackFilter(List<EntityUpdate<E2>> updates) {
-            return Ag.service(config).idempotentFullSync(E2.class).sync(updates);
+            return AgJaxrs.idempotentFullSync(E2.class, config).sync(updates);
         }
 
         @PUT
@@ -110,8 +110,7 @@ public class PUT_DeleteAuthorizerIT extends DbTest {
                 @PathParam("name") String name,
                 List<EntityUpdate<E2>> updates) {
 
-            return Ag.service(config)
-                    .idempotentFullSync(E2.class)
+            return AgJaxrs.idempotentFullSync(E2.class, config)
                     .deleteAuthorizer(E2.class, o -> !name.equals(o.getName()))
                     .sync(updates);
         }

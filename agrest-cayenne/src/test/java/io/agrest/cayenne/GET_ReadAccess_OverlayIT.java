@@ -1,6 +1,5 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.access.PropertyFilteringRulesBuilder;
 import io.agrest.cayenne.cayenne.main.E2;
@@ -8,6 +7,7 @@ import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -74,7 +74,8 @@ public class GET_ReadAccess_OverlayIT extends DbTest {
         @Path("e4/limit_attributes")
         public DataResponse<E4> getObjects_LimitAttributes(@Context UriInfo uriInfo) {
 
-            return Ag.select(E4.class, config).uri(uriInfo)
+            return AgJaxrs.select(E4.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
                     .propFilter(E4.class, r -> r.empty().id(true).property("cInt", true))
                     .get();
         }
@@ -83,9 +84,9 @@ public class GET_ReadAccess_OverlayIT extends DbTest {
         @Path("e2/constraints/{id}/e3s")
         public DataResponse<E3> getE2_E3s_Constrained(@PathParam("id") int id, @Context UriInfo uriInfo) {
 
-            return Ag.select(E3.class, config)
+            return AgJaxrs.select(E3.class, config)
                     .parent(E2.class, id, "e3s")
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .propFilter(E3.class, PropertyFilteringRulesBuilder::idOnly)
                     .get();
         }

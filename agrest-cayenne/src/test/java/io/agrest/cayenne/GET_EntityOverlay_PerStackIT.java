@@ -1,6 +1,5 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.MetadataResponse;
 import io.agrest.cayenne.cayenne.main.E2;
@@ -9,6 +8,7 @@ import io.agrest.cayenne.cayenne.main.E25;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.runtime.AgBuilder;
@@ -107,23 +107,22 @@ public class GET_EntityOverlay_PerStackIT extends DbTest {
         @GET
         @Path("e22")
         public DataResponse<E22> getE22(@Context UriInfo uriInfo) {
-            return Ag.service(config).select(E22.class).uri(uriInfo).get();
+            return AgJaxrs.select(E22.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
 
         @Deprecated
         @GET
         @Path("e22/meta")
         public MetadataResponse<E22> getMetaE22(@Context UriInfo uriInfo) {
-            return Ag.metadata(E22.class, config).forResource(Resource.class).baseUri(uriInfo.getBaseUri()).process();
+            return AgJaxrs.metadata(E22.class, config).forResource(Resource.class).baseUri(uriInfo.getBaseUri()).process();
         }
 
         @GET
         @Path("e2/noid")
         public DataResponse<E2> getE2_NoId(@Context UriInfo uriInfo) {
 
-            return Ag.service(config)
-                    .select(E2.class)
-                    .uri(uriInfo)
+            return AgJaxrs.select(E2.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
                     .get();
         }
     }

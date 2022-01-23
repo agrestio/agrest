@@ -1,13 +1,13 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E15;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E5;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.resolver.NestedDataResolverFactory;
@@ -173,10 +173,10 @@ public class GET_Resolvers_CombinationsIT extends DbTest {
                     .overlay(E3.class)
                     .redefineRelationshipResolver(E3.E2.getName(), resolverFactory(e3o));
 
-            return Ag.select(E5.class, config)
+            return AgJaxrs.select(E5.class, config)
                     .entityOverlay(o1)
                     .entityOverlay(o2)
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .get();
         }
 
@@ -195,10 +195,10 @@ public class GET_Resolvers_CombinationsIT extends DbTest {
                     .overlay(E5.class)
                     .redefineRelationshipResolver(E5.E15S.getName(), resolverFactory(e5o));
 
-            return Ag.select(E3.class, config)
+            return AgJaxrs.select(E3.class, config)
                     .entityOverlay(o1)
                     .entityOverlay(o2)
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .get();
         }
 

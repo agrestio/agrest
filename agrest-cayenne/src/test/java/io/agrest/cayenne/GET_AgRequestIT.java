@@ -1,15 +1,15 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
-import io.agrest.protocol.Exp;
-import io.agrest.protocol.Sort;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
+import io.agrest.protocol.Exp;
+import io.agrest.protocol.Sort;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -126,10 +126,10 @@ public class GET_AgRequestIT extends DbTest {
         @Path("e2_exp")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
             Exp exp = Exp.simple("name = 'xxx'");
-            AgRequest agRequest = Ag.request(config).andExp(exp).build();
+            AgRequest agRequest = AgJaxrs.request(config).andExp(exp).build();
 
-            return Ag.service(config).select(E2.class)
-                    .uri(uriInfo)
+            return AgJaxrs.select(E2.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
                     .request(agRequest) // overrides parameters from uriInfo
                     .get();
         }
@@ -138,10 +138,10 @@ public class GET_AgRequestIT extends DbTest {
         @Path("e3_includes")
         public DataResponse<E3> getE3_includes(@Context UriInfo uriInfo) {
 
-            AgRequest agRequest = Ag.request(config).addInclude("name").build();
+            AgRequest agRequest = AgJaxrs.request(config).addInclude("name").build();
 
-            return Ag.service(config).select(E3.class)
-                    .uri(uriInfo)
+            return AgJaxrs.select(E3.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
                     .request(agRequest) // overrides parameters from uriInfo
                     .get();
         }
@@ -149,10 +149,10 @@ public class GET_AgRequestIT extends DbTest {
         @GET
         @Path("e3_excludes")
         public DataResponse<E3> getE3_excludes(@Context UriInfo uriInfo) {
-            AgRequest agRequest = Ag.request(config).addExclude("id").build();
+            AgRequest agRequest = AgJaxrs.request(config).addExclude("id").build();
 
-            return Ag.service(config).select(E3.class)
-                    .uri(uriInfo)
+            return AgJaxrs.select(E3.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
                     .request(agRequest) // overrides parameters from uriInfo
                     .get();
         }
@@ -161,10 +161,10 @@ public class GET_AgRequestIT extends DbTest {
         @Path("e4_sort")
         public DataResponse<E4> getE4_sort(@Context UriInfo uriInfo) {
 
-            AgRequest agRequest = Ag.request(config).addOrdering(new Sort("id")).build();
+            AgRequest agRequest = AgJaxrs.request(config).addOrdering(new Sort("id")).build();
 
-            return Ag.service(config).select(E4.class)
-                    .uri(uriInfo)
+            return AgJaxrs.select(E4.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
                     .request(agRequest) // overrides parameters from uriInfo
                     .get();
         }
@@ -172,10 +172,10 @@ public class GET_AgRequestIT extends DbTest {
         @GET
         @Path("e4_mapBy")
         public DataResponse<E4> getE4_mapBy(@Context UriInfo uriInfo) {
-            AgRequest agRequest = Ag.request(config).mapBy(E4.C_VARCHAR.getName()).build();
+            AgRequest agRequest = AgJaxrs.request(config).mapBy(E4.C_VARCHAR.getName()).build();
 
-            return Ag.service(config).select(E4.class)
-                    .uri(uriInfo)
+            return AgJaxrs.select(E4.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
                     .request(agRequest) // overrides parameters from uriInfo
                     .get();
         }

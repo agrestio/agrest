@@ -6,6 +6,7 @@ import io.agrest.SimpleResponse;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -65,7 +66,7 @@ public class PUT_EntityUpdateBindingIT extends DbTest {
         public SimpleResponse sync_EntityUpdateCollection(
                 @Context UriInfo uriInfo,
                 Collection<EntityUpdate<E3>> entityUpdates) {
-            return Ag.idempotentFullSync(E3.class, config).uri(uriInfo).sync(entityUpdates);
+            return AgJaxrs.idempotentFullSync(E3.class, config).clientParams(uriInfo.getQueryParameters()).sync(entityUpdates);
         }
 
         @PUT
@@ -74,7 +75,7 @@ public class PUT_EntityUpdateBindingIT extends DbTest {
                 @PathParam("id") int id,
                 EntityUpdate<E3> update) {
 
-            return Ag.createOrUpdate(E3.class, config).byId(id).sync(update);
+            return AgJaxrs.createOrUpdate(E3.class, config).byId(id).sync(update);
         }
     }
 }

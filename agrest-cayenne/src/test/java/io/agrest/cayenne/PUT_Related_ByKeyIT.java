@@ -1,10 +1,14 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.cayenne.main.*;
+import io.agrest.cayenne.cayenne.main.E14;
+import io.agrest.cayenne.cayenne.main.E15;
+import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.cayenne.main.E7;
+import io.agrest.cayenne.cayenne.main.E8;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -112,7 +116,7 @@ public class PUT_Related_ByKeyIT extends DbTest {
         @PUT
         @Path("e8/bykey/{id}/e7s")
         public DataResponse<E7> e8CreateOrUpdateE7sByKey_Idempotent(@PathParam("id") int id, String entityData) {
-            return Ag.idempotentCreateOrUpdate(E7.class, config)
+            return AgJaxrs.idempotentCreateOrUpdate(E7.class, config)
                     .mapper(ByKeyObjectMapperFactory.byKey(E7.NAME.getName()))
                     .parent(E8.class, id, E8.E7S.getName())
                     .syncAndSelect(entityData);
@@ -121,7 +125,7 @@ public class PUT_Related_ByKeyIT extends DbTest {
         @PUT
         @Path("e8/bypropkey/{id}/e7s")
         public DataResponse<E7> e8CreateOrUpdateE7sByPropKey_Idempotent(@PathParam("id") int id, String entityData) {
-            return Ag.idempotentCreateOrUpdate(E7.class, config)
+            return AgJaxrs.idempotentCreateOrUpdate(E7.class, config)
                     .mapper(E7.NAME.getName())
                     .parent(E8.class, id, E8.E7S.getName())
                     .syncAndSelect(entityData);
@@ -132,7 +136,7 @@ public class PUT_Related_ByKeyIT extends DbTest {
         // note that parent id is "int" here , but is BIGINT (long) in the DB. This
         // is intentional
         public DataResponse<E14> relateToOneExisting(@PathParam("id") int id, String data) {
-            return Ag.idempotentFullSync(E14.class, config)
+            return AgJaxrs.idempotentFullSync(E14.class, config)
                     .parent(E15.class, id, E15.E14S.getName())
                     .syncAndSelect(data);
         }

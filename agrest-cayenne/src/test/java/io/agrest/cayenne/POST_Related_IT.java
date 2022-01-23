@@ -5,6 +5,7 @@ import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.*;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -126,7 +127,7 @@ public class POST_Related_IT extends DbTest {
         @POST
         @Path("e2/{id}/e3s")
         public DataResponse<E3> createOrUpdateE3sOfE2(@PathParam("id") int id, @Context UriInfo uri,  String targetData) {
-            return Ag.createOrUpdate(E3.class, config).uri(uri)
+            return AgJaxrs.createOrUpdate(E3.class, config).uri(uri)
                     .parent(E2.class, id, E2.E3S.getName())
                     .syncAndSelect(targetData);
         }
@@ -134,7 +135,7 @@ public class POST_Related_IT extends DbTest {
         @POST
         @Path("e12/{id}/e1213")
         public DataResponse<E12E13> create_Joins(@PathParam("id") int id, @Context UriInfo info, String entityData) {
-            return Ag.create(E12E13.class, config)
+            return AgJaxrs.create(E12E13.class, config)
                     .parent(E12.class, id, E12.E1213.getName())
                     .uri(info)
                     .syncAndSelect(entityData);
@@ -152,9 +153,9 @@ public class POST_Related_IT extends DbTest {
             parentIds.put(E17.ID1.getName(), parentId1);
             parentIds.put(E17.ID2.getName(), parentId2);
 
-            return Ag.createOrUpdate(E18.class, config)
+            return AgJaxrs.createOrUpdate(E18.class, config)
                     .parent(E17.class, parentIds, E17.E18S.getName())
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .syncAndSelect(targetData);
         }
     }

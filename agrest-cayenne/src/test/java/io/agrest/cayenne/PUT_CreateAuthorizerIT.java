@@ -1,6 +1,5 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.EntityUpdate;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.cayenne.main.E2;
@@ -8,6 +7,7 @@ import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -88,7 +88,7 @@ public class PUT_CreateAuthorizerIT extends DbTest {
         @PUT
         @Path("e2_stack_authorizer")
         public SimpleResponse putE2StackFilter(@Context UriInfo uriInfo, List<EntityUpdate<E2>> updates) {
-            return Ag.service(config).createOrUpdate(E2.class).uri(uriInfo).sync(updates);
+            return AgJaxrs.createOrUpdate(E2.class, config).clientParams(uriInfo.getQueryParameters()).sync(updates);
         }
 
         @PUT
@@ -98,8 +98,8 @@ public class PUT_CreateAuthorizerIT extends DbTest {
                 @PathParam("name") String name,
                 List<EntityUpdate<E2>> updates) {
 
-            return Ag.service(config).createOrUpdate(E2.class)
-                    .uri(uriInfo)
+            return AgJaxrs.createOrUpdate(E2.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
                     .createAuthorizer(E2.class, u -> !name.equals(u.getValues().get("name")))
                     .sync(updates);
         }

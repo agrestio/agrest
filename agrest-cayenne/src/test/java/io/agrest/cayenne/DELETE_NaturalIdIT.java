@@ -1,11 +1,11 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.SimpleResponse;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E20;
 import io.agrest.cayenne.cayenne.main.E21;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -71,13 +71,13 @@ public class DELETE_NaturalIdIT extends DbTest {
             Map<String, Object> id = new HashMap<>(3);
             id.put("age", age);
             id.put("name", name);
-            return Ag.delete(E21.class, config).byId(id).sync();
+            return AgJaxrs.delete(E21.class, config).byId(id).sync();
         }
 
         @DELETE
         @Path("single-id/{id}")
         public SimpleResponse deleteE20ById(@PathParam("id") String name, @Context UriInfo uriInfo) {
-            return Ag.delete(E20.class, config).byId(name).sync();
+            return AgJaxrs.delete(E20.class, config).byId(name).sync();
         }
     }
 }

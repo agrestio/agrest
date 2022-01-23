@@ -1,12 +1,12 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -97,8 +97,7 @@ public class DELETE_AuthorizerIT extends DbTest {
         @DELETE
         @Path("e2_stack_authorizer/{id}")
         public SimpleResponse putE2StackFilter(@PathParam("id") int id) {
-            return Ag.service(config)
-                    .delete(E2.class)
+            return AgJaxrs.delete(E2.class, config)
                     .byId(id)
                     .sync();
         }
@@ -109,8 +108,7 @@ public class DELETE_AuthorizerIT extends DbTest {
                 @PathParam("name") String name,
                 @PathParam("id") int id) {
 
-            return Ag.service(config)
-                    .delete(E2.class)
+            return AgJaxrs.delete(E2.class, config)
                     .byId(id)
                     .authorizer(o -> !name.equals(o.getName()))
                     .sync();

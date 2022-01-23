@@ -1,13 +1,13 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
+import io.agrest.access.ReadFilter;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
-import io.agrest.access.ReadFilter;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
@@ -196,29 +196,29 @@ public class GET_ReadFilterIT extends DbTest {
         @GET
         @Path("e2_nested_filter")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-            return Ag.service(config).select(E2.class).uri(uriInfo).get();
+            return AgJaxrs.select(E2.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
 
         @GET
         @Path("e3_nested_filter")
         public DataResponse<E3> getE3(@Context UriInfo uriInfo) {
-            return Ag.service(config).select(E3.class).uri(uriInfo).get();
+            return AgJaxrs.select(E3.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
 
         @GET
         @Path("e4_stack_filter")
         public DataResponse<E4> get(@Context UriInfo uriInfo) {
-            return Ag.service(config).select(E4.class).uri(uriInfo).get();
+            return AgJaxrs.select(E4.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
 
         @GET
         @Path("e4_by_prop/{cVarchar}")
         public DataResponse<E4> getWithRequestEncoder(@Context UriInfo uriInfo, @PathParam("cVarchar") String cVarchar) {
 
-            return Ag.service(config)
-                    .select(E4.class)
+            return AgJaxrs
+                    .select(E4.class, config)
                     .filter(E4.class, e4 -> cVarchar.equals(e4.getCVarchar()))
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .get();
         }
     }

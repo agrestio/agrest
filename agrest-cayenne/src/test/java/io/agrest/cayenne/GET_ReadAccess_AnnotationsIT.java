@@ -1,11 +1,11 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E10;
 import io.agrest.cayenne.cayenne.main.E11;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -58,7 +58,7 @@ public class GET_ReadAccess_AnnotationsIT extends DbTest {
         @GET
         @Path("e10")
         public DataResponse<E10> get(@Context UriInfo uriInfo) {
-            return Ag.select(E10.class, config).uri(uriInfo).get();
+            return AgJaxrs.select(E10.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
     }
 }

@@ -8,6 +8,7 @@ import io.agrest.cayenne.cayenne.main.E21;
 import io.agrest.cayenne.cayenne.main.E29;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -85,19 +86,19 @@ public class POST_NaturalIdIT extends DbTest {
         @POST
         @Path("single-id")
         public DataResponse<E20> createE20(EntityUpdate<E20> update, @Context UriInfo uriInfo) {
-            return Ag.create(E20.class, config).uri(uriInfo).syncAndSelect(update);
+            return AgJaxrs.create(E20.class, config).clientParams(uriInfo.getQueryParameters()).syncAndSelect(update);
         }
 
         @POST
         @Path("multi-id")
         public DataResponse<E21> createE21(EntityUpdate<E21> update, @Context UriInfo uriInfo) {
-            return Ag.create(E21.class, config).uri(uriInfo).syncAndSelect(update);
+            return AgJaxrs.create(E21.class, config).clientParams(uriInfo.getQueryParameters()).syncAndSelect(update);
         }
 
         @POST
         @Path("mixed-multi-id")
         public DataResponse<E29> createE29(EntityUpdate<E29> update, @Context UriInfo uriInfo) {
-            return Ag.create(E29.class, config).uri(uriInfo).syncAndSelect(update);
+            return AgJaxrs.create(E29.class, config).clientParams(uriInfo.getQueryParameters()).syncAndSelect(update);
         }
     }
 

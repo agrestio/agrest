@@ -1,6 +1,5 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
@@ -8,9 +7,9 @@ import io.agrest.cayenne.cayenne.main.E5;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.runtime.AgRuntime;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
@@ -119,10 +118,10 @@ public class GET_Resolvers_MixedIT extends DbTest {
                     .overlay(E3.class)
                     .redefineRelationshipResolver(E3.E2.getName(), CayenneResolvers.nestedViaParentPrefetch());
 
-            return Ag.select(E5.class, config)
+            return AgJaxrs.select(E5.class, config)
                     .entityOverlay(o1)
                     .entityOverlay(o2)
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .get();
         }
 
@@ -130,7 +129,7 @@ public class GET_Resolvers_MixedIT extends DbTest {
         @Path("test_mix_up_relations")
         public DataResponse<E5> test_mix_up_relations(@Context UriInfo uriInfo) {
 
-            ObjectContext context = AgRuntime.service(ICayennePersister.class, config).sharedContext();
+            ObjectContext context = AgJaxrs.runtime(config).service(ICayennePersister.class).sharedContext();
 
             AgEntityOverlay<E5> o1 = AgEntity
                     .overlay(E5.class)
@@ -146,10 +145,10 @@ public class GET_Resolvers_MixedIT extends DbTest {
                             SelectById.query(E3.class, Cayenne.intPKForObject(e2)).selectOne(context)
                     );
 
-            return Ag.select(E5.class, config)
+            return AgJaxrs.select(E5.class, config)
                     .entityOverlay(o1)
                     .entityOverlay(o2)
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .get();
         }
     }

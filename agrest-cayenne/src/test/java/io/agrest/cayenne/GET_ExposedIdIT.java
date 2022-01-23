@@ -1,11 +1,11 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E23;
 import io.agrest.cayenne.cayenne.main.E26;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -70,19 +70,19 @@ public class GET_ExposedIdIT extends DbTest {
         @GET
         @Path("e26")
         public DataResponse<E26> getAllE26s(@Context UriInfo uriInfo) {
-            return Ag.select(E26.class, config).uri(uriInfo).getOne();
+            return AgJaxrs.select(E26.class, config).clientParams(uriInfo.getQueryParameters()).getOne();
         }
 
         @GET
         @Path("e23")
         public DataResponse<E23> getAllE23s(@Context UriInfo uriInfo) {
-            return Ag.select(E23.class, config).uri(uriInfo).getOne();
+            return AgJaxrs.select(E23.class, config).clientParams(uriInfo.getQueryParameters()).getOne();
         }
 
         @GET
         @Path("e23/{id}")
         public DataResponse<E23> getById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.select(E23.class, config).byId(id).uri(uriInfo).getOne();
+            return AgJaxrs.select(E23.class, config).byId(id).clientParams(uriInfo.getQueryParameters()).getOne();
         }
     }
 }

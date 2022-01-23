@@ -1,6 +1,5 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
@@ -8,6 +7,7 @@ import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.cayenne.main.E5;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -95,7 +95,7 @@ public class GET_IncludeObjectCayenneExpIT extends DbTest {
         @GET
         @Path("e2")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-            return Ag.service(config).select(E2.class).uri(uriInfo).get();
+            return AgJaxrs.select(E2.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
     }
 }

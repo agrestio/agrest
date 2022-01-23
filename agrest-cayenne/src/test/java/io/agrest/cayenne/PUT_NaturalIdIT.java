@@ -10,6 +10,7 @@ import io.agrest.cayenne.cayenne.main.E23;
 import io.agrest.cayenne.cayenne.main.E29;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -141,7 +142,7 @@ public class PUT_NaturalIdIT extends DbTest {
                 Collection<EntityUpdate<E23>> update,
                 @Context UriInfo uriInfo) {
 
-            return Ag.idempotentCreateOrUpdate(E23.class, config).uri(uriInfo).sync(update);
+            return AgJaxrs.idempotentCreateOrUpdate(E23.class, config).clientParams(uriInfo.getQueryParameters()).sync(update);
         }
 
         @PUT
@@ -151,7 +152,7 @@ public class PUT_NaturalIdIT extends DbTest {
                 EntityUpdate<E20> update,
                 @Context UriInfo uriInfo) {
 
-            return Ag.idempotentCreateOrUpdate(E20.class, config).byId(name).uri(uriInfo).syncAndSelect(update);
+            return AgJaxrs.idempotentCreateOrUpdate(E20.class, config).byId(name).clientParams(uriInfo.getQueryParameters()).syncAndSelect(update);
         }
 
         @PUT
@@ -165,13 +166,13 @@ public class PUT_NaturalIdIT extends DbTest {
             Map<String, Object> id = new HashMap<>(3);
             id.put("age", age);
             id.put("name", name);
-            return Ag.idempotentCreateOrUpdate(E21.class, config).byId(id).uri(uriInfo).syncAndSelect(update);
+            return AgJaxrs.idempotentCreateOrUpdate(E21.class, config).byId(id).clientParams(uriInfo.getQueryParameters()).syncAndSelect(update);
         }
 
         @PUT
         @Path("mixed-multi-id")
         public DataResponse<E29> createE29(EntityUpdate<E29> update, @Context UriInfo uriInfo) {
-            return Ag.idempotentCreateOrUpdate(E29.class, config).uri(uriInfo).syncAndSelect(update);
+            return AgJaxrs.idempotentCreateOrUpdate(E29.class, config).clientParams(uriInfo.getQueryParameters()).syncAndSelect(update);
         }
     }
 

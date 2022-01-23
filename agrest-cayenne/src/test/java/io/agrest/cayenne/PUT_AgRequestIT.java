@@ -3,6 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.Ag;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.protocol.Exclude;
 import io.agrest.protocol.Include;
 import io.agrest.cayenne.unit.AgCayenneTester;
@@ -82,10 +83,10 @@ public class PUT_AgRequestIT extends DbTest {
         @PUT
         @Path("e3_includes")
         public DataResponse<E3> syncE3_includes(@Context UriInfo uriInfo, String requestBody) {
-            AgRequest agRequest = Ag.request(config).addInclude(new Include("name")).build();
+            AgRequest agRequest = AgJaxrs.request(config).addInclude(new Include("name")).build();
 
-            return Ag.idempotentFullSync(E3.class, config)
-                    .uri(uriInfo)
+            return AgJaxrs.idempotentFullSync(E3.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
                     .request(agRequest) // overrides parameters from uriInfo
                     .syncAndSelect(requestBody);
         }
@@ -93,10 +94,10 @@ public class PUT_AgRequestIT extends DbTest {
         @PUT
         @Path("e3_excludes")
         public DataResponse<E3> syncE3_excludes(@Context UriInfo uriInfo, String requestBody) {
-            AgRequest agRequest = Ag.request(config).addExclude(new Exclude("id")).build();
+            AgRequest agRequest = AgJaxrs.request(config).addExclude(new Exclude("id")).build();
 
-            return Ag.idempotentFullSync(E3.class, config)
-                    .uri(uriInfo)
+            return AgJaxrs.idempotentFullSync(E3.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
                     .request(agRequest) // overrides parameters from uriInfo
                     .syncAndSelect(requestBody);
         }

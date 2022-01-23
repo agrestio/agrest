@@ -46,7 +46,7 @@ public class CayenneRuntimeExceptionMapperIT extends DbTest {
         @Path("g1")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
             // must be thrown within Ag chain
-            return Ag.select(E2.class, config)
+            return AgJaxrs.select(E2.class, config)
                     .stage(SelectStage.APPLY_SERVER_PARAMS, c -> {
                         throw new CayenneRuntimeException("_something_w_cayenne_");
                     })

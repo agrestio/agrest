@@ -6,6 +6,7 @@ import io.agrest.SimpleResponse;
 import io.agrest.cayenne.cayenne.main.E25;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.cayenne.pojo.model.PX1;
@@ -61,9 +62,9 @@ public class GET_Resolvers_PojoToPersistentIT extends DbTest {
                     .redefineToOne("e25", E25.class, resolverFactory(overlay));
 
             try {
-                return Ag.select(PX1.class, config)
+                return AgJaxrs.select(PX1.class, config)
                         .entityOverlay(px1Overlay)
-                        .uri(uriInfo)
+                        .clientParams(uriInfo.getQueryParameters())
                         .get();
             } catch (AgException e) {
 

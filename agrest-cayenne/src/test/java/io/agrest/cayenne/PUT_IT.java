@@ -9,6 +9,7 @@ import io.agrest.cayenne.cayenne.main.*;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.Encoder;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -452,31 +453,31 @@ public class PUT_IT extends DbTest {
         @PUT
         @Path("e2/{id}")
         public DataResponse<E2> createOrUpdate_E2(@PathParam("id") int id, String entityData, @Context UriInfo uriInfo) {
-            return Ag.idempotentCreateOrUpdate(E2.class, config).byId(id).uri(uriInfo).syncAndSelect(entityData);
+            return AgJaxrs.idempotentCreateOrUpdate(E2.class, config).byId(id).clientParams(uriInfo.getQueryParameters()).syncAndSelect(entityData);
         }
 
         @PUT
         @Path("e3")
         public DataResponse<E3> syncE3(@Context UriInfo uriInfo, String requestBody) {
-            return Ag.idempotentFullSync(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
+            return AgJaxrs.idempotentFullSync(E3.class, config).clientParams(uriInfo.getQueryParameters()).syncAndSelect(requestBody);
         }
 
         @PUT
         @Path("e3/{id}")
         public DataResponse<E3> updateE3(@PathParam("id") int id, String requestBody) {
-            return Ag.update(E3.class, config).byId(id).syncAndSelect(requestBody);
+            return AgJaxrs.update(E3.class, config).byId(id).syncAndSelect(requestBody);
         }
 
         @PUT
         @Path("e4/{id}")
         public DataResponse<E4> updateE4(@PathParam("id") int id, String requestBody) {
-            return Ag.update(E4.class, config).byId(id).syncAndSelect(requestBody);
+            return AgJaxrs.update(E4.class, config).byId(id).syncAndSelect(requestBody);
         }
 
         @PUT
         @Path("e7")
         public DataResponse<E7> syncE7(@Context UriInfo uriInfo, String data) {
-            return Ag.idempotentFullSync(E7.class, config).uri(uriInfo).syncAndSelect(data);
+            return AgJaxrs.idempotentFullSync(E7.class, config).clientParams(uriInfo.getQueryParameters()).syncAndSelect(data);
         }
 
         @PUT
@@ -492,7 +493,7 @@ public class PUT_IT extends DbTest {
                 }
             };
 
-            return Ag.idempotentFullSync(E7.class, config).uri(uriInfo)
+            return AgJaxrs.idempotentFullSync(E7.class, config).clientParams(uriInfo.getQueryParameters())
                     .stage(UpdateStage.START, c -> c.setEncoder(encoder))
                     .syncAndSelect(data);
         }
@@ -500,25 +501,25 @@ public class PUT_IT extends DbTest {
         @PUT
         @Path("e7/{id}")
         public DataResponse<E7> syncOneE7(@PathParam("id") int id, @Context UriInfo uriInfo, String data) {
-            return Ag.idempotentFullSync(E7.class, config).byId(id).uri(uriInfo).syncAndSelect(data);
+            return AgJaxrs.idempotentFullSync(E7.class, config).byId(id).clientParams(uriInfo.getQueryParameters()).syncAndSelect(data);
         }
 
         @PUT
         @Path("e8")
         public DataResponse<E8> sync(@Context UriInfo uriInfo, String data) {
-            return Ag.idempotentFullSync(E8.class, config).uri(uriInfo).syncAndSelect(data);
+            return AgJaxrs.idempotentFullSync(E8.class, config).clientParams(uriInfo.getQueryParameters()).syncAndSelect(data);
         }
 
         @PUT
         @Path("e14")
         public DataResponse<E14> sync(String data) {
-            return Ag.idempotentFullSync(E14.class, config).syncAndSelect(data);
+            return AgJaxrs.idempotentFullSync(E14.class, config).syncAndSelect(data);
         }
 
         @PUT
         @Path("e14/{id}")
         public DataResponse<E14> update(@PathParam("id") int id, String data) {
-            return Ag.update(E14.class, config).byId(id).syncAndSelect(data);
+            return AgJaxrs.update(E14.class, config).byId(id).syncAndSelect(data);
         }
 
         @PUT
@@ -533,19 +534,19 @@ public class PUT_IT extends DbTest {
             ids.put(E17.ID1.getName(), id1);
             ids.put(E17.ID2.getName(), id2);
 
-            return Ag.update(E17.class, config).uri(uriInfo).byId(ids).syncAndSelect(targetData);
+            return AgJaxrs.update(E17.class, config).clientParams(uriInfo.getQueryParameters()).byId(ids).syncAndSelect(targetData);
         }
 
         @PUT
         @Path("e23_create_or_update/{id}")
         public DataResponse<E23> createOrUpdateE4(@PathParam("id") int id, String requestBody) {
-            return Ag.createOrUpdate(E23.class, config).byId(id).syncAndSelect(requestBody);
+            return AgJaxrs.createOrUpdate(E23.class, config).byId(id).syncAndSelect(requestBody);
         }
 
         @PUT
         @Path("e28")
         public SimpleResponse syncE28(String data) {
-            return Ag.createOrUpdate(E28.class, config).sync(data);
+            return AgJaxrs.createOrUpdate(E28.class, config).sync(data);
         }
     }
 }

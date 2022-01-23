@@ -1,10 +1,10 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
+import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
-import io.agrest.cayenne.cayenne.main.E4;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -79,7 +79,7 @@ public class GET_SizeConstraintsIT extends DbTest {
         @GET
         @Path("e4/limit")
         public DataResponse<E4> limit(@Context UriInfo uriInfo) {
-            return Ag.select(E4.class, config).uri(uriInfo)
+            return AgJaxrs.select(E4.class, config).clientParams(uriInfo.getQueryParameters())
                     .limit(2)
                     .get();
         }

@@ -1,14 +1,15 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.EntityDelete;
 import io.agrest.SimpleResponse;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E7;
 import io.agrest.cayenne.cayenne.main.E8;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
+import io.agrest.runtime.IAgService;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -130,13 +131,13 @@ public class DELETE_RelatedIT extends DbTest {
         @DELETE
         @Path("{id}")
         public SimpleResponse deleteE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.delete(E2.class, config).byId(id).sync();
+            return AgJaxrs.delete(E2.class, config).byId(id).sync();
         }
 
         @Deprecated
         @DELETE
         public SimpleResponse deleteE2_Batch(Collection<EntityDelete<E2>> deleted, @Context UriInfo uriInfo) {
-            return Ag.service(config).delete(E2.class, deleted);
+            return AgJaxrs.runtime(config).service(IAgService.class).delete(E2.class, deleted);
         }
 
         @DELETE
@@ -145,7 +146,7 @@ public class DELETE_RelatedIT extends DbTest {
                 @PathParam("id") int id,
                 @PathParam("rel") String relationship,
                 @PathParam("tid") int tid) {
-            return Ag.unrelate(E2.class, config).sourceId(id).related(relationship, tid).sync();
+            return AgJaxrs.unrelate(E2.class, config).sourceId(id).related(relationship, tid).sync();
         }
     }
 
@@ -158,14 +159,14 @@ public class DELETE_RelatedIT extends DbTest {
         @DELETE
         @Path("{id}/e2")
         public SimpleResponse deleteE2_Implicit(@PathParam("id") int id) {
-            return Ag.unrelate(E3.class, config).sourceId(id).allRelated(E3.E2.getName()).sync();
+            return AgJaxrs.unrelate(E3.class, config).sourceId(id).allRelated(E3.E2.getName()).sync();
         }
 
 
         @DELETE
         @Path("{id}/e2/{tid}")
         public SimpleResponse deleteE2(@PathParam("id") int id, @PathParam("tid") int tid) {
-            return Ag.unrelate(E3.class, config).sourceId(id).related(E3.E2.getName(), tid).sync();
+            return AgJaxrs.unrelate(E3.class, config).sourceId(id).related(E3.E2.getName(), tid).sync();
         }
     }
 
@@ -178,7 +179,7 @@ public class DELETE_RelatedIT extends DbTest {
         @DELETE
         @Path("{id}/e7s")
         public SimpleResponse deleteE7s(@PathParam("id") int id, String entityData) {
-            return Ag.delete(E7.class, config).parent(E8.class, id, E8.E7S.getName()).sync();
+            return AgJaxrs.delete(E7.class, config).parent(E8.class, id, E8.E7S.getName()).sync();
         }
     }
 

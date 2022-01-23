@@ -1,11 +1,11 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.bootique.junit5.BQTestTool;
@@ -158,9 +158,9 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
                     .overlay(E3.class)
                     .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaParentPrefetch());
 
-            return Ag.select(E3.class, config)
+            return AgJaxrs.select(E3.class, config)
                     .entityOverlay(e3Overlay)
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .get();
         }
 
@@ -173,9 +173,9 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
                     .overlay(E3.class)
                     .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaQueryWithParentIds());
 
-            return Ag.select(E3.class, config)
+            return AgJaxrs.select(E3.class, config)
                     .entityOverlay(e3Overlay)
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .get();
         }
 
@@ -189,9 +189,9 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
                     // this is actually the standard strategy, but let's see how it works if installed via a request-scoped overlay
                     .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaQueryWithParentExp());
 
-            return Ag.select(E3.class, config)
+            return AgJaxrs.select(E3.class, config)
                     .entityOverlay(e3Overlay)
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .get();
         }
     }

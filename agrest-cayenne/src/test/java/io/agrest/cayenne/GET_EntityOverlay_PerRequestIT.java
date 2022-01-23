@@ -1,6 +1,5 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E10;
 import io.agrest.cayenne.cayenne.main.E2;
@@ -9,6 +8,7 @@ import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.bootique.junit5.BQTestTool;
@@ -208,10 +208,10 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                     // 4. Dynamic relationship
                     .redefineToOne("dynamicRelationship", E22.class, e10 -> findMatching(E22.class, e10));
 
-            return Ag.service(config)
-                    .select(E10.class)
+            return AgJaxrs
+                    .select(E10.class, config)
                     .entityOverlay(overlay)
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .get();
         }
 
@@ -229,10 +229,10 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                     // 4. Dynamic relationship
                     .redefineToOne("dynamicRelationship", E22.class, e4 -> findMatching(E22.class, e4));
 
-            return Ag.service(config)
-                    .select(E4.class)
+            return AgJaxrs
+                    .select(E4.class, config)
                     .entityOverlay(overlay)
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .get();
         }
 
@@ -244,10 +244,9 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                     // dynamic relationship
                     .redefineToOne("dynamicRelationship", E3.class, e4 -> findMatching(E3.class, e4));
 
-            return Ag.service(config)
-                    .select(E4.class)
+            return AgJaxrs.select(E4.class, config)
                     .entityOverlay(overlay)
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .get();
         }
 
@@ -258,11 +257,10 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
             AgEntityOverlay<E2> e2Overlay = AgEntity.overlay(E2.class).readablePropFilter(p -> p.property("address", false));
             AgEntityOverlay<E3> e3Overlay = AgEntity.overlay(E3.class).readablePropFilter(p -> p.property("phoneNumber", false));
 
-            return Ag.service(config)
-                    .select(E2.class)
+            return AgJaxrs.select(E2.class, config)
                     .entityOverlay(e2Overlay)
                     .entityOverlay(e3Overlay)
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .get();
         }
     }

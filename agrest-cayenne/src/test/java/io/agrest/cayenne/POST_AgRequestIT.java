@@ -6,6 +6,7 @@ import io.agrest.DataResponse;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -56,10 +57,10 @@ public class POST_AgRequestIT extends DbTest {
         @Path("e3_includes")
         public DataResponse<E3> create_includes(@Context UriInfo uriInfo, String requestBody) {
 
-            AgRequest agRequest = Ag.request(config).addInclude("name").build();
+            AgRequest agRequest = AgJaxrs.request(config).addInclude("name").build();
 
-            return Ag.create(E3.class, config)
-                    .uri(uriInfo)
+            return AgJaxrs.create(E3.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
                     .request(agRequest) // overrides parameters from uriInfo
                     .syncAndSelect(requestBody);
         }
@@ -68,10 +69,10 @@ public class POST_AgRequestIT extends DbTest {
         @Path("e3_excludes")
         public DataResponse<E3> create_excludes(@Context UriInfo uriInfo, String requestBody) {
 
-            AgRequest agRequest = Ag.request(config).addExclude("id").build();
+            AgRequest agRequest = AgJaxrs.request(config).addExclude("id").build();
 
-            return Ag.create(E3.class, config)
-                    .uri(uriInfo)
+            return AgJaxrs.create(E3.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
                     .request(agRequest) // overrides parameters from uriInfo
                     .syncAndSelect(requestBody);
         }

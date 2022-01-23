@@ -1,11 +1,11 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E20;
 import io.agrest.cayenne.cayenne.main.E21;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -73,7 +73,7 @@ public class GET_NaturalIdIT extends DbTest {
         @GET
         @Path("single-id/{id}")
         public DataResponse<E20> getE20ById(@PathParam("id") String name, @Context UriInfo uriInfo) {
-            return Ag.select(E20.class, config).uri(uriInfo).byId(name).get();
+            return AgJaxrs.select(E20.class, config).clientParams(uriInfo.getQueryParameters()).byId(name).get();
         }
 
         @GET
@@ -84,7 +84,7 @@ public class GET_NaturalIdIT extends DbTest {
             Map<String, Object> id = new HashMap<>(3);
             id.put("age", age);
             id.put("name", name);
-            return Ag.service(config).select(E21.class).byId(id).uri(uriInfo).getOne();
+            return AgJaxrs.select(E21.class, config).byId(id).clientParams(uriInfo.getQueryParameters()).getOne();
         }
     }
 }

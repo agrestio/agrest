@@ -9,6 +9,7 @@ import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
@@ -118,7 +119,7 @@ public class PUT_ReadFilterIT extends DbTest {
         @PUT
         @Path("e2_stack_filter")
         public DataResponse<E2> putE2StackFilter(@Context UriInfo uriInfo, List<EntityUpdate<E2>> updates) {
-            return Ag.service(config).createOrUpdate(E2.class).uri(uriInfo).syncAndSelect(updates);
+            return AgJaxrs.createOrUpdate(E2.class, config).clientParams(uriInfo.getQueryParameters()).syncAndSelect(updates);
         }
 
         @PUT
@@ -128,8 +129,8 @@ public class PUT_ReadFilterIT extends DbTest {
                 @PathParam("name") String name,
                 List<EntityUpdate<E2>> updates) {
 
-            return Ag.service(config).createOrUpdate(E2.class)
-                    .uri(uriInfo)
+            return AgJaxrs.createOrUpdate(E2.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
                     .readableFilter(E2.class, e2 -> name.equals(e2.getName()))
                     .syncAndSelect(updates);
         }

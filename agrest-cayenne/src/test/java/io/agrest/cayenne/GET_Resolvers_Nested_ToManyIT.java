@@ -1,11 +1,11 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.bootique.junit5.BQTestTool;
@@ -93,9 +93,9 @@ public class GET_Resolvers_Nested_ToManyIT extends DbTest {
                     .overlay(E2.class)
                     .redefineRelationshipResolver("e3s", CayenneResolvers.nestedViaParentPrefetch());
 
-            return Ag.select(E2.class, config)
+            return AgJaxrs.select(E2.class, config)
                     .entityOverlay(e2Overlay)
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .get();
         }
 
@@ -107,9 +107,9 @@ public class GET_Resolvers_Nested_ToManyIT extends DbTest {
                     .overlay(E2.class)
                     .redefineRelationshipResolver("e3s", CayenneResolvers.nestedViaQueryWithParentIds());
 
-            return Ag.select(E2.class, config)
+            return AgJaxrs.select(E2.class, config)
                     .entityOverlay(e2Overlay)
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .get();
         }
     }

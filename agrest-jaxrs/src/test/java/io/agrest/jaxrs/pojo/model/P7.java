@@ -1,4 +1,4 @@
-package io.agrest.pojo.model;
+package io.agrest.jaxrs.pojo.model;
 
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;

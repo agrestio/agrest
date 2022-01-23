@@ -1,11 +1,11 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
 import org.junit.jupiter.api.Test;
@@ -85,7 +85,7 @@ public class GET_Request_EntityAttributeIT extends DbTest {
         @GET
         @Path("e4/calc_property")
         public DataResponse<E4> property_WithReader(@Context UriInfo uriInfo) {
-            return Ag.select(E4.class, config).uri(uriInfo)
+            return AgJaxrs.select(E4.class, config).clientParams(uriInfo.getQueryParameters())
                     .entityAttribute("x", String.class, o -> "y_" + Cayenne.intPKForObject(o))
                     .get();
         }
@@ -93,7 +93,7 @@ public class GET_Request_EntityAttributeIT extends DbTest {
         @GET
         @Path("e3/custom_encoding")
         public DataResponse<E3> replaceProperty_WithReader(@Context UriInfo uriInfo) {
-            return Ag.select(E3.class, config).uri(uriInfo)
+            return AgJaxrs.select(E3.class, config).clientParams(uriInfo.getQueryParameters())
                     .entityAttribute(E3.NAME.getName(), String.class, o -> "_" + o.getName() + "_")
                     .get();
         }

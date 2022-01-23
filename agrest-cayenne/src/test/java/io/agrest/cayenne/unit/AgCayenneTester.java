@@ -3,10 +3,11 @@ package io.agrest.cayenne.unit;
 import io.agrest.cayenne.AgCayenneBuilder;
 import io.agrest.cayenne.persister.CayennePersister;
 import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.jaxrs.junit.AgHttpTester;
+import io.agrest.jaxrs.junit.AgTestJaxrsFeature;
 import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.IAgService;
-import io.agrest.junit.AgHttpTester;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.cayenne.v42.CayenneModule;
@@ -357,7 +358,7 @@ public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallb
         }
 
         private void configureJersey(JerseyModuleExtender extender) {
-            extender.addFeature(AgRuntime.class);
+            extender.addFeature(AgTestJaxrsFeature.class);
             resources.forEach(extender::addResource);
         }
 

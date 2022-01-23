@@ -7,6 +7,7 @@ import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E5;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -85,19 +86,19 @@ public class PUT_ObjectIncludeIT extends DbTest {
         @PUT
         @Path("e2/{id}")
         public DataResponse<E2> createOrUpdate_E2(@PathParam("id") int id, String entityData, @Context UriInfo uriInfo) {
-            return Ag.idempotentCreateOrUpdate(E2.class, config).byId(id).uri(uriInfo).syncAndSelect(entityData);
+            return AgJaxrs.idempotentCreateOrUpdate(E2.class, config).byId(id).clientParams(uriInfo.getQueryParameters()).syncAndSelect(entityData);
         }
 
         @PUT
         @Path("e3")
         public DataResponse<E3> syncE3(@Context UriInfo uriInfo, String requestBody) {
-            return Ag.idempotentFullSync(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
+            return AgJaxrs.idempotentFullSync(E3.class, config).clientParams(uriInfo.getQueryParameters()).syncAndSelect(requestBody);
         }
 
         @PUT
         @Path("e3/{id}")
         public DataResponse<E3> updateE3(@PathParam("id") int id, String data, @Context UriInfo uriInfo) {
-            return Ag.update(E3.class, config).uri(uriInfo).byId(id).syncAndSelect(data);
+            return AgJaxrs.update(E3.class, config).clientParams(uriInfo.getQueryParameters()).byId(id).syncAndSelect(data);
         }
     }
 }

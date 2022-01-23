@@ -8,6 +8,7 @@ import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E8;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -122,7 +123,7 @@ public class POST_ReadAccess_OverlayIT extends DbTest {
         @POST
         @Path("e3/constrained")
         public DataResponse<E3> insertE3ReadConstrained(@Context UriInfo uriInfo, String requestBody) {
-            return Ag.create(E3.class, config).uri(uriInfo)
+            return AgJaxrs.create(E3.class, config).clientParams(uriInfo.getQueryParameters())
                     .readablePropFilter(E3.class, b -> b.idOnly().property("name", true))
                     .syncAndSelect(requestBody);
         }
@@ -130,7 +131,7 @@ public class POST_ReadAccess_OverlayIT extends DbTest {
         @POST
         @Path("e3/w/constrained")
         public DataResponse<E3> insertE3WriteConstrained(@Context UriInfo uriInfo, String requestBody) {
-            return Ag.create(E3.class, config).uri(uriInfo)
+            return AgJaxrs.create(E3.class, config).clientParams(uriInfo.getQueryParameters())
                     .writablePropFilter(E3.class, b -> b.idOnly().property("name", true))
                     .syncAndSelect(requestBody);
         }
@@ -142,7 +143,7 @@ public class POST_ReadAccess_OverlayIT extends DbTest {
                 @Context UriInfo uriInfo,
                 String requestBody) {
 
-            return Ag.create(E8.class, config).uri(uriInfo).byId(id)
+            return AgJaxrs.create(E8.class, config).clientParams(uriInfo.getQueryParameters()).byId(id)
                     .writablePropFilter(E8.class, b -> b.idOnly().property("name", true))
                     .sync(requestBody);
         }
@@ -153,7 +154,7 @@ public class POST_ReadAccess_OverlayIT extends DbTest {
                 @PathParam("id") int id,
                 @Context UriInfo uriInfo,
                 String requestBody) {
-            return Ag.create(E8.class, config).uri(uriInfo).byId(id)
+            return AgJaxrs.create(E8.class, config).clientParams(uriInfo.getQueryParameters()).byId(id)
                     .writablePropFilter(E8.class, b -> b.empty().property("name", true))
                     .sync(requestBody);
         }

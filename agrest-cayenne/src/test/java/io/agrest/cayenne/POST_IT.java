@@ -11,6 +11,7 @@ import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -213,31 +214,31 @@ public class POST_IT extends DbTest {
         @POST
         @Path("e2")
         public DataResponse<E2> createE2(String targetData, @Context UriInfo uriInfo) {
-            return Ag.create(E2.class, config).uri(uriInfo).syncAndSelect(targetData);
+            return AgJaxrs.create(E2.class, config).clientParams(uriInfo.getQueryParameters()).syncAndSelect(targetData);
         }
 
         @POST
         @Path("e3")
         public DataResponse<E3> create(@Context UriInfo uriInfo, String requestBody) {
-            return Ag.create(E3.class, config).uri(uriInfo).syncAndSelect(requestBody);
+            return AgJaxrs.create(E3.class, config).clientParams(uriInfo.getQueryParameters()).syncAndSelect(requestBody);
         }
 
         @POST
         @Path("e4")
         public DataResponse<E4> createE4(String requestBody) {
-            return Ag.create(E4.class, config).syncAndSelect(requestBody);
+            return AgJaxrs.create(E4.class, config).syncAndSelect(requestBody);
         }
 
         @POST
         @Path("e4/sync")
         public SimpleResponse createE4_DefaultData(String requestBody) {
-            return Ag.create(E4.class, config).sync(requestBody);
+            return AgJaxrs.create(E4.class, config).sync(requestBody);
         }
 
         @POST
         @Path("e16")
         public DataResponse<E16> createE16(String requestBody) {
-            return Ag.create(E16.class, config).syncAndSelect(requestBody);
+            return AgJaxrs.create(E16.class, config).syncAndSelect(requestBody);
         }
 
         @POST
@@ -252,25 +253,25 @@ public class POST_IT extends DbTest {
             ids.put(E17.ID1.getName(), id1);
             ids.put(E17.ID2.getName(), id2);
 
-            return Ag.create(E17.class, config).byId(ids).syncAndSelect(requestBody);
+            return AgJaxrs.create(E17.class, config).byId(ids).syncAndSelect(requestBody);
         }
 
         @POST
         @Path("e19")
         public DataResponse<E19> createE19(@Context UriInfo uriInfo, String data) {
-            return Ag.create(E19.class, config).uri(uriInfo).syncAndSelect(data);
+            return AgJaxrs.create(E19.class, config).clientParams(uriInfo.getQueryParameters()).syncAndSelect(data);
         }
 
         @POST
         @Path("e19/float")
         public DataResponse<E19> createE19_FloatAttribute(@Context UriInfo uriInfo, String data) {
-            return Ag.create(E19.class, config).uri(uriInfo).syncAndSelect(data);
+            return AgJaxrs.create(E19.class, config).clientParams(uriInfo.getQueryParameters()).syncAndSelect(data);
         }
 
         @POST
         @Path("e19/double")
         public SimpleResponse create_E19_DoubleAttribute(String entityData) {
-            return Ag.create(E19.class, config).sync(entityData);
+            return AgJaxrs.create(E19.class, config).sync(entityData);
         }
     }
 }

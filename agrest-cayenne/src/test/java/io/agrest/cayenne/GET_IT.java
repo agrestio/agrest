@@ -1,18 +1,29 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
-import io.agrest.converter.jsonvalue.UtcDateConverter;
-import io.agrest.cayenne.cayenne.main.*;
+import io.agrest.cayenne.cayenne.main.E17;
+import io.agrest.cayenne.cayenne.main.E19;
+import io.agrest.cayenne.cayenne.main.E2;
+import io.agrest.cayenne.cayenne.main.E28;
+import io.agrest.cayenne.cayenne.main.E29;
+import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.cayenne.main.E4;
+import io.agrest.cayenne.cayenne.main.E6;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
+import io.agrest.converter.jsonvalue.UtcDateConverter;
 import io.agrest.encoder.DateTimeFormatters;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -431,55 +442,55 @@ public class GET_IT extends DbTest {
         @GET
         @Path("e2")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-            return Ag.service(config).select(E2.class).uri(uriInfo).get();
+            return AgJaxrs.select(E2.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
 
         @GET
         @Path("e2/{id}")
         public DataResponse<E2> getE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.select(E2.class, config).uri(uriInfo).byId(id).get();
+            return AgJaxrs.select(E2.class, config).clientParams(uriInfo.getQueryParameters()).byId(id).get();
         }
 
         @GET
         @Path("e3")
         public DataResponse<E3> getE3(@Context UriInfo uriInfo) {
-            return Ag.service(config).select(E3.class).uri(uriInfo).get();
+            return AgJaxrs.select(E3.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
 
         @GET
         @Path("e3/{id}")
         public DataResponse<E3> getE3ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.select(E3.class, config).uri(uriInfo).byId(id).get();
+            return AgJaxrs.select(E3.class, config).clientParams(uriInfo.getQueryParameters()).byId(id).get();
         }
 
         @GET
         @Path("e4")
         public DataResponse<E4> getE4(@Context UriInfo uriInfo) {
-            return Ag.service(config).select(E4.class).uri(uriInfo).get();
+            return AgJaxrs.select(E4.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
 
         @GET
         @Path("e4/{id}")
         public DataResponse<E4> getE4_WithIncludeExclude(@PathParam("id") int id, @Context UriInfo uriInfo) {
-            return Ag.select(E4.class, config).uri(uriInfo).byId(id).get();
+            return AgJaxrs.select(E4.class, config).clientParams(uriInfo.getQueryParameters()).byId(id).get();
         }
 
         @GET
         @Path("e6/{id}")
         public DataResponse<E6> getOneE6(@PathParam("id") String id) {
-            return Ag.select(E6.class, config).byId(id).get();
+            return AgJaxrs.select(E6.class, config).byId(id).get();
         }
 
         @GET
         @Path("e19/{id}")
         public DataResponse<E19> getById(@Context UriInfo uriInfo, @PathParam("id") Integer id) {
-            return Ag.select(E19.class, config).uri(uriInfo).byId(id).getOne();
+            return AgJaxrs.select(E19.class, config).clientParams(uriInfo.getQueryParameters()).byId(id).getOne();
         }
 
         @GET
         @Path("e28")
         public DataResponse<E28> get28(@Context UriInfo uriInfo) {
-            return Ag.select(E28.class, config).uri(uriInfo).get();
+            return AgJaxrs.select(E28.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
 
         @GET
@@ -491,9 +502,9 @@ public class GET_IT extends DbTest {
                     .redefineAttribute("a", String.class, o -> "A")
                     .redefineAttribute("z", String.class, o -> "Z");
 
-            return Ag.select(E28.class, config)
+            return AgJaxrs.select(E28.class, config)
                     .entityOverlay(overlay)
-                    .uri(uriInfo)
+                    .clientParams(uriInfo.getQueryParameters())
                     .get();
         }
 
@@ -508,13 +519,13 @@ public class GET_IT extends DbTest {
             ids.put(E17.ID1.getName(), id1);
             ids.put(E17.ID2.getName(), id2);
 
-            return Ag.select(E17.class, config).uri(uriInfo).byId(ids).getOne();
+            return AgJaxrs.select(E17.class, config).clientParams(uriInfo.getQueryParameters()).byId(ids).getOne();
         }
 
         @GET
         @Path("e29")
         public DataResponse<E29> getAllE29s(@Context UriInfo uriInfo) {
-            return Ag.select(E29.class, config).uri(uriInfo).getOne();
+            return AgJaxrs.select(E29.class, config).clientParams(uriInfo.getQueryParameters()).getOne();
         }
 
         @GET
@@ -528,7 +539,7 @@ public class GET_IT extends DbTest {
             ids.put("db:" + E29.ID1_PK_COLUMN, id1);
             ids.put(E29.ID2PROP.getName(), id2);
 
-            return Ag.select(E29.class, config).uri(uriInfo).byId(ids).getOne();
+            return AgJaxrs.select(E29.class, config).clientParams(uriInfo.getQueryParameters()).byId(ids).getOne();
         }
     }
 

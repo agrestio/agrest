@@ -1,13 +1,13 @@
 package io.agrest.cayenne;
 
-import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SelectStage;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E14;
 import io.agrest.cayenne.cayenne.main.E15;
-import io.agrest.pojo.model.P7;
+import io.agrest.cayenne.unit.AgCayenneTester;
+import io.agrest.cayenne.unit.DbTest;
+import io.agrest.jaxrs.AgJaxrs;
+import io.agrest.jaxrs.pojo.model.P7;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
@@ -74,15 +74,15 @@ public class GET_PersistentWithExtraAnnotatedPropertiesIT extends DbTest {
         @GET
         @Path("e15")
         public DataResponse<E15> getE15(@Context UriInfo uriInfo) {
-            return Ag.select(E15.class, config).uri(uriInfo).get();
+            return AgJaxrs.select(E15.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
 
         @GET
         @Path("e14")
         public DataResponse<E14> getE14(@Context UriInfo uriInfo) {
-            return Ag.select(E14.class, config)
+            return AgJaxrs.select(E14.class, config)
                     .stage(SelectStage.FETCH_DATA, (SelectContext<E14> c) -> afterE14Fetched(c))
-                    .uri(uriInfo).get();
+                    .clientParams(uriInfo.getQueryParameters()).get();
         }
 
         void afterE14Fetched(SelectContext<E14> context) {
