@@ -20,7 +20,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-public class AgBuilder_ExceptionMappersIT extends PojoTest {
+public class AgRuntimeBuilder_ExceptionMappersIT extends PojoTest {
 
     @BQTestTool
     static final AgPojoTester tester = PojoTest.tester(Resource.class)

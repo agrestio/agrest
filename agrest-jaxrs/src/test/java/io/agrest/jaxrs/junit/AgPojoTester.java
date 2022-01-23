@@ -12,7 +12,7 @@ import io.agrest.jaxrs.pojo.runtime.PojoSelectProcessorFactoryProvider;
 import io.agrest.jaxrs.pojo.runtime.PojoStore;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
-import io.agrest.runtime.AgBuilder;
+import io.agrest.runtime.AgRuntimeBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.IAgService;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
@@ -53,7 +53,7 @@ import static org.mockito.Mockito.mock;
 public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
 
     private final List<Class<?>> resources;
-    private Function<AgBuilder, AgBuilder> agCustomizer;
+    private Function<AgRuntimeBuilder, AgRuntimeBuilder> agCustomizer;
     private final List<BQModule> bqModules;
 
     private PojoStore pojoStoreInScope;
@@ -188,7 +188,7 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
             return this;
         }
 
-        public Builder agCustomizer(Function<AgBuilder, AgBuilder> agCustomizer) {
+        public Builder agCustomizer(Function<AgRuntimeBuilder, AgRuntimeBuilder> agCustomizer) {
             tester.agCustomizer = Objects.requireNonNull(agCustomizer);
             return this;
         }
@@ -206,10 +206,10 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
     static class AgModule implements BQModule {
 
         private final PojoStore pojoStore;
-        private final Function<AgBuilder, AgBuilder> customizer;
+        private final Function<AgRuntimeBuilder, AgRuntimeBuilder> customizer;
         private final List<Class<?>> resources;
 
-        public AgModule(Function<AgBuilder, AgBuilder> customizer, PojoStore pojoStore, List<Class<?>> resources) {
+        public AgModule(Function<AgRuntimeBuilder, AgRuntimeBuilder> customizer, PojoStore pojoStore, List<Class<?>> resources) {
             this.pojoStore = pojoStore;
             this.customizer = customizer;
             this.resources = resources;
@@ -228,7 +228,7 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         @Provides
         @Singleton
         AgRuntime provideAgRuntime() {
-            AgBuilder agBuilder = new AgBuilder().module(this::configureAg);
+            AgRuntimeBuilder agBuilder = AgRuntime.builder().module(this::configureAg);
             return customizer.apply(agBuilder).build();
         }
 

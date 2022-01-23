@@ -5,7 +5,7 @@ import io.agrest.cayenne.persister.CayennePersister;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.jaxrs.junit.AgHttpTester;
 import io.agrest.jaxrs.junit.AgTestJaxrsFeature;
-import io.agrest.runtime.AgBuilder;
+import io.agrest.runtime.AgRuntimeBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.IAgService;
 import io.bootique.BQRuntime;
@@ -52,7 +52,7 @@ public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallb
     private final List<Class<?>> resources;
     private Class<? extends Persistent>[] entities;
     private Class<? extends Persistent>[] entitiesAndDependencies;
-    private BiFunction<AgBuilder, ICayennePersister, AgBuilder> agCustomizer;
+    private BiFunction<AgRuntimeBuilder, ICayennePersister, AgRuntimeBuilder> agCustomizer;
     private boolean doNotCleanData;
 
     private JettyTester jettyInScope;
@@ -320,11 +320,11 @@ public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallb
             return this;
         }
 
-        public Builder agCustomizer(UnaryOperator<AgBuilder> agCustomizer) {
+        public Builder agCustomizer(UnaryOperator<AgRuntimeBuilder> agCustomizer) {
             return agCustomizer((b, p) -> agCustomizer.apply(b));
         }
 
-        public Builder agCustomizer(BiFunction<AgBuilder, ICayennePersister, AgBuilder> agCustomizer) {
+        public Builder agCustomizer(BiFunction<AgRuntimeBuilder, ICayennePersister, AgRuntimeBuilder> agCustomizer) {
             tester.agCustomizer = Objects.requireNonNull(agCustomizer);
             return this;
         }
@@ -344,10 +344,10 @@ public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallb
 
     static class AgModule implements BQModule {
 
-        private final BiFunction<AgBuilder, ICayennePersister, AgBuilder> customizer;
+        private final BiFunction<AgRuntimeBuilder, ICayennePersister, AgRuntimeBuilder> customizer;
         private final List<Class<?>> resources;
 
-        public AgModule(BiFunction<AgBuilder, ICayennePersister, AgBuilder> customizer, List<Class<?>> resources) {
+        public AgModule(BiFunction<AgRuntimeBuilder, ICayennePersister, AgRuntimeBuilder> customizer, List<Class<?>> resources) {
             this.customizer = customizer;
             this.resources = resources;
         }
@@ -366,8 +366,9 @@ public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallb
         @Singleton
         AgRuntime provideAgRuntime(ServerRuntime runtime) {
             ICayennePersister persister = new CayennePersister(runtime);
-            AgBuilder agBuilder = new AgBuilder().module(
-                    AgCayenneBuilder.builder().persister(persister).build());
+            AgRuntimeBuilder agBuilder = AgRuntime.builder()
+                    .module(AgCayenneBuilder.builder().persister(persister).build());
+
             return customizer.apply(agBuilder, persister).build();
         }
     }

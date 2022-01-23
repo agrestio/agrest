@@ -2,7 +2,7 @@ package io.agrest.jaxrs.openapi.junit;
 
 import io.agrest.jaxrs.AgJaxrsFeature;
 import io.agrest.jaxrs.openapi.AgSwaggerModule;
-import io.agrest.runtime.AgBuilder;
+import io.agrest.runtime.AgRuntimeBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContext;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
@@ -43,7 +43,7 @@ public class TestOpenAPIBuilder {
         // The side effect of creating AgRuntime is adding Swagger ModelConverters to the static Swagger collection
         // and with the right set of packages
         // TODO: cleanup static vars after the test
-        AgBuilder builder = new AgBuilder();
+        AgRuntimeBuilder builder = AgRuntime.builder();
         packages.forEach(p -> builder.module(b -> AgSwaggerModule.contributeEntityPackages(b).add(p)));
         AgRuntime runtime = builder.build();
 

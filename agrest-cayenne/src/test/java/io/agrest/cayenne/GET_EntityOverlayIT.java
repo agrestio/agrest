@@ -13,7 +13,7 @@ import io.agrest.cayenne.unit.DbTest;
 import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.runtime.AgBuilder;
+import io.agrest.runtime.AgRuntimeBuilder;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectId;
@@ -37,7 +37,7 @@ public class GET_EntityOverlayIT extends DbTest {
             .agCustomizer(GET_EntityOverlayIT::addOverlay)
             .build();
 
-    private static AgBuilder addOverlay(AgBuilder builder) {
+    private static AgRuntimeBuilder addOverlay(AgRuntimeBuilder builder) {
 
         AgEntityOverlay<E2> e2Overlay = AgEntity.overlay(E2.class)
                 .redefineAttribute("adhocString", String.class, e2 -> e2.getName() + "*")

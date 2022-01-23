@@ -62,6 +62,14 @@ works the same way as before and requires no changes.
 All JAX-RS specific code is now moved to a new module - `agrest-jaxrs`. It will need to be explicitly added to the 
 application dependencies.
 
+### (JAX-RS) Starting the stack [#537](https://github.com/agrestio/agrest/issues/537)
+As JAX-RS is no longer a part of Agrest core, and comes from a separate module, Agrest runtime startup in a JAX-RS 
+environment looks different:
+
+```java
+
+```
+
 ### (JAX-RS) Use of `Ag` [#537](https://github.com/agrestio/agrest/issues/537)
 `Ag` class is no longer present in Agrest, as it was too tightly coupled with JAX-RS. You should replace it with 
 `AgJaxrs`.

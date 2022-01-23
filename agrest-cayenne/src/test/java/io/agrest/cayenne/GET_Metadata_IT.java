@@ -11,7 +11,7 @@ import io.agrest.cayenne.cayenne.main.E5;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.jaxrs.AgJaxrs;
-import io.agrest.runtime.AgBuilder;
+import io.agrest.runtime.AgRuntimeBuilder;
 import io.agrest.runtime.jackson.JacksonService;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ public class GET_Metadata_IT extends DbTest {
             .agCustomizer(GET_Metadata_IT::customize)
             .build();
 
-    private static AgBuilder customize(AgBuilder builder) {
+    private static AgRuntimeBuilder customize(AgRuntimeBuilder builder) {
         return builder.baseUrl("https://example.org");
     }
 

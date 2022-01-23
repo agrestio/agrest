@@ -19,6 +19,7 @@
 * #534 Remove "Encoder.visit()" / "DataResponse.getIncludedObjects()"
 * #535 Immutable SimpleResponse/DataResponse
 * #536 DataResponse object should resemble its encoded version
+* #537 Split JAX-RS interface to Agrest in a separate module
 
 ## Release 4.9
 

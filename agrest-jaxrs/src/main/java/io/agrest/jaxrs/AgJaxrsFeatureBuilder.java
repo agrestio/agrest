@@ -11,7 +11,6 @@ import io.agrest.jaxrs.provider.JaxrsAgExceptionMapper;
 import io.agrest.jaxrs.provider.MetadataResponseWriter;
 import io.agrest.jaxrs.provider.ResponseStatusDynamicFeature;
 import io.agrest.jaxrs.provider.SimpleResponseWriter;
-import io.agrest.runtime.AgBuilder;
 import io.agrest.runtime.AgRuntime;
 
 import javax.ws.rs.core.Feature;
@@ -133,7 +132,7 @@ public class AgJaxrsFeatureBuilder {
     }
 
     private AgRuntime createRuntime() {
-        return new AgBuilder().build();
+        return AgRuntime.builder().build();
     }
 
     private List<Feature> features(AgRuntime runtime) {

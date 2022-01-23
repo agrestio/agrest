@@ -114,9 +114,11 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * A builder of Agrest runtime.
+ * A builder of Agrest runtime. Created via {@link AgRuntime#builder()}.
+ *
+ * @since 5.0
  */
-public class AgBuilder {
+public class AgRuntimeBuilder {
 
     private Class<? extends IAgService> agServiceType;
     private IAgService agService;
@@ -133,7 +135,7 @@ public class AgBuilder {
 
     private boolean autoLoadModules;
 
-    public AgBuilder() {
+    protected AgRuntimeBuilder() {
         this.autoLoadModules = true;
         this.entityOverlays = new HashMap<>();
         this.agServiceType = DefaultAgService.class;
@@ -151,18 +153,18 @@ public class AgBuilder {
      * @return this builder instance.
      * @since 2.10
      */
-    public AgBuilder doNotAutoLoadModules() {
+    public AgRuntimeBuilder doNotAutoLoadModules() {
         this.autoLoadModules = false;
         return this;
     }
 
-    public AgBuilder agService(IAgService agService) {
+    public AgRuntimeBuilder agService(IAgService agService) {
         this.agService = agService;
         this.agServiceType = null;
         return this;
     }
 
-    public AgBuilder agService(Class<? extends IAgService> agServiceType) {
+    public AgRuntimeBuilder agService(Class<? extends IAgService> agServiceType) {
         this.agService = null;
         this.agServiceType = agServiceType;
         return this;
@@ -183,7 +185,7 @@ public class AgBuilder {
     // TODO: this may be useful for the future hypermedia controls (like pagination "next" links),
     //  but for now this is of no use
     @Deprecated
-    public AgBuilder baseUrl(String url) {
+    public AgRuntimeBuilder baseUrl(String url) {
         this.baseUrl = url;
         return this;
     }
@@ -195,7 +197,7 @@ public class AgBuilder {
      * @see io.agrest.SelectBuilder#entityOverlay(AgEntityOverlay)
      * @since 2.10
      */
-    public <T> AgBuilder entityOverlay(AgEntityOverlay<T> overlay) {
+    public <T> AgRuntimeBuilder entityOverlay(AgEntityOverlay<T> overlay) {
         getOrCreateOverlay(overlay.getType()).merge(overlay);
         return this;
     }
@@ -211,7 +213,7 @@ public class AgBuilder {
      * @return this builder instance.
      * @since 2.10
      */
-    public AgBuilder module(Module module) {
+    public AgRuntimeBuilder module(Module module) {
         modules.add(module);
         return this;
     }
@@ -223,7 +225,7 @@ public class AgBuilder {
      * @return this builder instance.
      * @since 2.10
      */
-    public AgBuilder module(AgModuleProvider provider) {
+    public AgRuntimeBuilder module(AgModuleProvider provider) {
         moduleProviders.add(provider);
         return this;
     }
@@ -232,7 +234,7 @@ public class AgBuilder {
      * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
      */
     @Deprecated
-    public AgBuilder metadataEncoder(String type, PropertyMetadataEncoder encoder) {
+    public AgRuntimeBuilder metadataEncoder(String type, PropertyMetadataEncoder encoder) {
         this.metadataEncoders.put(type, encoder);
         return this;
     }
@@ -261,8 +263,6 @@ public class AgBuilder {
     }
 
 
-
-
     private void loadAutoLoadableModules(Collection<Module> collector) {
         collector.addAll(new ModuleLoader().load(AgModuleProvider.class));
     }
@@ -288,7 +288,6 @@ public class AgBuilder {
             binder.bindList(AgEntityCompiler.class).add(AnnotationsAgEntityCompiler.class);
 
             binder.bindMap(AgEntityOverlay.class).putAll(entityOverlays);
-
 
 
             if (agServiceType != null) {

@@ -15,11 +15,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AgBuilder_OverlayTest {
+public class AgRuntimeBuilder_OverlayTest {
 
     @Test
     public void testOverlay_RedefineAttribute_New() {
-        AgRuntime runtime = new AgBuilder()
+        AgRuntime runtime = AgRuntime
+                .builder()
                 .entityOverlay(AgEntity.overlay(X.class).redefineAttribute("adHoc", Integer.class, true, true, e -> 2))
                 .build();
 
@@ -42,7 +43,8 @@ public class AgBuilder_OverlayTest {
 
     @Test
     public void testOverlay_RedefineAttribute_Replace() {
-        AgRuntime runtime = new AgBuilder()
+        AgRuntime runtime = AgRuntime
+                .builder()
                 .entityOverlay(AgEntity.overlay(X.class).redefineAttribute("phoneNumber", Long.class, x -> Long.valueOf(x.getPhoneNumber())))
                 .build();
 
@@ -69,7 +71,8 @@ public class AgBuilder_OverlayTest {
 
         NestedDataResolver<?> resolver = new TestNestedDataResolver<>();
 
-        AgRuntime runtime = new AgBuilder()
+        AgRuntime runtime = AgRuntime
+                .builder()
                 .entityOverlay(AgEntity.overlay(X.class).redefineRelationshipResolver("y", (t, n) -> resolver))
                 .build();
 
@@ -97,7 +100,8 @@ public class AgBuilder_OverlayTest {
 
         NestedDataResolver<?> resolver = new TestNestedDataResolver<>();
 
-        AgRuntime runtime = new AgBuilder()
+        AgRuntime runtime = AgRuntime
+                .builder()
                 // this overlay is partial, as it is missing "targetType" property
                 .entityOverlay(AgEntity.overlay(X.class).redefineRelationshipResolver("adHoc", (t, n) -> resolver))
                 .build();
@@ -112,7 +116,8 @@ public class AgBuilder_OverlayTest {
 
         NestedDataResolver<Object> resolver = new TestNestedDataResolver<>();
 
-        AgRuntime runtime = new AgBuilder()
+        AgRuntime runtime = AgRuntime
+                .builder()
                 // just for kicks redefine to-one as to-many, and change its target
                 .entityOverlay(AgEntity.overlay(X.class).redefineToMany("y", A.class, (t, n) -> resolver))
                 .build();
@@ -141,7 +146,8 @@ public class AgBuilder_OverlayTest {
 
         NestedDataResolver<P1> resolver = new TestNestedDataResolver<>();
 
-        AgRuntime runtime = new AgBuilder()
+        AgRuntime runtime = AgRuntime
+                .builder()
                 .entityOverlay(AgEntity.overlay(X.class).redefineToOne("adHoc", A.class, true, true, (t, n) -> resolver))
                 .build();
 
@@ -166,7 +172,8 @@ public class AgBuilder_OverlayTest {
 
     @Test
     public void testOverlay_Exclude() {
-        AgRuntime runtime = new AgBuilder()
+        AgRuntime runtime = AgRuntime
+                .builder()
                 .entityOverlay(AgEntity.overlay(X.class).readablePropFilter(b -> b.property("phoneNumber", false)))
                 .entityOverlay(AgEntity.overlay(X.class).writablePropFilter(b -> b.property("phoneNumber", false)))
                 .build();

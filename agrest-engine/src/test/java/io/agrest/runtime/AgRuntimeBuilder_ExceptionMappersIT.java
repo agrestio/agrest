@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @BQTest
-public class AgBuilder_ExceptionMappersIT {
+public class AgRuntimeBuilder_ExceptionMappersIT {
 
     @BQTestTool
     static final AgPojoTester tester = AgPojoTester

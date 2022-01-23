@@ -14,6 +14,15 @@ public class AgRuntime {
 
     private final Injector injector;
 
+    /**
+     * Creates and returns a builder of Agrest runtime.
+     *
+     * @since 5.0
+     */
+    public static AgRuntimeBuilder builder() {
+        return new AgRuntimeBuilder();
+    }
+
     AgRuntime(Injector injector) {
         this.injector = injector;
     }

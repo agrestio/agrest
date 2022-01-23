@@ -15,33 +15,33 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class AgBuilder_ModuleProviderTest {
+public class AgRuntimeBuilder_ModuleProviderTest {
 
     @Test
     public void testAgModule_Provider() {
         inRuntime(
-                new AgBuilder().module(new LocalTestModuleProvider()),
+                new AgRuntimeBuilder().module(new LocalTestModuleProvider()),
                 this::assertLocalTestModuleActive);
     }
 
     @Test
     public void testModule() {
         inRuntime(
-                new AgBuilder().module(new LocalTestModule()),
+                new AgRuntimeBuilder().module(new LocalTestModule()),
                 this::assertLocalTestModuleActive);
     }
 
     @Test
     public void testAutoLoading() {
         inRuntime(
-                new AgBuilder(),
+                new AgRuntimeBuilder(),
                 this::assertTestModuleActive);
     }
 
     @Test
     public void testSuppressAutoLoading() {
         inRuntime(
-                new AgBuilder().doNotAutoLoadModules(),
+                new AgRuntimeBuilder().doNotAutoLoadModules(),
                 this::assertTestModuleNotActive);
     }
 
@@ -63,7 +63,7 @@ public class AgBuilder_ModuleProviderTest {
         assertFalse(encoders.containsKey(TestModuleProvider.METADATA_ENCODER_KEY), "Auto-loading was on");
     }
 
-    private void inRuntime(AgBuilder builder, Consumer<AgRuntime> test) {
+    private void inRuntime(AgRuntimeBuilder builder, Consumer<AgRuntime> test) {
         AgRuntime r = builder.build();
         try {
             test.accept(r);

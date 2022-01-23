@@ -12,7 +12,7 @@ import io.agrest.pojo.model.P9;
 import io.agrest.pojo.runtime.PojoFetchStage;
 import io.agrest.pojo.runtime.PojoSelectProcessorFactoryProvider;
 import io.agrest.pojo.runtime.PojoStore;
-import io.agrest.runtime.AgBuilder;
+import io.agrest.runtime.AgRuntimeBuilder;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.IAgService;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
@@ -45,7 +45,7 @@ import static org.mockito.Mockito.mock;
 
 public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
 
-    private Function<AgBuilder, AgBuilder> agCustomizer;
+    private Function<AgRuntimeBuilder, AgRuntimeBuilder> agCustomizer;
     private final List<BQModule> bqModules;
 
     private PojoStore pojoStoreInScope;
@@ -145,7 +145,7 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
 
         private final AgPojoTester tester = new AgPojoTester();
 
-        public Builder agCustomizer(Function<AgBuilder, AgBuilder> agCustomizer) {
+        public Builder agCustomizer(Function<AgRuntimeBuilder, AgRuntimeBuilder> agCustomizer) {
             tester.agCustomizer = Objects.requireNonNull(agCustomizer);
             return this;
         }
@@ -163,9 +163,9 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
     static class AgModule implements BQModule {
 
         private final PojoStore pojoStore;
-        private final Function<AgBuilder, AgBuilder> customizer;
+        private final Function<AgRuntimeBuilder, AgRuntimeBuilder> customizer;
 
-        public AgModule(Function<AgBuilder, AgBuilder> customizer, PojoStore pojoStore) {
+        public AgModule(Function<AgRuntimeBuilder, AgRuntimeBuilder> customizer, PojoStore pojoStore) {
             this.pojoStore = pojoStore;
             this.customizer = customizer;
         }
@@ -177,7 +177,7 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         @Provides
         @Singleton
         AgRuntime provideAgRuntime() {
-            AgBuilder agBuilder = new AgBuilder().module(this::configureAg);
+            AgRuntimeBuilder agBuilder = AgRuntime.builder().module(this::configureAg);
             return customizer.apply(agBuilder).build();
         }
 
