@@ -12,5 +12,5 @@ Quick links:
 * [support](https://groups.google.com/forum/?#!forum/agrest-user)
 * [upgrade instructions](https://github.com/agrestio/agrest/blob/master/UPGRADE-NOTES.md)
 * examples:
-** [Bootique, Cayenne, Derby DB](https://github.com/bootique-examples/bootique-agrest-demo) 
-** [Various Agrest Examples](https://github.com/agrestio/agrest-examples) 
+  * [Bootique, Cayenne, Derby DB](https://github.com/bootique-examples/bootique-agrest-demo) 
+  * [Various Agrest Examples](https://github.com/agrestio/agrest-examples) 
