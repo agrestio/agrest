@@ -7,7 +7,8 @@ import org.apache.cayenne.di.Module;
 
 /**
  * @since 5.0
- * @deprecated since 5.0 loads some deprecated service with JAX-RS dependency
+ * @deprecated since 5.0. Exists to load a few remaining deprecated core services that have JAX-RS dependencies. As those
+ * services go away, this module will be removed as well,
  */
 @Deprecated
 public class AgJaxrsModule implements Module {
