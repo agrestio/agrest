@@ -71,6 +71,11 @@
             </dependency>
             <dependency>
                 <groupId>io.agrest</groupId>
+                <artifactId>agrest-jakarta</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.agrest</groupId>
                 <artifactId>agrest-jaxrs</artifactId>
                 <version>${project.version}</version>
             </dependency>

@@ -15,6 +15,7 @@
     <modules>
         <module>agrest-annotations</module>
         <module>agrest-engine</module>
+        <module>agrest-jakarta</module>
         <module>agrest-jaxrs</module>
         <module>agrest-jaxrs-openapi</module>
         <module>agrest-cayenne</module>
@@ -31,9 +32,13 @@
         <!-- Custom properties (mostly framework versions) -->
         <slf4j-version>1.7.25</slf4j-version>
         <cayenne-version>4.2.B1</cayenne-version>
-        <jaxrs-version>2.1.6</jaxrs-version>
+        <jaxrs2.version>2.1.6</jaxrs2.version>
+        <jaxrs3.version>3.0.0</jaxrs3.version>
         <jackson-version>2.13.1</jackson-version>
-        <bootique-version>2.0.RC1</bootique-version>
+
+        <!-- TODO: replace with release version as soon as possible -->
+        <bootique.version>3.0.M1-SNAPSHOT</bootique.version>
+
         <junit5-version>5.7.0</junit5-version>
         <swagger.version>2.1.5</swagger.version>
         <mockito.version>3.9.0</mockito.version>
@@ -68,6 +73,21 @@
         <url>https://github.com/agrestio/agrest</url>
         <tag>HEAD</tag>
     </scm>
+
+
+    <repositories>
+        <!-- TODO: remove this repo declaration once Bootuque 3.0.M1 is released and we can reference it in tests -->
+        <repository>
+            <id>bootique-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <distributionManagement>
         <repository>
@@ -116,11 +136,6 @@
                 <version>${slf4j-version}</version>
             </dependency>
             <dependency>
-                <groupId>jakarta.ws.rs</groupId>
-                <artifactId>jakarta.ws.rs-api</artifactId>
-                <version>${jaxrs-version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
                 <version>${jackson-version}</version>
@@ -152,32 +167,42 @@
             <dependency>
                 <groupId>io.bootique.jdbc</groupId>
                 <artifactId>bootique-jdbc-junit5-derby</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.cayenne</groupId>
                 <artifactId>bootique-cayenne42-junit5</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique</groupId>
                 <artifactId>bootique-junit5</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.jdbc</groupId>
                 <artifactId>bootique-jdbc-junit5-derby</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.jersey</groupId>
                 <artifactId>bootique-jersey</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.jetty</groupId>
                 <artifactId>bootique-jetty-junit5</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.bootique.jersey</groupId>
+                <artifactId>bootique-jersey-jakarta</artifactId>
+                <version>${bootique.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.bootique.jetty</groupId>
+                <artifactId>bootique-jetty-jakarta-junit5</artifactId>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
