@@ -6,7 +6,7 @@ import io.agrest.SimpleResponse;
 import io.agrest.cayenne.cayenne.main.E25;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
-import io.agrest.jaxrs.AgJaxrs;
+import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.cayenne.pojo.model.PX1;

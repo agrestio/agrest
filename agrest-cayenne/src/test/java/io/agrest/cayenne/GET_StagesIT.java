@@ -11,7 +11,7 @@ import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.GenericEncoder;
 import io.agrest.encoder.ListEncoder;
-import io.agrest.jaxrs.AgJaxrs;
+import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.query.ObjectSelect;

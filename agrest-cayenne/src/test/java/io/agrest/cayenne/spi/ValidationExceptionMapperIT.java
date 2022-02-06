@@ -6,7 +6,7 @@ import io.agrest.SelectStage;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
-import io.agrest.jaxrs.AgJaxrs;
+import io.agrest.jaxrs2.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.validation.SimpleValidationFailure;
 import org.apache.cayenne.validation.ValidationException;

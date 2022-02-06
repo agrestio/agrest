@@ -15,9 +15,9 @@
     <modules>
         <module>agrest-annotations</module>
         <module>agrest-engine</module>
-        <module>agrest-jakarta</module>
-        <module>agrest-jaxrs</module>
-        <module>agrest-jaxrs-openapi</module>
+        <module>agrest-jaxrs3</module>
+        <module>agrest-jaxrs2</module>
+        <module>agrest-jaxrs2-openapi</module>
         <module>agrest-cayenne</module>
         <module>agrest-bom</module>
     </modules>

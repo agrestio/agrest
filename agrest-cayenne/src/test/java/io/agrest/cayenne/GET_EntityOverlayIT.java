@@ -10,7 +10,7 @@ import io.agrest.cayenne.cayenne.main.E7;
 import io.agrest.cayenne.cayenne.main.E8;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
-import io.agrest.jaxrs.AgJaxrs;
+import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.runtime.AgRuntimeBuilder;

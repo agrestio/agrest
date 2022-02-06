@@ -13,7 +13,7 @@ import io.agrest.cayenne.exp.CayenneExpParser;
 import io.agrest.cayenne.exp.CayenneExpPostProcessor;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.jaxrs.meta.parser.ResourceParser;
+import io.agrest.jaxrs2.meta.parser.ResourceParser;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazyAgDataMap;

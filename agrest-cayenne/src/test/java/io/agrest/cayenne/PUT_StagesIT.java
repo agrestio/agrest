@@ -6,7 +6,7 @@ import io.agrest.UpdateStage;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E3;
-import io.agrest.jaxrs.AgJaxrs;
+import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.BeforeEach;

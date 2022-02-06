@@ -2,7 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
-import io.agrest.jaxrs.AgJaxrs;
+import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.protocol.Exclude;
 import io.agrest.protocol.Include;
 import io.agrest.cayenne.unit.AgCayenneTester;

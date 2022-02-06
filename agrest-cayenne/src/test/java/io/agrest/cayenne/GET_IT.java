@@ -13,7 +13,7 @@ import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.converter.jsonvalue.UtcDateConverter;
 import io.agrest.encoder.DateTimeFormatters;
-import io.agrest.jaxrs.AgJaxrs;
+import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.bootique.junit5.BQTestTool;

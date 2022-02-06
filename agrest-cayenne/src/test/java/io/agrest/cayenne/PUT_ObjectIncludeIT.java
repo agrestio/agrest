@@ -7,7 +7,7 @@ import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E5;
-import io.agrest.jaxrs.AgJaxrs;
+import io.agrest.jaxrs2.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
