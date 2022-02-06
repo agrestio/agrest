@@ -8,7 +8,9 @@ _This branch is for Agrest 4.x line of development. It provides integration with
 Quick links:
 
 * [website](https://agrest.io) | [twitter](https://twitter.com/agrestproject)
-* [quick tutorial with Bootique and Derby DB](https://github.com/bootique-examples/bootique-agrest-demo)
 * [documentation](https://agrest.io/docs/)
 * [support](https://groups.google.com/forum/?#!forum/agrest-user)
 * [upgrade instructions](https://github.com/agrestio/agrest/blob/master/UPGRADE-NOTES.md)
+* examples:
+** [Bootique, Cayenne, Derby DB](https://github.com/bootique-examples/bootique-agrest-demo) 
+** [Various Agrest Examples](https://github.com/agrestio/agrest-examples) 
