@@ -1,9 +1,0 @@
-== Prerequisites
-
-* Java 1.8 or newer
-* A Java web app project that will serve your REST requests.
-* A JAX-RS 2.0 container, such as Jersey 2.x.
-* Cayenne 4.0 or newer. Mapping your database and starting Cayenne
-  ServerRuntime is outside the scope of this document. Please refer to the
-  http://cayenne.apache.org/docs/4.0/cayenne-guide/index.html[corresponding Cayenne docs]
-

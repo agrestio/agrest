@@ -1,7 +1,0 @@
-== JSON Documents
-
-include::_json-documents/response-simple-document.adoc[]
-
-include::_json-documents/response-collection-document.adoc[]
-
-include::_json-documents/request-update-document.adoc[]

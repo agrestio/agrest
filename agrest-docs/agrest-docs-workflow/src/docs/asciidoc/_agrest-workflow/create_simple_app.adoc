@@ -1,9 +1,0 @@
-== Create a Simple `Agrest` App
-
-include::_create_simple_app/setup.adoc[]
-
-include::_create_simple_app/starting_project.adoc[]
-
-include::_create_simple_app/implementation.adoc[]
-
-include::_create_simple_app/running_app.adoc[]
