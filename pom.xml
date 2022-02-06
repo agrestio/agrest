@@ -16,6 +16,7 @@
         <module>agrest-annotations</module>
         <module>agrest-engine</module>
         <module>agrest-jaxrs3</module>
+        <module>agrest-jaxrs3-openapi</module>
         <module>agrest-jaxrs2</module>
         <module>agrest-jaxrs2-openapi</module>
         <module>agrest-cayenne</module>
@@ -40,7 +41,7 @@
         <bootique.version>3.0.M1-SNAPSHOT</bootique.version>
 
         <junit5-version>5.7.0</junit5-version>
-        <swagger.version>2.1.5</swagger.version>
+        <swagger.version>2.1.12</swagger.version>
         <mockito.version>3.9.0</mockito.version>
 
         <gpg.pinentry.mode>loopback</gpg.pinentry.mode>
@@ -203,11 +204,6 @@
                 <groupId>io.bootique.jetty</groupId>
                 <artifactId>bootique-jetty-jakarta-junit5</artifactId>
                 <version>${bootique.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-jaxrs2</artifactId>
-                <version>${swagger.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
