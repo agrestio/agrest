@@ -1,3 +1,7 @@
+## Release 4.10
+
+* #540 Fetch by ID with filters will return 200 even if the filter excludes the object
+
 ## Release 4.9
 
 * #513 AgEntityOverly with a single root resolver doesn't update the entity

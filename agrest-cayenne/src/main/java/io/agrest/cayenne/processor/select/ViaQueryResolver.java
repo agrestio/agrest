@@ -1,10 +1,8 @@
 package io.agrest.cayenne.processor.select;
 
-import io.agrest.AgException;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
-import io.agrest.meta.AgEntity;
 import io.agrest.resolver.BaseRootDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.DataObject;
@@ -36,22 +34,6 @@ public class ViaQueryResolver<T extends DataObject> extends BaseRootDataResolver
     protected List<T> doFetchData(SelectContext<T> context) {
         SelectQuery<T> select = CayenneProcessor.getCayenneEntity(context.getEntity()).getSelect();
         List<T> result = persister.sharedContext().select(select);
-        checkObjectNotFound(context, result);
         return result;
-    }
-
-    protected void checkObjectNotFound(SelectContext<T> context, List<?> result) {
-        if (context.isAtMostOneObject() && result.size() != 1) {
-
-            AgEntity<?> entity = context.getEntity().getAgEntity();
-
-            if (result.isEmpty()) {
-                throw AgException.notFound("No object for ID '%s' and entity '%s'", context.getId(), entity.getName());
-            } else {
-                throw AgException.internalServerError("Found more than one object for ID '%s' and entity '%s'",
-                        context.getId(),
-                        entity.getName());
-            }
-        }
     }
 }
