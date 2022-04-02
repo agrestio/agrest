@@ -1,17 +1,16 @@
 package io.agrest;
 
-import io.agrest.encoder.PropertyMetadataEncoder;
+import com.fasterxml.jackson.databind.JsonNode;
+import io.agrest.converter.jsonvalue.JsonValueConverter;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.Module;
 
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.mockito.Mockito.mock;
-
 public class TestModuleProvider implements AgModuleProvider {
 
-    public static final String METADATA_ENCODER_KEY = "TestModuleProvider.test";
+    public static final String CONVERTER_KEY = X.class.getName();
 
     @Override
     public Module module() {
@@ -32,8 +31,17 @@ public class TestModuleProvider implements AgModuleProvider {
 
         @Override
         public void configure(Binder binder) {
-            binder.bindMap(PropertyMetadataEncoder.class)
-                    .put(METADATA_ENCODER_KEY, mock(PropertyMetadataEncoder.class));
+            binder.bindMap(JsonValueConverter.class).put(CONVERTER_KEY, new XConverter());
+        }
+    }
+
+    public static class X {
+    }
+
+    public static class XConverter implements JsonValueConverter<X> {
+        @Override
+        public X value(JsonNode node) {
+            return null;
         }
     }
 }

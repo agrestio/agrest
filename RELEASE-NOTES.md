@@ -21,6 +21,7 @@
 * #536 DataResponse object should resemble its encoded version
 * #537 Split JAX-RS interface to Agrest in a separate module
 * #538 "agrest-jaxrs3" module 
+* #541 Remove deprecated metadata responses
 
 ## Release 4.10
 

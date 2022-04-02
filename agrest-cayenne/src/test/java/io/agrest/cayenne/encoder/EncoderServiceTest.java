@@ -51,8 +51,7 @@ public class EncoderServiceTest extends CayenneNoDbTest {
         encoderService = new EncoderService(
                 epf,
                 converters,
-                new RelationshipMapper(),
-                Collections.emptyMap());
+                new RelationshipMapper());
     }
 
     @Test

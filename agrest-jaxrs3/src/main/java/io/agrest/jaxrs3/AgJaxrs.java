@@ -2,7 +2,6 @@ package io.agrest.jaxrs3;
 
 import io.agrest.AgRequestBuilder;
 import io.agrest.DeleteBuilder;
-import io.agrest.MetadataBuilder;
 import io.agrest.SelectBuilder;
 import io.agrest.UnrelateBuilder;
 import io.agrest.UpdateBuilder;
@@ -56,14 +55,6 @@ public class AgJaxrs {
 
     public static <T> UnrelateBuilder<T> unrelate(Class<T> type, Configuration config) {
         return runtime(config).unrelate(type);
-    }
-
-    /**
-     * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
-     */
-    @Deprecated
-    public static <T> MetadataBuilder<T> metadata(Class<T> entityClass, Configuration config) {
-        return runtime(config).metadata(entityClass);
     }
 
     /**

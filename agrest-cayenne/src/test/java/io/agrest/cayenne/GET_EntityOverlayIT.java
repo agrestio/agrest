@@ -1,7 +1,6 @@
 package io.agrest.cayenne;
 
 import io.agrest.DataResponse;
-import io.agrest.MetadataResponse;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
@@ -27,7 +26,6 @@ import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GET_EntityOverlayIT extends DbTest {
 
@@ -60,17 +58,6 @@ public class GET_EntityOverlayIT extends DbTest {
                 .redefineAttribute("name", Integer.class, e7 -> e7.getName().length());
 
         return builder.entityOverlay(e4Overlay).entityOverlay(e2Overlay).entityOverlay(e7Overlay);
-    }
-
-    @Test
-    public void testOverlayMeta() {
-
-        String data = tester.target("/e4/meta").get().wasOk().getContentAsString();
-
-        assertTrue(data.contains("{\"name\":\"derived\",\"type\":\"string\"}"));
-        assertTrue(data.contains("{\"name\":\"adhocString\",\"type\":\"string\"}"));
-        assertTrue(data.contains("{\"name\":\"adhocToOne\",\"type\":\"EX\",\"relationship\":true}"));
-        assertTrue(data.contains("{\"name\":\"adhocToMany\",\"type\":\"EY\",\"relationship\":true,\"collection\":true}"));
     }
 
     @Test
@@ -247,13 +234,6 @@ public class GET_EntityOverlayIT extends DbTest {
         @Path("e4")
         public DataResponse<E4> getE4(@Context UriInfo uriInfo) {
             return AgJaxrs.select(E4.class, config).clientParams(uriInfo.getQueryParameters()).get();
-        }
-
-        @Deprecated
-        @GET
-        @Path("e4/meta")
-        public MetadataResponse<E4> getMetaE4(@Context UriInfo uriInfo) {
-            return AgJaxrs.metadata(E4.class, config).forResource(Resource.class).baseUri(uriInfo.getBaseUri()).process();
         }
 
         @GET

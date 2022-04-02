@@ -5,22 +5,17 @@ import io.agrest.RootResourceEntity;
 import io.agrest.ToManyResourceEntity;
 import io.agrest.ToOneResourceEntity;
 import io.agrest.cayenne.compiler.CayenneAgEntityCompiler;
+import io.agrest.cayenne.exp.CayenneExpParser;
+import io.agrest.cayenne.exp.CayenneExpPostProcessor;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.path.PathResolver;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneQueryAssembler;
-import io.agrest.cayenne.exp.CayenneExpParser;
-import io.agrest.cayenne.exp.CayenneExpPostProcessor;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.jaxrs2.meta.parser.ResourceParser;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazyAgDataMap;
-import io.agrest.meta.parser.IResourceParser;
-import io.agrest.runtime.meta.BaseUrlProvider;
-import io.agrest.runtime.meta.IResourceMetadataService;
-import io.agrest.runtime.meta.ResourceMetadataService;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
@@ -32,7 +27,6 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.mock;
@@ -49,8 +43,6 @@ public abstract class CayenneNoDbTest {
     protected ICayennePersister mockCayennePersister;
     protected IPathResolver pathDescriptorManager;
     protected AgDataMap dataMap;
-    protected IResourceMetadataService resourceMetadataService;
-    protected IResourceParser resourceParser;
     protected CayenneQueryAssembler queryAssembler;
 
     @BeforeAll
@@ -84,9 +76,6 @@ public abstract class CayenneNoDbTest {
         when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());
 
         this.dataMap = new LazyAgDataMap(createEntityCompilers());
-        this.resourceParser = new ResourceParser(dataMap);
-        this.resourceMetadataService = createResourceMetadataService();
-
         this.pathDescriptorManager = new PathResolver();
         this.queryAssembler = new CayenneQueryAssembler(
                 () -> dataMap,
@@ -106,10 +95,6 @@ public abstract class CayenneNoDbTest {
         AgEntityCompiler c2 = new AnnotationsAgEntityCompiler(Collections.emptyMap());
 
         return asList(c1, c2);
-    }
-
-    protected IResourceMetadataService createResourceMetadataService() {
-        return new ResourceMetadataService(resourceParser, BaseUrlProvider.forUrl(Optional.empty()));
     }
 
     protected <T> AgEntity<T> getAgEntity(Class<T> type) {

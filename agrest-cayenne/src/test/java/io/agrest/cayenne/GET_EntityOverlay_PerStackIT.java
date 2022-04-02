@@ -1,7 +1,6 @@
 package io.agrest.cayenne;
 
 import io.agrest.DataResponse;
-import io.agrest.MetadataResponse;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E22;
 import io.agrest.cayenne.cayenne.main.E25;
@@ -15,7 +14,6 @@ import io.agrest.runtime.AgRuntimeBuilder;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.query.SelectById;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -50,15 +48,6 @@ public class GET_EntityOverlay_PerStackIT extends DbTest {
         return SelectById
                 .query(E25.class, Cayenne.intPKForObject(parent) * 2)
                 .selectOne(parent.getObjectContext());
-    }
-
-    @Deprecated
-    @Test
-    public void testRedefineToOne_Meta() {
-        String data = tester.target("/e22/meta").get().wasOk().getContentAsString();
-        Assertions.assertTrue(
-                data.contains("{\"name\":\"overlayToOne\",\"type\":\"E25\",\"relationship\":true}"),
-                "Unexpected metadata: " + data);
     }
 
     @Test
@@ -108,13 +97,6 @@ public class GET_EntityOverlay_PerStackIT extends DbTest {
         @Path("e22")
         public DataResponse<E22> getE22(@Context UriInfo uriInfo) {
             return AgJaxrs.select(E22.class, config).clientParams(uriInfo.getQueryParameters()).get();
-        }
-
-        @Deprecated
-        @GET
-        @Path("e22/meta")
-        public MetadataResponse<E22> getMetaE22(@Context UriInfo uriInfo) {
-            return AgJaxrs.metadata(E22.class, config).forResource(Resource.class).baseUri(uriInfo.getBaseUri()).process();
         }
 
         @GET

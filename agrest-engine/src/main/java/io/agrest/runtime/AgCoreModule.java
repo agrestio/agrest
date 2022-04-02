@@ -26,13 +26,10 @@ import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.converter.valuestring.ValueStringConvertersProvider;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.encoder.ValueEncoders;
 import io.agrest.encoder.ValueEncodersProvider;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.parser.IResourceParser;
-import io.agrest.meta.parser.ThrowingResourceParser;
 import io.agrest.runtime.constraints.ConstraintsHandler;
 import io.agrest.runtime.constraints.IConstraintsHandler;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
@@ -57,27 +54,21 @@ import io.agrest.runtime.entity.SizeMerger;
 import io.agrest.runtime.entity.SortMerger;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
-import io.agrest.runtime.meta.BaseUrlProvider;
-import io.agrest.runtime.meta.IResourceMetadataService;
 import io.agrest.runtime.meta.LazyAgDataMapProvider;
-import io.agrest.runtime.meta.ResourceMetadataService;
+import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
+import io.agrest.runtime.processor.delete.provider.DeleteProcessorFactoryProvider;
 import io.agrest.runtime.processor.delete.stage.DeleteAuthorizeChangesStage;
 import io.agrest.runtime.processor.delete.stage.DeleteInDataStoreStage;
 import io.agrest.runtime.processor.delete.stage.DeleteMapChangesStage;
-import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
-import io.agrest.runtime.processor.delete.provider.DeleteProcessorFactoryProvider;
 import io.agrest.runtime.processor.delete.stage.DeleteStartStage;
-import io.agrest.runtime.processor.meta.CollectMetadataStage;
-import io.agrest.runtime.processor.meta.MetadataProcessorFactory;
-import io.agrest.runtime.processor.meta.MetadataProcessorFactoryProvider;
+import io.agrest.runtime.processor.select.SelectProcessorFactory;
+import io.agrest.runtime.processor.select.provider.SelectProcessorFactoryProvider;
 import io.agrest.runtime.processor.select.stage.SelectApplyServerParamsStage;
 import io.agrest.runtime.processor.select.stage.SelectAssembleQueryStage;
 import io.agrest.runtime.processor.select.stage.SelectCreateResourceEntityStage;
 import io.agrest.runtime.processor.select.stage.SelectEncoderInstallStage;
 import io.agrest.runtime.processor.select.stage.SelectFetchDataStage;
 import io.agrest.runtime.processor.select.stage.SelectFilterResultStage;
-import io.agrest.runtime.processor.select.SelectProcessorFactory;
-import io.agrest.runtime.processor.select.provider.SelectProcessorFactoryProvider;
 import io.agrest.runtime.processor.select.stage.SelectStartStage;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
 import io.agrest.runtime.processor.unrelate.provider.UnrelateProcessorFactoryProvider;
@@ -137,7 +128,6 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Configures core Agrest services.
@@ -149,21 +139,12 @@ public class AgCoreModule implements Module {
     private final Map<String, AgEntityOverlay> entityOverlays;
     private final Map<String, Class<? extends AgExceptionMapper>> exceptionMappers;
 
-    @Deprecated
-    private final Map<String, PropertyMetadataEncoder> metadataEncoders;
-    @Deprecated
-    private final String baseUrl;
-
     protected AgCoreModule(
             Map<String, AgEntityOverlay> entityOverlays,
-            Map<String, Class<? extends AgExceptionMapper>> exceptionMappers,
-            Map<String, PropertyMetadataEncoder> metadataEncoders,
-            String baseUrl) {
+            Map<String, Class<? extends AgExceptionMapper>> exceptionMappers) {
 
         this.entityOverlays = entityOverlays;
         this.exceptionMappers = exceptionMappers;
-        this.metadataEncoders = metadataEncoders;
-        this.baseUrl = baseUrl;
     }
 
     @Override
@@ -297,16 +278,6 @@ public class AgCoreModule implements Module {
         binder.bind(IResultFilter.class).to(ResultFilter.class);
         binder.bind(IChangeAuthorizer.class).to(ChangeAuthorizer.class);
 
-
         binder.bind(IEntityUpdateParser.class).to(EntityUpdateParser.class);
-
-        // deprecated services
-        binder.bindMap(PropertyMetadataEncoder.class).putAll(metadataEncoders);
-        binder.bind(MetadataProcessorFactory.class).toProvider(MetadataProcessorFactoryProvider.class);
-        binder.bind(CollectMetadataStage.class).to(CollectMetadataStage.class);
-        binder.bind(IResourceMetadataService.class).to(ResourceMetadataService.class);
-        // IResourceParser is implemented for real in "bootique-jaxrs". Here just use a placeholder
-        binder.bind(IResourceParser.class).to(ThrowingResourceParser.class);
-        binder.bind(BaseUrlProvider.class).toInstance(BaseUrlProvider.forUrl(Optional.ofNullable(baseUrl)));
     }
 }

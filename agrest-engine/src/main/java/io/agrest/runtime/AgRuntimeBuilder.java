@@ -1,7 +1,6 @@
 package io.agrest.runtime;
 
 import io.agrest.AgModuleProvider;
-import io.agrest.encoder.PropertyMetadataEncoder;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.spi.AgExceptionMapper;
 import org.apache.cayenne.di.DIBootstrap;
@@ -27,18 +26,12 @@ public class AgRuntimeBuilder {
     private final Map<String, AgEntityOverlay> entityOverlays;
     private final Map<String, Class<? extends AgExceptionMapper>> exceptionMappers;
 
-    @Deprecated
-    private final Map<String, PropertyMetadataEncoder> metadataEncoders;
-    @Deprecated
-    private String baseUrl;
-
     private boolean autoLoadModules;
 
     protected AgRuntimeBuilder() {
         this.autoLoadModules = true;
         this.entityOverlays = new HashMap<>();
         this.exceptionMappers = new HashMap<>();
-        this.metadataEncoders = new HashMap<>();
         this.moduleProviders = new ArrayList<>(5);
         this.modules = new ArrayList<>(5);
     }
@@ -53,26 +46,6 @@ public class AgRuntimeBuilder {
      */
     public AgRuntimeBuilder doNotAutoLoadModules() {
         this.autoLoadModules = false;
-        return this;
-    }
-
-    /**
-     * Sets the public base URL of the application serving this Agrest stack. This should be a URL of the root REST
-     * resource of the application. This value is used to build hypermedia controls (i.e. links) in the metadata
-     * responses. It is optional, and for most apps can be calculated automatically. Usually has to be set explicitly
-     * in case of a misconfigured reverse proxy (missing "X-Forwarded-Proto" header to tell apart HTTP from HTTPS), and
-     * such.
-     *
-     * @param url a URL of the root REST resource of the application.
-     * @return this builder instance
-     * @since 2.10
-     * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
-     */
-    // TODO: this may be useful for the future hypermedia controls (like pagination "next" links),
-    //  but for now this is of no use
-    @Deprecated
-    public AgRuntimeBuilder baseUrl(String url) {
-        this.baseUrl = url;
         return this;
     }
 
@@ -116,15 +89,6 @@ public class AgRuntimeBuilder {
         return this;
     }
 
-    /**
-     * @deprecated since 4.1, as Agrest now integrates with OpenAPI 3 / Swagger.
-     */
-    @Deprecated
-    public AgRuntimeBuilder metadataEncoder(String type, PropertyMetadataEncoder encoder) {
-        this.metadataEncoders.put(type, encoder);
-        return this;
-    }
-
     public AgRuntime build() {
         return new AgRuntime(createInjector());
     }
@@ -150,7 +114,7 @@ public class AgRuntimeBuilder {
 
 
     private Module createCoreModule() {
-        return new AgCoreModule(entityOverlays, exceptionMappers, metadataEncoders, baseUrl);
+        return new AgCoreModule(entityOverlays, exceptionMappers);
     }
 
     private void loadAutoLoadableModules(Collection<Module> collector) {

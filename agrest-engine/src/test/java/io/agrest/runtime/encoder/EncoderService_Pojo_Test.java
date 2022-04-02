@@ -50,8 +50,7 @@ public class EncoderService_Pojo_Test {
         this.encoderService = new EncoderService(
                 epf,
                 converters,
-                new RelationshipMapper(),
-                Collections.emptyMap());
+                new RelationshipMapper());
     }
 
     @Test

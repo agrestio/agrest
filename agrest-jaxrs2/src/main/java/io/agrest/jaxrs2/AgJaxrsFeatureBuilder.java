@@ -2,13 +2,11 @@ package io.agrest.jaxrs2;
 
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
-import io.agrest.MetadataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.jaxrs2.provider.DataResponseWriter;
 import io.agrest.jaxrs2.provider.EntityUpdateCollectionReader;
 import io.agrest.jaxrs2.provider.EntityUpdateReader;
 import io.agrest.jaxrs2.provider.JaxrsAgExceptionMapper;
-import io.agrest.jaxrs2.provider.MetadataResponseWriter;
 import io.agrest.jaxrs2.provider.ResponseStatusDynamicFeature;
 import io.agrest.jaxrs2.provider.SimpleResponseWriter;
 import io.agrest.runtime.AgRuntime;
@@ -57,9 +55,6 @@ public class AgJaxrsFeatureBuilder {
 
         map.put(SimpleResponse.class, SimpleResponseWriter.class);
         map.put(DataResponse.class, DataResponseWriter.class);
-
-        // deprecated writers
-        map.put(MetadataResponse.class, MetadataResponseWriter.class);
     }
 
     public AgJaxrsFeature build() {

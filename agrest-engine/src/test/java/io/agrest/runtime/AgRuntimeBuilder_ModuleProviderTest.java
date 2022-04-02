@@ -1,8 +1,9 @@
 package io.agrest.runtime;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgModuleProvider;
 import io.agrest.TestModuleProvider;
-import io.agrest.encoder.PropertyMetadataEncoder;
+import io.agrest.converter.jsonvalue.JsonValueConverter;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.Key;
 import org.apache.cayenne.di.Module;
@@ -13,9 +14,10 @@ import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 
 public class AgRuntimeBuilder_ModuleProviderTest {
+
+    static final String CONVERTER_KEY = X.class.getName();
 
     @Test
     public void testAgModule_Provider() {
@@ -46,21 +48,21 @@ public class AgRuntimeBuilder_ModuleProviderTest {
     }
 
     private void assertLocalTestModuleActive(AgRuntime runtime) {
-        Map<String, PropertyMetadataEncoder> encoders =
-                runtime.service(Key.getMapOf(String.class, PropertyMetadataEncoder.class));
-        assertTrue(encoders.containsKey("local.test"));
+        Map<String, JsonValueConverter> converters =
+                runtime.service(Key.getMapOf(String.class, JsonValueConverter.class));
+        assertTrue(converters.containsKey(CONVERTER_KEY));
     }
 
     private void assertTestModuleActive(AgRuntime runtime) {
-        Map<String, PropertyMetadataEncoder> encoders =
-                runtime.service(Key.getMapOf(String.class, PropertyMetadataEncoder.class));
-        assertTrue(encoders.containsKey(TestModuleProvider.METADATA_ENCODER_KEY), "Auto-loading was off");
+        Map<String, JsonValueConverter> converters =
+                runtime.service(Key.getMapOf(String.class, JsonValueConverter.class));
+        assertTrue(converters.containsKey(TestModuleProvider.CONVERTER_KEY), "Auto-loading was off");
     }
 
     private void assertTestModuleNotActive(AgRuntime runtime) {
-        Map<String, PropertyMetadataEncoder> encoders =
-                runtime.service(Key.getMapOf(String.class, PropertyMetadataEncoder.class));
-        assertFalse(encoders.containsKey(TestModuleProvider.METADATA_ENCODER_KEY), "Auto-loading was on");
+        Map<String, JsonValueConverter> converters =
+                runtime.service(Key.getMapOf(String.class, JsonValueConverter.class));
+        assertFalse(converters.containsKey(TestModuleProvider.CONVERTER_KEY), "Auto-loading was on");
     }
 
     private void inRuntime(AgRuntimeBuilder builder, Consumer<AgRuntime> test) {
@@ -88,8 +90,17 @@ public class AgRuntimeBuilder_ModuleProviderTest {
     public static class LocalTestModule implements Module {
         @Override
         public void configure(Binder binder) {
-            binder.bindMap(PropertyMetadataEncoder.class)
-                    .put("local.test", mock(PropertyMetadataEncoder.class));
+            binder.bindMap(JsonValueConverter.class).put(CONVERTER_KEY, new XConverter());
+        }
+    }
+
+    public static class X {
+    }
+
+    public static class XConverter implements JsonValueConverter<X> {
+        @Override
+        public X value(JsonNode node) {
+            return null;
         }
     }
 }

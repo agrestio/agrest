@@ -3,15 +3,12 @@ package io.agrest.runtime;
 import io.agrest.AgRequestBuilder;
 import io.agrest.DeleteBuilder;
 import io.agrest.EntityDelete;
-import io.agrest.MetadataBuilder;
 import io.agrest.SelectBuilder;
 import io.agrest.SimpleResponse;
 import io.agrest.UnrelateBuilder;
 import io.agrest.UpdateBuilder;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
-import io.agrest.runtime.processor.meta.MetadataContext;
-import io.agrest.runtime.processor.meta.MetadataProcessorFactory;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import io.agrest.runtime.processor.unrelate.UnrelateContext;
@@ -49,9 +46,6 @@ public class AgRuntime {
     private final IdempotentFullSyncProcessorFactory idempotentFullSyncProcessorFactory;
     private final UnrelateProcessorFactory unrelateProcessorFactory;
 
-    @Deprecated
-    private final MetadataProcessorFactory metadataProcessorFactory;
-
     /**
      * Creates and returns a builder of Agrest runtime.
      *
@@ -74,7 +68,6 @@ public class AgRuntime {
         this.idempotentCreateOrUpdateProcessorFactory = injector.getInstance(IdempotentCreateOrUpdateProcessorFactory.class);
         this.idempotentFullSyncProcessorFactory = injector.getInstance(IdempotentFullSyncProcessorFactory.class);
         this.unrelateProcessorFactory = injector.getInstance(UnrelateProcessorFactory.class);
-        this.metadataProcessorFactory = injector.getInstance(MetadataProcessorFactory.class);
     }
 
     /**
@@ -185,15 +178,5 @@ public class AgRuntime {
         DeleteBuilder<T> builder = delete(root);
         deleted.forEach(entityDelete -> builder.id(entityDelete.getId()));
         return builder.sync();
-    }
-
-    /**
-     * @since 5.0
-     * @deprecated since 5.0, as Agrest now integrates with OpenAPI 3 / Swagger.
-     */
-    @Deprecated
-    public <T> MetadataBuilder<T> metadata(Class<T> type) {
-        MetadataContext<T> context = new MetadataContext<>(type, injector);
-        return new DefaultMetadataBuilder<>(context, metadataProcessorFactory);
     }
 }

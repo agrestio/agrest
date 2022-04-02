@@ -61,8 +61,7 @@ public class EncoderService_DateTime_Test {
         this.encoderService = new EncoderService(
                 new EncodablePropertyFactory(new ValueEncodersProvider(converters, Collections.emptyMap()).get()),
                 converters,
-                new RelationshipMapper(),
-                Collections.emptyMap());
+                new RelationshipMapper());
 
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
         AgDataMap dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
