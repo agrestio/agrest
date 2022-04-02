@@ -47,6 +47,13 @@ from Java.
 TODO: we might add a utility for DataResponse deserialization in the Agrest core. Nothing like that is 
 available yet. 
 
+### Metadata API is removed [#541](https://github.com/agrestio/agrest/issues/541)
+Agrest no longer includes an API for describing Agrest endpoints metadata (`Ag.metadata(..)`). Instead, it provides 
+integration with OpenAPI / Swagger via `agrest-jaxrs2-openapi` and `agrest-jaxrs3-openapi`. Unfortunately, the two 
+ways to document endpoints (the old Agrest metadata responses vs OpenAPI) are not directly compatible. Though we feel
+that the OpenAPI approach is more powerful and, more importantly, can be used with or without Agrest. It
+has become a de-facto standard for REST API documentation, and is the way forward for Agrest as well.
+
 ### Custom Exception mapping is no longer tied to JAX-RS [#530](https://github.com/agrestio/agrest/issues/530)
 
 Now if you need a mapper for a custom Exception to be rendered in a response in a certain way, instead of 
