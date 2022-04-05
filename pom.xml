@@ -21,6 +21,7 @@
         <module>agrest-jaxrs2-openapi</module>
         <module>agrest-cayenne</module>
         <module>agrest-bom</module>
+        <module>agrest-jpa</module>
     </modules>
 
     <properties>
