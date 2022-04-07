@@ -75,17 +75,38 @@ public class AgJpaTester implements BQBeforeScopeCallback, BQAfterScopeCallback,
     public Table e1() {
         return getTable("E1");
     }
-
     public Table e2() {
         return getTable("E2");
     }
-
     public Table e3() {
         return getTable("E3");
     }
-
     public Table e4() {
         return getTable("E4");
+    }
+    public Table e6() {
+        return getTable("E6");
+    }
+    public Table e7() {
+        return getTable("E7");
+    }
+    public Table e9() {
+        return getTable("E9");
+    }
+    public Table e17() {
+        return getTable("E17");
+    }
+    public Table e19() {
+        return getTable("E19");
+    }
+    public Table e23() {
+        return getTable("E23");
+    }
+    public Table e28() {
+        return getTable("E28");
+    }
+    public Table e29() {
+        return getTable("E29");
     }
 
     protected JettyTester getJettyInScope() {

@@ -1,5 +1,6 @@
 package io.agrest.jpa.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,8 +15,11 @@ public class E1 {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "age")
     protected Integer age;
+    @Column(name = "description")
     protected String description;
+    @Column(name = "name")
     protected String name;
 
     public Integer getAge() {
