@@ -38,12 +38,12 @@ public class PUT_IT extends DbTest {
         tester.target("/e23_create_or_update/8").put("{\"name\":\"zzz\"}")
                 .wasCreated()
                 .bodyEquals(1, "{\"id\":8,\"exposedId\":8,\"name\":\"zzz\"}");
-        tester.e23().matcher().eq("id", 8).eq("name", "zzz").assertOneMatch();
+        tester.e23().matcher().eq("ID", 8).eq("NAME", "zzz").assertOneMatch();
 
         tester.target("/e23_create_or_update/8").put("{\"name\":\"aaa\"}")
                 .wasOk()
                 .bodyEquals(1, "{\"id\":8,\"exposedId\":8,\"name\":\"aaa\"}");
-        tester.e23().matcher().eq("id", 8).eq("name", "aaa").assertOneMatch();
+        tester.e23().matcher().eq("ID", 8).eq("NAME", "aaa").assertOneMatch();
     }
 
     @Test
@@ -68,8 +68,8 @@ public class PUT_IT extends DbTest {
 
         // TODO: some kinda bug in TableMatcher - can't match on BigDecimal. So need to select the data and compare
         //   in memory
-        Object[] data = tester.e4().selectColumns("c_varchar", "c_decimal")
-                .where("id", 8)
+        Object[] data = tester.e4().selectColumns("C_VARCHAR", "C_DECIMAL")
+                .where("ID", 8)
                 .selectOne();
 
         Assertions.assertArrayEquals(new Object[]{"zzz", new BigDecimal("12.99")}, data);

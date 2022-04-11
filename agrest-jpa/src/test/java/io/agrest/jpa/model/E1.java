@@ -15,11 +15,8 @@ public class E1 {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "age")
     protected Integer age;
-    @Column(name = "description")
     protected String description;
-    @Column(name = "name")
     protected String name;
 
     public Integer getAge() {

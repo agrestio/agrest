@@ -94,7 +94,16 @@ public class JpaAgEntityBuilder<T> {
 
         for (SingularAttribute<?, ?> attribute : jpaEntity.getSingularAttributes()) {
             if(attribute.isId()) {
-                continue;
+                addId(new DefaultAgIdPart(
+                        attribute.getName(),
+                        attribute.getJavaType(),
+                        true,
+                        true,
+                        JpaPropertyReader.reader(attribute))
+                );
+                if(attribute.getName().equals("id")) {
+                    continue;
+                }
             }
             Class<?> type = attribute.getJavaType();
             String name = attribute.getName();
@@ -116,18 +125,6 @@ public class JpaAgEntityBuilder<T> {
                     true,
                     true,
                     nestedDataResolver));
-        }
-
-        for(SingularAttribute<?, ?> attribute : jpaEntity.getSingularAttributes()) {
-            if(!attribute.isId()) {
-                continue;
-            }
-            addId(new DefaultAgIdPart(
-                    attribute.getName(),
-                    attribute.getJavaType(),
-                    true,
-                    true,
-                    JpaPropertyReader.reader(attribute)));
         }
     }
 
