@@ -9,8 +9,25 @@
         <property name="hbm2ddl.auto">none</property> <!-- validate -->
         <property name="show_sql">true</property>
 
-        <mapping class="io.agrest.jpa.model.E1"/>
+<!--        <mapping class="io.agrest.jpa.model.E1"/>-->
+<!--        <mapping class="io.agrest.jpa.model.E2"/>-->
+<!--        <mapping class="io.agrest.jpa.model.E3"/>-->
         <mapping class="io.agrest.jpa.model.E4"/>
-<!--        <mapping package="io.agrest.jpa.model"/>-->
+<!--        <mapping class="io.agrest.jpa.model.E5"/>-->
+<!--        <mapping class="io.agrest.jpa.model.E6"/>-->
+<!--        <mapping class="io.agrest.jpa.model.E7"/>-->
+<!--        <mapping class="io.agrest.jpa.model.E8"/>-->
+<!--        <mapping class="io.agrest.jpa.model.E9"/>-->
+<!--        <mapping class="io.agrest.jpa.model.E14"/>-->
+<!--        <mapping class="io.agrest.jpa.model.E15"/>-->
+<!--        <mapping class="io.agrest.jpa.model.E15E1"/>-->
+<!--        <mapping class="io.agrest.jpa.model.E17"/>-->
+<!--        <mapping class="io.agrest.jpa.model.E18"/>-->
+<!--        <mapping class="io.agrest.jpa.model.E19"/>-->
+        <mapping class="io.agrest.jpa.model.E23"/>
+        <mapping class="io.agrest.jpa.model.E26"/>
+<!--        <mapping class="io.agrest.jpa.model.E28"/>-->
+<!--        <mapping class="io.agrest.jpa.model.E29"/>-->
+<!--        <mapping class="io.agrest.jpa.model.E30"/>-->
     </session-factory>
 </hibernate-configuration>

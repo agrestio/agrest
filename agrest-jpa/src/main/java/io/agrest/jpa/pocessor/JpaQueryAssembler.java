@@ -1,8 +1,12 @@
 package io.agrest.jpa.pocessor;
 
+import java.util.Iterator;
+
+import io.agrest.NestedResourceEntity;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.runtime.processor.select.SelectContext;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import org.apache.cayenne.di.Inject;
 
@@ -23,5 +27,17 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
         // TODO: using JPA query syntax here, may need something better
         //       also no EntityManager lifecycle management here
         return entityManager.createQuery("select e from " + context.getEntity().getName() + " e", context.getEntity().getType());
+    }
+
+    @Override
+    public <T> Query createQueryWithParentQualifier(NestedResourceEntity<T> entity) {
+        EntityManager entityManager = persister.entityManager();
+
+        return entityManager.createQuery("select e from " + entity.getName() + " e");
+    }
+
+    @Override
+    public <T, P> Query createQueryWithParentIdsQualifier(NestedResourceEntity<T> entity, Iterator<P> parentIt) {
+        return null;
     }
 }

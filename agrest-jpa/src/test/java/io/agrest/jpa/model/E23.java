@@ -2,8 +2,6 @@ package io.agrest.jpa.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -15,16 +13,10 @@ import java.util.List;
 public class E23  {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private Long exposedId;
 
-    @Column(name = "exposedId")
-    protected Integer exposedId;
-
-    @Column(name = "name")
     protected String name;
-
 
     @OneToMany
     protected List<E26> e26s = new java.util.ArrayList<>();
@@ -37,19 +29,11 @@ public class E23  {
         return e26s;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getExposedId() {
+    public Long getExposedId() {
         return exposedId;
     }
 
-    public void setExposedId(Integer exposedId) {
+    public void setExposedId(Long exposedId) {
         this.exposedId = exposedId;
     }
 
