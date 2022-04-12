@@ -138,8 +138,6 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
         }
 
         // TODO: implement this
-//        return Collections.emptyList();
-
         String rootQualifier = qualifierForKeys(keys, mapper);
 
         EntityManager entityManager = JpaUpdateStartStage.entityManager(context);
@@ -149,23 +147,9 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
                 .getResultList();
 
 /*
-        // TODO: split query in batches:
-        // respect Constants.SERVER_MAX_ID_QUALIFIER_SIZE_PROPERTY
-        // property of Cayenne , breaking query into subqueries.
-        // Otherwise this operation will not scale.. Though I guess since we are
-        // not using streaming API to read data from Cayenne, we are already
-        // limited in how much data can fit in the memory map.
-
-        Expression rootQualifier = qualifierForKeys(keys, mapper);
-        if (rootQualifier == null) {
-            return Collections.emptyList();
-        }
-
         buildRootQuery(context.getEntity(), rootQualifier);
-
-        // TODO: implement entity-tied resolvers for updates to avoid duplicating selecting logic
-
         List<T> objects = fetchRootEntity(CayenneUpdateStartStage.cayenneContext(context), context.getEntity());
+        
         if (context.isById() && objects.size() > 1) {
             throw AgException.internalServerError(
                     "Found more than one object for ID '%s' and entity '%s'",
@@ -191,21 +175,6 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
     }
 
 /*
-    protected Expression qualifierForKeys(Collection<Object> keys, ObjectMapper<?> mapper) {
-        List<Expression> expressions = new ArrayList<>(keys.size());
-        for (Object key : keys) {
-            // update keys can be null... see a note in "mutableUpdatesByKey"
-            if (key != null) {
-                Exp e = mapper.expressionForKey(key);
-                if (e != null) {
-                    expressions.add(qualifierParser.parse(e));
-                }
-            }
-        }
-
-        return expressions.isEmpty() ? null : ExpressionFactory.or(expressions);
-    }
-
     protected <T> ObjectSelect<T> buildRootQuery(RootResourceEntity<T> entity, Expression qualifier) {
 
         ObjectSelect<T> query = ObjectSelect.query(entity.getType()).where(qualifier);

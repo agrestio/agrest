@@ -14,7 +14,6 @@ public class DbTest {
     protected static AgJpaTester.Builder tester(Class<?>... resources) {
         return AgJpaTester
                 .forDb(db)
-//                .cayenneProject("cayenne-project.xml")
                 .resources(resources);
     }
 

@@ -8,6 +8,9 @@ import io.agrest.jpa.exp.JpaExpParser;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.pocessor.IJpaQueryAssembler;
 import io.agrest.jpa.pocessor.JpaQueryAssembler;
+import io.agrest.jpa.pocessor.delete.stage.JpaDeleteInDataStoreStage;
+import io.agrest.jpa.pocessor.delete.stage.JpaDeleteMapChangesStage;
+import io.agrest.jpa.pocessor.delete.stage.JpaDeleteStartStage;
 import io.agrest.jpa.pocessor.select.stage.JpaSelectApplyServerParamsStage;
 import io.agrest.jpa.pocessor.update.stage.JpaCreatedOrOkResponseStage;
 import io.agrest.jpa.pocessor.update.stage.JpaCreatedResponseStage;
@@ -21,6 +24,9 @@ import io.agrest.jpa.pocessor.update.stage.JpaOkResponseStage;
 import io.agrest.jpa.pocessor.update.stage.JpaUpdateApplyServerParamsStage;
 import io.agrest.jpa.pocessor.update.stage.JpaUpdateCommitStage;
 import io.agrest.jpa.pocessor.update.stage.JpaUpdateStartStage;
+import io.agrest.runtime.processor.delete.stage.DeleteInDataStoreStage;
+import io.agrest.runtime.processor.delete.stage.DeleteMapChangesStage;
+import io.agrest.runtime.processor.delete.stage.DeleteStartStage;
 import io.agrest.runtime.processor.select.stage.SelectApplyServerParamsStage;
 import io.agrest.runtime.processor.update.UpdateFlavorDIKeys;
 import io.agrest.runtime.processor.update.stage.UpdateApplyServerParamsStage;
@@ -55,7 +61,7 @@ public class AgJpaModule implements Module {
 
         binder.bind(IJpaExpParser.class).to(JpaExpParser.class);
 
-        // Update stage
+        // Update stages
         binder.bind(UpdateStartStage.class).to(JpaUpdateStartStage.class);
         binder.bind(UpdateApplyServerParamsStage.class).to(JpaUpdateApplyServerParamsStage.class);
         binder.bind(UpdateMergeChangesStage.class).to(JpaMergeChangesStage.class);
@@ -72,5 +78,10 @@ public class AgJpaModule implements Module {
         binder.bind(Key.get(UpdateFillResponseStage.class, UpdateFlavorDIKeys.IDEMPOTENT_CREATE_OR_UPDATE)).to(JpaCreatedOrOkResponseStage.class);
         binder.bind(Key.get(UpdateFillResponseStage.class, UpdateFlavorDIKeys.IDEMPOTENT_FULL_SYNC)).to(JpaCreatedOrOkResponseStage.class);
         binder.bind(Key.get(UpdateFillResponseStage.class, UpdateFlavorDIKeys.UPDATE)).to(JpaOkResponseStage.class);
+
+        // Delete stages
+        binder.bind(DeleteStartStage.class).to(JpaDeleteStartStage.class);
+        binder.bind(DeleteMapChangesStage.class).to(JpaDeleteMapChangesStage.class);
+        binder.bind(DeleteInDataStoreStage.class).to(JpaDeleteInDataStoreStage.class);
     }
 }
