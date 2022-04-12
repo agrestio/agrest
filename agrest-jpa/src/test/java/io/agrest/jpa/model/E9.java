@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -19,7 +18,6 @@ public class E9 {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "e8_id")
     protected E8 e8;
 
     public Long getId() {

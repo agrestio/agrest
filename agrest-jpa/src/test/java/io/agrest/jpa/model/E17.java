@@ -1,7 +1,6 @@
 package io.agrest.jpa.model;
 
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,24 +8,22 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import java.io.Serializable;
 import java.util.List;
 
 
 @Entity
 @Table (name = "e17")
-public  class E17 {
+public  class E17 implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id1", nullable = false)
     protected Integer id1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id2")
     protected Integer id2;
 
-    @Column(name = "name")
     protected String name;
 
     @OneToMany

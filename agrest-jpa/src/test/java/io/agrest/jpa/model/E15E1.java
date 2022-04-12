@@ -1,6 +1,5 @@
 package io.agrest.jpa.model;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,13 +13,12 @@ public class E15E1 {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @OneToOne
     protected E1 e1;
 
-    @OneToOne(orphanRemoval = true)
+    @OneToOne
     protected E15 e15;
 
     public Long getId() {

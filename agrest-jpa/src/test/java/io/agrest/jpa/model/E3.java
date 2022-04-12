@@ -16,7 +16,6 @@ public class E3 {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_;
 
-    @Column(name = "name")
     protected String name;
 
     @Column(name = "phone_number")
