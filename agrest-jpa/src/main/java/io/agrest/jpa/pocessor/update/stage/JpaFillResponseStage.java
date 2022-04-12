@@ -19,6 +19,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.ToManyResourceEntity;
 import io.agrest.jpa.persister.IAgJpaPersister;
+import io.agrest.jpa.pocessor.JpaUtil;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.property.PropertyReader;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -90,7 +91,7 @@ public abstract class JpaFillResponseStage extends UpdateFillResponseStage {
             for (Map.Entry<String, NestedResourceEntity<?>> e : children.entrySet()) {
                 NestedResourceEntity childEntity = e.getValue();
 
-                Object result = readProperty(root, entityType.getAttribute(e.getKey()));
+                Object result = JpaUtil.readProperty(root, entityType.getAttribute(e.getKey()));
                 if (result == null) { // TODO: could it be some sort of a fault?
                     continue;
                 }
@@ -112,43 +113,6 @@ public abstract class JpaFillResponseStage extends UpdateFillResponseStage {
                     assignChildrenToParent(result, childEntity);
                 }
             }
-        }
-    }
-
-    private static Object readProperty(Object object, Attribute<?,?> attribute) {
-        Member javaMember = attribute.getJavaMember();
-        if(javaMember instanceof Method) {
-            return safeInvoke((Method) javaMember, object);
-        } else if(javaMember instanceof Field) {
-            return safeGet((Field) javaMember, object);
-        } else {
-            throw AgException.badRequest("Can't get attribute '%s' for the entity %s",
-                    attribute.getName(),
-                    attribute.getDeclaringType().getJavaType().getName());
-        }
-    }
-
-    private static Object safeInvoke(Method method, Object object, Object... value) {
-        try {
-            return method.invoke(object, value);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static void safeSet(Field field, Object object, Object value) {
-        try {
-            field.set(object, value);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static Object safeGet(Field field, Object object) {
-        try {
-            return field.get(object);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 }

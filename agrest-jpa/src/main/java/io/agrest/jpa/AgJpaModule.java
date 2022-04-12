@@ -12,6 +12,8 @@ import io.agrest.jpa.pocessor.delete.stage.JpaDeleteInDataStoreStage;
 import io.agrest.jpa.pocessor.delete.stage.JpaDeleteMapChangesStage;
 import io.agrest.jpa.pocessor.delete.stage.JpaDeleteStartStage;
 import io.agrest.jpa.pocessor.select.stage.JpaSelectApplyServerParamsStage;
+import io.agrest.jpa.pocessor.unrelate.stage.JpaUnrelateDataStoreStage;
+import io.agrest.jpa.pocessor.unrelate.stage.JpaUnrelateStartStage;
 import io.agrest.jpa.pocessor.update.stage.JpaCreatedOrOkResponseStage;
 import io.agrest.jpa.pocessor.update.stage.JpaCreatedResponseStage;
 import io.agrest.jpa.pocessor.update.stage.JpaMapCreateOrUpdateStage;
@@ -28,6 +30,8 @@ import io.agrest.runtime.processor.delete.stage.DeleteInDataStoreStage;
 import io.agrest.runtime.processor.delete.stage.DeleteMapChangesStage;
 import io.agrest.runtime.processor.delete.stage.DeleteStartStage;
 import io.agrest.runtime.processor.select.stage.SelectApplyServerParamsStage;
+import io.agrest.runtime.processor.unrelate.stage.UnrelateStartStage;
+import io.agrest.runtime.processor.unrelate.stage.UnrelateUpdateDateStoreStage;
 import io.agrest.runtime.processor.update.UpdateFlavorDIKeys;
 import io.agrest.runtime.processor.update.stage.UpdateApplyServerParamsStage;
 import io.agrest.runtime.processor.update.stage.UpdateCommitStage;
@@ -83,5 +87,9 @@ public class AgJpaModule implements Module {
         binder.bind(DeleteStartStage.class).to(JpaDeleteStartStage.class);
         binder.bind(DeleteMapChangesStage.class).to(JpaDeleteMapChangesStage.class);
         binder.bind(DeleteInDataStoreStage.class).to(JpaDeleteInDataStoreStage.class);
+
+        // Unrelate stages
+        binder.bind(UnrelateStartStage.class).to(JpaUnrelateStartStage.class);
+        binder.bind(UnrelateUpdateDateStoreStage.class).to(JpaUnrelateDataStoreStage.class);
     }
 }
