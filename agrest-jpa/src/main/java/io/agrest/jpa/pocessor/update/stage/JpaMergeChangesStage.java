@@ -1,9 +1,5 @@
 package io.agrest.jpa.pocessor.update.stage;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +11,7 @@ import io.agrest.CompoundObjectId;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.jpa.persister.IAgJpaPersister;
+import io.agrest.jpa.pocessor.JpaUtil;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.ProcessorOutcome;
@@ -157,31 +154,7 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
                         idPart.getKey());
             }
 
-            writeProperty(o, attribute, idPart.getValue());
-        }
-    }
-
-    private static Object safeInvoke(Method method, Object object, Object... value) {
-        try {
-            return method.invoke(object, value);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static void safeSet(Field field, Object object, Object value) {
-        try {
-            field.set(object, value);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static Object safeGet(Field field, Object object) {
-        try {
-            return field.get(object);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            JpaUtil.writeProperty(o, attribute, idPart.getValue());
         }
     }
 
@@ -192,7 +165,7 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
 
         // attributes
         for (Map.Entry<String, Object> e : entityUpdate.getValues().entrySet()) {
-            writeProperty(o, entityType.getAttribute(e.getKey()), e.getValue());
+            JpaUtil.writeProperty(o, entityType.getAttribute(e.getKey()), e.getValue());
         }
 
         // relationships
@@ -285,74 +258,16 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
             return new ObjectRelator(entityType) {
                 @Override
                 public void relateToParent(Object object) {
-                    setToManyTarget(parentObject, (PluralAttribute<?,?,?>)attribute, object);
+                    JpaUtil.setToManyTarget(parentObject, (PluralAttribute<?,?,?>)attribute, object);
                 }
             };
         } else {
             return new ObjectRelator(entityType) {
                 @Override
                 public void relateToParent(Object object) {
-                    setToOneTarget(parentObject, attribute, object);
+                    JpaUtil.setToOneTarget(parentObject, attribute, object);
                 }
             };
-        }
-    }
-
-    private static void setToOneTarget(Object parent, Attribute<?,?> attribute, Object object) {
-        writeProperty(parent, attribute, object);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static void setToManyTarget(Object parent, PluralAttribute<?,?,?> attribute, Object object) {
-        Object collection = readProperty(parent, attribute);
-        switch (attribute.getCollectionType()) {
-            case MAP:
-                // TODO: how do we get the key?
-                break;
-            case SET:
-            case LIST:
-            case COLLECTION:
-                ((Collection<Object>)collection).add(object);
-        }
-    }
-
-    private static void removeToManyTarget(Object parent, PluralAttribute<?,?,?> attribute, Object object) {
-        Object collection = readProperty(parent, attribute);
-        switch (attribute.getCollectionType()) {
-            case MAP:
-                ((Map<?,?>)collection).entrySet().removeIf(e -> e.getValue() == object);
-                break;
-            case SET:
-            case LIST:
-            case COLLECTION:
-                ((Collection<?>)collection).remove(object);
-                break;
-        }
-    }
-
-    private static Object readProperty(Object object, Attribute<?,?> attribute) {
-        Member javaMember = attribute.getJavaMember();
-        if(javaMember instanceof Method) {
-            return safeInvoke((Method) javaMember, object);
-        } else if(javaMember instanceof Field) {
-            return safeGet((Field) javaMember, object);
-        } else {
-            throw AgException.badRequest("Can't get attribute '%s' for the entity %s",
-                    attribute.getName(),
-                    attribute.getDeclaringType().getJavaType().getName());
-        }
-    }
-
-    private static void writeProperty(Object object, Attribute<?, ?> attribute, Object value) {
-        Member javaMember = attribute.getJavaMember();
-        if(javaMember instanceof Method) {
-            safeInvoke((Method) javaMember, object, value);
-        } else if(javaMember instanceof Field) {
-            safeSet((Field) javaMember, object, value);
-        } else {
-            throw AgException.badRequest("Can't set attribute '%s' for the entity %s",
-                    attribute.getName(),
-                    attribute.getDeclaringType().getJavaType().getName());
         }
     }
 
@@ -381,9 +296,9 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
         void relate(AgRelationship agRelationship, Object object, Object relatedObject) {
             Attribute<? super Object, ?> attribute = entityType.getAttribute(agRelationship.getName());
             if (agRelationship.isToMany()) {
-                setToManyTarget(object, (PluralAttribute<?, ?, ?>) attribute, relatedObject);
+                JpaUtil.setToManyTarget(object, (PluralAttribute<?, ?, ?>) attribute, relatedObject);
             } else {
-                setToOneTarget(object, attribute, relatedObject);
+                JpaUtil.setToOneTarget(object, attribute, relatedObject);
             }
         }
 
@@ -395,19 +310,19 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
             Attribute<? super Object, ?> attribute = entityType.getAttribute(agRelationship.getName());
             if (agRelationship.isToMany()) {
                 @SuppressWarnings("unchecked")
-                List<Object> relatedObjects = (List<Object>) readProperty(object, attribute);
+                List<Object> relatedObjects = (List<Object>) JpaUtil.readProperty(object, attribute);
 
                 for (int i = 0; i < relatedObjects.size(); i++) {
                     Object relatedObject = relatedObjects.get(i);
                     if (relationshipUpdate == null || !relationshipUpdate.containsRelatedObject(relatedObject)) {
-                        removeToManyTarget(object, (PluralAttribute<?, ?, ?>) attribute, relatedObject);
+                        JpaUtil.removeToManyTarget(object, (PluralAttribute<?, ?, ?>) attribute, relatedObject);
                         i--;
                     } else {
                         relationshipUpdate.removeUpdateForRelatedObject(relatedObject);
                     }
                 }
             } else {
-                setToOneTarget(object, attribute, null);
+                JpaUtil.setToOneTarget(object, attribute, null);
             }
         }
     }
