@@ -1,12 +1,10 @@
 package io.agrest.jpa.model;
 
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -17,10 +15,8 @@ public  class E14 {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "long_id", nullable = false)
     private Long long_id;
 
-    @Column(name = "name")
     protected String name;
 
     @OneToOne
