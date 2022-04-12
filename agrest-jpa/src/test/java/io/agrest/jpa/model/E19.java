@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "e19")
-public abstract class E19 {
+public class E19 {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

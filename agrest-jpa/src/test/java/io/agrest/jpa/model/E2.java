@@ -17,13 +17,10 @@ public  class E2  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_", nullable = false)
     private Integer id_;
 
-    @Column(name = "address")
     protected String address;
 
-    @Column(name = "name")
     protected String name;
 
     @OneToMany
