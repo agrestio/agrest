@@ -142,16 +142,16 @@ public class PUT_IT extends DbTest {
     @Test
     public void testToOne_FromNull() {
 
-        tester.e2().insertColumns("ID_", "NAME")
+        tester.e2().insertColumns("ID", "NAME")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
-        tester.e3().insertColumns("ID_", "NAME", "E2_ID").values(3, "zzz", null).exec();
+        tester.e3().insertColumns("ID", "NAME", "E2_ID").values(3, "zzz", null).exec();
 
         tester.target("/e3/3").put("{\"id\":3,\"e2\":8}")
                 .wasOk()
                 .bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
-        tester.e3().matcher().eq("id_", 3).eq("e2_id", 8).assertOneMatch();
+        tester.e3().matcher().eq("ID", 3).eq("E2_ID", 8).assertOneMatch();
     }
 
 //    @Test

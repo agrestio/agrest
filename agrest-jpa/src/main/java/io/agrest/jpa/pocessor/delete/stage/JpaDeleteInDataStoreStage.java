@@ -30,7 +30,7 @@ public class JpaDeleteInDataStoreStage extends DeleteInDataStoreStage {
         EntityManager entityManager = JpaDeleteStartStage.entityManager(context);
 
         entityManager.getTransaction().begin();
-        objects.forEach(entityManager::detach);
+        objects.forEach(entityManager::remove);
         entityManager.getTransaction().commit();
     }
 }

@@ -74,7 +74,7 @@ public class JpaDeleteMapChangesStage extends DeleteMapChangesStage {
         for (AgObjectId id : context.getIds()) {
 
             // TODO: batch objects retrieval into a single query
-            Object o = entityManager.find(context.getType(), id);
+            Object o = entityManager.find(context.getType(), id.asMap(context.getAgEntity()).values().iterator().next());
             if (o == null) {
                 // TODO: get proper entity name here?
                 throw AgException.notFound("No object for ID '%s' and entity '%s'", id, context.getType().getSimpleName());

@@ -1,6 +1,5 @@
 package io.agrest.jpa.model;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,7 +16,7 @@ public  class E2  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_;
+    private Integer id;
 
     protected String address;
 
@@ -27,8 +26,8 @@ public  class E2  {
     @JoinColumn(name = "e2_id")
     protected List<E3> e3s = new java.util.ArrayList<>();
 
-    public Integer getId_() {
-        return id_;
+    public Integer getId() {
+        return id;
     }
 
     public String getAddress() {
