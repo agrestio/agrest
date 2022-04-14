@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import io.agrest.NestedResourceEntity;
 import io.agrest.jpa.persister.IAgJpaPersister;
+import io.agrest.meta.AgRelationship;
 import io.agrest.runtime.processor.select.SelectContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -33,6 +34,9 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
     public <T> Query createQueryWithParentQualifier(NestedResourceEntity<T> entity) {
         EntityManager entityManager = persister.entityManager();
 
+
+        AgRelationship incoming = entity.getIncoming();
+        // TODO: need parent id here
         return entityManager.createQuery("select e from " + entity.getName() + " e");
     }
 

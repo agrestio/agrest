@@ -1,5 +1,6 @@
 package io.agrest.jpa.pocessor.select.stage;
 
+import io.agrest.NestedResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.jpa.pocessor.JpaProcessor;
 import io.agrest.runtime.constraints.IConstraintsHandler;
@@ -25,5 +26,32 @@ public class JpaSelectApplyServerParamsStage extends SelectApplyServerParamsStag
     private void tagRootEntity(RootResourceEntity<?> entity) {
         // TODO: check that this is in fact JPA-managed entity
         JpaProcessor.getOrCreateRootEntity(entity);
+
+        if (entity.getMapBy() != null) {
+            for (NestedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
+                tagNestedEntity(child);
+            }
+        }
+
+        for (NestedResourceEntity<?> child : entity.getChildren().values()) {
+            tagNestedEntity(child);
+        }
+    }
+
+    private void tagNestedEntity(NestedResourceEntity<?> entity) {
+        // TODO: check that this is in fact JPA-managed entity
+//        if (entityResolver.getObjEntity(entity.getName()) != null) {
+            JpaProcessor.getOrCreateNestedEntity(entity);
+//        }
+
+        if (entity.getMapBy() != null) {
+            for (NestedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
+                tagNestedEntity(child);
+            }
+        }
+
+        for (NestedResourceEntity<?> child : entity.getChildren().values()) {
+            tagNestedEntity(child);
+        }
     }
 }

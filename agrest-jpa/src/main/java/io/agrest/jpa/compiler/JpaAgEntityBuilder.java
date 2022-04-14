@@ -107,11 +107,28 @@ public class JpaAgEntityBuilder<T> {
             }
             Class<?> type = attribute.getJavaType();
             String name = attribute.getName();
-            // by default adding attributes as readable and writable... @AgAttribute annotation on a getter may override this
-            addAttribute(new DefaultAgAttribute(name, type, true, true, JpaPropertyReader.reader(attribute)));
+
+            if(attribute.isAssociation()) {
+                // to-one
+                addRelationship(new DefaultAgRelationship(
+                        name,
+                        // 'agDataMap.getEntity' will compile the entity on the fly if needed
+                        agDataMap.getEntity(type),
+                        false,
+                        true,
+                        true,
+                        nestedDataResolver));
+            } else {
+                // by default adding attributes as readable and writable... @AgAttribute annotation on a getter may override this
+                addAttribute(new DefaultAgAttribute(name, type, true, true, JpaPropertyReader.reader(attribute)));
+            }
         }
 
         for (PluralAttribute<?, ?, ?> attribute : jpaEntity.getPluralAttributes()) {
+            if(!attribute.isAssociation()) {
+                // TODO: should we map collection-based attributes to AgRest?
+                continue;
+            }
             Type<?> elementType = attribute.getElementType();
             Class<?> targetEntityType = elementType.getJavaType();
             boolean toMany = attribute.getPersistentAttributeType() == Attribute.PersistentAttributeType.MANY_TO_MANY

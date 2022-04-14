@@ -130,8 +130,8 @@ class GET_IT extends DbTest {
     @Test
     public void testById_IncludeRelationship() {
 
-        tester.e2().insertColumns("ID_", "NAME").values(1, "xxx").exec();
-        tester.e3().insertColumns("ID_", "NAME", "E2_ID")
+        tester.e2().insertColumns("ID", "NAME").values(1, "xxx").exec();
+        tester.e3().insertColumns("ID", "NAME", "E2_ID")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
@@ -315,6 +315,30 @@ class GET_IT extends DbTest {
         @Path("e1")
         public DataResponse<E1> getE1(@Context UriInfo uriInfo) {
             return AgJaxrs.select(E1.class, config).clientParams(uriInfo.getQueryParameters()).get();
+        }
+
+        @GET
+        @Path("e2")
+        public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
+            return AgJaxrs.select(E2.class, config).clientParams(uriInfo.getQueryParameters()).get();
+        }
+
+        @GET
+        @Path("e2/{id}")
+        public DataResponse<E2> getE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
+            return AgJaxrs.select(E2.class, config).clientParams(uriInfo.getQueryParameters()).byId(id).get();
+        }
+
+        @GET
+        @Path("e3")
+        public DataResponse<E3> getE3(@Context UriInfo uriInfo) {
+            return AgJaxrs.select(E3.class, config).clientParams(uriInfo.getQueryParameters()).get();
+        }
+
+        @GET
+        @Path("e3/{id}")
+        public DataResponse<E3> getE3ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
+            return AgJaxrs.select(E3.class, config).clientParams(uriInfo.getQueryParameters()).byId(id).get();
         }
 
         @GET
