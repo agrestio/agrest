@@ -14,6 +14,7 @@ import io.agrest.SimpleResponse;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.jpa.model.E17;
 import io.agrest.jpa.model.E2;
+import io.agrest.jpa.model.E24;
 import io.agrest.jpa.model.E3;
 import io.agrest.jpa.model.E4;
 import io.agrest.jpa.unit.AgJpaTester;
@@ -112,16 +113,16 @@ public class DELETE_IT extends DbTest {
                 .bodyEquals("{\"success\":false,\"message\":\"No object for ID '8' and entity 'E4'\"}");
     }
 
-//    @Test
-//    public void testDelete_UpperCasePK() {
-//
-//        tester.e24().insertColumns("TYPE", "name").values(1, "xyz").exec();
-//
-//        tester.target("/e24/1")
-//                .delete()
-//                .wasOk()
-//                .bodyEquals("{\"success\":true}");
-//    }
+    @Test
+    public void testDelete_UpperCasePK() {
+
+        tester.e24().insertColumns("TYPE", "NAME").values(1, "xyz").exec();
+
+        tester.target("/e24/1")
+                .delete()
+                .wasOk()
+                .bodyEquals("{\"success\":true}");
+    }
 
     @Test
     public void testDelete_ByParentId() {
@@ -185,10 +186,10 @@ public class DELETE_IT extends DbTest {
             return AgJaxrs.delete(E17.class, config).byId(ids).sync();
         }
 
-//        @DELETE
-//        @Path("e24/{id}")
-//        public SimpleResponse deleteE24ById(@PathParam("id") int id) {
-//            return AgJaxrs.delete(E24.class, config).byId(id).sync();
-//        }
+        @DELETE
+        @Path("e24/{id}")
+        public SimpleResponse deleteE24ById(@PathParam("id") String id) {
+            return AgJaxrs.delete(E24.class, config).byId(id).sync();
+        }
     }
 }

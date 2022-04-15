@@ -25,6 +25,7 @@
         <mapping class="io.agrest.jpa.model.E18"/>
 <!--        <mapping class="io.agrest.jpa.model.E19"/>-->
         <mapping class="io.agrest.jpa.model.E23"/>
+        <mapping class="io.agrest.jpa.model.E24"/>
         <mapping class="io.agrest.jpa.model.E26"/>
         <mapping class="io.agrest.jpa.model.E28"/>
         <mapping class="io.agrest.jpa.model.E29"/>
