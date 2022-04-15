@@ -3,6 +3,7 @@ package io.agrest.jpa.pocessor.delete.stage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
@@ -91,14 +92,21 @@ public class JpaDeleteMapChangesStage extends DeleteMapChangesStage {
         EntityParent<?> parent = context.getParent();
         EntityManager entityManager = JpaDeleteStartStage.entityManager(context);
 
-        Object parentObject = entityManager.find(parent.getType(), parent.getId());
+        Map<String, Object> parentIdMap = parent.getId().asMap(context.getAgEntity());
+//        Object parentObject = entityManager.find(parent.getType(),
+//                parentIdMap.values().iterator().next());
+//
+//        if (parentObject == null) {
+//            throw AgException.notFound("No parent object for ID '%s' and entity '%s'",
+//                    parent.getId(), parent.getType().getSimpleName());
+//        }
 
-        if (parentObject == null) {
-            throw AgException.notFound("No parent object for ID '%s' and entity '%s'",
-                    parent.getId(), parent.getType().getSimpleName());
-        }
+        String relationship = parent.getRelationship();
+        String queryViaParent = "select p." + relationship + " from " + agParentEntity.getName() + " p " +
+                "where p." + parentIdMap.keySet().iterator().next() + " = " + parentIdMap.values().iterator().next();
+        return entityManager.createQuery(queryViaParent).getResultList();
 
-        return Collections.emptyList();
+//        return Collections.emptyList();
         // TODO: get objects by parent
 //        return ObjectSelect.query(context.getType())
 //                .where(CayenneUtil.parentQualifier(pathResolver, agParentEntity, parent, cayenneContext.getEntityResolver()))

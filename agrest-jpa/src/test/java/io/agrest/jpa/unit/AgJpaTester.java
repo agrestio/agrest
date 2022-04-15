@@ -102,6 +102,10 @@ public class AgJpaTester implements BQBeforeScopeCallback, BQAfterScopeCallback,
     public Table e23() {
         return getTable("E23");
     }
+
+    public Table e24() {
+        return getTable("E24");
+    }
     public Table e28() {
         return getTable("E28");
     }
