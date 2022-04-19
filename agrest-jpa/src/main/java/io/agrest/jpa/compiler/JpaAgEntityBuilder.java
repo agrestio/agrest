@@ -132,7 +132,7 @@ public class JpaAgEntityBuilder<T> {
             Type<?> elementType = attribute.getElementType();
             Class<?> targetEntityType = elementType.getJavaType();
             boolean toMany = attribute.getPersistentAttributeType() == Attribute.PersistentAttributeType.MANY_TO_MANY
-                    || attribute.getPersistentAttributeType() == Attribute.PersistentAttributeType.MANY_TO_ONE;
+                    || attribute.getPersistentAttributeType() == Attribute.PersistentAttributeType.ONE_TO_MANY;
 
             addRelationship(new DefaultAgRelationship(
                     attribute.getName(),
