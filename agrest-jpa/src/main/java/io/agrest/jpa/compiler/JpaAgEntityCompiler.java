@@ -40,7 +40,7 @@ public class JpaAgEntityCompiler implements AgEntityCompiler {
             @Inject IJpaQueryAssembler queryAssembler) {
         this.metamodel = jpaPersister.metamodel();
         this.entityOverlays = entityOverlays;
-        this.defaultRootResolver = createDefaultRootResolver(queryAssembler);
+        this.defaultRootResolver = createDefaultRootResolver(queryAssembler, jpaPersister);
         this.defaultNestedResolver = createDefaultNestedResolver(queryAssembler, jpaPersister);
     }
 
@@ -52,8 +52,9 @@ public class JpaAgEntityCompiler implements AgEntityCompiler {
                 : null;
     }
 
-    protected RootDataResolver<?> createDefaultRootResolver(IJpaQueryAssembler queryAssembler) {
-        return new ViaQueryResolver<>(queryAssembler);
+    protected RootDataResolver<?> createDefaultRootResolver(IJpaQueryAssembler queryAssembler,
+                                                            IAgJpaPersister jpaPersister) {
+        return new ViaQueryResolver<>(queryAssembler, jpaPersister);
     }
 
     protected NestedDataResolver<?> createDefaultNestedResolver(IJpaQueryAssembler queryAssembler,

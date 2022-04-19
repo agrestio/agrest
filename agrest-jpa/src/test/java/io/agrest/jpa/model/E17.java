@@ -17,11 +17,9 @@ import java.util.List;
 public  class E17 implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id1;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id2;
 
     protected String name;

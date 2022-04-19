@@ -60,7 +60,7 @@ public class ViaQueryWithParentExpResolver<T> extends BaseNestedDataResolver<T> 
 
         JpaNestedResourceEntityExt ext = JpaProcessor.getNestedEntity(entity);
         @SuppressWarnings("unchecked")
-        List<Object[]> result = (List<Object[]>)ext.getSelect().getResultList();
+        List<Object[]> result = (List<Object[]>)ext.getSelect().build(persister.entityManager()).getResultList();
         indexResultByParentId(entity, result);
 
         return result.isEmpty()

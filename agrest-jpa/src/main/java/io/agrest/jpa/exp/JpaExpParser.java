@@ -16,7 +16,9 @@ public class JpaExpParser implements IJpaExpParser {
     @Override
     public JpaExpression parse(Exp qualifier) {
         StringBuilder sb = new StringBuilder();
-        qualifier.visit(new JpaExpVisitor(sb));
+        if(qualifier != null) {
+            qualifier.visit(new JpaExpVisitor(sb));
+        }
         return new JpaExpression(sb.toString());
     }
 

@@ -2,6 +2,7 @@ package io.agrest.jpa.pocessor.select.stage;
 
 import io.agrest.NestedResourceEntity;
 import io.agrest.RootResourceEntity;
+import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.pocessor.JpaProcessor;
 import io.agrest.runtime.constraints.IConstraintsHandler;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -13,8 +14,12 @@ import org.apache.cayenne.di.Inject;
  */
 public class JpaSelectApplyServerParamsStage extends SelectApplyServerParamsStage {
 
-    public JpaSelectApplyServerParamsStage(@Inject IConstraintsHandler constraintsHandler) {
+    private final IAgJpaPersister persister;
+
+    public JpaSelectApplyServerParamsStage(@Inject IConstraintsHandler constraintsHandler,
+                                           @Inject IAgJpaPersister persister) {
         super(constraintsHandler);
+        this.persister = persister;
     }
 
     @Override
@@ -25,7 +30,9 @@ public class JpaSelectApplyServerParamsStage extends SelectApplyServerParamsStag
 
     private void tagRootEntity(RootResourceEntity<?> entity) {
         // TODO: check that this is in fact JPA-managed entity
-        JpaProcessor.getOrCreateRootEntity(entity);
+        if(persister.metamodel().entity(entity.getType()) != null) {
+            JpaProcessor.getOrCreateRootEntity(entity);
+        }
 
         if (entity.getMapBy() != null) {
             for (NestedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
@@ -39,10 +46,9 @@ public class JpaSelectApplyServerParamsStage extends SelectApplyServerParamsStag
     }
 
     private void tagNestedEntity(NestedResourceEntity<?> entity) {
-        // TODO: check that this is in fact JPA-managed entity
-//        if (entityResolver.getObjEntity(entity.getName()) != null) {
+        if(persister.metamodel().entity(entity.getType()) != null) {
             JpaProcessor.getOrCreateNestedEntity(entity);
-//        }
+        }
 
         if (entity.getMapBy() != null) {
             for (NestedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {

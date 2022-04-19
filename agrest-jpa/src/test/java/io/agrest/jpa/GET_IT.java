@@ -27,6 +27,7 @@ class GET_IT extends DbTest {
 
     @Test
     public void testResponse() {
+        tester.e4().deleteAll();
 
         tester.e4().insertColumns("ID", "C_VARCHAR", "C_INT").values(1, "xxx", 5).exec();
 
@@ -45,6 +46,7 @@ class GET_IT extends DbTest {
 
     @Test
     public void testSort_ById() {
+        tester.e4().deleteAll();
 
         tester.e4().insertColumns("ID")
                 .values(2)
@@ -61,6 +63,7 @@ class GET_IT extends DbTest {
 
     @Test
     public void testSort_Invalid() {
+        tester.e4().deleteAll();
 
         tester.target("/e4")
                 .queryParam("sort", "[{\"property\":\"xyz\",\"direction\":\"DESC\"}]")
@@ -74,6 +77,7 @@ class GET_IT extends DbTest {
     // this is a hack for Sencha bug, passing us null sorters per LF-189...
     // allowing for lax property name checking as a result
     public void testSort_Null() {
+        tester.e4().deleteAll();
 
         tester.e4().insertColumns("ID")
                 .values(2)
@@ -89,6 +93,7 @@ class GET_IT extends DbTest {
 
     @Test
     public void testById() {
+        tester.e4().deleteAll();
 
         tester.e4().insertColumns("ID")
                 .values(2)
@@ -105,6 +110,7 @@ class GET_IT extends DbTest {
 
     @Test
     public void testById_Params() {
+        tester.e4().deleteAll();
 
         tester.e4().insertColumns("ID")
                 .values(2)
@@ -122,6 +128,8 @@ class GET_IT extends DbTest {
 
     @Test
     public void testById_NotFound() {
+        tester.e4().deleteAll();
+
         tester.target("/e4/2").get()
                 .wasNotFound()
                 .bodyEquals("{\"success\":false,\"message\":\"No object for ID '2' and entity 'E4'\"}");
@@ -129,6 +137,8 @@ class GET_IT extends DbTest {
 
     @Test
     public void testById_IncludeRelationship() {
+        tester.e3().deleteAll();
+        tester.e2().deleteAll();
 
         tester.e2().insertColumns("ID", "NAME").values(1, "xxx").exec();
         tester.e3().insertColumns("ID", "NAME", "E2_ID")
@@ -153,10 +163,12 @@ class GET_IT extends DbTest {
 
     @Test
     public void testToOne_Null() {
+        tester.e3().deleteAll();
+        tester.e2().deleteAll();
 
-        tester.e2().insertColumns("ID_", "NAME").values(1, "xxx").exec();
+        tester.e2().insertColumns("ID", "NAME").values(1, "xxx").exec();
 
-        tester.e3().insertColumns("ID_", "NAME", "E2_ID")
+        tester.e3().insertColumns("ID", "NAME", "E2_ID")
                 .values(8, "yyy", 1)
                 .values(9, "zzz", null).exec();
 
@@ -170,6 +182,7 @@ class GET_IT extends DbTest {
 
     @Test
     public void testCharPK() {
+        tester.e6().deleteAll();
 
         tester.e6().insertColumns("CHAR_ID", "CHAR_COLUMN").values("a", "aaa").exec();
 
@@ -179,6 +192,7 @@ class GET_IT extends DbTest {
 
     @Test
     public void testByCompoundId() {
+        tester.e17().deleteAll();
 
         tester.e17().insertColumns("ID1", "ID2", "NAME").values(1, 1, "aaa").exec();
 
@@ -192,6 +206,7 @@ class GET_IT extends DbTest {
     @Test
     // Reproduces https://github.com/agrestio/agrest/issues/478
     public void testCompoundId_PartiallyMapped_DiffPropNames() {
+        tester.e29().deleteAll();
 
         tester.e29().insertColumns("ID1", "ID2").values(1, 15).exec();
         tester.target("/e29")
@@ -217,6 +232,7 @@ class GET_IT extends DbTest {
 
     @Test
     public void testMapByRootEntity() {
+        tester.e4().deleteAll();
 
         tester.e4().insertColumns("C_VARCHAR", "C_INT").values("xxx", 1)
                 .values("yyy", 2)
@@ -233,12 +249,14 @@ class GET_IT extends DbTest {
 
     @Test
     public void testMapBy_RelatedId() {
+        tester.e3().deleteAll();
+        tester.e2().deleteAll();
 
-        tester.e2().insertColumns("ID_", "NAME")
+        tester.e2().insertColumns("ID", "NAME")
                 .values(1, "zzz")
                 .values(2, "yyy").exec();
 
-        tester.e3().insertColumns("ID_", "NAME", "E2_ID")
+        tester.e3().insertColumns("ID", "NAME", "E2_ID")
                 .values(8, "aaa", 1)
                 .values(9, "bbb", 1)
                 .values(10, "ccc", 2).exec();
@@ -254,12 +272,14 @@ class GET_IT extends DbTest {
 
     @Test
     public void testMapBy_OverRelationship() {
+        tester.e3().deleteAll();
+        tester.e2().deleteAll();
 
-        tester.e2().insertColumns("ID_", "NAME")
+        tester.e2().insertColumns("ID", "NAME")
                 .values(1, "zzz")
                 .values(2, "yyy").exec();
 
-        tester.e3().insertColumns("ID_", "NAME", "E2_ID")
+        tester.e3().insertColumns("ID", "NAME", "E2_ID")
                 .values(8, "aaa", 1)
                 .values(9, "bbb", 1)
                 .values(10, "ccc", 2).exec();
@@ -275,6 +295,7 @@ class GET_IT extends DbTest {
 
     @Test
     public void testById_EscapeLineSeparators() {
+        tester.e4().deleteAll();
 
         tester.e4().insertColumns("ID", "C_VARCHAR").values(1, "First line\u2028Second line...\u2029").exec();
 

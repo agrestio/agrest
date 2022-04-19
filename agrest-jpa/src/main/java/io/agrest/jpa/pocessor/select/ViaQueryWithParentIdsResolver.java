@@ -7,8 +7,8 @@ import io.agrest.NestedResourceEntity;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.pocessor.IJpaQueryAssembler;
 import io.agrest.jpa.pocessor.JpaProcessor;
+import io.agrest.jpa.query.JpaQueryBuilder;
 import io.agrest.runtime.processor.select.SelectContext;
-import jakarta.persistence.Query;
 
 /**
  * A nested resolver that waits for the parent query to complete, and resolves its entity objects based on the collection
@@ -40,12 +40,13 @@ public class ViaQueryWithParentIdsResolver<T> extends ViaQueryWithParentExpResol
         }
 
         // assemble query here, where we have access to all parent ids
-        Query select = queryAssembler.createQueryWithParentIdsQualifier(entity, parentIt);
+        JpaQueryBuilder select = queryAssembler.createQueryWithParentIdsQualifier(entity, parentIt);
         if (select == null) {
             // no parents - nothing to fetch for this entity, and no need to descend into children
             return Collections.emptyList();
         }
 
+        // FIXME
         JpaProcessor.getNestedEntity(entity).setSelect(select);
         afterQueryAssembled(entity, context);
         return super.doOnParentDataResolved(entity, parentData, context);
