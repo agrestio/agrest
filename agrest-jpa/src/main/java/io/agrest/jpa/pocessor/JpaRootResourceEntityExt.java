@@ -1,6 +1,6 @@
 package io.agrest.jpa.pocessor;
 
-import jakarta.persistence.TypedQuery;
+import io.agrest.jpa.query.JpaQueryBuilder;
 
 /**
  * Stores JPA-related per root entity request state.
@@ -10,14 +10,14 @@ import jakarta.persistence.TypedQuery;
  */
 public class JpaRootResourceEntityExt<T> implements JpaResourceEntityExt {
 
-    private TypedQuery<T> select;
+    private JpaQueryBuilder select;
 
     @Override
-    public TypedQuery<T> getSelect() {
+    public JpaQueryBuilder getSelect() {
         return select;
     }
 
-    public void setSelect(TypedQuery<T> select) {
+    public void setSelect(JpaQueryBuilder select) {
         this.select = select;
     }
 }

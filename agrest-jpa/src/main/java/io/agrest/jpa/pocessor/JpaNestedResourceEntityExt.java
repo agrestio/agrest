@@ -1,6 +1,6 @@
 package io.agrest.jpa.pocessor;
 
-import jakarta.persistence.Query;
+import io.agrest.jpa.query.JpaQueryBuilder;
 
 /**
  * Stores JPA-related per nested entity request state. A presence in a {@link io.agrest.NestedResourceEntity} tags it
@@ -10,14 +10,14 @@ import jakarta.persistence.Query;
  */
 public class JpaNestedResourceEntityExt implements JpaResourceEntityExt {
 
-    private Query select; // TODO: ???
+    private JpaQueryBuilder select;
 
     @Override
-    public Query getSelect() {
+    public JpaQueryBuilder getSelect() {
         return select;
     }
 
-    public void setSelect(Query select) {
+    public void setSelect(JpaQueryBuilder select) {
         this.select = select;
     }
 }

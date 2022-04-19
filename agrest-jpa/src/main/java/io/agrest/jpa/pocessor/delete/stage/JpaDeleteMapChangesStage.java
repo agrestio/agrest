@@ -1,13 +1,13 @@
 package io.agrest.jpa.pocessor.delete.stage;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
 import io.agrest.EntityParent;
+import io.agrest.jpa.query.JpaQueryBuilder;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.ProcessorOutcome;
@@ -87,35 +87,29 @@ public class JpaDeleteMapChangesStage extends DeleteMapChangesStage {
         return objects;
     }
 
+    @SuppressWarnings("unchecked")
     protected List<Object> findByParent(DeleteContext<Object> context, AgEntity<?> agParentEntity) {
 
         EntityParent<?> parent = context.getParent();
         EntityManager entityManager = JpaDeleteStartStage.entityManager(context);
 
         Map<String, Object> parentIdMap = parent.getId().asMap(context.getAgEntity());
-//        Object parentObject = entityManager.find(parent.getType(),
-//                parentIdMap.values().iterator().next());
-//
-//        if (parentObject == null) {
-//            throw AgException.notFound("No parent object for ID '%s' and entity '%s'",
-//                    parent.getId(), parent.getType().getSimpleName());
-//        }
 
         String relationship = parent.getRelationship();
-        String queryViaParent = "select p." + relationship + " from " + agParentEntity.getName() + " p " +
-                "where p." + parentIdMap.keySet().iterator().next() + " = " + parentIdMap.values().iterator().next();
-        return entityManager.createQuery(queryViaParent).getResultList();
-
-//        return Collections.emptyList();
-        // TODO: get objects by parent
-//        return ObjectSelect.query(context.getType())
-//                .where(CayenneUtil.parentQualifier(pathResolver, agParentEntity, parent, cayenneContext.getEntityResolver()))
-//                .select(CayenneDeleteStartStage.cayenneContext(context));
+        // TODO: compound id
+        return JpaQueryBuilder.select("p." + relationship)
+                .from(agParentEntity.getName() + " p")
+                .where("p." + parentIdMap.keySet().iterator().next() + " = " + parentIdMap.values().iterator().next())
+                .build(entityManager)
+                .getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     protected List<Object> findAll(DeleteContext<Object> context) {
-        return JpaDeleteStartStage.entityManager(context)
-                .createQuery("select e from " + context.getAgEntity().getName() + " e", context.getType())
+        EntityManager entityManager = JpaDeleteStartStage.entityManager(context);
+        return JpaQueryBuilder.select("e")
+                .from(context.getAgEntity().getName() + " e")
+                .build(entityManager)
                 .getResultList();
     }
 }

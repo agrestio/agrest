@@ -1,11 +1,10 @@
 package io.agrest.jpa.pocessor;
 
-import jakarta.persistence.Query;
+import io.agrest.jpa.query.JpaQueryBuilder;
 
 /**
  * @since 5.0
  */
 public interface JpaResourceEntityExt {
-
-    Query getSelect();
+    JpaQueryBuilder getSelect();
 }
