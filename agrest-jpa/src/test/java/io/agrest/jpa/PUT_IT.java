@@ -16,14 +16,11 @@ import org.junit.jupiter.api.Test;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PUT_IT extends DbTest {
 
@@ -93,54 +90,62 @@ public class PUT_IT extends DbTest {
 
     @Test
     public void testToOne() {
+        tester.e3().deleteAll();
+        tester.e2().deleteAll();
 
-        tester.e2().insertColumns("ID_", "NAME")
+        tester.e2().insertColumns("ID", "NAME")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
-        tester.e3().insertColumns("ID_", "NAME", "E2_ID").values(3, "zzz", 8).exec();
+        tester.e3().insertColumns("ID", "NAME", "E2_ID").values(3, "zzz", 8).exec();
 
         tester.target("/e3/3")
                 .put("{\"id\":3,\"e2\":1}")
                 .wasOk()
                 .bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
-        tester.e3().matcher().eq("id_", 3).eq("e2_id", 1).assertOneMatch();
+        tester.e3().matcher().eq("ID", 3).eq("E2_ID", 1).assertOneMatch();
     }
 
     @Test
     public void testToOne_ArraySyntax() {
+        tester.e3().deleteAll();
+        tester.e2().deleteAll();
 
-        tester.e2().insertColumns("ID_", "NAME")
+        tester.e2().insertColumns("ID", "NAME")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
-        tester.e3().insertColumns("ID_", "NAME", "E2_ID").values(3, "zzz", 8).exec();
+        tester.e3().insertColumns("ID", "NAME", "E2_ID").values(3, "zzz", 8).exec();
 
         tester.target("/e3/3")
                 .put("{\"id\":3,\"e2\":[1]}")
                 .wasOk()
                 .bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
-        tester.e3().matcher().eq("id_", 3).eq("e2_id", 1).assertOneMatch();
+        tester.e3().matcher().eq("ID", 3).eq("E2_ID", 1).assertOneMatch();
     }
 
     @Test
     public void testToOne_ToNull() {
+        tester.e3().deleteAll();
+        tester.e2().deleteAll();
 
-        tester.e2().insertColumns("ID_", "NAME")
+        tester.e2().insertColumns("ID", "NAME")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
-        tester.e3().insertColumns("ID_", "NAME", "E2_ID").values(3, "zzz", 8).exec();
+        tester.e3().insertColumns("ID", "NAME", "E2_ID").values(3, "zzz", 8).exec();
 
         tester.target("/e3/3")
                 .put("{\"id\":3,\"e2\":null}")
                 .wasOk().bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
         tester.e3().matcher().assertOneMatch();
-        tester.e3().matcher().eq("id_", 3).eq("e2_id", null).assertOneMatch();
+        tester.e3().matcher().eq("ID", 3).eq("E2_ID", null).assertOneMatch();
     }
 
     @Test
     public void testToOne_FromNull() {
+        tester.e3().deleteAll();
+        tester.e2().deleteAll();
 
         tester.e2().insertColumns("ID", "NAME")
                 .values(1, "xxx")
