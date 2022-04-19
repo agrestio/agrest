@@ -52,7 +52,15 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
     public <T> JpaQueryBuilder createQueryWithParentQualifier(NestedResourceEntity<T> entity) {
         String relationship = entity.getIncoming().getName();
         JpaQueryBuilder parentSelect = JpaProcessor.getEntity(entity.getParent()).getSelect();
-        JpaQueryBuilder select = JpaQueryBuilder.select("e." + relationship).selectSpec("e.id").from(entity.getParent().getName() + " e");
+
+        JpaQueryBuilder select;
+        if(entity.getIncoming().isToMany()) {
+            select = JpaQueryBuilder.select("DISTINCT r").selectSpec("e.id")
+                    .from(entity.getParent().getName() + " e")
+                    .from(", IN (e." + relationship + ") r");
+        } else {
+            select = JpaQueryBuilder.select("e." + relationship).selectSpec("e.id").from(entity.getParent().getName() + " e");
+        }
         if(parentSelect.hasWhere()) {
             // translate to a new root
             select.where(parentSelect.getWhere());
