@@ -36,7 +36,6 @@ public class JpaUnrelateDataStoreStage extends UnrelateUpdateDateStoreStage {
         return ProcessorOutcome.CONTINUE;
     }
 
-
     protected void doExecute(UnrelateContext<Object> context) {
         EntityManager entityManager = JpaUnrelateStartStage.entityManager(context);
         entityManager.getTransaction().begin();

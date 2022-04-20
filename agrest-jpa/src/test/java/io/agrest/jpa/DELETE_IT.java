@@ -26,11 +26,12 @@ public class DELETE_IT extends DbTest {
 
     @BQTestTool
     static final AgJpaTester tester = tester(Resource.class)
+            .entities(E3.class, E2.class, E4.class, E17.class, E24.class)
             .build();
 
     @Test
     public void testDeleteAll() {
-        tester.e4().deleteAll();
+
         tester.e4().insertColumns("ID", "C_VARCHAR")
                 .values(1, "xxx")
                 .values(35, "zzz")
@@ -46,7 +47,7 @@ public class DELETE_IT extends DbTest {
 
     @Test
     public void testDeleteAll_Empty() {
-        tester.e4().deleteAll();
+
         tester.target("/e4")
                 .delete()
                 .wasOk()
@@ -55,7 +56,7 @@ public class DELETE_IT extends DbTest {
 
     @Test
     public void testDeleteById() {
-        tester.e4().deleteAll();
+
         tester.e4().insertColumns("ID", "C_VARCHAR")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();
@@ -84,7 +85,7 @@ public class DELETE_IT extends DbTest {
 
     @Test
     public void testDeleteById_BadId() {
-        tester.e4().deleteAll();
+
         tester.e4().insertColumns("ID", "C_VARCHAR").values(1, "xxx").exec();
 
         tester.target("/e4/7")
@@ -97,7 +98,7 @@ public class DELETE_IT extends DbTest {
 
     @Test
     public void testDeleteTwice() {
-        tester.e4().deleteAll();
+
         tester.e4().insertColumns("ID", "C_VARCHAR")
                 .values(1, "xxx")
                 .values(8, "yyy").exec();

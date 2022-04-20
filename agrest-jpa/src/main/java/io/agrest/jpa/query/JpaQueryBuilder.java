@@ -3,6 +3,7 @@ package io.agrest.jpa.query;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.agrest.jpa.exp.JpaExpression;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 
@@ -49,6 +50,10 @@ public class JpaQueryBuilder {
         }
         this.join.add(join);
         return this;
+    }
+
+    public JpaQueryBuilder where(JpaExpression where) {
+        return where(where.getExp());
     }
 
     public JpaQueryBuilder where(String where) {
