@@ -36,9 +36,13 @@ public class AgJpaTester implements BQBeforeScopeCallback, BQAfterScopeCallback,
     private DbTester<?> db;
     private final List<Class<?>> resources;
 
+    private final List<Class<?>> entities;
+
     private JettyTester jettyInScope;
     private AgHibernateTester hibernateInScope;
     private BQRuntime appInScope;
+
+    private boolean doNotCleanData;
 
     public static AgJpaTester.Builder forDb(DbTester<?> db) {
         return new Builder().db(db);
@@ -46,6 +50,7 @@ public class AgJpaTester implements BQBeforeScopeCallback, BQAfterScopeCallback,
 
     protected AgJpaTester() {
         resources = new ArrayList<>();
+        entities = new ArrayList<>();
     }
 
     public AgHttpTester target() {
@@ -148,12 +153,16 @@ public class AgJpaTester implements BQBeforeScopeCallback, BQAfterScopeCallback,
     }
 
     @Override
-    public void beforeMethod(BQTestScope bqTestScope, ExtensionContext extensionContext) throws Exception {
+    public void beforeMethod(BQTestScope bqTestScope, ExtensionContext extensionContext) {
         getHibernateInScope().beforeMethod(bqTestScope, extensionContext);
     }
 
     protected AgHibernateTester createHibernateInScope() {
-        return AgHibernateTester.forDb(db);
+        AgHibernateTester tester = AgHibernateTester.forDb(db).entities(entities);
+        if(!doNotCleanData) {
+            return tester.deleteBeforeEachTest();
+        }
+        return tester;
     }
 
     protected BQRuntime createAppInScope(JettyTester jetty, AgHibernateTester hibernateInScope) {
@@ -178,6 +187,16 @@ public class AgJpaTester implements BQBeforeScopeCallback, BQAfterScopeCallback,
 
         public Builder resources(Class<?>... resources) {
             tester.resources.addAll(Arrays.asList(resources));
+            return this;
+        }
+
+        public Builder entities(Class<?>... entities) {
+            tester.entities.addAll(Arrays.asList(entities));
+            return this;
+        }
+
+        public Builder doNotCleanData() {
+            tester.doNotCleanData = true;
             return this;
         }
 

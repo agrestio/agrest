@@ -1,5 +1,6 @@
 package io.agrest.jpa.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +23,7 @@ public  class E2  {
 
     protected String name;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "e2_id")
     protected List<E3> e3s = new java.util.ArrayList<>();
 

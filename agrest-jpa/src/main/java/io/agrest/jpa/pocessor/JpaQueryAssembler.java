@@ -38,7 +38,7 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
                 : createBaseQuery(entity);
 
         JpaExpression parsedExp = expParser.parse(entity.getExp());
-        query.where(parsedExp.getExp());
+        query.where(parsedExp);
 
         EntityParent<?> parent = context.getParent();
         if (parent != null) {
@@ -55,14 +55,15 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
 
         JpaQueryBuilder select;
         if(entity.getIncoming().isToMany()) {
-            select = JpaQueryBuilder.select("DISTINCT r").selectSpec("e.id")
+            select = JpaQueryBuilder.select("r").selectSpec("e.id")
                     .from(entity.getParent().getName() + " e")
                     .from(", IN (e." + relationship + ") r");
         } else {
-            select = JpaQueryBuilder.select("e." + relationship).selectSpec("e.id").from(entity.getParent().getName() + " e");
+            select = JpaQueryBuilder.select("e." + relationship).selectSpec("e.id")
+                    .from(entity.getParent().getName() + " e");
         }
         if(parentSelect.hasWhere()) {
-            // translate to a new root
+            // TODO: translate to a new root
             select.where(parentSelect.getWhere());
         }
         return select;
@@ -70,7 +71,7 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
 
     @Override
     public <T, P> JpaQueryBuilder createQueryWithParentIdsQualifier(NestedResourceEntity<T> entity, Iterator<P> parentIt) {
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     private <T> JpaQueryBuilder createRootIdQuery(RootResourceEntity<T> entity, AgObjectId id) {
@@ -83,8 +84,9 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
         }
     }
 
-    private String parentQualifier(EntityParent<?> parent) {
-        return "";
+    private JpaExpression parentQualifier(EntityParent<?> parent) {
+
+        return new JpaExpression("");
     }
 
     protected <T> JpaQueryBuilder createBaseQuery(ResourceEntity<T> entity) {
