@@ -24,8 +24,8 @@ public  class E17 implements Serializable {
 
     protected String name;
 
-    @OneToMany
-    protected List<E18> e18s = new java.util.ArrayList<>();
+//    @OneToMany
+//    protected List<E18> e18s = new java.util.ArrayList<>();
 
     public Integer getId1() {
         return id1;
@@ -47,13 +47,13 @@ public  class E17 implements Serializable {
         this.name = name;
     }
 
-    public void setE18s(List<E18> e18s) {
-        this.e18s = e18s;
-    }
+//    public void setE18s(List<E18> e18s) {
+//        this.e18s = e18s;
+//    }
 
-    public List<E18> getE18s() {
-        return e18s;
-    }
+//    public List<E18> getE18s() {
+//        return e18s;
+//    }
 
     public String getName() {
         return name;

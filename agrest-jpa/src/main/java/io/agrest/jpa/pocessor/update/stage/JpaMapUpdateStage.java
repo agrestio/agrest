@@ -12,15 +12,16 @@ import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.jpa.exp.IJpaExpParser;
+import io.agrest.jpa.exp.JpaExpression;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.pocessor.IJpaQueryAssembler;
+import io.agrest.jpa.query.JpaQueryBuilder;
 import io.agrest.protocol.Exp;
 import io.agrest.runtime.processor.update.ByIdObjectMapperFactory;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import jakarta.persistence.metamodel.Metamodel;
 import org.apache.cayenne.di.Inject;
 
@@ -137,19 +138,14 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
             return Collections.emptyList();
         }
 
-        // TODO: implement this
-        String rootQualifier = qualifierForKeys(keys, mapper);
-
+        JpaExpression rootQualifier = qualifierForKeys(keys, mapper);
         EntityManager entityManager = JpaUpdateStartStage.entityManager(context);
-        return entityManager.createQuery(
-                "select e from " + context.getEntity().getName() + " e where " + rootQualifier,
-                        context.getEntity().getType())
+        @SuppressWarnings("unchecked")
+        List<T> objects = JpaQueryBuilder.select("e").from(context.getEntity().getName() + " e")
+                .where(rootQualifier)
+                .build(entityManager)
                 .getResultList();
 
-/*
-        buildRootQuery(context.getEntity(), rootQualifier);
-        List<T> objects = fetchRootEntity(CayenneUpdateStartStage.cayenneContext(context), context.getEntity());
-        
         if (context.isById() && objects.size() > 1) {
             throw AgException.internalServerError(
                     "Found more than one object for ID '%s' and entity '%s'",
@@ -158,20 +154,24 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
         }
 
         return objects;
- */
     }
 
-    protected String qualifierForKeys(Collection<Object> keys, ObjectMapper<?> mapper) {
-        StringBuilder str = new StringBuilder();
+    protected JpaExpression qualifierForKeys(Collection<Object> keys, ObjectMapper<?> mapper) {
+        JpaExpression expression = null;
         for(Object key: keys) {
             if (key != null) {
                 Exp e = mapper.expressionForKey(key);
                 if (e != null) {
-                    str.append(qualifierParser.parse(e).getExp());
+                    JpaExpression parsedExp = qualifierParser.parse(e);
+                    if(expression == null) {
+                        expression = parsedExp;
+                    } else {
+                        expression = expression.and(parsedExp);
+                    }
                 }
             }
         }
-        return str.toString();
+        return expression;
     }
 
 /*

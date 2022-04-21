@@ -17,7 +17,7 @@ public class JpaQueryBuilder {
     private List<String> selectSpec;
     private List<String> from;
     private List<String> join;
-    private List<String> where;
+    private JpaExpression where;
     private List<String> ordering;
 
     private int limit;
@@ -53,7 +53,16 @@ public class JpaQueryBuilder {
     }
 
     public JpaQueryBuilder where(JpaExpression where) {
-        return where(where.getExp());
+        if(where.isEmpty()) {
+            return this;
+        }
+
+        if(this.where != null) {
+            this.where = this.where.and(where);
+        } else {
+            this.where = where;
+        }
+        return this;
     }
 
     public JpaQueryBuilder where(String where) {
@@ -61,9 +70,10 @@ public class JpaQueryBuilder {
             return this;
         }
         if(this.where == null) {
-            this.where = new ArrayList<>();
+            this.where = new JpaExpression(where);
+        } else {
+            // TODO: solve this case somehow?
         }
-        this.where.add(where);
         return this;
     }
 
@@ -95,7 +105,7 @@ public class JpaQueryBuilder {
         }
 
         if(hasWhere()) {
-            sb.append(" where ").append(getWhere());
+            sb.append(" where ").append(getWhere().getExp());
         }
         if(hasOrdering()) {
             sb.append(" order by ").append(getOrdering());
@@ -107,6 +117,12 @@ public class JpaQueryBuilder {
         }
         if(offset != 0) {
             query.setFirstResult(offset);
+        }
+        if(hasWhere()) {
+            int i = 0;
+            for(Object param : where.getParams()) {
+                query.setParameter(i++, param);
+            }
         }
 
         return query;
@@ -136,8 +152,8 @@ public class JpaQueryBuilder {
         return String.join(" ", join);
     }
 
-    public String getWhere() {
-        return String.join(", ", where);
+    public JpaExpression getWhere() {
+        return where;
     }
 
     public String getOrdering() {

@@ -68,6 +68,7 @@ public class AgHibernateTester implements BQBeforeScopeCallback, BQAfterScopeCal
         configuration.getStandardServiceRegistryBuilder().applySetting("hibernate.connection.datasource", db.getDataSource());
         this.sessionFactory = configuration.buildSessionFactory();
 
+        // TODO: add entity sorting for the proper delete order
 //        sessionFactory.getMetamodel()
     }
 
@@ -88,6 +89,8 @@ public class AgHibernateTester implements BQBeforeScopeCallback, BQAfterScopeCal
         } catch (Exception ex) {
             session.getTransaction().rollback();
             throw ex;
+        } finally {
+            session.close();
         }
     }
 }
