@@ -19,8 +19,8 @@ public  class E18  {
 
     protected String name;
 
-    @OneToOne
-    protected E17 e17;
+//    @OneToOne
+//    protected E17 e17;
 
     public Long getId() {
         return id;
@@ -38,11 +38,11 @@ public  class E18  {
         this.name = name;
     }
 
-    public E17 getE17() {
-        return e17;
-    }
+//    public E17 getE17() {
+//        return e17;
+//    }
 
-    public void setE17(E17 e17) {
-        this.e17 = e17;
-    }
+//    public void setE17(E17 e17) {
+//        this.e17 = e17;
+//    }
 }

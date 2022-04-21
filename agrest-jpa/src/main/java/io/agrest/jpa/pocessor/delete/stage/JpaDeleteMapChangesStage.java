@@ -7,6 +7,7 @@ import java.util.Map;
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
 import io.agrest.EntityParent;
+import io.agrest.jpa.pocessor.IJpaQueryAssembler;
 import io.agrest.jpa.query.JpaQueryBuilder;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
@@ -27,11 +28,14 @@ import org.apache.cayenne.di.Inject;
 public class JpaDeleteMapChangesStage extends DeleteMapChangesStage {
 
     private final AgDataMap dataMap;
+    private final IJpaQueryAssembler queryAssembler;
 //    private final IPathResolver pathResolver;
 
-    public JpaDeleteMapChangesStage(@Inject AgDataMap dataMap) {
+    public JpaDeleteMapChangesStage(@Inject AgDataMap dataMap,
+                                    @Inject IJpaQueryAssembler queryAssembler) {
 //            , @Inject IPathResolver pathResolver) {
         this.dataMap = dataMap;
+        this.queryAssembler = queryAssembler;
 //        this.pathResolver = pathResolver;
     }
 
@@ -56,14 +60,12 @@ public class JpaDeleteMapChangesStage extends DeleteMapChangesStage {
     }
 
     protected List<Object> findObjectsToDelete(DeleteContext<Object> context) {
-
         if (context.isById()) {
             return findById(context);
         } else if (context.getParent() != null) {
             return findByParent(context, dataMap.getEntity(context.getParent().getType()));
-        }
-        // delete all !!
-        else {
+        } else {
+            // delete all !!
             return findAll(context);
         }
     }
@@ -73,15 +75,14 @@ public class JpaDeleteMapChangesStage extends DeleteMapChangesStage {
         List<Object> objects = new ArrayList<>(context.getIds().size());
         EntityManager entityManager = JpaDeleteStartStage.entityManager(context);
         for (AgObjectId id : context.getIds()) {
-
             // TODO: batch objects retrieval into a single query
-            Object o = entityManager.find(context.getType(), id.asMap(context.getAgEntity()).values().iterator().next());
-            if (o == null) {
+            JpaQueryBuilder byIdQuery = queryAssembler.createByIdQuery(context.getAgEntity(), id);
+            List<Object> result = byIdQuery.build(entityManager).getResultList();
+            if (result.size() == 0) {
                 // TODO: get proper entity name here?
                 throw AgException.notFound("No object for ID '%s' and entity '%s'", id, context.getType().getSimpleName());
             }
-
-            objects.add(o);
+            objects.add(result.get(0));
         }
 
         return objects;

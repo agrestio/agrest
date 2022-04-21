@@ -7,20 +7,20 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "e6")
-public  class E6  {
+public class E6  {
 
     @Id
     @Column(name = "CHAR_ID")
-    private char id;
+    private String id;
 
     @Column(name = "CHAR_COLUMN")
     protected String charColumn;
 
-    public char getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(char id) {
+    public void setId(String id) {
         this.id = id;
     }
 

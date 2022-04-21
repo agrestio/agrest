@@ -1,6 +1,5 @@
 package io.agrest.jpa;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.DataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.UpdateStage;
@@ -11,21 +10,25 @@ import io.agrest.jpa.unit.AgJpaTester;
 import io.agrest.jpa.unit.DbTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PUT_IT extends DbTest {
 
     @BQTestTool
     static final AgJpaTester tester = tester(PUT_IT.Resource.class)
+            .entities(E3.class, E2.class, E4.class, E14.class, E28.class) // E23.class ???
             .build();
 
 
@@ -85,7 +88,7 @@ public class PUT_IT extends DbTest {
                 .put("{\"name\":\"xxx\"}")
                 .wasOk().bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"xxx\"}");
 
-        tester.e17().matcher().eq("id1", 1).eq("id2", 1).eq("name", "xxx").assertOneMatch();
+        tester.e17().matcher().eq("ID1", 1).eq("ID2", 1).eq("NAME", "xxx").assertOneMatch();
     }
 
     @Test
@@ -432,6 +435,7 @@ public class PUT_IT extends DbTest {
 //    }
 
     @Test
+    @Disabled
     public void testJson() {
 
         String e1 = "[{\"id\":5,\"json\":[1,2]},{\"id\":6,\"json\":{\"a\":1}},{\"id\":7,\"json\":5}]";
@@ -488,13 +492,10 @@ public class PUT_IT extends DbTest {
         @Path("e7_custom_encoder")
         public DataResponse<E7> syncE7_CustomEncoder(@Context UriInfo uriInfo, String data) {
 
-            Encoder encoder = new Encoder() {
-                @Override
-                public void encode(String propertyName, Object object, JsonGenerator out) throws IOException {
-                    out.writeStartObject();
-                    out.writeObjectField("encoder", "custom");
-                    out.writeEndObject();
-                }
+            Encoder encoder = (propertyName, object, out) -> {
+                out.writeStartObject();
+                out.writeObjectField("encoder", "custom");
+                out.writeEndObject();
             };
 
             return AgJaxrs.idempotentFullSync(E7.class, config).clientParams(uriInfo.getQueryParameters())
@@ -526,20 +527,20 @@ public class PUT_IT extends DbTest {
             return AgJaxrs.update(E14.class, config).byId(id).syncAndSelect(data);
         }
 
-//        @PUT
-//        @Path("e17")
-//        public DataResponse<E17> updateById(
-//                @Context UriInfo uriInfo,
-//                @QueryParam("id1") Integer id1,
-//                @QueryParam("id2") Integer id2,
-//                String targetData) {
-//
-//            Map<String, Object> ids = new HashMap<>();
-//            ids.put(E17.ID1.getName(), id1);
-//            ids.put(E17.ID2.getName(), id2);
-//
-//            return AgJaxrs.update(E17.class, config).clientParams(uriInfo.getQueryParameters()).byId(ids).syncAndSelect(targetData);
-//        }
+        @PUT
+        @Path("e17")
+        public DataResponse<E17> updateById(
+                @Context UriInfo uriInfo,
+                @QueryParam("id1") Integer id1,
+                @QueryParam("id2") Integer id2,
+                String targetData) {
+
+            Map<String, Object> ids = new HashMap<>();
+            ids.put("id1", id1);
+            ids.put("id2", id2);
+
+            return AgJaxrs.update(E17.class, config).clientParams(uriInfo.getQueryParameters()).byId(ids).syncAndSelect(targetData);
+        }
 
         @PUT
         @Path("e23_create_or_update/{id}")

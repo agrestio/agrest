@@ -48,6 +48,10 @@ public class JpaExpParser implements IJpaExpParser {
 
         @Override
         public void visitKeyValueExp(KeyValueExp exp) {
+            if(sb.length() > 0) {
+                sb.append(" and ");
+            }
+            // TODO: move value to expression params
             sb.append(exp.getKey()).append(" ").append(exp.getOp()).append(" ").append(exp.getValue());
         }
 

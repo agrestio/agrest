@@ -1,6 +1,7 @@
 package io.agrest.jpa.pocessor;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
@@ -12,6 +13,7 @@ import io.agrest.jpa.exp.IJpaExpParser;
 import io.agrest.jpa.exp.JpaExpression;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.query.JpaQueryBuilder;
+import io.agrest.meta.AgEntity;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
@@ -74,14 +76,33 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    private <T> JpaQueryBuilder createRootIdQuery(RootResourceEntity<T> entity, AgObjectId id) {
-        Object idValue = id.asMap(entity.getAgEntity()).values().iterator().next();
-        JpaQueryBuilder baseQuery = createBaseQuery(entity);
-        if(idValue instanceof Number) {
-            return baseQuery.where("e.id = " + idValue);
-        } else {
-            return baseQuery.where("e.id = '" + idValue + "'");
+    protected <T> JpaQueryBuilder createRootIdQuery(RootResourceEntity<T> entity, AgObjectId id) {
+        return createBaseQuery(entity)
+                .where(createIdQualifier(entity.getAgEntity(), id, "e"));
+    }
+
+    @Override
+    public JpaQueryBuilder createByIdQuery(AgEntity<?> entity, AgObjectId id) {
+        return JpaQueryBuilder.select("e")
+                .from(entity.getName() + " e")
+                .where(createIdQualifier(entity, id, "e"));
+    }
+
+    JpaExpression createIdQualifier(AgEntity<?> entity, AgObjectId id, String alias) {
+        Map<String, Object> idMap = id.asMap(entity);
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        for(String key : idMap.keySet()) {
+            if(sb.length() > 0) {
+                sb.append(" and ");
+            }
+            sb.append(alias).append('.').append(key).append(" = ?").append(i++);
         }
+        JpaExpression expression = new JpaExpression(sb.toString());
+        for(Object value: idMap.values()) {
+            expression.addParameter(value);
+        }
+        return expression;
     }
 
     private JpaExpression parentQualifier(EntityParent<?> parent) {
