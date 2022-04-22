@@ -21,9 +21,12 @@
         <mapping class="io.agrest.jpa.model.E14"/>
         <mapping class="io.agrest.jpa.model.E15"/>
         <mapping class="io.agrest.jpa.model.E15E1"/>
+        <mapping class="io.agrest.jpa.model.E16"/>
         <mapping class="io.agrest.jpa.model.E17"/>
         <mapping class="io.agrest.jpa.model.E18"/>
-<!--        <mapping class="io.agrest.jpa.model.E19"/>-->
+        <mapping class="io.agrest.jpa.model.E19"/>
+        <mapping class="io.agrest.jpa.model.E20"/>
+        <mapping class="io.agrest.jpa.model.E21"/>
         <mapping class="io.agrest.jpa.model.E23"/>
         <mapping class="io.agrest.jpa.model.E24"/>
         <mapping class="io.agrest.jpa.model.E26"/>
