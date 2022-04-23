@@ -8,6 +8,7 @@ import io.agrest.cayenne.cayenne.main.E17;
 import io.agrest.cayenne.cayenne.main.E19;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.cayenne.main.E31;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
@@ -29,7 +30,7 @@ public class POST_IT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E16.class, E17.class, E19.class)
+            .entities(E2.class, E3.class, E4.class, E16.class, E17.class, E19.class, E31.class)
             .build();
 
     @Test
@@ -52,6 +53,17 @@ public class POST_IT extends DbTest {
 
         tester.e4().matcher().assertMatches(2);
         tester.e4().matcher().eq("c_varchar", "TTTT").assertOneMatch();
+    }
+
+    @Test
+    public void testIdCalledId() {
+
+        tester.target("/e31").post("{\"id\":5,\"name\":\"31\"}")
+                .wasCreated()
+                .bodyEquals(1, "{\"id\":5,\"name\":\"31\"}");
+
+        tester.e31().matcher().assertOneMatch();
+        tester.e31().matcher().eq("id", 5L).assertOneMatch();
     }
 
     @Test
@@ -271,6 +283,12 @@ public class POST_IT extends DbTest {
         @Path("e19/double")
         public SimpleResponse create_E19_DoubleAttribute(String entityData) {
             return Ag.create(E19.class, config).sync(entityData);
+        }
+
+        @POST
+        @Path("e31")
+        public DataResponse<E31> createE31(@Context UriInfo uriInfo, String requestBody) {
+            return Ag.create(E31.class, config).uri(uriInfo).syncAndSelect(requestBody);
         }
     }
 }

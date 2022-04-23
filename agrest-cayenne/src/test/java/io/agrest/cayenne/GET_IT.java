@@ -29,7 +29,8 @@ public class GET_IT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E6.class, E17.class, E19.class, E28.class, E29.class)
+            .entities(E2.class, E3.class, E4.class, E6.class, E17.class, E19.class, E28.class, E31.class)
+            .entitiesAndDependencies(E29.class)
             .build();
 
     @Test
@@ -43,6 +44,18 @@ public class GET_IT extends DbTest {
                 .bodyEquals(1,
                         "{\"id\":1,\"cBoolean\":null,\"cDate\":null,\"cDecimal\":null,"
                                 + "\"cInt\":5,\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"xxx\"}");
+    }
+
+    @Test
+    public void testIdCalledId() {
+
+        tester.e31().insertColumns("id", "name").values(5, "30").values(4, "31").exec();
+
+        tester.target("/e31")
+                .queryParam("sort", "name")
+                .get()
+                .wasOk()
+                .bodyEquals(2, "{\"id\":5,\"name\":\"30\"}", "{\"id\":4,\"name\":\"31\"}");
     }
 
     @Test
@@ -497,6 +510,12 @@ public class GET_IT extends DbTest {
         @Path("e29")
         public DataResponse<E29> getAllE29s(@Context UriInfo uriInfo) {
             return Ag.select(E29.class, config).uri(uriInfo).getOne();
+        }
+
+        @GET
+        @Path("e31")
+        public DataResponse<E31> getAllE31s(@Context UriInfo uriInfo) {
+            return Ag.select(E31.class, config).uri(uriInfo).get();
         }
     }
 

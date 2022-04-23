@@ -5,7 +5,18 @@ import io.agrest.Ag;
 import io.agrest.DataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.UpdateStage;
-import io.agrest.cayenne.cayenne.main.*;
+import io.agrest.cayenne.cayenne.main.E14;
+import io.agrest.cayenne.cayenne.main.E17;
+import io.agrest.cayenne.cayenne.main.E2;
+import io.agrest.cayenne.cayenne.main.E23;
+import io.agrest.cayenne.cayenne.main.E26;
+import io.agrest.cayenne.cayenne.main.E28;
+import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.cayenne.main.E31;
+import io.agrest.cayenne.cayenne.main.E4;
+import io.agrest.cayenne.cayenne.main.E7;
+import io.agrest.cayenne.cayenne.main.E8;
+import io.agrest.cayenne.cayenne.main.E9;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.encoder.Encoder;
@@ -29,7 +40,7 @@ public class PUT_IT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E7.class, E8.class, E9.class, E14.class, E17.class, E23.class, E26.class, E28.class)
+            .entities(E2.class, E3.class, E4.class, E7.class, E8.class, E9.class, E14.class, E17.class, E23.class, E26.class, E28.class, E31.class)
             .build();
 
     @Test
@@ -73,6 +84,19 @@ public class PUT_IT extends DbTest {
                 .selectOne();
 
         Assertions.assertArrayEquals(new Object[]{"zzz", new BigDecimal("12.99")}, data);
+    }
+
+    @Test
+    public void testUpdateIdCalledId() {
+
+        tester.e31().insertColumns("id", "name").values(5, "30").exec();
+
+        tester.target("/e31/5").put("{\"name\":\"31\"}")
+                .wasOk()
+                .bodyEquals(1, "{\"id\":5,\"name\":\"31\"}");
+
+        tester.e31().matcher().assertOneMatch();
+        tester.e31().matcher().eq("id", 5L).eq("name", "31").assertOneMatch();
     }
 
     @Test
@@ -540,6 +564,12 @@ public class PUT_IT extends DbTest {
             ids.put(E17.ID2_PK_COLUMN, id2);
 
             return Ag.update(E17.class, config).uri(uriInfo).id(ids).syncAndSelect(targetData);
+        }
+
+        @PUT
+        @Path("e31/{id}")
+        public DataResponse<E31> updateE31(@PathParam("id") long id, @Context UriInfo uriInfo, String requestBody) {
+            return Ag.update(E31.class, config).uri(uriInfo).id(id).syncAndSelect(requestBody);
         }
 
         @PUT

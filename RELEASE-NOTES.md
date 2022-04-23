@@ -1,6 +1,7 @@
 ## Release 4.10
 
 * #540 Fetch by ID with filters will return 200 even if the filter excludes the object
+* #542 4.x: "id" appears twice in the response for Ag.create() of Cayenne entity with a mapped id called "id"
 
 ## Release 4.9
 
