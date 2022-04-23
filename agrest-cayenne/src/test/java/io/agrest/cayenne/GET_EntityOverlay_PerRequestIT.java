@@ -28,7 +28,8 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E10.class, E22.class)
+            .entities(E2.class, E3.class, E4.class, E22.class)
+            .entitiesAndDependencies(E10.class)
             .build();
 
     @Test
