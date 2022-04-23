@@ -1,5 +1,6 @@
 package io.agrest.cayenne.compiler;
 
+import io.agrest.PathConstants;
 import io.agrest.access.CreateAuthorizer;
 import io.agrest.access.DeleteAuthorizer;
 import io.agrest.access.ReadFilter;
@@ -99,6 +100,23 @@ public class CayenneAgEntityBuilder<T> {
     protected void buildCayenneEntity() {
 
         for (ObjAttribute a : cayenneEntity.getAttributes()) {
+
+            // check for naming conflicts with Agrest "id"
+            if (PathConstants.ID_PK_ATTRIBUTE.equals(a.getName())) {
+
+                // TODO: We allow ObjAttributes that are PKs to be used as regular Agrest attributes, except
+                //   when they are called "id". Such a distinction may be confusing
+                if (a.isPrimaryKey()) {
+                    // this attribute will be added below as the ID (or a part of the ID)
+                    continue;
+                }
+                
+                LOGGER.warn(
+                        "Non-PK attribute in {} is called '{}', which conflicts with the Agrest default ID property",
+                        cayenneEntity.getName(),
+                        a.getName());
+            }
+
             Class<?> type = typeForName(a.getType());
             String name = a.getName();
             // by default adding attributes as readable and writable... @AgAttribute annotation on a getter may override this
@@ -106,6 +124,14 @@ public class CayenneAgEntityBuilder<T> {
         }
 
         for (ObjRelationship r : cayenneEntity.getRelationships()) {
+
+            // check for naming conflicts with Agrest "id"
+            if (PathConstants.ID_PK_ATTRIBUTE.equals(r.getName())) {
+                LOGGER.warn(
+                        "A relationship in {} is called '{}', which conflicts with the Agrest default ID property",
+                        cayenneEntity.getName(),
+                        r.getName());
+            }
 
             Class<?> targetEntityType = cayenneResolver.getClassDescriptor(r.getTargetEntityName()).getObjectClass();
 

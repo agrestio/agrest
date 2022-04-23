@@ -7,6 +7,7 @@
 * #519 Remove deprecated EncoderFilter and Constraint
 * #520 Stop using Cayenne expression API in Ag core
 * #521 Cayenne entity ID part represented by a DB column to be prefixed with "db:"
+* #522 "id" appears twice in the response for Ag.create() of Cayenne entity with a mapped id called "id"
 * #524 Align APIs for passing ID to requests: "byId" vs "id"
 * #525 UnrelateBuilder
 * #526 Replace deprecated Cayenne SelectQuery with ObjectSelect/ColumnSelect

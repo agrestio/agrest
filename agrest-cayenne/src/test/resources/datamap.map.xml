@@ -159,6 +159,10 @@
 		<db-attribute name="e29_id2" type="INTEGER"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 	</db-entity>
+	<db-entity name="e31">
+		<db-attribute name="id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+	</db-entity>
 	<db-entity name="e4">
 		<db-attribute name="c_boolean" type="BOOLEAN"/>
 		<db-attribute name="c_date" type="DATE"/>
@@ -297,6 +301,10 @@
 		<obj-attribute name="phoneNumber" type="java.lang.String" db-attribute-path="phone_number"/>
 	</obj-entity>
 	<obj-entity name="E30" className="io.agrest.cayenne.cayenne.main.E30" dbEntityName="e30"/>
+	<obj-entity name="E31" className="io.agrest.cayenne.cayenne.main.E31" dbEntityName="e31">
+		<obj-attribute name="id" type="java.lang.Long" db-attribute-path="id"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
 	<obj-entity name="E4" className="io.agrest.cayenne.cayenne.main.E4" dbEntityName="e4">
 		<obj-attribute name="cBoolean" type="java.lang.Boolean" db-attribute-path="c_boolean"/>
 		<obj-attribute name="cDate" type="java.util.Date" db-attribute-path="c_date"/>
@@ -457,6 +465,7 @@
 	<obj-relationship name="e9" source="E8" target="E9" deleteRule="Nullify" db-relationship-path="e9"/>
 	<obj-relationship name="e8" source="E9" target="E8" deleteRule="Nullify" db-relationship-path="e8"/>
 	<cgen xmlns="http://cayenne.apache.org/schema/10/cgen">
+		<excludeEntities>E31</excludeEntities>
 		<destDir>../java</destDir>
 		<mode>entity</mode>
 		<template>templates/v4_1/subclass.vm</template>
