@@ -1,12 +1,6 @@
 package io.agrest.jpa.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -21,6 +15,7 @@ public  class E8  {
     protected String name;
 
     @OneToMany
+    @JoinColumn (name = "e8_id")
     protected List<E7> e7s = new java.util.ArrayList<>();
 
     @OneToOne

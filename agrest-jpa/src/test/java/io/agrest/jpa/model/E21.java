@@ -16,8 +16,26 @@ public  class E21  {
     protected String description;
     protected String name;
 
-    @OneToMany (cascade = CascadeType.REMOVE)
+
+    @OneToMany(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "e21_id")
     protected List<E20> e20s = new java.util.ArrayList<>();
+
+    public void setE20s(List<E20> e20s) {
+        this.e20s = e20s;
+    }
+
+    public List<E20> getE20s() {
+        return e20s;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Integer getAge() {
         return age;
@@ -43,13 +61,13 @@ public  class E21  {
         this.name = name;
     }
 
-    public void setE20s(List<E20> e20s) {
-        this.e20s = e20s;
-    }
-
-    public List<E20> getE20s() {
-        return e20s;
-    }
+//    public void setE20s(List<E20> e20s) {
+//        this.e20s = e20s;
+//    }
+//
+//    public List<E20> getE20s() {
+//        return e20s;
+//    }
 
 
 }
