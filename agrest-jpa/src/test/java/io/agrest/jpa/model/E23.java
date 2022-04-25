@@ -1,10 +1,6 @@
 package io.agrest.jpa.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -18,7 +14,10 @@ public class E23  {
 
     protected String name;
 
-    @OneToMany
+
+
+    @OneToMany(cascade = {CascadeType.REMOVE})
+    @JoinColumn(name = "e23_id")
     protected List<E26> e26s = new java.util.ArrayList<>();
 
     public void setE26s(List<E26> e26s) {
