@@ -1,5 +1,7 @@
 package io.agrest.jpa;
 
+import java.util.HashMap;
+import java.util.Map;
 
 import io.agrest.DataResponse;
 import io.agrest.SimpleResponse;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -33,7 +36,7 @@ public class POST_IT extends DbTest {
                         + "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"zzz\"}");
 
         tester.e4().matcher().assertOneMatch();
-        tester.e4().matcher().eq("c_varchar", "zzz").assertOneMatch();
+        tester.e4().matcher().eq("C_VARCHAR", "zzz").assertOneMatch();
 
         tester.target("/e4").post("{\"cVarchar\":\"TTTT\"}")
                 .wasCreated()
@@ -42,7 +45,7 @@ public class POST_IT extends DbTest {
                         + "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"TTTT\"}");
 
         tester.e4().matcher().assertMatches(2);
-        tester.e4().matcher().eq("c_varchar", "TTTT").assertOneMatch();
+        tester.e4().matcher().eq("C_VARCHAR", "TTTT").assertOneMatch();
     }
 
     @Test
@@ -91,7 +94,7 @@ public class POST_IT extends DbTest {
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"MM\",\"phoneNumber\":null}");
 
         tester.e3().matcher().assertOneMatch();
-        tester.e3().matcher().eq("e2_id", 8).eq("name", "MM").assertOneMatch();
+        tester.e3().matcher().eq("E2_ID", 8).eq("NAME", "MM").assertOneMatch();
     }
 
     @Test
@@ -104,7 +107,7 @@ public class POST_IT extends DbTest {
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"MM\",\"phoneNumber\":null}");
 
         tester.e3().matcher().assertOneMatch();
-        tester.e3().matcher().eq("e2_id", null).assertOneMatch();
+        tester.e3().matcher().eq("E2_ID", null).assertOneMatch();
     }
 
     @Test
@@ -236,23 +239,20 @@ public class POST_IT extends DbTest {
             return AgJaxrs.create(E16.class, config).syncAndSelect(requestBody);
         }
 
+        @POST
+        @Path("e17")
+        public DataResponse<E17> createE17(
+                @Context UriInfo uriInfo,
+                @QueryParam("id1") Integer id1,
+                @QueryParam("id2") Integer id2,
+                String requestBody) {
 
-//TODO @Path("e17")
+            Map<String, Object> ids = new HashMap<>();
+            ids.put("id1", id1);
+            ids.put("id2", id2);
 
-//        @POST
-//        @Path("e17")
-//        public DataResponse<E17> createE17(
-//                @Context UriInfo uriInfo,
-//                @QueryParam("id1") Integer id1,
-//                @QueryParam("id2") Integer id2,
-//                String requestBody) {
-//
-//            Map<String, Object> ids = new HashMap<>();
-//            ids.put(E17.ID1.getName(), id1);
-//            ids.put(E17.ID2.getName(), id2);
-//
-//            return AgJaxrs.create(E17.class, config).byId(ids).syncAndSelect(requestBody);
-//        }
+            return AgJaxrs.create(E17.class, config).byId(ids).syncAndSelect(requestBody);
+        }
 
         @POST
         @Path("e19")

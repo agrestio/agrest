@@ -139,12 +139,19 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
         }
 
         JpaExpression rootQualifier = qualifierForKeys(keys, mapper);
+
+
+        // 1. build root query + nested queries
+
+        JpaQueryBuilder rootQuery = JpaQueryBuilder.select("e").from(context.getEntity().getName() + " e")
+                .where(rootQualifier);
+
+
+        // 2. fetch root + nested + join children with parents down to top
+
         EntityManager entityManager = JpaUpdateStartStage.entityManager(context);
         @SuppressWarnings("unchecked")
-        List<T> objects = JpaQueryBuilder.select("e").from(context.getEntity().getName() + " e")
-                .where(rootQualifier)
-                .build(entityManager)
-                .getResultList();
+        List<T> objects = rootQuery.build(entityManager).getResultList();
 
         if (context.isById() && objects.size() > 1) {
             throw AgException.internalServerError(
