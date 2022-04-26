@@ -100,7 +100,7 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
 
         mergeChanges(context, update, o, relator);
         relator.relateToParent(o);
-        entityManager.merge(o);
+        entityManager.persist(o);
     }
 
     protected void update(UpdateContext<Object> context, ObjectRelator relator, Object o, EntityUpdate<Object> update) {
