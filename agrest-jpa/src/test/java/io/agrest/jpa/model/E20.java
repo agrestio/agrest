@@ -19,8 +19,24 @@ public  class E20   {
     protected String name;
 
     @OneToOne (cascade = CascadeType.REMOVE)
- //   @JoinColumn(name = "e21_id")
     protected E21 e21;
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 
     public String getName() {
         return name;
