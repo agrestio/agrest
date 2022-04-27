@@ -81,8 +81,8 @@ public class GET_NaturalIdIT extends DbTest {
                                             @QueryParam("name") String name,
                                             @Context UriInfo uriInfo) {
             Map<String, Object> id = new HashMap<>(3);
-            id.put("AGE", age);
-            id.put("NAME", name);
+            id.put("age", age);
+            id.put("name", name);
             return AgJaxrs.select(E21.class, config).byId(id).clientParams(uriInfo.getQueryParameters()).getOne();
         }
     }

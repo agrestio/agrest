@@ -173,7 +173,7 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
                     if(expression == null) {
                         expression = parsedExp;
                     } else {
-                        expression = expression.and(parsedExp);
+                        expression = expression.or(parsedExp);
                     }
                 }
             }

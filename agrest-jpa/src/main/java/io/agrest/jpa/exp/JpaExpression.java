@@ -46,4 +46,15 @@ public class JpaExpression {
         expression.getParams().forEach(newExp::addParameter);
         return newExp;
     }
+
+    public JpaExpression or(JpaExpression expression) {
+        if(expression.isEmpty()) {
+            return this;
+        }
+
+        JpaExpression newExp = new JpaExpression(exp + " or " + expression.getExp());
+        getParams().forEach(newExp::addParameter);
+        expression.getParams().forEach(newExp::addParameter);
+        return newExp;
+    }
 }

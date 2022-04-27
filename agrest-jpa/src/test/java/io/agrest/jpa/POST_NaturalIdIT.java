@@ -21,7 +21,7 @@ import javax.ws.rs.core.UriInfo;
 public class POST_NaturalIdIT extends DbTest {
 
     @BQTestTool
-    static final AgJpaTester tester = tester(POST_NaturalIdIT.class)
+    static final AgJpaTester tester = tester(Resource.class)
             .entities(E20.class, E21.class, E29.class)
             .build();
 
