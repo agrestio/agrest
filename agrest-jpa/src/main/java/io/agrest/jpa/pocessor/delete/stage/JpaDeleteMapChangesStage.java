@@ -76,7 +76,7 @@ public class JpaDeleteMapChangesStage extends DeleteMapChangesStage {
         EntityManager entityManager = JpaDeleteStartStage.entityManager(context);
         for (AgObjectId id : context.getIds()) {
             // TODO: batch objects retrieval into a single query
-            JpaQueryBuilder byIdQuery = queryAssembler.createByIdQuery(context.getAgEntity(), id);
+            JpaQueryBuilder byIdQuery = queryAssembler.createByIdQuery(context.getAgEntity(), id.asMap(context.getAgEntity()));
             List<Object> result = byIdQuery.build(entityManager).getResultList();
             if (result.size() == 0) {
                 // TODO: get proper entity name here?

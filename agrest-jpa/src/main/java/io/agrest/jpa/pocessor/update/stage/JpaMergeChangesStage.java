@@ -11,6 +11,7 @@ import io.agrest.CompoundObjectId;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.jpa.persister.IAgJpaPersister;
+import io.agrest.jpa.pocessor.IJpaQueryAssembler;
 import io.agrest.jpa.pocessor.JpaUtil;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
@@ -35,8 +36,12 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
 
     private final Metamodel metamodel;
 
-    public JpaMergeChangesStage(@Inject IAgJpaPersister persister) {
+    private final IJpaQueryAssembler queryAssembler;
+
+    public JpaMergeChangesStage(@Inject IAgJpaPersister persister,
+                                @Inject IJpaQueryAssembler queryAssembler) {
         this.metamodel = persister.metamodel();
+        this.queryAssembler = queryAssembler;
     }
 
     @SuppressWarnings("unchecked")
@@ -130,9 +135,8 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
             AgEntity<Object> agEntity,
             Map<String, Object> idByAgAttribute) {
 
-        // TODO: implement multi-PK case
-        Object existing = entityManager.find(agEntity.getType(), idByAgAttribute.values().iterator().next());
-        if(existing != null) {
+        List<?> resultList = queryAssembler.createByIdQuery(agEntity, idByAgAttribute).build(entityManager).getResultList();
+        if(!resultList.isEmpty()) {
             throw AgException.badRequest("Can't create '%s' with id %s - already exists",
                     agEntity.getName(),
                     CompoundObjectId.mapToString(idByAgAttribute));
