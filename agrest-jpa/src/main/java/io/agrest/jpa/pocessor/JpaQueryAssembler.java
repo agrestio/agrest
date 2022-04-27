@@ -36,7 +36,7 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
     public <T> JpaQueryBuilder createRootQuery(SelectContext<T> context) {
         RootResourceEntity<T> entity = context.getEntity();
         JpaQueryBuilder query = context.getId() != null
-                ? createRootIdQuery(entity, context.getId())
+                ? createRootIdQuery(entity, context.getId().asMap(entity.getAgEntity()))
                 : createBaseQuery(entity);
 
         JpaExpression parsedExp = expParser.parse(entity.getExp());
@@ -76,20 +76,19 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    protected <T> JpaQueryBuilder createRootIdQuery(RootResourceEntity<T> entity, AgObjectId id) {
+    protected <T> JpaQueryBuilder createRootIdQuery(RootResourceEntity<T> entity, Map<String, Object> idMap) {
         return createBaseQuery(entity)
-                .where(createIdQualifier(entity.getAgEntity(), id, "e"));
+                .where(createIdQualifier(entity.getAgEntity(), idMap, "e"));
     }
 
     @Override
-    public JpaQueryBuilder createByIdQuery(AgEntity<?> entity, AgObjectId id) {
+    public JpaQueryBuilder createByIdQuery(AgEntity<?> entity, Map<String, Object> idMap) {
         return JpaQueryBuilder.select("e")
                 .from(entity.getName() + " e")
-                .where(createIdQualifier(entity, id, "e"));
+                .where(createIdQualifier(entity, idMap, "e"));
     }
 
-    JpaExpression createIdQualifier(AgEntity<?> entity, AgObjectId id, String alias) {
-        Map<String, Object> idMap = id.asMap(entity);
+    JpaExpression createIdQualifier(AgEntity<?> entity, Map<String, Object> idMap, String alias) {
         StringBuilder sb = new StringBuilder();
         int i = 0;
         for(String key : idMap.keySet()) {
