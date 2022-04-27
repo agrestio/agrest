@@ -1,5 +1,6 @@
 package io.agrest.jpa.model;
 
+import io.agrest.annotation.AgId;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public  class E21  {
         this.id = id;
     }
 
+    @AgId
     public Integer getAge() {
         return age;
     }
@@ -53,6 +55,7 @@ public  class E21  {
         this.description = description;
     }
 
+    @AgId
     public String getName() {
         return name;
     }

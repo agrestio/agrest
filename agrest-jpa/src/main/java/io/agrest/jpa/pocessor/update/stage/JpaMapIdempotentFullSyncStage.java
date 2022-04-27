@@ -2,20 +2,21 @@ package io.agrest.jpa.pocessor.update.stage;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import io.agrest.AgException;
-import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
 import io.agrest.jpa.exp.IJpaExpParser;
+import io.agrest.jpa.exp.JpaExpression;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.pocessor.IJpaQueryAssembler;
+import io.agrest.jpa.query.JpaQueryBuilder;
 import io.agrest.meta.AgDataMap;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
+import jakarta.persistence.EntityManager;
 import org.apache.cayenne.di.Inject;
 
 /**
@@ -79,25 +80,27 @@ public class JpaMapIdempotentFullSyncStage extends JpaMapIdempotentCreateOrUpdat
             throw AgException.internalServerError("No implemented yet.");
         }
 
-        return Collections.emptyList();
+        JpaExpression rootQualifier = qualifierForKeys(keys, mapper);
 
-//        EntityParent<?> parent = context.getParent();
-//        Expression rootQualifier = parent != null ?
-//                CayenneUtil.parentQualifier(pathResolver, dataMap.getEntity(parent.getType()), parent, entityResolver)
-//                : null;
-//
-//        buildRootQuery(context.getEntity(), rootQualifier);
-//
-//         TODO: implement entity-tied resolvers for updates to avoid duplicating selecting logic
-//
-//        List<T> objects = fetchRootEntity(CayenneUpdateStartStage.cayenneContext(context), context.getEntity());
-//
-//        if (context.isById() && objects.size() > 1) {
-//            throw AgException.internalServerError(
-//                    "Found more than one object for ID '%s' and entity '%s'",
-//                    context.getId(),
-//                    context.getEntity().getName());
-//        }
-//        return objects;
+        // 1. build root query + nested queries
+
+        JpaQueryBuilder rootQuery = JpaQueryBuilder.select("e").from(context.getEntity().getName() + " e")
+                .where(rootQualifier);
+
+
+        // 2. fetch root + nested + join children with parents down to top
+
+        EntityManager entityManager = JpaUpdateStartStage.entityManager(context);
+        @SuppressWarnings("unchecked")
+        List<T> objects = rootQuery.build(entityManager).getResultList();
+
+        if (context.isById() && objects.size() > 1) {
+            throw AgException.internalServerError(
+                    "Found more than one object for ID '%s' and entity '%s'",
+                    context.getId(),
+                    context.getEntity().getName());
+        }
+
+        return objects;
     }
 }
