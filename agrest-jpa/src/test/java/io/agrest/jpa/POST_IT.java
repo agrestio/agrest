@@ -12,12 +12,9 @@ import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import java.util.HashMap;
-import java.util.Map;
 
 public class POST_IT extends DbTest {
 
@@ -36,7 +33,7 @@ public class POST_IT extends DbTest {
                         + "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"zzz\"}");
 
         tester.e4().matcher().assertOneMatch();
-        tester.e4().matcher().eq("c_varchar", "zzz").assertOneMatch();
+        tester.e4().matcher().eq("C_VARCHAR", "zzz").assertOneMatch();
 
         tester.target("/e4").post("{\"cVarchar\":\"TTTT\"}")
                 .wasCreated()
@@ -45,7 +42,7 @@ public class POST_IT extends DbTest {
                         + "\"cTime\":null,\"cTimestamp\":null,\"cVarchar\":\"TTTT\"}");
 
         tester.e4().matcher().assertMatches(2);
-        tester.e4().matcher().eq("c_varchar", "TTTT").assertOneMatch();
+        tester.e4().matcher().eq("C_VARCHAR", "TTTT").assertOneMatch();
     }
 
     @Test
@@ -94,7 +91,7 @@ public class POST_IT extends DbTest {
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"MM\",\"phoneNumber\":null}");
 
         tester.e3().matcher().assertOneMatch();
-        tester.e3().matcher().eq("e2_id", 8).eq("name", "MM").assertOneMatch();
+        tester.e3().matcher().eq("E2_ID", 8).eq("NAME", "MM").assertOneMatch();
     }
 
     @Test
@@ -107,7 +104,7 @@ public class POST_IT extends DbTest {
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"MM\",\"phoneNumber\":null}");
 
         tester.e3().matcher().assertOneMatch();
-        tester.e3().matcher().eq("e2_id", null).assertOneMatch();
+        tester.e3().matcher().eq("E2_ID", null).assertOneMatch();
     }
 
     @Test
@@ -144,7 +141,7 @@ public class POST_IT extends DbTest {
 //                .values(8, "yyy").exec();
 //
 //        Long id = tester.target("/e2")
-//                .queryParam("include", E2.E3S)
+//                .queryParam("include", E2.E3S.getName())
 //                .queryParam("exclude", E2.ADDRESS.getName(), E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
 //                .post("{\"e3s\":[1,8],\"name\":\"MM\"}")
 //                .wasCreated()

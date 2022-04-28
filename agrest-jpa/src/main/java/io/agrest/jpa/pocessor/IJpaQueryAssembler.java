@@ -1,6 +1,7 @@
 package io.agrest.jpa.pocessor;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import io.agrest.AgObjectId;
 import io.agrest.NestedResourceEntity;
@@ -18,5 +19,5 @@ public interface IJpaQueryAssembler {
 
     <T, P> JpaQueryBuilder createQueryWithParentIdsQualifier(NestedResourceEntity<T> entity, Iterator<P> parentIt);
 
-    JpaQueryBuilder createByIdQuery(AgEntity<?> entity, AgObjectId id);
+    JpaQueryBuilder createByIdQuery(AgEntity<?> entity, Map<String, Object> idMap);
 }

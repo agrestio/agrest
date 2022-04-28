@@ -1,5 +1,6 @@
 package io.agrest.jpa.model;
 
+import io.agrest.annotation.AgId;
 import jakarta.persistence.*;
 
 
@@ -38,6 +39,7 @@ public  class E20   {
         return description;
     }
 
+    @AgId
     public String getName() {
         return name;
     }
