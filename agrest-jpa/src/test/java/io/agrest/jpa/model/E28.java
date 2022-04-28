@@ -11,6 +11,8 @@ import jakarta.persistence.Table;
 @Table (name = "e28")
 public  class E28 {
 
+    public static final String JSON = "json";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

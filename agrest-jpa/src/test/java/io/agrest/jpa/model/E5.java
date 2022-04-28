@@ -1,11 +1,6 @@
 package io.agrest.jpa.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.Date;
 import java.util.List;
@@ -13,18 +8,22 @@ import java.util.List;
 @Entity
 @Table(name = "e5")
 public class E5 {
+    public static final String E15S = "e15s";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     protected Date date;
     protected String name;
 
-    @OneToMany
+
+    @ManyToMany
+    @JoinTable(name = "e15_e5",
+            joinColumns = @JoinColumn(name = "e15_id"),
+            inverseJoinColumns = @JoinColumn(name = "e5_id"))
     protected List<E15> e15s = new java.util.ArrayList<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "e5",cascade = {jakarta.persistence.CascadeType.REMOVE})
     protected List<E3> e3s = new java.util.ArrayList<>();
 
     public void setE15s(List<E15> e15s) {

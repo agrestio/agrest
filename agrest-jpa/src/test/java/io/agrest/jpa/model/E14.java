@@ -1,11 +1,6 @@
 package io.agrest.jpa.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table
@@ -17,7 +12,8 @@ public  class E14 {
 
     protected String name;
 
-    @OneToOne
+    @OneToOne(cascade = {jakarta.persistence.CascadeType.REMOVE})
+    @JoinColumn (name="e14_id")
     protected E15 e15;
 
     public Long getLong_id() {

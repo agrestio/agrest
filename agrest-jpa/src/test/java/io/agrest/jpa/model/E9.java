@@ -1,31 +1,24 @@
 package io.agrest.jpa.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "e9")
 public class E9 {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    protected Integer e8_id;
 
     @OneToOne
+    @JoinColumn(name = "e8_id")
     protected E8 e8;
 
-    public Long getId() {
-        return id;
+    public void setE8_id(Integer e8_id) {
+        this.e8_id = e8_id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Integer getE8_id() {
+        return e8_id;
     }
 
     public E8 getE8() {
@@ -35,4 +28,6 @@ public class E9 {
     public void setE8(E8 e8) {
         this.e8 = e8;
     }
+
+
 }

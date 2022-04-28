@@ -12,9 +12,12 @@ import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
+import java.util.HashMap;
+import java.util.Map;
 
 public class POST_IT extends DbTest {
 
@@ -118,21 +121,21 @@ public class POST_IT extends DbTest {
         tester.e3().matcher().assertNoMatches();
     }
 
-    //TODO testBulk
-//    @Test
-//    public void testBulk() {
+
+    @Test
+    public void testBulk() {
+
+        tester.target("/e3/")
+                .queryParam("exclude", "id")
+                .queryParam("include", E3.NAME)
+                .post("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}]")
+                .wasCreated()
+                // ordering from request must be preserved...
+                .bodyEquals(4, "{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}");
+    }
+
+
 //
-//        tester.target("/e3/")
-//                .queryParam("exclude", "id")
-//                .queryParam("include", E3.NAME.getName())
-//                .post("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}]")
-//                .wasCreated()
-//                // ordering from request must be preserved...
-//                .bodyEquals(4, "{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}");
-//    }
-
-
-    //TODO testToMany
 //    @Test
 //    public void testToMany() {
 //
@@ -141,7 +144,7 @@ public class POST_IT extends DbTest {
 //                .values(8, "yyy").exec();
 //
 //        Long id = tester.target("/e2")
-//                .queryParam("include", E2.E3S.getName())
+//                .queryParam("include", E2.E3S)
 //                .queryParam("exclude", E2.ADDRESS.getName(), E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
 //                .post("{\"e3s\":[1,8],\"name\":\"MM\"}")
 //                .wasCreated()
@@ -154,18 +157,18 @@ public class POST_IT extends DbTest {
 //        tester.e3().matcher().eq("e2_id", id).assertMatches(2);
 //    }
 
-    //TODO testByteArrayProperty
-//    @Test
-//    public void testByteArrayProperty() {
-//
-//        String base64Encoded = "c29tZVZhbHVlMTIz"; // someValue123
-//
-//        tester.target("/e19")
-//                .queryParam("include", E19.GUID.getName())
-//                .post("{\"guid\":\"" + base64Encoded + "\"}")
-//                .wasCreated()
-//                .bodyEquals(1, "{\"guid\":\"" + base64Encoded + "\"}");
-//    }
+
+    @Test
+    public void testByteArrayProperty() {
+
+        String base64Encoded = "c29tZVZhbHVlMTIz"; // someValue123
+
+        tester.target("/e19")
+                .queryParam("include", E19.GUID)
+                .post("{\"guid\":\"" + base64Encoded + "\"}")
+                .wasCreated()
+                .bodyEquals(1, "{\"guid\":\"" + base64Encoded + "\"}");
+    }
 
 
     @Test
@@ -237,22 +240,20 @@ public class POST_IT extends DbTest {
         }
 
 
-//TODO @Path("e17")
+        @POST
+        @Path("e17")
+        public DataResponse<E17> createE17(
+                @Context UriInfo uriInfo,
+                @QueryParam("id1") Integer id1,
+                @QueryParam("id2") Integer id2,
+                String requestBody) {
 
-//        @POST
-//        @Path("e17")
-//        public DataResponse<E17> createE17(
-//                @Context UriInfo uriInfo,
-//                @QueryParam("id1") Integer id1,
-//                @QueryParam("id2") Integer id2,
-//                String requestBody) {
-//
-//            Map<String, Object> ids = new HashMap<>();
-//            ids.put(E17.ID1.getName(), id1);
-//            ids.put(E17.ID2.getName(), id2);
-//
-//            return AgJaxrs.create(E17.class, config).byId(ids).syncAndSelect(requestBody);
-//        }
+            Map<String, Object> ids = new HashMap<>();
+            ids.put(E17.ID1, id1);
+            ids.put(E17.ID2, id2);
+
+            return AgJaxrs.create(E17.class, config).byId(ids).syncAndSelect(requestBody);
+        }
 
         @POST
         @Path("e19")

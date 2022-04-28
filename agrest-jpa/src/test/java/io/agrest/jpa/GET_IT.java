@@ -1,9 +1,16 @@
 package io.agrest.jpa;
 
+import java.nio.charset.StandardCharsets;
+import java.sql.Time;
+import java.time.Instant;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import io.agrest.DataResponse;
+import io.agrest.converter.jsonvalue.UtcDateConverter;
+import io.agrest.encoder.DateTimeFormatters;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.jpa.model.*;
 import io.agrest.jpa.unit.AgJpaTester;
@@ -26,7 +33,7 @@ class GET_IT extends DbTest {
 
     @BQTestTool
     static final AgJpaTester tester = tester(Resource.class)
-            .entities(E1.class, E3.class, E2.class, E4.class, E6.class, E17.class, E29.class)
+            .entities(E1.class, E3.class, E2.class, E4.class, E6.class, E17.class, E30.class,E28.class,E29.class)
             .build();
 
     @Test
@@ -42,9 +49,50 @@ class GET_IT extends DbTest {
     }
 
 
-    //TODO testDateTime
-    //TODO testDate
-    //TODO testTime
+    @Test
+    public void testDateTime() {
+
+        Date date = Date.from(Instant.from(UtcDateConverter.dateParser().fromString("2012-02-03T11:01:02Z")));
+        tester.e4().insertColumns("C_TIMESTAMP").values(date).exec();
+
+        String dateString = DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(date.getTime()));
+
+        tester.target("/e4").queryParam("include", E4.C_TIMESTAMP).get()
+                .wasOk().bodyEquals(1, "{\"cTimestamp\":\"" + dateString + "\"}");
+    }
+
+    @Test
+    public void testDate() {
+
+        Date date = Date.from(Instant.from(UtcDateConverter.dateParser().fromString("2012-02-03")));
+        tester.e4().insertColumns("C_DATE").values(date).exec();
+
+        String dateString = DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(date.getTime()));
+
+        tester.target("/e4").queryParam("include", E4.C_DATE)
+                .get()
+                .wasOk()
+                .bodyEquals(1, "{\"cDate\":\"" + dateString + "\"}");
+    }
+
+    @Test
+    public void testTime() {
+
+        LocalTime lt = LocalTime.of(14, 0, 1);
+
+        // "14:00:01"
+        Time time = Time.valueOf(lt);
+
+        tester.e4().insertColumns("C_TIME").values(time).exec();
+
+        String timeString = DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(time.getTime()));
+
+        tester.target("/e4").queryParam("include", E4.C_TIME).get().wasOk().bodyEquals(1, "{\"cTime\":\"" + timeString + "\"}");
+    }
+
+
+
+
 
     @Test
     public void testSort_ById() {
@@ -277,9 +325,54 @@ class GET_IT extends DbTest {
                 .get().wasOk().bodyEquals(1, "{\"cVarchar\":\"First line\\u2028Second line...\\u2029\"}");
     }
 
-    //TODO testByteArrayProperty
-    //TODO testJsonProperty
-    //TODO testJsonProperty_WithOtherProps
+
+    @Test
+    public void testByteArrayProperty() {
+
+        tester.e19().insertColumns("ID", "GUID").values(35, "someValue123".getBytes(StandardCharsets.UTF_8)).exec();
+
+        tester.target("/e19/35")
+                .queryParam("include", E19.GUID)
+                .get().wasOk().bodyEquals(1, "{\"guid\":\"c29tZVZhbHVlMTIz\"}");
+    }
+
+    @Test
+    public void testJsonProperty() {
+
+        tester.e28().insertColumns("ID", "JSON")
+                .values(35, "[1,2]")
+                .values(36, "{\"a\":1}")
+                .values(37, "{}")
+                .values(38, "5")
+                .values(39, null)
+                .exec();
+
+        tester.target("/e28")
+                .queryParam("include", E28.JSON)
+                .queryParam("sort", "id")
+                .get()
+                .wasOk()
+                .bodyEquals(5, "{\"json\":[1,2]}", "{\"json\":{\"a\":1}}", "{\"json\":{}}", "{\"json\":5}", "{\"json\":null}");
+    }
+
+    @Test
+    public void testJsonProperty_WithOtherProps() {
+
+        tester.e28().insertColumns("ID", "JSON")
+                .values(35, "[1,2]")
+                .values(37, "{}")
+                .exec();
+
+        tester.target("/e28/expanded")
+                .queryParam("include", "a", E28.JSON, "z")
+                .queryParam("sort", "id")
+                .get()
+                .wasOk()
+                .bodyEquals(2, "{\"a\":\"A\",\"json\":[1,2],\"z\":\"Z\"}", "{\"a\":\"A\",\"json\":{},\"z\":\"Z\"}");
+    }
+
+
+
 
 
     /////////////
@@ -400,7 +493,20 @@ class GET_IT extends DbTest {
             return AgJaxrs.select(E29.class, config).clientParams(uriInfo.getQueryParameters()).getOne();
         }
 
-        //TODO  @GET @Path("e29_compound_db")
+        @GET
+        @Path("e29_compound_db")
+        public DataResponse<E29> getByCompoundDbId(
+                @Context UriInfo uriInfo,
+                @QueryParam("id1") Integer id1,
+                @QueryParam("id2") Integer id2) {
+
+            Map<String, Object> ids = new HashMap<>();
+            ids.put("db:" + "id1", id1);
+            ids.put("id2Prop", id2);
+
+            return AgJaxrs.select(E29.class, config).clientParams(uriInfo.getQueryParameters()).byId(ids).getOne();
+        }
+
 
     }
 

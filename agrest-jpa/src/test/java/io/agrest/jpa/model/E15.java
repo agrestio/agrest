@@ -1,11 +1,6 @@
 package io.agrest.jpa.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -13,26 +8,31 @@ import java.util.List;
 @Entity
 @Table(name = "e15")
 public class E15 {
+    public static final String E14S = "e14s";
+    public static final String E15E1 = "e15e1";
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer long_id;
+    private Long long_id;
 
     protected String name;
 
-    @OneToMany
+    @OneToMany(cascade = {jakarta.persistence.CascadeType.REMOVE})
+    @JoinColumn (name = "e14s_id")
     protected List<E14> e14s = new java.util.ArrayList<>();
 
-    @OneToMany
+    @OneToMany(cascade = {jakarta.persistence.CascadeType.REMOVE})
+    @JoinColumn (name = "e15e1s_id")
     protected List<E15E1> e15E1s = new java.util.ArrayList<>();
 
-    @OneToMany
+
+    @ManyToMany (mappedBy = "e15s")
     protected List<E5> e5s = new java.util.ArrayList<>();
 
-    public Integer getLong_id() {
+    public Long getLong_id() {
         return long_id;
     }
 
-    public void setLong_id(Integer long_id) {
+    public void setLong_id(Long long_id) {
         this.long_id = long_id;
     }
 
