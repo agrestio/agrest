@@ -89,6 +89,9 @@ public class AgJpaTester implements BQBeforeScopeCallback, BQAfterScopeCallback,
     public Table e4() {
         return getTable("E4");
     }
+    public Table e5() {
+        return getTable("E5");
+    }
     public Table e6() {
         return getTable("E6");
     }
@@ -101,11 +104,35 @@ public class AgJpaTester implements BQBeforeScopeCallback, BQAfterScopeCallback,
     public Table e9() {
         return getTable("E9");
     }
+    public Table e12() {
+        return getTable("E12");
+    }
+    public Table e12_13() {
+        return getTable("E12_E13");
+    }
+    public Table e13() {
+        return getTable("E13");
+    }
+    public Table e14() {
+        return getTable("E14");
+    }
+    public Table e15() {
+        return getTable("E15");
+    }
+    public Table e15_1() {
+        return getTable("E15_E1");
+    }
+    public Table e15_5() {
+        return getTable("E15_E5");
+    }
     public Table e16() {
         return getTable("E16");
     }
     public Table e17() {
         return getTable("E17");
+    }
+    public Table e18() {
+        return getTable("E18");
     }
     public Table e19() {
         return getTable("E19");
@@ -122,11 +149,20 @@ public class AgJpaTester implements BQBeforeScopeCallback, BQAfterScopeCallback,
     public Table e24() {
         return getTable("E24");
     }
+    public Table e26() {
+        return getTable("E26");
+    }
+    public Table e27NoPk() {
+        return getTable("e27_nopk");
+    }
     public Table e28() {
         return getTable("E28");
     }
     public Table e29() {
         return getTable("E29");
+    }
+    public Table e30() {
+        return getTable("E30");
     }
 
     protected JettyTester getJettyInScope() {

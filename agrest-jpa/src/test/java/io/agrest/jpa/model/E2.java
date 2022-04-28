@@ -15,6 +15,10 @@ import java.util.List;
 @Table(name = "e2")
 public  class E2  {
 
+    public static final String E3S = "e3s";
+    public static final String ADDRESS = "address";
+    public static final String NAME = "name";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -23,8 +27,7 @@ public  class E2  {
 
     protected String name;
 
-    @OneToMany(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "e2_id")
+    @OneToMany(mappedBy = "e2",cascade = CascadeType.REMOVE)
     protected List<E3> e3s = new java.util.ArrayList<>();
 
     public Integer getId() {

@@ -5,21 +5,22 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table (name = "e8")
-public  class E8  {
+@Table(name = "e8")
+public class E8 {
+    public static final String E7S = "e7s";
+    public static final String E9 = "e9";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     protected String name;
 
-    @OneToMany
-    @JoinColumn (name = "e8_id")
+    @OneToMany(mappedBy = "e8")
     protected List<E7> e7s = new java.util.ArrayList<>();
 
-    @OneToOne
+    @OneToOne(mappedBy = "e8")
     protected E9 e9;
+
 
     public void setE7s(List<E7> e7s) {
         this.e7s = e7s;
@@ -29,11 +30,11 @@ public  class E8  {
         return e7s;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

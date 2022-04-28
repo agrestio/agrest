@@ -14,6 +14,10 @@ import jakarta.persistence.Table;
 @Table(name = "e4")
 public class E4 {
 
+    public static final String C_TIMESTAMP = "cTimestamp";
+    public static final String C_DATE = "cDate";
+    public static final String C_TIME = "cTime";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
