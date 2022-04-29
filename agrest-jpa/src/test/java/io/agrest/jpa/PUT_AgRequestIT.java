@@ -48,29 +48,29 @@ public class PUT_AgRequestIT extends DbTest {
                         "{\"name\":\"333\"}");
     }
 
-    //TODO testPUT_Excludes_OverrideByAgRequest
-//    @Test
-//    public void testPUT_Excludes_OverrideByAgRequest() {
-//
-//        tester.e3().insertColumns("ID", "NAME")
-//                .values(5, "aaa")
-//                .values(4, "zzz")
-//                .values(2, "bbb")
-//                .values(6, "yyy").exec();
-//
-//        String entity = "[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]";
-//
-//        tester.target("/e3_excludes")
-//                .queryParam("exclude", E3.NAME.getName())
-//                .put(entity)
-//                .wasOk()
-//                // returns 'name' and 'phoneNumber' fields except 'id' due to overriding exclude by AgRequest
-//                .bodyEquals(4,
-//                        "{\"name\":\"yyy\",\"phoneNumber\":null}",
-//                        "{\"name\":\"zzz\",\"phoneNumber\":null}",
-//                        "{\"name\":\"111\",\"phoneNumber\":null}",
-//                        "{\"name\":\"333\",\"phoneNumber\":null}");
-//    }
+
+    @Test
+    public void testPUT_Excludes_OverrideByAgRequest() {
+
+        tester.e3().insertColumns("ID", "NAME")
+                .values(5, "aaa")
+                .values(4, "zzz")
+                .values(2, "bbb")
+                .values(6, "yyy").exec();
+
+        String entity = "[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]";
+
+        tester.target("/e3_excludes")
+                .queryParam("exclude", E3.NAME)
+                .put(entity)
+                .wasOk()
+                // returns 'name' and 'phoneNumber' fields except 'id' due to overriding exclude by AgRequest
+                .bodyEquals(4,
+                        "{\"name\":\"yyy\",\"phoneNumber\":null}",
+                        "{\"name\":\"zzz\",\"phoneNumber\":null}",
+                        "{\"name\":\"111\",\"phoneNumber\":null}",
+                        "{\"name\":\"333\",\"phoneNumber\":null}");
+    }
 
 
     @Path("")

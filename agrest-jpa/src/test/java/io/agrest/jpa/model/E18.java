@@ -1,17 +1,14 @@
 package io.agrest.jpa.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 
 @Entity
 @Table(name = "e18" )
 public  class E18  {
+
+    public static final String E17 = "e17";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,8 +16,10 @@ public  class E18  {
 
     protected String name;
 
-//    @OneToOne
-//    protected E17 e17;
+    @ManyToOne
+    @JoinColumn (name = "e17_id1")
+    @JoinColumn (name = "e17_id2")
+    protected E17 e17;
 
     public Long getId() {
         return id;
@@ -38,11 +37,11 @@ public  class E18  {
         this.name = name;
     }
 
-//    public E17 getE17() {
-//        return e17;
-//    }
+    public E17 getE17() {
+        return e17;
+    }
 
-//    public void setE17(E17 e17) {
-//        this.e17 = e17;
-//    }
+    public void setE17(E17 e17) {
+        this.e17 = e17;
+    }
 }

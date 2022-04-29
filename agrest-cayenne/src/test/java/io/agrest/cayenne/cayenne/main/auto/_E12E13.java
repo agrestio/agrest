@@ -17,7 +17,7 @@ import io.agrest.cayenne.cayenne.main.E13;
  * since it may be overwritten next time code is regenerated.
  * If you need to make any customizations, please use subclass.
  */
-public abstract class _E12E13 extends BaseDataObject {
+public abstract class  _E12E13 extends BaseDataObject {
 
     private static final long serialVersionUID = 1L;
 

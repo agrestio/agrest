@@ -1,56 +1,39 @@
 package io.agrest.jpa.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Table (name = "e29")
-public  class E29 implements Serializable {
+@IdClass(E29Id.class)
+public  class E29  {
+
+    public static final String ID1 = "id1";
+    public static final String ID2 = "id2";
+    public static final String ID2PROP = "id2Prop";
+    public static final String E30S = "e30s";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id1;
+    private Integer id1;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id2;
+    private Integer id2;
 
-    protected Integer id2Prop;
+//    @Column (name = "ID2PROP")
+//    protected Integer id2Prop;
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.REMOVE})
     protected List<E30> e30s = new java.util.ArrayList<>();
 
-
-    public Long getId1() {
-        return id1;
-    }
-
-    public void setId1(Long id1) {
-        this.id1 = id1;
-    }
-
-    public Long getId2() {
-        return id2;
-    }
-
-    public void setId2(Long id2) {
-        this.id2 = id2;
-    }
-
-    public Integer getId2Prop() {
-        return id2Prop;
-    }
-
-    public void setId2Prop(Integer id2Prop) {
-        this.id2Prop = id2Prop;
-    }
+//    public Integer getId2Prop() {
+//        return id2Prop;
+//    }
+//
+//    public void setId2Prop(Integer id2Prop) {
+//        this.id2Prop = id2Prop;
+//    }
 
     public List<E30> getE30s() {
         return e30s;
@@ -59,4 +42,6 @@ public  class E29 implements Serializable {
     public void setE30s(List<E30> e30s) {
         this.e30s = e30s;
     }
+
+
 }

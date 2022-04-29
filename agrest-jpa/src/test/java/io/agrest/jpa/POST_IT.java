@@ -1,7 +1,5 @@
 package io.agrest.jpa;
 
-import java.util.HashMap;
-import java.util.Map;
 
 import io.agrest.DataResponse;
 import io.agrest.SimpleResponse;
@@ -18,6 +16,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
+import java.util.HashMap;
+import java.util.Map;
 
 public class POST_IT extends DbTest {
 
@@ -121,21 +121,21 @@ public class POST_IT extends DbTest {
         tester.e3().matcher().assertNoMatches();
     }
 
-    //TODO testBulk
-//    @Test
-//    public void testBulk() {
+
+    @Test
+    public void testBulk() {
+
+        tester.target("/e3/")
+                .queryParam("exclude", "id")
+                .queryParam("include", E3.NAME)
+                .post("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}]")
+                .wasCreated()
+                // ordering from request must be preserved...
+                .bodyEquals(4, "{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}");
+    }
+
+
 //
-//        tester.target("/e3/")
-//                .queryParam("exclude", "id")
-//                .queryParam("include", E3.NAME.getName())
-//                .post("[{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}]")
-//                .wasCreated()
-//                // ordering from request must be preserved...
-//                .bodyEquals(4, "{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}");
-//    }
-
-
-    //TODO testToMany
 //    @Test
 //    public void testToMany() {
 //
@@ -157,18 +157,18 @@ public class POST_IT extends DbTest {
 //        tester.e3().matcher().eq("e2_id", id).assertMatches(2);
 //    }
 
-    //TODO testByteArrayProperty
-//    @Test
-//    public void testByteArrayProperty() {
-//
-//        String base64Encoded = "c29tZVZhbHVlMTIz"; // someValue123
-//
-//        tester.target("/e19")
-//                .queryParam("include", E19.GUID.getName())
-//                .post("{\"guid\":\"" + base64Encoded + "\"}")
-//                .wasCreated()
-//                .bodyEquals(1, "{\"guid\":\"" + base64Encoded + "\"}");
-//    }
+
+    @Test
+    public void testByteArrayProperty() {
+
+        String base64Encoded = "c29tZVZhbHVlMTIz"; // someValue123
+
+        tester.target("/e19")
+                .queryParam("include", E19.GUID)
+                .post("{\"guid\":\"" + base64Encoded + "\"}")
+                .wasCreated()
+                .bodyEquals(1, "{\"guid\":\"" + base64Encoded + "\"}");
+    }
 
 
     @Test
@@ -239,6 +239,7 @@ public class POST_IT extends DbTest {
             return AgJaxrs.create(E16.class, config).syncAndSelect(requestBody);
         }
 
+
         @POST
         @Path("e17")
         public DataResponse<E17> createE17(
@@ -248,8 +249,8 @@ public class POST_IT extends DbTest {
                 String requestBody) {
 
             Map<String, Object> ids = new HashMap<>();
-            ids.put("id1", id1);
-            ids.put("id2", id2);
+            ids.put(E17.ID1, id1);
+            ids.put(E17.ID2, id2);
 
             return AgJaxrs.create(E17.class, config).byId(ids).syncAndSelect(requestBody);
         }
