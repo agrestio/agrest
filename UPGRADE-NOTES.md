@@ -61,7 +61,7 @@ using JAX-RS API (`binder.bindMap(ExceptionMapper.class)`), you would bind a spe
 (`binder.bindMap(AgExceptionMapper.class)`) that converts a custom exception to AgException instead of Response. 
 
 In addition to changing the API above, if your code throws `CayenneRuntimeException`, `ValidationException` or any
-custom exception other than `AgException` explicitly outside of Agrest processing chain, you will need to replace 
+custom exception other than `AgException` explicitly outside Agrest processing chain, you will need to replace 
 those exceptions with `AgException` to ensure it is rendered cleanly in the response. Throwing within custom "stages"
 works the same way as before and requires no changes.
 
@@ -96,5 +96,5 @@ with `SelectBuilder.clientParams(Map)` and `UpdateBuilder.clientParams(Map)`. Pa
 corresponds to `UriInfo.getQueryParameters()`.
 
 ### SelectStage.PARSE_REQUEST is gone [#537](https://github.com/agrestio/agrest/issues/537)
-`SelectStage.PARSE_REQUEST` is no longer needed, as protocol parameter parsing happens outside of a stage, right in
+`SelectStage.PARSE_REQUEST` is no longer needed, as protocol parameter parsing happens outside a stage, right in
 the context. If you had stage callbacks referencing this stage, you may instead reference `SelectStage.START`.
