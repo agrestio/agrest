@@ -1,6 +1,0 @@
-== Security
-
-From the very beginning Agrest was designed with security in mind. It can be easily
-integrated with common web and enterprise security solutions
-(OAuth, http://shiro.apache.org/[Apache Shiro], Spring Security, etc.),
-giving Java developers a straightforward API to implement custom object and attribute-level access.

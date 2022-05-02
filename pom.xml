@@ -21,7 +21,6 @@
         <module>agrest-client</module>
         <module>agrest-openapi</module>
         <module>agrest-bom</module>
-        <module>agrest-docs</module>
         <module>agrest-openapi-designfirst</module>
         <module>agrest-openapi-designfirst-test</module>
     </modules>
