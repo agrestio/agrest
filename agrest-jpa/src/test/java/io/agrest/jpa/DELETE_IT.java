@@ -69,19 +69,6 @@ public class DELETE_IT extends DbTest {
         tester.e4().matcher().assertOneMatch();
     }
 
-    @Test
-    public void testDeleteById_CompoundId() {
-
-        tester.e17().insertColumns("ID1", "ID2", "NAME").values(1, 1, "aaa").values(2, 2, "bbb").exec();
-
-        tester.target("/e17").queryParam("id1", 1).queryParam("id2", 1)
-                .delete()
-                .wasOk()
-                .bodyEquals("{\"success\":true}");
-
-        tester.e17().matcher().assertOneMatch();
-        tester.e17().matcher().eq("ID2", 2).eq("ID2", 2).eq("NAME", "bbb").assertOneMatch();
-    }
 
     @Test
     public void testDeleteById_BadId() {
@@ -171,20 +158,6 @@ public class DELETE_IT extends DbTest {
         @Path("e4/{id}")
         public SimpleResponse deleteById(@PathParam("id") int id) {
             return AgJaxrs.delete(E4.class, config).byId(id).sync();
-        }
-
-        @DELETE
-        @Path("e17")
-        public SimpleResponse deleteByMultiId(
-                @Context UriInfo uriInfo,
-                @QueryParam("id1") Integer id1,
-                @QueryParam("id2") Integer id2) {
-
-            Map<String, Object> ids = new HashMap<>();
-            ids.put("id1", id1);
-            ids.put("id2", id2);
-
-            return AgJaxrs.delete(E17.class, config).byId(ids).sync();
         }
 
         @DELETE
