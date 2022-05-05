@@ -48,16 +48,6 @@ public class POST_IT extends DbTest {
         tester.e4().matcher().eq("C_VARCHAR", "TTTT").assertOneMatch();
     }
 
-    @Test
-    public void testCompoundId() {
-
-        tester.target("/e17")
-                .queryParam("id1", 1)
-                .queryParam("id2", 1)
-                .post("{\"name\":\"xxx\"}")
-                .wasCreated()
-                .bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"xxx\"}");
-    }
 
     @Test
     public void testDateTime() {
@@ -237,22 +227,6 @@ public class POST_IT extends DbTest {
         @Path("e16")
         public DataResponse<E16> createE16(String requestBody) {
             return AgJaxrs.create(E16.class, config).syncAndSelect(requestBody);
-        }
-
-
-        @POST
-        @Path("e17")
-        public DataResponse<E17> createE17(
-                @Context UriInfo uriInfo,
-                @QueryParam("id1") Integer id1,
-                @QueryParam("id2") Integer id2,
-                String requestBody) {
-
-            Map<String, Object> ids = new HashMap<>();
-            ids.put(E17.ID1, id1);
-            ids.put(E17.ID2, id2);
-
-            return AgJaxrs.create(E17.class, config).byId(ids).syncAndSelect(requestBody);
         }
 
         @POST
