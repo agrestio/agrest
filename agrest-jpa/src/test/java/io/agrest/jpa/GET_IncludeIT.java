@@ -42,7 +42,7 @@ public class GET_IncludeIT extends DbTest {
                 .wasOk()
                 .bodyEquals(2, "{\"id\":8,\"e2\":{\"id\":1}}", "{\"id\":9,\"e2\":{\"id\":1}}");
 
-     //TODO   tester.assertQueryCount(2);
+        tester.assertQueryCount(2);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class GET_IncludeIT extends DbTest {
         tester.target("/e3")
                 .queryParam("include", "id", "e2.id", "e2")
                 .get().wasOk().bodyEquals(1, "{\"id\":3,\"e2\":{\"id\":8}}");
-      //TODO  tester.assertQueryCount(2 + 2);
+        tester.assertQueryCount(2 + 2);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class GET_IncludeIT extends DbTest {
                 .bodyEquals(1, "{\"id\":8,\"e3s\":[{\"e5\":{\"id\":45}}]}");
 
         // TODO: actually expect only 2 queries .. "e3" is a phantom entity
-     //TODO   tester.assertQueryCount(3);
+        tester.assertQueryCount(3);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class GET_IncludeIT extends DbTest {
                 "{\"id\":10,\"e2\":{\"id\":1}}");
 
         // There are 3 queries, while our counter catches only 2 (the last query in paginated result is not reported).
-     //TODO   tester.assertQueryCount(2);
+        tester.assertQueryCount(2);
 
         // TODO: e2 is fetched via a join.. If we have lots of E2s, this will be problematic
     }
