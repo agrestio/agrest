@@ -1,5 +1,8 @@
 package io.agrest.jpa.exp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.agrest.protocol.Exp;
 import io.agrest.protocol.exp.CompositeExp;
 import io.agrest.protocol.exp.ExpVisitor;
@@ -16,15 +19,22 @@ public class JpaExpParser implements IJpaExpParser {
     @Override
     public JpaExpression parse(Exp qualifier) {
         StringBuilder sb = new StringBuilder();
+        JpaExpVisitor visitor = new JpaExpVisitor(sb);
         if(qualifier != null) {
-            qualifier.visit(new JpaExpVisitor(sb));
+            qualifier.visit(visitor);
         }
-        return new JpaExpression(sb.toString());
+        JpaExpression expression = new JpaExpression(sb.toString());
+        if(visitor.params != null) {
+            visitor.params.forEach(expression::addParameter);
+        }
+        return expression;
     }
 
     private static class JpaExpVisitor implements ExpVisitor {
 
         private final StringBuilder sb;
+
+        private List<Object> params;
 
         private JpaExpVisitor(StringBuilder sb) {
             this.sb = sb;
@@ -51,8 +61,8 @@ public class JpaExpParser implements IJpaExpParser {
             if(sb.length() > 0) {
                 sb.append(" and ");
             }
-            // TODO: move value to expression params
-            sb.append(exp.getKey()).append(" ").append(exp.getOp()).append(" ").append(exp.getValue());
+            addParam(exp.getValue());
+            sb.append(exp.getKey()).append(" ").append(exp.getOp()).append(" ?").append(params.size() - 1);
         }
 
         @Override
@@ -60,6 +70,13 @@ public class JpaExpParser implements IJpaExpParser {
             for(Exp part : exp.getParts()) {
                 part.visit(this);
             }
+        }
+
+        private void addParam(Object param) {
+            if(params == null) {
+                params = new ArrayList<>();
+            }
+            params.add(param);
         }
     }
 }

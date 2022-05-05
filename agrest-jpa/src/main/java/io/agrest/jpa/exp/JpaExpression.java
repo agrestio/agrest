@@ -37,24 +37,32 @@ public class JpaExpression {
     }
 
     public JpaExpression and(JpaExpression expression) {
+        return join(expression, "and");
+    }
+
+    public JpaExpression or(JpaExpression expression) {
+        return join(expression, "or");
+    }
+
+    private JpaExpression join(JpaExpression expression, String operator) {
         if(expression.isEmpty()) {
             return this;
         }
 
-        JpaExpression newExp = new JpaExpression(exp + " and " + expression.getExp());
+        String expString = reindexParams(expression.getExp(), expression.getParams().size());
+        JpaExpression newExp = new JpaExpression(exp + " " + operator + " " + expString);
         getParams().forEach(newExp::addParameter);
         expression.getParams().forEach(newExp::addParameter);
         return newExp;
     }
 
-    public JpaExpression or(JpaExpression expression) {
-        if(expression.isEmpty()) {
-            return this;
+    private String reindexParams(String exp, int size) {
+        if(size == 0) {
+            return exp;
         }
-
-        JpaExpression newExp = new JpaExpression(exp + " or " + expression.getExp());
-        getParams().forEach(newExp::addParameter);
-        expression.getParams().forEach(newExp::addParameter);
-        return newExp;
+        for(int i=0; i<size; i++) {
+            exp = exp.replace("?"+i, "?" + (i + params.size()));
+        }
+        return exp;
     }
 }
