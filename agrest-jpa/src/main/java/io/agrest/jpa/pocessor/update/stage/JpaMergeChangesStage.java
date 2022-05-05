@@ -13,6 +13,7 @@ import io.agrest.EntityUpdate;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.pocessor.IJpaQueryAssembler;
 import io.agrest.jpa.pocessor.JpaUtil;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.ProcessorOutcome;
@@ -38,10 +39,14 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
 
     private final IJpaQueryAssembler queryAssembler;
 
+    private final AgDataMap dataMap;
+
     public JpaMergeChangesStage(@Inject IAgJpaPersister persister,
-                                @Inject IJpaQueryAssembler queryAssembler) {
+                                @Inject IJpaQueryAssembler queryAssembler,
+                                @Inject AgDataMap dataMap) {
         this.metamodel = persister.metamodel();
         this.queryAssembler = queryAssembler;
+        this.dataMap = dataMap;
     }
 
     @SuppressWarnings("unchecked")
@@ -214,8 +219,13 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
                     continue;
                 }
 
+                Class<?> type = attribute.getJavaType();
+                if(attribute.isCollection() && (attribute.getPersistentAttributeType() == Attribute.PersistentAttributeType.MANY_TO_MANY
+                        || attribute.getPersistentAttributeType() == Attribute.PersistentAttributeType.ONE_TO_MANY)) {
+                    type = ((PluralAttribute<?,?,?>)attribute).getElementType().getJavaType();
+                }
                 // TODO: to-many collections will brake here!
-                Object related = manager.find(attribute.getJavaType(), relatedId);
+                Object related = manager.find(type, relatedId);
 
                 if (related == null) {
                     throw AgException.notFound("Related object '%s' with ID '%s' is not found",
@@ -243,33 +253,39 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
 
     protected ObjectRelator createRelator(UpdateContext<Object> context) {
         final EntityParent<?> parent = context.getParent();
+        EntityManager manager = JpaUpdateStartStage.entityManager(context);
         EntityType<Object> entityType = metamodel.entity(context.getEntity().getType());
-
         if (parent == null) {
-            return new ObjectRelator(entityType);
+            return new ObjectRelator(entityType, manager);
         }
 
-        EntityManager manager = JpaUpdateStartStage.entityManager(context);
-
-        final Object parentObject = manager.find(parent.getType(), parent.getId());
-        if (parentObject == null) {
+        EntityType<?> parentEntityType = metamodel.entity(parent.getType());
+        AgEntity<?> parentAgEntity = dataMap.getEntity(context.getParent().getType());
+        List<?> resultList = queryAssembler.createByIdQuery(parentAgEntity, parent.getId())
+                .build(manager)
+                .getResultList();
+        if (resultList.isEmpty()) {
             throw AgException.notFound("No parent object for ID '%s' and entity '%s'", parent.getId(), entityType.getName());
         }
 
-        Attribute<?, ?> attribute = entityType.getAttribute(parent.getRelationship());
+        Object parentObject = resultList.get(0);
+
+        Attribute<?, ?> attribute = parentEntityType.getAttribute(parent.getRelationship());
         if (attribute.getPersistentAttributeType() == Attribute.PersistentAttributeType.MANY_TO_MANY
-                || attribute.getPersistentAttributeType() == Attribute.PersistentAttributeType.MANY_TO_ONE) {
-            return new ObjectRelator(entityType) {
+                || attribute.getPersistentAttributeType() == Attribute.PersistentAttributeType.ONE_TO_MANY) {
+            return new ObjectRelator(entityType, manager) {
                 @Override
                 public void relateToParent(Object object) {
                     JpaUtil.setToManyTarget(parentObject, (PluralAttribute<?,?,?>)attribute, object);
+                    manager.merge(parentObject);
                 }
             };
         } else {
-            return new ObjectRelator(entityType) {
+            return new ObjectRelator(entityType, manager) {
                 @Override
                 public void relateToParent(Object object) {
                     JpaUtil.setToOneTarget(parentObject, attribute, object);
+                    manager.merge(parentObject);
                 }
             };
         }
@@ -288,9 +304,11 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
     static class ObjectRelator {
 
         private final EntityType<Object> entityType;
+        private final EntityManager manager;
 
-        ObjectRelator(EntityType<Object> entityType) {
+        ObjectRelator(EntityType<Object> entityType, EntityManager manager) {
             this.entityType = entityType;
+            this.manager = manager;
         }
 
         void relateToParent(Object object) {

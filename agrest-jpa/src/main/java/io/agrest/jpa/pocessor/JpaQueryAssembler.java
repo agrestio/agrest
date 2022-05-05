@@ -78,17 +78,23 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
 
     protected <T> JpaQueryBuilder createRootIdQuery(RootResourceEntity<T> entity, Map<String, Object> idMap) {
         return createBaseQuery(entity)
-                .where(createIdQualifier(entity.getAgEntity(), idMap, "e"));
+                .where(createIdQualifier(idMap, "e"));
+    }
+
+
+    @Override
+    public JpaQueryBuilder createByIdQuery(AgEntity<?> entity, AgObjectId id) {
+        return createByIdQuery(entity, id.asMap(entity));
     }
 
     @Override
     public JpaQueryBuilder createByIdQuery(AgEntity<?> entity, Map<String, Object> idMap) {
         return JpaQueryBuilder.select("e")
                 .from(entity.getName() + " e")
-                .where(createIdQualifier(entity, idMap, "e"));
+                .where(createIdQualifier(idMap, "e"));
     }
 
-    JpaExpression createIdQualifier(AgEntity<?> entity, Map<String, Object> idMap, String alias) {
+    JpaExpression createIdQualifier(Map<String, Object> idMap, String alias) {
         StringBuilder sb = new StringBuilder();
         int i = 0;
         for(String key : idMap.keySet()) {

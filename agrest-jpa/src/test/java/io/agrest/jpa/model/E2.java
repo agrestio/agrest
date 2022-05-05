@@ -27,7 +27,7 @@ public  class E2  {
 
     protected String name;
 
-    @OneToMany(mappedBy = "e2",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "e2", cascade = CascadeType.ALL)
     protected List<E3> e3s = new java.util.ArrayList<>();
 
     public Integer getId() {
