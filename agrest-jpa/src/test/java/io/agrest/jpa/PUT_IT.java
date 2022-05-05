@@ -75,21 +75,6 @@ public class PUT_IT extends DbTest {
         Assertions.assertArrayEquals(new Object[]{"zzz", new BigDecimal("12.99")}, data);
     }
 
-    @Test
-    public void testExplicitCompoundId() {
-
-        tester.e17().insertColumns("ID1", "ID2", "NAME")
-                .values(1, 1, "aaa")
-                .values(2, 2, "bbb").exec();
-
-        tester.target("/e17")
-                .queryParam("id1", 1)
-                .queryParam("id2", 1)
-                .put("{\"name\":\"xxx\"}")
-                .wasOk().bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"xxx\"}");
-
-        tester.e17().matcher().eq("ID1", 1).eq("ID2", 1).eq("NAME", "xxx").assertOneMatch();
-    }
 
     @Test
     public void testToOne() {
@@ -162,48 +147,48 @@ public class PUT_IT extends DbTest {
         tester.e3().matcher().eq("ID", 3).eq("E2_ID", 8).assertOneMatch();
     }
 
-//    @Test
-//    public void testBulk() {
-//
-//        tester.e3().insertColumns("id_", "name")
-//                .values(5, "aaa")
-//                .values(4, "zzz")
-//                .values(2, "bbb")
-//                .values(6, "yyy").exec();
-//
-//        String entity = "[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]";
-//        tester.target("/e3/")
-//                .queryParam("exclude", "id")
-//                .queryParam("include", E3.NAME.getName())
-//                .put(entity)
-//                .wasOk()
-//                // ordering must be preserved in response, so comparing with request entity
-//                .bodyEquals(4,
-//                        "{\"name\":\"yyy\"}",
-//                        "{\"name\":\"zzz\"}",
-//                        "{\"name\":\"111\"}",
-//                        "{\"name\":\"333\"}");
-//    }
+    @Test
+    public void testBulk() {
 
+        tester.e3().insertColumns("ID", "NAME")
+                .values(5, "aaa")
+                .values(4, "zzz")
+                .values(2, "bbb")
+                .values(6, "yyy").exec();
+
+        String entity = "[{\"id\":6,\"name\":\"yyy\"},{\"id\":4,\"name\":\"zzz\"},{\"id\":5,\"name\":\"111\"},{\"id\":2,\"name\":\"333\"}]";
+        tester.target("/e3/")
+                .queryParam("exclude", "id")
+                .queryParam("include", E3.NAME)
+                .put(entity)
+                .wasOk()
+                // ordering must be preserved in response, so comparing with request entity
+                .bodyEquals(4,
+                        "{\"name\":\"yyy\"}",
+                        "{\"name\":\"zzz\"}",
+                        "{\"name\":\"111\"}",
+                        "{\"name\":\"333\"}");
+    }
+//
 //    @Test
 //    public void testSingle_LongId_Small() {
 //
-//        tester.e14().insertColumns("long_id", "name").values(5L, "aaa").exec();
+//        tester.e14().insertColumns("LONG_ID", "NAME").values(5L, "aaa").exec();
 //
 //        tester.target("/e14/5/")
 //                .queryParam("exclude", "id")
-//                .queryParam("include", E14.NAME.getName())
+//                .queryParam("include", E14.NAME)
 //                .put("[{\"id\":5,\"name\":\"bbb\"}]")
 //                .wasOk().bodyEquals(1, "{\"id\":5,\"name\":\"bbb\",\"prettyName\":\"bbb_pretty\"}");
 //
 //        tester.e14().matcher().assertOneMatch();
 //        tester.e14().matcher().eq("long_id", 5).eq("name", "bbb").assertOneMatch();
 //    }
-
+//
 //    @Test
 //    public void testBulk_LongId_Small() {
 //
-//        tester.e14().insertColumns("long_id", "name")
+//        tester.e14().insertColumns("LONG_ID", "NAME")
 //                .values(5L, "aaa")
 //                .values(4L, "zzz")
 //                .values(2L, "bbb")
@@ -216,7 +201,7 @@ public class PUT_IT extends DbTest {
 //
 //        tester.target("/e14/")
 //                .queryParam("exclude", "id")
-//                .queryParam("include", E14.NAME.getName())
+//                .queryParam("include", E14.NAME)
 //                .put(entity)
 //                .wasOk()
 //                .bodyEquals(4,
@@ -234,11 +219,11 @@ public class PUT_IT extends DbTest {
 //        tester.e14().matcher().eq("long_id", 5L).assertMatches(1);
 //        tester.e14().matcher().eq("long_id", 5L).assertMatches(1);
 //    }
-
+//
 //    @Test
 //    public void testBulk_LongId() {
 //
-//        tester.e14().insertColumns("long_id", "name")
+//        tester.e14().insertColumns("LONG_ID", "NAME")
 //                .values(8147483647L, "aaa")
 //                .values(8147483648L, "zzz")
 //                .values(8147483649L, "bbb")
@@ -264,7 +249,7 @@ public class PUT_IT extends DbTest {
 //        tester.e14().matcher().eq("long_id", 8147483647L).assertOneMatch();
 //        tester.e14().matcher().eq("long_id", 8147483649L).assertOneMatch();
 //    }
-
+//
 //    @Test
 //    public void testCustomEncoder() {
 //
@@ -273,7 +258,7 @@ public class PUT_IT extends DbTest {
 //                .wasCreated()
 //                .bodyEquals("{\"encoder\":\"custom\"}");
 //    }
-//
+
 //    @Test
 //    public void testBulk_ResponseAttributesFilter() {
 //
@@ -527,20 +512,6 @@ public class PUT_IT extends DbTest {
             return AgJaxrs.update(E14.class, config).byId(id).syncAndSelect(data);
         }
 
-        @PUT
-        @Path("e17")
-        public DataResponse<E17> updateById(
-                @Context UriInfo uriInfo,
-                @QueryParam("id1") Integer id1,
-                @QueryParam("id2") Integer id2,
-                String targetData) {
-
-            Map<String, Object> ids = new HashMap<>();
-            ids.put("id1", id1);
-            ids.put("id2", id2);
-
-            return AgJaxrs.update(E17.class, config).clientParams(uriInfo.getQueryParameters()).byId(ids).syncAndSelect(targetData);
-        }
 
         @PUT
         @Path("e23_create_or_update/{id}")
