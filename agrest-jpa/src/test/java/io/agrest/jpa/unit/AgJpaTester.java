@@ -27,8 +27,10 @@ import io.bootique.junit5.BQTestScope;
 import io.bootique.junit5.scope.BQAfterScopeCallback;
 import io.bootique.junit5.scope.BQBeforeMethodCallback;
 import io.bootique.junit5.scope.BQBeforeScopeCallback;
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AgJpaTester implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
@@ -51,6 +53,10 @@ public class AgJpaTester implements BQBeforeScopeCallback, BQAfterScopeCallback,
     protected AgJpaTester() {
         resources = new ArrayList<>();
         entities = new ArrayList<>();
+    }
+
+    public void assertQueryCount(int expectedCommits) {
+        assertEquals(expectedCommits, hibernateInScope.getQueryExecutionCount(), "Unexpected number of Hibernate queries executed");
     }
 
     public AgHttpTester target() {

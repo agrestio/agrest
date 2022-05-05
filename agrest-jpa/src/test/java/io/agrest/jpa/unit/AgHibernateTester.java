@@ -15,6 +15,8 @@ import jakarta.persistence.metamodel.EntityType;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.stat.SessionStatistics;
+import org.hibernate.stat.Statistics;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 public class AgHibernateTester implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
@@ -51,6 +53,20 @@ public class AgHibernateTester implements BQBeforeScopeCallback, BQAfterScopeCal
         return this;
     }
 
+    /**
+     * NOTE: Counter is reset before every test,
+     * (see resetStatistics() method)
+     *
+     * @return number of executed query's
+     */
+    public long getQueryExecutionCount() {
+        return sessionFactory.getStatistics().getQueryExecutionCount();
+    }
+
+    private void resetStatistics() {
+        sessionFactory.getStatistics().clear();
+    }
+
     public AgJpaModule getJpaModule() {
         return AgJpaModuleBuilder.build(sessionFactory);
     }
@@ -67,14 +83,15 @@ public class AgHibernateTester implements BQBeforeScopeCallback, BQAfterScopeCal
         // FIXME: this getter is for internal usage only, but it's the easiest way to set our datasource
         configuration.getStandardServiceRegistryBuilder().applySetting("hibernate.connection.datasource", db.getDataSource());
         this.sessionFactory = configuration.buildSessionFactory();
-
+        this.sessionFactory.getStatistics().setStatisticsEnabled(true);
         // TODO: add entity sorting for the proper delete order
 //        sessionFactory.getMetamodel()
     }
 
     @Override
     public void beforeMethod(BQTestScope scope, ExtensionContext context) {
-        if(!deleteBeforeEachTest) {
+        resetStatistics();
+        if (!deleteBeforeEachTest) {
             return;
         }
 
