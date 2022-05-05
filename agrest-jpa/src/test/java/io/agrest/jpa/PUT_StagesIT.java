@@ -52,7 +52,7 @@ public class PUT_StagesIT extends DbTest {
                 .wasOk()
                 .bodyEquals(1, "{\"id\":3,\"name\":\"x\",\"phoneNumber\":null}");
 
-        tester.e3().matcher().eq("ID", 3).eq("name", "x").assertOneMatch();
+        tester.e3().matcher().eq("ID", 3).eq("NAME", "x").assertOneMatch();
         tester.e3().matcher().eq("ID", 4).assertNoMatches();
 
         assertTrue(Resource.START_CALLED);

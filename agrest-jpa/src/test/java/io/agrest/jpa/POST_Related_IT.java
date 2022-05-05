@@ -39,7 +39,7 @@ public class POST_Related_IT extends DbTest {
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"zzz\",\"phoneNumber\":null}");
 
         tester.e3().matcher().assertOneMatch();
-        tester.e3().matcher().eq("e2_id", 24).eq("name", "zzz").assertOneMatch();
+        tester.e3().matcher().eq("E2_ID", 24).eq("NAME", "zzz").assertOneMatch();
     }
 
     @Test
@@ -58,7 +58,7 @@ public class POST_Related_IT extends DbTest {
 
 
         tester.e18().matcher().assertOneMatch();
-        tester.e18().matcher().eq("e17_id1", 1).eq("e17_id2", 1).eq("name", "xxx").assertOneMatch();
+        tester.e18().matcher().eq("E17_ID1", 1).eq("E17_ID2", 1).eq("NAME", "xxx").assertOneMatch();
     }
 
     @Test
@@ -81,7 +81,7 @@ public class POST_Related_IT extends DbTest {
                 .bodyEquals(2, "{\"name\":\"123\"}", "{\"name\":\"newname\"}");
 
         tester.e3().matcher().assertMatches(4);
-        tester.e3().matcher().eq("e2_id", 15).assertMatches(3);
+        tester.e3().matcher().eq("E2_ID", 15).assertMatches(3);
 
         // testing non-idempotency
 
@@ -92,7 +92,7 @@ public class POST_Related_IT extends DbTest {
                 .bodyEquals(2, "{\"name\":\"123\"}", "{\"name\":\"newname\"}");
 
         tester.e3().matcher().assertMatches(5);
-        tester.e3().matcher().eq("e2_id", 15).assertMatches(4);
+        tester.e3().matcher().eq("E2_ID", 15).assertMatches(4);
     }
 
     @Test
@@ -114,8 +114,8 @@ public class POST_Related_IT extends DbTest {
                 .bodyEquals(2, "{},{}");
 
         tester.e12_13().matcher().assertMatches(2);
-        tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 14).assertOneMatch();
-        tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 15).assertOneMatch();
+        tester.e12_13().matcher().eq("E12_ID", 12).eq("E13_ID", 14).assertOneMatch();
+        tester.e12_13().matcher().eq("E12_ID", 12).eq("E13_ID", 15).assertOneMatch();
     }
 
     @Path("")

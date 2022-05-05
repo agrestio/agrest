@@ -77,7 +77,7 @@ public class JpaMapIdempotentFullSyncStage extends JpaMapIdempotentCreateOrUpdat
             ObjectMapper<T> mapper) {
 
         if(context.getParent() != null) {
-            throw AgException.internalServerError("No implemented yet.");
+            throw AgException.internalServerError("Not implemented yet.");
         }
 
         JpaExpression rootQualifier = qualifierForKeys(keys, mapper);

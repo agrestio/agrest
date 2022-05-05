@@ -20,4 +20,6 @@ public interface IJpaQueryAssembler {
     <T, P> JpaQueryBuilder createQueryWithParentIdsQualifier(NestedResourceEntity<T> entity, Iterator<P> parentIt);
 
     JpaQueryBuilder createByIdQuery(AgEntity<?> entity, Map<String, Object> idMap);
+
+    JpaQueryBuilder createByIdQuery(AgEntity<?> entity, AgObjectId id);
 }
