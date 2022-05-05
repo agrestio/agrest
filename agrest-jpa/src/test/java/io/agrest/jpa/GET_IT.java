@@ -375,59 +375,9 @@ class GET_IT extends DbTest {
         }
 
         @GET
-        @Path("e28")
-        public DataResponse<E28> get28(@Context UriInfo uriInfo) {
-            return AgJaxrs.select(E28.class, config).clientParams(uriInfo.getQueryParameters()).get();
-        }
-
-        //FIXME type of Json in E28?
-        @GET
-        @Path("e28/expanded")
-        public DataResponse<E28> get28Expanded(@Context UriInfo uriInfo) {
-
-            // adding regular properties to see if JSON property can be encoded when other properties are present
-            AgEntityOverlay<E28> overlay = AgEntity.overlay(E28.class)
-                    .redefineAttribute("a", String.class, o -> "A")
-                    .redefineAttribute("z", String.class, o -> "Z");
-
-            return AgJaxrs.select(E28.class, config)
-                    .entityOverlay(overlay)
-                    .clientParams(uriInfo.getQueryParameters())
-                    .get();
-        }
-
-        @GET
-        @Path("e17")
-        public DataResponse<E17> getByCompoundId(
-                @Context UriInfo uriInfo,
-                @QueryParam("id1") Integer id1,
-                @QueryParam("id2") Integer id2) {
-
-            Map<String, Object> ids = new HashMap<>();
-            ids.put("id1", id1);
-            ids.put("id2", id2);
-
-            return AgJaxrs.select(E17.class, config).clientParams(uriInfo.getQueryParameters()).byId(ids).getOne();
-        }
-
-        @GET
         @Path("e29")
         public DataResponse<E29> getAllE29s(@Context UriInfo uriInfo) {
             return AgJaxrs.select(E29.class, config).clientParams(uriInfo.getQueryParameters()).getOne();
-        }
-
-        @GET
-        @Path("e29_compound_db")
-        public DataResponse<E29> getByCompoundDbId(
-                @Context UriInfo uriInfo,
-                @QueryParam("id1") Integer id1,
-                @QueryParam("id2") Integer id2) {
-
-            Map<String, Object> ids = new HashMap<>();
-            ids.put("db:" + "id1", id1);
-            ids.put("id2Prop", id2);
-
-            return AgJaxrs.select(E29.class, config).clientParams(uriInfo.getQueryParameters()).byId(ids).getOne();
         }
 
 
