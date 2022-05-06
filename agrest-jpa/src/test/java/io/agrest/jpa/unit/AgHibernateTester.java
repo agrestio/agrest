@@ -90,11 +90,9 @@ public class AgHibernateTester implements BQBeforeScopeCallback, BQAfterScopeCal
 
     @Override
     public void beforeMethod(BQTestScope scope, ExtensionContext context) {
-        resetStatistics();
         if (!deleteBeforeEachTest) {
             return;
         }
-
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         try {
@@ -109,5 +107,6 @@ public class AgHibernateTester implements BQBeforeScopeCallback, BQAfterScopeCal
         } finally {
             session.close();
         }
+        resetStatistics();
     }
 }
