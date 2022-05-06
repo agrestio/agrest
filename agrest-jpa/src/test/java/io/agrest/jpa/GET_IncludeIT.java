@@ -56,7 +56,7 @@ public class GET_IncludeIT extends DbTest {
                 .queryParam("include", "id", "e2", "e2.id")
                 .get().wasOk().bodyEquals(1, "{\"id\":3,\"e2\":{\"id\":8}}");
 
-     //   tester.assertQueryCount(2);
+        tester.assertQueryCount(2);
 
         // change the order of includes
         tester.target("/e3")
