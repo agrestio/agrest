@@ -26,7 +26,8 @@ class GET_CompoundIdIT extends DbTest {
 
     @BQTestTool
     static final AgJpaTester tester = tester(Resource.class)
-            .entities(E17.class,E31.class,E32.class).build();
+            .entities(E17.class,E31.class,E32.class)
+            .build();
 
 
     @Test
@@ -87,9 +88,10 @@ class GET_CompoundIdIT extends DbTest {
                 @QueryParam("id1") Integer id1,
                 @QueryParam("id2") Integer id2) {
 
-                E31IdClass e31IdClass = new E31IdClass(id1, id2);
-
-                return AgJaxrs.select(E31.class, config).clientParams(uriInfo.getQueryParameters()).byId(e31IdClass).getOne();
+                Map<String, Object> ids = new HashMap<>();
+                ids.put("id1", id1);
+                ids.put("id2", id2);
+                return AgJaxrs.select(E31.class, config).clientParams(uriInfo.getQueryParameters()).byId(ids).getOne();
         }
 
 

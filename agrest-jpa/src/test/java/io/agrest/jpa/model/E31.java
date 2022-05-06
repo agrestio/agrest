@@ -1,16 +1,11 @@
 package io.agrest.jpa.model;
 
-
 import jakarta.persistence.*;
 
-import java.io.Serializable;
-import java.util.List;
-
-
 @Entity
-@Table (name = "e31")
+@Table(name = "e31")
 @IdClass(E31IdClass.class)
-public  class E31 {
+public class E31 {
 
     public static final String ID1 = "id1";
     public static final String ID2 = "id2";
@@ -23,7 +18,6 @@ public  class E31 {
 
     @Column
     protected String name;
-
 
     public Integer getId1() {
         return id1;
@@ -45,12 +39,8 @@ public  class E31 {
         this.name = name;
     }
 
-
     public String getName() {
         return name;
     }
-
-
-
 
 }
