@@ -23,6 +23,7 @@
 * #537 Split JAX-RS interface to Agrest in a separate module
 * #538 "agrest-jaxrs3" module 
 * #541 Remove deprecated metadata responses
+* #557 Upgrade Jackson to 2.13.2.x
 
 ## Release 4.10
 
