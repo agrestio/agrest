@@ -31,16 +31,16 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Custom properties (mostly framework versions) -->
-        <slf4j-version>1.7.25</slf4j-version>
-        <cayenne-version>4.2.B1</cayenne-version>
+        <slf4j.version>1.7.25</slf4j.version>
+        <cayenne.version>4.2.B1</cayenne.version>
         <jaxrs2.version>2.1.6</jaxrs2.version>
         <jaxrs3.version>3.0.0</jaxrs3.version>
-        <jackson-version>2.13.1</jackson-version>
+        <jackson.version>2.13.1</jackson.version>
 
         <!-- TODO: replace with release version as soon as possible -->
         <bootique.version>3.0.M1-SNAPSHOT</bootique.version>
 
-        <junit5-version>5.7.0</junit5-version>
+        <junit5.version>5.7.0</junit5.version>
         <swagger.version>2.1.12</swagger.version>
         <mockito.version>3.9.0</mockito.version>
 
@@ -108,18 +108,18 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
-                <version>${junit5-version}</version>
+                <version>${junit5.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-params</artifactId>
-                <version>${junit5-version}</version>
+                <version>${junit5.version}</version>
             </dependency>
             <!-- Use Vintage until we switch every module to JUnit 5-->
             <dependency>
                 <groupId>org.junit.vintage</groupId>
                 <artifactId>junit-vintage-engine</artifactId>
-                <version>${junit5-version}</version>
+                <version>${junit5.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
@@ -129,37 +129,37 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>${slf4j-version}</version>
+                <version>${slf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j-version}</version>
+                <version>${slf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
-                <version>${jackson-version}</version>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson-version}</version>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
-                <version>${jackson-version}</version>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.cayenne</groupId>
                 <artifactId>cayenne-di</artifactId>
-                <version>${cayenne-version}</version>
+                <version>${cayenne.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.cayenne</groupId>
                 <artifactId>cayenne-server</artifactId>
-                <version>${cayenne-version}</version>
+                <version>${cayenne.version}</version>
             </dependency>
             <!--
             Importing individual Bootique modules instead of a BOM, as BOM would be treated as a dependency
