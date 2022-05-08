@@ -93,7 +93,7 @@ public class JacksonService implements IJacksonService {
             JsonParser parser = getJsonFactory().createParser(json);
             return new ObjectMapper().readTree(parser);
         } catch (IOException ioex) {
-            throw AgException.badRequest("Error parsing JSON", ioex);
+            throw AgException.badRequest(ioex, "Error parsing JSON");
         }
     }
 
@@ -107,7 +107,7 @@ public class JacksonService implements IJacksonService {
             JsonParser parser = getJsonFactory().createParser(json);
             return new ObjectMapper().readTree(parser);
         } catch (IOException ioex) {
-            throw AgException.badRequest("Error parsing JSON", ioex);
+            throw AgException.badRequest(ioex, "Error parsing JSON");
         }
     }
 }
