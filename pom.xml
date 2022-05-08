@@ -35,7 +35,6 @@
         <cayenne.version>4.2.B1</cayenne.version>
         <jaxrs2.version>2.1.6</jaxrs2.version>
         <jaxrs3.version>3.0.0</jaxrs3.version>
-        <jackson.version>2.13.2</jackson.version>
         <jackson.databind.version>2.13.2.2</jackson.databind.version>
 
         <!-- TODO: replace with release version as soon as possible -->
@@ -139,18 +138,8 @@
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.databind.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.jaxrs</groupId>
-                <artifactId>jackson-jaxrs-json-provider</artifactId>
-                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.cayenne</groupId>

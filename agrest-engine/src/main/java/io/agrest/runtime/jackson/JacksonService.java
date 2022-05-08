@@ -25,6 +25,8 @@ public class JacksonService implements IJacksonService {
         this.sharedMapper = new ObjectMapper();
         this.sharedFactory = sharedMapper.getFactory();
 
+        // TODO: revisit this code from 2015. Maybe this hack is not longer needed?
+
         final SerializableString LINE_SEPARATOR = new SerializedString("\\u2028");
         final SerializableString PARAGRAPH_SEPARATOR = new SerializedString("\\u2029");
 
