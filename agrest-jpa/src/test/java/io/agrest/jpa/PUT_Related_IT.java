@@ -19,8 +19,8 @@ public class PUT_Related_IT extends DbTest {
 
     @BQTestTool
     static final AgJpaTester tester = tester(Resource.class)
-            .entities(E1.class, E3.class, E9.class, E5.class, E7.class,
-                    E8.class, E12.class, E13.class, E15.class, E2.class)
+            .entities(E3.class, E2.class, E9.class, E7.class,
+                    E8.class, E12.class, E13.class, E15E1.class, E15E5.class, E1.class, E15.class, E5.class)
             .build();
 
     @Test
@@ -166,8 +166,8 @@ public class PUT_Related_IT extends DbTest {
         tester.e8().matcher().eq("NAME", "aaa").assertOneMatch();
         tester.e8().matcher().eq("ID", 24).assertOneMatch();
 
-        tester.e7().matcher().eq("ID", 8).eq("e8_id", 24).assertOneMatch();
-        tester.e7().matcher().eq("ID", 7).eq("e8_id", null).assertOneMatch();
+        tester.e7().matcher().eq("ID", 8).eq("E8_ID", 24).assertOneMatch();
+        tester.e7().matcher().eq("ID", 7).eq("E8_ID", null).assertOneMatch();
 
         // PUT is idempotent... doing another update should not change the picture
         tester.target("/e7/8/e8/24")
@@ -178,8 +178,8 @@ public class PUT_Related_IT extends DbTest {
         tester.e8().matcher().assertOneMatch();
         tester.e8().matcher().eq("NAME", "aaa").assertOneMatch();
         tester.e8().matcher().eq("ID", 24).assertOneMatch();
-        tester.e7().matcher().eq("ID", 8).eq("e8_id", 24).assertOneMatch();
-        tester.e7().matcher().eq("ID", 7).eq("e8_id", null).assertOneMatch();
+        tester.e7().matcher().eq("ID", 8).eq("E8_ID", 24).assertOneMatch();
+        tester.e7().matcher().eq("ID", 7).eq("E8_ID", null).assertOneMatch();
     }
 
     @Test
