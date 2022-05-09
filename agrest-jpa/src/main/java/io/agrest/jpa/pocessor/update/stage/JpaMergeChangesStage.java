@@ -55,7 +55,7 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
         try {
             merge((UpdateContext<Object>) context);
             return ProcessorOutcome.CONTINUE;
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             try {
                 JpaUpdateStartStage.entityManager(context)
                         .getTransaction()
