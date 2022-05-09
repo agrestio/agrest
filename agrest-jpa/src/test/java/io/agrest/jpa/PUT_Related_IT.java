@@ -1,6 +1,5 @@
 package io.agrest.jpa;
 
-
 import io.agrest.DataResponse;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.jpa.model.*;
@@ -20,8 +19,8 @@ public class PUT_Related_IT extends DbTest {
 
     @BQTestTool
     static final AgJpaTester tester = tester(Resource.class)
-            .entities(E1.class, E3.class, E9.class,
-                    E5.class, E7.class, E8.class, E12.class, E13.class, E15.class, E2.class)
+            .entities(E1.class, E3.class, E9.class, E5.class, E7.class,
+                    E8.class, E12.class, E13.class, E15.class, E2.class)
             .build();
 
     @Test
@@ -39,7 +38,7 @@ public class PUT_Related_IT extends DbTest {
                 .wasOk()
                 .bodyEquals(1, "{\"id\":24,\"address\":null,\"name\":\"xxx\"}");
 
-        tester.e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
+        tester.e3().matcher().eq("E2_ID", 24).eq("NAME", "yyy").assertOneMatch();
     }
 
     @Test
@@ -55,7 +54,7 @@ public class PUT_Related_IT extends DbTest {
                 .wasOk()
                 .bodyEquals(1, "{\"id\":24,\"address\":null,\"name\":\"xxx\"}");
 
-        tester.e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
+        tester.e3().matcher().eq("E2_ID", 24).eq("NAME", "yyy").assertOneMatch();
     }
 
     @Test
@@ -74,7 +73,7 @@ public class PUT_Related_IT extends DbTest {
                 .bodyEquals(1, "{\"id\":24,\"address\":null,\"name\":\"123\"}");
 
         tester.e2().matcher().assertOneMatch();
-        tester.e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
+        tester.e3().matcher().eq("E2_ID", 24).eq("NAME", "yyy").assertOneMatch();
     }
 
     @Test
@@ -311,7 +310,7 @@ public class PUT_Related_IT extends DbTest {
         tester.e15_5().matcher().assertOneMatch();
         tester.e5().matcher().assertMatches(2);
         tester.e15().matcher().assertMatches(3);
-        tester.e15_5().matcher().eq("E15_ID", 14).eq("e5_id", 1).assertOneMatch();
+        tester.e15_5().matcher().eq("E15_ID", 14).eq("E5_ID", 1).assertOneMatch();
     }
 
     @Path("")

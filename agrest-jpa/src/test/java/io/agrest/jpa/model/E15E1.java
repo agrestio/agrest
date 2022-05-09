@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class E15E1 implements Serializable {
 
     @Id
-    private Integer e1_id;
+    private Long e1_id;
 
     @Id
     private Long e15_id;
@@ -22,7 +22,6 @@ public class E15E1 implements Serializable {
     @OneToOne
     @JoinColumn (name = "e15_id")
     protected E15 e15;
-
 
     public E1 getE1() {
         return e1;

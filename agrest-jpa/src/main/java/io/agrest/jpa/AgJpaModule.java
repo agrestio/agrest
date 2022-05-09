@@ -39,6 +39,8 @@ import io.agrest.runtime.processor.update.stage.UpdateFillResponseStage;
 import io.agrest.runtime.processor.update.stage.UpdateMapChangesStage;
 import io.agrest.runtime.processor.update.stage.UpdateMergeChangesStage;
 import io.agrest.runtime.processor.update.stage.UpdateStartStage;
+import io.agrest.spi.AgExceptionMapper;
+import jakarta.persistence.PersistenceException;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.Key;
 import org.apache.cayenne.di.Module;
@@ -91,5 +93,8 @@ public class AgJpaModule implements Module {
         // Unrelate stages
         binder.bind(UnrelateStartStage.class).to(JpaUnrelateStartStage.class);
         binder.bind(UnrelateUpdateDateStoreStage.class).to(JpaUnrelateDataStoreStage.class);
+
+        //
+        binder.bindMap(AgExceptionMapper.class).put(PersistenceException.class.getName(), JpaRuntimeExceptionMapper.class);
     }
 }
