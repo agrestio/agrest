@@ -19,8 +19,8 @@ public class PUT_Related_IT extends DbTest {
 
     @BQTestTool
     static final AgJpaTester tester = tester(Resource.class)
-            .entities(E3.class, E2.class, E9.class, E7.class,
-                    E8.class, E12.class, E13.class, E15E1.class, E15E5.class, E1.class, E15.class, E5.class)
+            .entities(E3.class, E2.class, E9.class, E7.class, E8.class, E12.class,
+                    E13.class, E15E1.class, E15E5.class, E14.class, E15.class, E1.class, E5.class)
             .build();
 
     @Test

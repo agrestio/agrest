@@ -97,9 +97,11 @@ public class DELETE_CompoundIdIT extends DbTest {
                 @QueryParam("id1") Integer id1,
                 @QueryParam("id2") Integer id2) {
 
-            E31IdClass e31IdClass = new E31IdClass(id1, id2);
+            Map<String, Object> ids = new HashMap<>();
+            ids.put("id1", id1);
+            ids.put("id2", id2);
 
-            return AgJaxrs.delete(E31.class, config).byId(e31IdClass).sync();
+            return AgJaxrs.delete(E31.class, config).byId(ids).sync();
         }
 
         @DELETE

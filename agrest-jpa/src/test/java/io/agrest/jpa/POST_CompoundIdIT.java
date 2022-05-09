@@ -93,9 +93,11 @@ public class POST_CompoundIdIT extends DbTest {
                 @QueryParam("id2") Integer id2,
                 String requestBody) {
 
-            E31IdClass e31IdClass = new E31IdClass(id1, id2);
+            Map<String, Object> ids = new HashMap<>();
+            ids.put(E31.ID1, id1);
+            ids.put(E31.ID2, id2);
 
-            return AgJaxrs.create(E31.class, config).byId(e31IdClass).syncAndSelect(requestBody);
+            return AgJaxrs.create(E31.class, config).byId(ids).syncAndSelect(requestBody);
         }
 
         @POST
