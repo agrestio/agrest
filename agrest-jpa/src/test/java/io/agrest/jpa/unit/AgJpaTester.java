@@ -170,6 +170,12 @@ public class AgJpaTester implements BQBeforeScopeCallback, BQAfterScopeCallback,
     public Table e30() {
         return getTable("E30");
     }
+    public Table e31() {
+        return getTable("E31");
+    }
+    public Table e32() {
+        return getTable("E32");
+    }
 
     protected JettyTester getJettyInScope() {
         return Objects.requireNonNull(jettyInScope, "Not in test scope");

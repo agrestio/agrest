@@ -219,18 +219,6 @@ class GET_IT extends DbTest {
         tester.target("/e6/a").get().wasOk().bodyEquals(1, "{\"id\":\"a\",\"charColumn\":\"aaa\"}");
     }
 
-
-    @Test
-    public void testByCompoundId() {
-        tester.e17().insertColumns("ID1", "ID2", "NAME").values(1, 1, "aaa").exec();
-
-        tester.target("/e17")
-                .queryParam("id1", 1)
-                .queryParam("id2", 1)
-
-                .get().wasOk().bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"}");
-    }
-
     @Test
     // Reproduces https://github.com/agrestio/agrest/issues/478
     public void testCompoundId_PartiallyMapped_DiffPropNames() {
@@ -242,19 +230,6 @@ class GET_IT extends DbTest {
                 .bodyEquals(1, "{\"id\":{\"db:id1\":1,\"id2Prop\":15},\"id2Prop\":15}");
     }
 
-    @Test
-    public void testByCompoundDbId() {
-
-        tester.e29().insertColumns("ID1", "ID2")
-                .values(1, 15)
-                .values(2, 35).exec();
-
-        tester.target("/e29_compound_db")
-                .queryParam("id1", 1)
-                .queryParam("id2", 15)
-                .get().wasOk()
-                .bodyEquals(1, "{\"id\":{\"db:id1\":1,\"id2Prop\":15},\"id2Prop\":15}");
-    }
 
     @Test
     public void testMapByRootEntity() {
@@ -336,59 +311,7 @@ class GET_IT extends DbTest {
                 .get().wasOk().bodyEquals(1, "{\"guid\":\"c29tZVZhbHVlMTIz\"}");
     }
 
-    @Test
-    public void testJsonProperty() {
 
-        tester.e28().insertColumns("ID", "JSON")
-                .values(35, "[1,2]")
-                .values(36, "{\"a\":1}")
-                .values(37, "{}")
-                .values(38, "5")
-                .values(39, null)
-                .exec();
-
-        tester.target("/e28")
-                .queryParam("include", E28.JSON)
-                .queryParam("sort", "id")
-                .get()
-                .wasOk()
-                .bodyEquals(5, "{\"json\":[1,2]}", "{\"json\":{\"a\":1}}", "{\"json\":{}}", "{\"json\":5}", "{\"json\":null}");
-    }
-
-    @Test
-    public void testJsonProperty_WithOtherProps() {
-
-        tester.e28().insertColumns("ID", "JSON")
-                .values(35, "[1,2]")
-                .values(37, "{}")
-                .exec();
-
-        tester.target("/e28/expanded")
-                .queryParam("include", "a", E28.JSON, "z")
-                .queryParam("sort", "id")
-                .get()
-                .wasOk()
-                .bodyEquals(2, "{\"a\":\"A\",\"json\":[1,2],\"z\":\"Z\"}", "{\"a\":\"A\",\"json\":{},\"z\":\"Z\"}");
-    }
-
-
-
-
-
-    /////////////
-    @Test
-    public void test() {
-        tester.e1()
-                .insertColumns("AGE", "DESCRIPTION", "NAME")
-                .values(32, null, "test 1")
-                .values(43, "description", "test 2")
-                .exec();
-
-        tester.target("/e1")
-                .get()
-                .wasOk()
-                .totalEquals(2);
-    }
 
     @Path("")
     @Produces(MediaType.APPLICATION_JSON)
@@ -452,59 +375,9 @@ class GET_IT extends DbTest {
         }
 
         @GET
-        @Path("e28")
-        public DataResponse<E28> get28(@Context UriInfo uriInfo) {
-            return AgJaxrs.select(E28.class, config).clientParams(uriInfo.getQueryParameters()).get();
-        }
-
-        //FIXME type of Json in E28?
-        @GET
-        @Path("e28/expanded")
-        public DataResponse<E28> get28Expanded(@Context UriInfo uriInfo) {
-
-            // adding regular properties to see if JSON property can be encoded when other properties are present
-            AgEntityOverlay<E28> overlay = AgEntity.overlay(E28.class)
-                    .redefineAttribute("a", String.class, o -> "A")
-                    .redefineAttribute("z", String.class, o -> "Z");
-
-            return AgJaxrs.select(E28.class, config)
-                    .entityOverlay(overlay)
-                    .clientParams(uriInfo.getQueryParameters())
-                    .get();
-        }
-
-        @GET
-        @Path("e17")
-        public DataResponse<E17> getByCompoundId(
-                @Context UriInfo uriInfo,
-                @QueryParam("id1") Integer id1,
-                @QueryParam("id2") Integer id2) {
-
-            Map<String, Object> ids = new HashMap<>();
-            ids.put("id1", id1);
-            ids.put("id2", id2);
-
-            return AgJaxrs.select(E17.class, config).clientParams(uriInfo.getQueryParameters()).byId(ids).getOne();
-        }
-
-        @GET
         @Path("e29")
         public DataResponse<E29> getAllE29s(@Context UriInfo uriInfo) {
             return AgJaxrs.select(E29.class, config).clientParams(uriInfo.getQueryParameters()).getOne();
-        }
-
-        @GET
-        @Path("e29_compound_db")
-        public DataResponse<E29> getByCompoundDbId(
-                @Context UriInfo uriInfo,
-                @QueryParam("id1") Integer id1,
-                @QueryParam("id2") Integer id2) {
-
-            Map<String, Object> ids = new HashMap<>();
-            ids.put("db:" + "id1", id1);
-            ids.put("id2Prop", id2);
-
-            return AgJaxrs.select(E29.class, config).clientParams(uriInfo.getQueryParameters()).byId(ids).getOne();
         }
 
 

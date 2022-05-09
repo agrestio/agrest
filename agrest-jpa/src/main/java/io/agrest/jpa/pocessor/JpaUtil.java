@@ -74,15 +74,18 @@ public class JpaUtil {
     }
 
     public static Object readProperty(Object object, Attribute<?, ?> attribute) {
-        Member javaMember = attribute.getJavaMember();
+        return readProperty(object, attribute.getJavaMember());
+    }
+
+    public static Object readProperty(Object object, Member javaMember) {
         if(javaMember instanceof Method) {
             return safeInvoke((Method) javaMember, object);
         } else if(javaMember instanceof Field) {
             return safeGet((Field) javaMember, object);
         } else {
             throw AgException.badRequest("Can't get attribute '%s' for the entity %s",
-                    attribute.getName(),
-                    attribute.getDeclaringType().getJavaType().getName());
+                    javaMember.getName(),
+                    javaMember.getDeclaringClass().getSimpleName());
         }
     }
 
