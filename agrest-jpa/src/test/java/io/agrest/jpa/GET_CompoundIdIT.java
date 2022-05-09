@@ -1,8 +1,6 @@
 package io.agrest.jpa;
 
 import io.agrest.DataResponse;
-import io.agrest.converter.jsonvalue.UtcDateConverter;
-import io.agrest.encoder.DateTimeFormatters;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.jpa.model.*;
 import io.agrest.jpa.unit.AgJpaTester;
@@ -14,11 +12,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
-import java.nio.charset.StandardCharsets;
-import java.sql.Time;
-import java.time.Instant;
-import java.time.LocalTime;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 

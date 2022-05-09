@@ -52,8 +52,19 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
     @SuppressWarnings("unchecked")
     @Override
     public ProcessorOutcome execute(UpdateContext<?> context) {
-        merge((UpdateContext<Object>)context);
-        return ProcessorOutcome.CONTINUE;
+        try {
+            merge((UpdateContext<Object>) context);
+            return ProcessorOutcome.CONTINUE;
+        } catch (Exception ex) {
+            try {
+                JpaUpdateStartStage.entityManager(context)
+                        .getTransaction()
+                        .rollback();
+            } finally {
+                JpaUpdateStartStage.entityManager(context).close();
+            }
+            throw ex;
+        }
     }
 
     protected void merge(UpdateContext<Object> context) {
@@ -109,8 +120,8 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
         }
 
         mergeChanges(context, update, o, relator);
-        relator.relateToParent(o);
         entityManager.persist(o);
+        relator.relateToParent(o);
     }
 
     protected void update(UpdateContext<Object> context, ObjectRelator relator, Object o, EntityUpdate<Object> update) {
