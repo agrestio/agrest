@@ -16,7 +16,6 @@ import jakarta.persistence.metamodel.PluralAttribute;
  */
 public class JpaUtil {
 
-
     private static Object safeInvoke(Method method, Object object, Object... value) {
         try {
             return method.invoke(object, value);
@@ -89,6 +88,7 @@ public class JpaUtil {
         }
     }
 
+    // TODO: support for id class attributes
     public static void writeProperty(Object object, Attribute<?, ?> attribute, Object value) {
         Member javaMember = attribute.getJavaMember();
         if(javaMember instanceof Method) {
