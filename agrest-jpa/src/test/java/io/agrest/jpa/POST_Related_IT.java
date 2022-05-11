@@ -136,7 +136,7 @@ public class POST_Related_IT extends DbTest {
         @Path("e12/{id}/e1213")
         public DataResponse<E12E13> create_Joins(@PathParam("id") int id, @Context UriInfo info, String entityData) {
             return AgJaxrs.create(E12E13.class, config)
-                    .parent(E12.class, id, E12.E1213)
+                    .parent(E12.class, id, E12.E1213S)
                     .clientParams(info.getQueryParameters())
                     .syncAndSelect(entityData);
         }

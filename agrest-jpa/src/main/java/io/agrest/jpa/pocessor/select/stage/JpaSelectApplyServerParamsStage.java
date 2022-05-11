@@ -29,7 +29,6 @@ public class JpaSelectApplyServerParamsStage extends SelectApplyServerParamsStag
     }
 
     private void tagRootEntity(RootResourceEntity<?> entity) {
-        // TODO: check that this is in fact JPA-managed entity
         if(persister.metamodel().entity(entity.getType()) != null) {
             JpaProcessor.getOrCreateRootEntity(entity);
         }

@@ -13,7 +13,6 @@ import jakarta.persistence.Query;
  * @since 5.0
  */
 public class JpaQueryBuilder {
-
     private List<String> selectSpec;
     private List<String> from;
     private List<String> join;

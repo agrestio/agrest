@@ -76,7 +76,9 @@ public class GET_Related_IT extends DbTest {
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
-        tester.target("/e2/1/e3s").queryParam("include", "id").get().wasOk().bodyEquals(2, "{\"id\":8},{\"id\":9}");
+        tester.target("/e2/1/e3s").queryParam("include", "id")
+                .get().wasOk()
+                .bodyEquals(2, "{\"id\":8},{\"id\":9}");
     }
 
     @Test
@@ -121,7 +123,7 @@ public class GET_Related_IT extends DbTest {
                 .values(12, 16)
                 .exec();
 
-        tester.target("/e12/12/e1213")
+        tester.target("/e12/12/e1213s")
                 .queryParam("include", "e12", "e13")
                 .get()
                 .wasOk()
@@ -172,10 +174,10 @@ public class GET_Related_IT extends DbTest {
 
 
         @GET
-        @Path("e12/{id}/e1213")
+        @Path("e12/{id}/e1213s")
         public DataResponse<E12E13> get_Joins_NoId(@PathParam("id") int id, @Context UriInfo info) {
             return AgJaxrs.select(E12E13.class, config)
-                    .parent(E12.class, id, E12.E1213)
+                    .parent(E12.class, id, E12.E1213S)
                     .clientParams(info.getQueryParameters()).get();
         }
 
