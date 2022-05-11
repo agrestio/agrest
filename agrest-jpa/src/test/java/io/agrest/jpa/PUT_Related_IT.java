@@ -377,7 +377,7 @@ public class PUT_Related_IT extends DbTest {
         @Path("e12/{id}/e1213")
         public DataResponse<E12E13> fullSync_Joins(@PathParam("id") int id, @Context UriInfo info, String entityData) {
             return AgJaxrs.idempotentFullSync(E12E13.class, config)
-                    .parent(E12.class, id, E12.E1213)
+                    .parent(E12.class, id, E12.E1213S)
                     .clientParams(info.getQueryParameters())
                     .syncAndSelect(entityData);
         }

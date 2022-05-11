@@ -8,7 +8,7 @@ import java.util.List;
 @Entity
 @Table (name = "e12")
 public  class E12  {
-    public static final String E1213 = "e1213";
+    public static final String E1213S = "e12E13s";
 
     @Id
     private Integer id;

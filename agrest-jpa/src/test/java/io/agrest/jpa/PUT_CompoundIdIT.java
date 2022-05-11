@@ -99,7 +99,7 @@ public class PUT_CompoundIdIT extends DbTest {
             return AgJaxrs.update(E17.class, config).clientParams(uriInfo.getQueryParameters()).byId(ids).syncAndSelect(targetData);
         }
 
-        @DELETE
+        @PUT
         @Path("e31")
         public DataResponse<E31> updateByCompoundIdWithIdClass(
                 @Context UriInfo uriInfo,
@@ -107,12 +107,13 @@ public class PUT_CompoundIdIT extends DbTest {
                 @QueryParam("id2") Integer id2,
                 String targetData) {
 
-            E31IdClass e31IdClass = new E31IdClass(id1, id2);
-
-            return AgJaxrs.update(E31.class, config).clientParams(uriInfo.getQueryParameters()).byId(e31IdClass).syncAndSelect(targetData);
+            Map<String, Object> ids = new HashMap<>();
+            ids.put("id1", id1);
+            ids.put("id2", id2);
+            return AgJaxrs.update(E31.class, config).clientParams(uriInfo.getQueryParameters()).byId(ids).syncAndSelect(targetData);
         }
 
-        @DELETE
+        @PUT
         @Path("e32")
         public DataResponse<E32> updateByCompoundIdWithEmbeddedIdClass(
                 @Context UriInfo uriInfo,

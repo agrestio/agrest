@@ -13,10 +13,13 @@ import io.agrest.jpa.exp.IJpaExpParser;
 import io.agrest.jpa.exp.JpaExpression;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.query.JpaQueryBuilder;
+import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
+import org.apache.cayenne.di.Provider;
 
 /**
  * @since 5.0
@@ -26,26 +29,39 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
     private final IAgJpaPersister persister;
     private final IJpaExpParser expParser;
 
+    private final Provider<AgDataMap> dataMap;
+
     public JpaQueryAssembler(@Inject IAgJpaPersister persister,
-                             @Inject IJpaExpParser expParser) {
+                             @Inject IJpaExpParser expParser,
+                             @Inject Provider<AgDataMap> dataMap) {
         this.persister = persister;
         this.expParser = expParser;
+        this.dataMap = dataMap;
     }
 
     @Override
     public <T> JpaQueryBuilder createRootQuery(SelectContext<T> context) {
         RootResourceEntity<T> entity = context.getEntity();
-        JpaQueryBuilder query = context.getId() != null
-                ? createRootIdQuery(entity, context.getId().asMap(entity.getAgEntity()))
-                : createBaseQuery(entity);
+        EntityParent<?> parent = context.getParent();
+
+        JpaQueryBuilder query;
+        if(parent == null) {
+            query = context.getId() != null
+                    ? createRootIdQuery(entity, context.getId())
+                    : createBaseQuery(entity);
+        } else {
+            AgEntity<?> agEntity = dataMap.get().getEntity(parent.getType());
+            AgRelationship incomingRelationship = agEntity.getRelationship(parent.getRelationship());
+            if (incomingRelationship == null) {
+                throw AgException.internalServerError("Invalid parent relationship: '%s'", parent.getRelationship());
+            }
+            query = viaParentJoinQuery(agEntity.getName(), parent.getRelationship(), incomingRelationship.isToMany())
+                    .where(createIdQualifier(parent.getId().asMap(agEntity), "e"));
+        }
 
         JpaExpression parsedExp = expParser.parse(entity.getExp());
         query.where(parsedExp);
-
-        EntityParent<?> parent = context.getParent();
-        if (parent != null) {
-            query.where(parentQualifier(parent));
-        }
+        applyLimitAndOrdering(entity, query);
 
         return query;
     }
@@ -55,20 +71,26 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
         String relationship = entity.getIncoming().getName();
         JpaQueryBuilder parentSelect = JpaProcessor.getEntity(entity.getParent()).getSelect();
 
-        JpaQueryBuilder select;
-        if(entity.getIncoming().isToMany()) {
-            select = JpaQueryBuilder.select("r").selectSpec("e.id")
-                    .from(entity.getParent().getName() + " e")
-                    .from(", IN (e." + relationship + ") r");
-        } else {
-            select = JpaQueryBuilder.select("e." + relationship).selectSpec("e.id")
-                    .from(entity.getParent().getName() + " e");
-        }
+        JpaQueryBuilder select = viaParentJoinQuery(entity.getParent().getName(), relationship, entity.getIncoming().isToMany())
+                .selectSpec("e.id");
         if(parentSelect.hasWhere()) {
             // TODO: translate to a new root
             select.where(parentSelect.getWhere());
         }
+
+        applyLimitAndOrdering(entity, select);
         return select;
+    }
+
+    private <T> JpaQueryBuilder viaParentJoinQuery(String parentName, String relationship, boolean toMany) {
+        if(toMany) {
+            return JpaQueryBuilder.select("r")
+                    .from(parentName + " e")
+                    .from(", IN (e." + relationship + ") r");
+        } else {
+            return JpaQueryBuilder.select("e." + relationship)
+                    .from(parentName + " e");
+        }
     }
 
     @Override
@@ -76,9 +98,9 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    protected <T> JpaQueryBuilder createRootIdQuery(RootResourceEntity<T> entity, Map<String, Object> idMap) {
+    protected <T> JpaQueryBuilder createRootIdQuery(RootResourceEntity<T> entity, AgObjectId id) {
         return createBaseQuery(entity)
-                .where(createIdQualifier(idMap, "e"));
+                .where(createIdQualifier(id.asMap(entity.getAgEntity()), "e"));
     }
 
 
@@ -110,14 +132,11 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
         return expression;
     }
 
-    private JpaExpression parentQualifier(EntityParent<?> parent) {
-
-        return new JpaExpression("");
+    protected <T> JpaQueryBuilder createBaseQuery(ResourceEntity<T> entity) {
+        return JpaQueryBuilder.select("e").from(entity.getName() + " e");
     }
 
-    protected <T> JpaQueryBuilder createBaseQuery(ResourceEntity<T> entity) {
-        JpaQueryBuilder query = JpaQueryBuilder.select("e").from(entity.getName() + " e");
-
+    private <T> void applyLimitAndOrdering(ResourceEntity<T> entity, JpaQueryBuilder query) {
         if (!entity.isFiltered()) {
             int limit = entity.getLimit();
             if (limit > 0) {
@@ -128,8 +147,6 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
         for (Sort o : entity.getOrderings()) {
             query.orderBy(toOrdering(entity, o));
         }
-
-        return query;
     }
 
     private <T> String toOrdering(ResourceEntity<T> entity, Sort o) {

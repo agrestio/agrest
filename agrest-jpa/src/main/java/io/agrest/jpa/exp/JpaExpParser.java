@@ -62,7 +62,7 @@ public class JpaExpParser implements IJpaExpParser {
                 sb.append(" and ");
             }
             addParam(exp.getValue());
-            sb.append(exp.getKey()).append(" ").append(exp.getOp()).append(" ?").append(params.size() - 1);
+            sb.append("e.").append(exp.getKey()).append(" ").append(exp.getOp()).append(" ?").append(params.size() - 1);
         }
 
         @Override
