@@ -97,7 +97,6 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
         }
 
         if (!updateMap.getIds().isEmpty()) {
-
             throw AgException.notFound(
                     "No object for ID '%s' and entity '%s'",
                     updateMap.getIds().iterator().next(),
@@ -147,7 +146,8 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
             return Collections.emptyList();
         }
 
-        buildRootQuery(context, keys, mapper);
+        JpaExpression rootQualifier = qualifierForKeys(keys, mapper);
+        buildRootQuery(context, rootQualifier);
 
         List<T> objects = fetchRootEntity(context);
 
@@ -161,7 +161,7 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
         return objects;
     }
 
-    private <T> List<T> fetchRootEntity(UpdateContext<T> context) {
+    protected <T> List<T> fetchRootEntity(UpdateContext<T> context) {
 
         RootResourceEntity<T> entity = context.getEntity();
         JpaQueryBuilder rootQuery = JpaProcessor.getRootEntity(entity).getSelect();
@@ -176,7 +176,7 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
         return objects;
     }
 
-    private <T> void fetchNestedEntity(UpdateContext<T> context, NestedResourceEntity<?> entity) {
+    protected <T> void fetchNestedEntity(UpdateContext<T> context, NestedResourceEntity<?> entity) {
         JpaNestedResourceEntityExt ext = JpaProcessor.getNestedEntity(entity);
         if (ext != null && ext.getSelect() != null) {
             EntityManager entityManager = JpaUpdateStartStage.entityManager(context);
@@ -210,9 +210,7 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
         }
     }
 
-    private <T> JpaQueryBuilder buildRootQuery(UpdateContext<T> context, Collection<Object> keys, ObjectMapper<T> mapper) {
-        JpaExpression rootQualifier = qualifierForKeys(keys, mapper);
-
+    protected <T> JpaQueryBuilder buildRootQuery(UpdateContext<T> context, JpaExpression rootQualifier) {
         // 1. build root query + nested queries
         JpaQueryBuilder rootQuery = JpaQueryBuilder.select("e").from(context.getEntity().getName() + " e")
                 .where(rootQualifier);
@@ -226,7 +224,7 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
         return rootQuery;
     }
 
-    private void buildNestedQuery(NestedResourceEntity<?> entity) {
+    protected void buildNestedQuery(NestedResourceEntity<?> entity) {
         JpaQueryBuilder query = queryAssembler.createQueryWithParentQualifier(entity);
 
         JpaProcessor.getNestedEntity(entity).setSelect(query);
