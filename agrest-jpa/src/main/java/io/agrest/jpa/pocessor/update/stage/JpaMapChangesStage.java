@@ -15,7 +15,18 @@ public abstract class JpaMapChangesStage extends UpdateMapChangesStage {
     @Override
     public ProcessorOutcome execute(UpdateContext<?> context) {
         UpdateContext<Object> doContext = (UpdateContext<Object>) context;
-        map(doContext);
+        try {
+            map(doContext);
+        }catch (Throwable e){
+            try {
+                JpaUpdateStartStage.entityManager(context)
+                        .getTransaction()
+                        .rollback();
+            } finally {
+                JpaUpdateStartStage.entityManager(context).close();
+            }
+            throw e;
+        }
         return ProcessorOutcome.CONTINUE;
     }
 
