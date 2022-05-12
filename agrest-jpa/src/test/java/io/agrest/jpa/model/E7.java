@@ -3,14 +3,13 @@ package io.agrest.jpa.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table (name = "e7")
-public  class E7  {
+@Table(name = "e7")
+public class E7 {
 
     public static final String NAME = "name";
     public static final String E8 = "e8";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     protected String name;

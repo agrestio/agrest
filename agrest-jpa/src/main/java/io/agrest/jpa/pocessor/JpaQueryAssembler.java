@@ -82,7 +82,7 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
         return select;
     }
 
-    private <T> JpaQueryBuilder viaParentJoinQuery(String parentName, String relationship, boolean toMany) {
+    private JpaQueryBuilder viaParentJoinQuery(String parentName, String relationship, boolean toMany) {
         if(toMany) {
             return JpaQueryBuilder.select("r")
                     .from(parentName + " e")

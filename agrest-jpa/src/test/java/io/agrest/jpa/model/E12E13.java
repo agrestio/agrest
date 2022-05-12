@@ -6,8 +6,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "e12_e13")
-
-public class E12E13 implements Serializable  {
+public class E12E13 implements Serializable {
 
     @Id
     private Integer e12_id;
