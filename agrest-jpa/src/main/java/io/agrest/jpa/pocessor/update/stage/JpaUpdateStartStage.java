@@ -1,5 +1,6 @@
 package io.agrest.jpa.pocessor.update.stage;
 
+import io.agrest.jpa.persister.AgJpaPersister;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.processor.ProcessorOutcome;
@@ -13,14 +14,12 @@ import org.apache.cayenne.di.Inject;
  */
 public class JpaUpdateStartStage extends UpdateStartStage {
 
-    private static final String UPDATE_ENTITY_MANAGER_ATTRIBUTE = "updateEntityManager";
-
     /**
      * Returns Cayenne ObjectContext previously stored in the ProcessingContext
      * by this stage.
      */
     public static EntityManager entityManager(ProcessingContext<?> context) {
-        return (EntityManager) context.getAttribute(UPDATE_ENTITY_MANAGER_ATTRIBUTE);
+        return (EntityManager) context.getAttribute(AgJpaPersister.ENTITY_MANAGER_KEY);
     }
 
     private IAgJpaPersister persister;
@@ -33,7 +32,7 @@ public class JpaUpdateStartStage extends UpdateStartStage {
     public ProcessorOutcome execute(UpdateContext<?> context) {
         EntityManager entityManager = persister.entityManager();
         entityManager.getTransaction().begin();
-        context.setAttribute(UPDATE_ENTITY_MANAGER_ATTRIBUTE, entityManager);
+        context.setAttribute(AgJpaPersister.ENTITY_MANAGER_KEY, entityManager);
         return ProcessorOutcome.CONTINUE;
     }
 }

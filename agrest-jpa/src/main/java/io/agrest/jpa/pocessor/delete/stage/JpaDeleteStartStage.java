@@ -1,6 +1,8 @@
 package io.agrest.jpa.pocessor.delete.stage;
 
+import io.agrest.jpa.persister.AgJpaPersister;
 import io.agrest.jpa.persister.IAgJpaPersister;
+import io.agrest.jpa.pocessor.JpaProcessor;
 import io.agrest.meta.AgDataMap;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.processor.ProcessorOutcome;
@@ -14,14 +16,13 @@ import org.apache.cayenne.di.Inject;
  */
 public class JpaDeleteStartStage extends DeleteStartStage {
 
-    private static final String DELETE_ENTITY_MANAGER_ATTRIBUTE = "deleteContext";
 
     /**
      * Returns Cayenne ObjectContext previously stored in the ProcessingContext
      * by this stage.
      */
     public static EntityManager entityManager(ProcessingContext<?> context) {
-        return (EntityManager) context.getAttribute(DELETE_ENTITY_MANAGER_ATTRIBUTE);
+        return (EntityManager) context.getAttribute(AgJpaPersister.ENTITY_MANAGER_KEY);
     }
 
     private final IAgJpaPersister persister;
@@ -42,7 +43,7 @@ public class JpaDeleteStartStage extends DeleteStartStage {
     }
 
     protected <T> void initCayenneContext(DeleteContext<T> context) {
-        context.setAttribute(DELETE_ENTITY_MANAGER_ATTRIBUTE, persister.entityManager());
+        context.setAttribute(AgJpaPersister.ENTITY_MANAGER_KEY, persister.entityManager());
     }
 }
 
