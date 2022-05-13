@@ -9,6 +9,7 @@ import jakarta.persistence.metamodel.Metamodel;
  */
 public class AgJpaPersister implements IAgJpaPersister {
 
+    public static final String ENTITY_MANAGER_KEY = "entityManagerKey";
     private final EntityManagerFactory entityManagerFactory;
 
     public AgJpaPersister(EntityManagerFactory entityManagerFactory) {

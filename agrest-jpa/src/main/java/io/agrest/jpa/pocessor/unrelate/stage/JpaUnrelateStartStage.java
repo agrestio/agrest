@@ -1,5 +1,6 @@
 package io.agrest.jpa.pocessor.unrelate.stage;
 
+import io.agrest.jpa.persister.AgJpaPersister;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.processor.ProcessorOutcome;
@@ -13,14 +14,12 @@ import org.apache.cayenne.di.Inject;
  */
 public class JpaUnrelateStartStage extends UnrelateStartStage {
 
-    private static final String UNRELATE_ENTITY_MANAGER_ATTRIBITE = "unrelateContext";
-
     /**
      * Returns Cayenne ObjectContext previously stored in the ProcessingContext
      * by this stage.
      */
     public static EntityManager entityManager(ProcessingContext<?> context) {
-        return (EntityManager) context.getAttribute(UNRELATE_ENTITY_MANAGER_ATTRIBITE);
+        return (EntityManager) context.getAttribute(AgJpaPersister.ENTITY_MANAGER_KEY);
     }
 
     private final IAgJpaPersister persister;
@@ -31,7 +30,7 @@ public class JpaUnrelateStartStage extends UnrelateStartStage {
 
     @Override
     public ProcessorOutcome execute(UnrelateContext<?> context) {
-        context.setAttribute(UNRELATE_ENTITY_MANAGER_ATTRIBITE, persister.entityManager());
+        context.setAttribute(AgJpaPersister.ENTITY_MANAGER_KEY, persister.entityManager());
         return ProcessorOutcome.CONTINUE;
     }
 }
