@@ -1,8 +1,6 @@
 package io.agrest.jpa.pocessor.delete.stage;
 
-import io.agrest.jpa.persister.AgJpaPersister;
 import io.agrest.jpa.persister.IAgJpaPersister;
-import io.agrest.jpa.pocessor.JpaProcessor;
 import io.agrest.meta.AgDataMap;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.processor.ProcessorOutcome;
@@ -22,7 +20,7 @@ public class JpaDeleteStartStage extends DeleteStartStage {
      * by this stage.
      */
     public static EntityManager entityManager(ProcessingContext<?> context) {
-        return (EntityManager) context.getAttribute(AgJpaPersister.ENTITY_MANAGER_KEY);
+        return (EntityManager) context.getAttribute(IAgJpaPersister.ENTITY_MANAGER_KEY);
     }
 
     private final IAgJpaPersister persister;
@@ -43,7 +41,7 @@ public class JpaDeleteStartStage extends DeleteStartStage {
     }
 
     protected <T> void initEntityManager(DeleteContext<T> context) {
-        context.setAttribute(AgJpaPersister.ENTITY_MANAGER_KEY, persister.entityManager());
+        context.setAttribute(IAgJpaPersister.ENTITY_MANAGER_KEY, persister.entityManager());
     }
 }
 

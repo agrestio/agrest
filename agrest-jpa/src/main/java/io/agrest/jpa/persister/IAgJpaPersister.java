@@ -8,6 +8,8 @@ import jakarta.persistence.metamodel.Metamodel;
  */
 public interface IAgJpaPersister {
 
+    String ENTITY_MANAGER_KEY = "entityManagerKey";
+
     EntityManager entityManager();
 
     Metamodel metamodel();
