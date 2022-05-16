@@ -63,7 +63,7 @@ public class JpaDeleteMapChangesStage extends DeleteMapChangesStage {
         if (context.isById()) {
             return findById(context);
         } else if (context.getParent() != null) {
-            return findByParent(context, dataMap.getEntity(context.getParent().getType()));
+            return findByParent(context);
         } else {
             // delete all !!
             return findAll(context);
@@ -79,7 +79,6 @@ public class JpaDeleteMapChangesStage extends DeleteMapChangesStage {
             JpaQueryBuilder byIdQuery = queryAssembler.createByIdQuery(context.getAgEntity(), id);
             List<Object> result = byIdQuery.build(entityManager).getResultList();
             if (result.size() == 0) {
-                // TODO: get proper entity name here?
                 throw AgException.notFound("No object for ID '%s' and entity '%s'", id, context.getType().getSimpleName());
             }
             objects.add(result.get(0));
@@ -89,18 +88,10 @@ public class JpaDeleteMapChangesStage extends DeleteMapChangesStage {
     }
 
     @SuppressWarnings("unchecked")
-    protected List<Object> findByParent(DeleteContext<Object> context, AgEntity<?> agParentEntity) {
-
-        EntityParent<?> parent = context.getParent();
+    protected List<Object> findByParent(DeleteContext<Object> context) {
         EntityManager entityManager = JpaDeleteStartStage.entityManager(context);
-
-        Map<String, Object> parentIdMap = parent.getId().asMap(context.getAgEntity());
-
-        String relationship = parent.getRelationship();
-        // TODO: compound id
-        return JpaQueryBuilder.select("p." + relationship)
-                .from(agParentEntity.getName() + " p")
-                .where("p." + parentIdMap.keySet().iterator().next() + " = " + parentIdMap.values().iterator().next())
+        EntityParent<?> parent = context.getParent();
+        return queryAssembler.createByParentIdQuery(parent)
                 .build(entityManager)
                 .getResultList();
     }

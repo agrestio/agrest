@@ -36,13 +36,13 @@ public class JpaDeleteStartStage extends DeleteStartStage {
     public ProcessorOutcome execute(DeleteContext<?> context) {
         ProcessorOutcome outcome = super.execute(context);
         if (outcome == ProcessorOutcome.CONTINUE) {
-            initCayenneContext(context);
+            initEntityManager(context);
         }
 
         return outcome;
     }
 
-    protected <T> void initCayenneContext(DeleteContext<T> context) {
+    protected <T> void initEntityManager(DeleteContext<T> context) {
         context.setAttribute(AgJpaPersister.ENTITY_MANAGER_KEY, persister.entityManager());
     }
 }

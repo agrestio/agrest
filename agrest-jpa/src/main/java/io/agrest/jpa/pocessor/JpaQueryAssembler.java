@@ -96,6 +96,12 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
     @Override
     public <T, P> JpaQueryBuilder createQueryWithParentIdsQualifier(NestedResourceEntity<T> entity, Iterator<P> parentIt) {
         throw new UnsupportedOperationException("Not implemented yet");
+//        String relationship = entity.getIncoming().getName();
+//        JpaQueryBuilder select = viaParentJoinQuery(entity.getParent().getName(), relationship, entity.getIncoming().isToMany())
+//                .selectSpec("e.id")
+//                .where(createIdQualifer(entity.getParent(), parentIt));
+//        applyLimitAndOrdering(entity, select);
+//        return select;
     }
 
     protected <T> JpaQueryBuilder createRootIdQuery(RootResourceEntity<T> entity, AgObjectId id) {
@@ -107,6 +113,17 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
     @Override
     public JpaQueryBuilder createByIdQuery(AgEntity<?> entity, AgObjectId id) {
         return createByIdQuery(entity, id.asMap(entity));
+    }
+
+    @Override
+    public JpaQueryBuilder createByParentIdQuery(EntityParent<?> parent) {
+        AgEntity<?> agEntity = dataMap.get().getEntity(parent.getType());
+        AgRelationship incomingRelationship = agEntity.getRelationship(parent.getRelationship());
+        if (incomingRelationship == null) {
+            throw AgException.internalServerError("Invalid parent relationship: '%s'", parent.getRelationship());
+        }
+        return viaParentJoinQuery(agEntity.getName(), parent.getRelationship(), incomingRelationship.isToMany())
+                .where(createIdQualifier(parent.getId().asMap(agEntity), "e"));
     }
 
     @Override

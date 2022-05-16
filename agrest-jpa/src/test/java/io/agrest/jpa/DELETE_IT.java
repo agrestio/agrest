@@ -1,14 +1,10 @@
 package io.agrest.jpa;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import io.agrest.SimpleResponse;
 import io.agrest.jaxrs2.AgJaxrs;
