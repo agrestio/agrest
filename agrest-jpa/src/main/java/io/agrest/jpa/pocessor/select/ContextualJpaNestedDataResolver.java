@@ -43,10 +43,10 @@ public class ContextualJpaNestedDataResolver<T> implements NestedDataResolver<T>
     protected NestedDataResolver<T> pickResolver(NestedResourceEntity<T> entity) {
         JpaResourceEntityExt parentExt = JpaProcessor.getEntity(entity.getParent());
 
-        // depending on the parent Cayenne semantics, we have some choices to make
+        // depending on the parent JPA semantics, we have some choices to make
         if (parentExt == null) {
             throw AgException.internalServerError(
-                    "Parent entity '%s' of entity '%s' is not managed by the Cayenne backend",
+                    "Parent entity '%s' of entity '%s' is not managed by the JPA backend",
                     entity.getParent().getName(),
                     entity.getName());
         }
