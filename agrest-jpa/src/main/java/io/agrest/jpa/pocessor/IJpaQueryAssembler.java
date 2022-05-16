@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import io.agrest.AgObjectId;
+import io.agrest.EntityParent;
 import io.agrest.NestedResourceEntity;
 import io.agrest.jpa.query.JpaQueryBuilder;
 import io.agrest.meta.AgEntity;
@@ -22,4 +23,6 @@ public interface IJpaQueryAssembler {
     JpaQueryBuilder createByIdQuery(AgEntity<?> entity, Map<String, Object> idMap);
 
     JpaQueryBuilder createByIdQuery(AgEntity<?> entity, AgObjectId id);
+
+    JpaQueryBuilder createByParentIdQuery(EntityParent<?> parent);
 }
