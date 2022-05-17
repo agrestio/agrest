@@ -101,14 +101,14 @@ public class JpaMapIdempotentFullSyncStage extends JpaMapIdempotentCreateOrUpdat
             }
             if (incomingRelationship.isToMany()) {
                 rootQuery = JpaQueryBuilder.select("r")
-                        .from(agEntity.getName() + " e")
-                        .from(", IN (e." + parent.getRelationship() + ") r");
+                        .from(agEntity.getName(), "e")
+                        .from("IN (e." + parent.getRelationship() + ")", "r");
             } else {
                 rootQuery = JpaQueryBuilder.select("e." + parent.getRelationship())
-                        .from(agEntity.getName() + " e");
+                        .from(agEntity.getName(), "e");
             }
         } else {
-            rootQuery = JpaQueryBuilder.select("e").from(context.getEntity().getName() + " e");
+            rootQuery = JpaQueryBuilder.select("e").from(context.getEntity().getName(), "e");
         }
 
         JpaProcessor.getRootEntity(context.getEntity()).setSelect(rootQuery);

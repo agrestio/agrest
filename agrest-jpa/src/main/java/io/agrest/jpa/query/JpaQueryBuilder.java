@@ -8,13 +8,13 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 
 /**
- * Simple query builder that simplifies JPA query construction
+ * Lightweight builder that simplifies JPA query construction
  *
  * @since 5.0
  */
 public class JpaQueryBuilder {
-    private List<String> selectSpec;
-    private List<String> from;
+    private final List<String> selectSpec;
+    private final List<String> from;
     private List<String> join;
     private JpaExpression where;
     private List<String> ordering;
@@ -38,8 +38,12 @@ public class JpaQueryBuilder {
         return this;
     }
 
-    public JpaQueryBuilder from(String from) {
-        this.from.add(from);
+    public JpaQueryBuilder from(String from, String alias) {
+        if(alias == null) {
+            this.from.add(from);
+        } else {
+            this.from.add(from + " " + alias);
+        }
         return this;
     }
 
@@ -102,9 +106,8 @@ public class JpaQueryBuilder {
         if(hasJoins()) {
             sb.append(" ").append(getJoins());
         }
-
         if(hasWhere()) {
-            sb.append(" where ").append(getWhere().getExp());
+            sb.append(" where ").append(getWhere().toJpaString());
         }
         if(hasOrdering()) {
             sb.append(" order by ").append(getOrdering());
@@ -144,7 +147,7 @@ public class JpaQueryBuilder {
     }
 
     public String getFrom() {
-        return String.join(" ", from);
+        return String.join(", ", from);
     }
 
     public String getJoins() {

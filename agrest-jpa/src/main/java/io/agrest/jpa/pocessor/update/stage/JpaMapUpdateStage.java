@@ -212,7 +212,7 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
 
     protected <T> JpaQueryBuilder buildRootQuery(UpdateContext<T> context, JpaExpression rootQualifier) {
         // 1. build root query + nested queries
-        JpaQueryBuilder rootQuery = JpaQueryBuilder.select("e").from(context.getEntity().getName() + " e")
+        JpaQueryBuilder rootQuery = JpaQueryBuilder.select("e").from(context.getEntity().getName(), "e")
                 .where(rootQualifier);
 
         JpaProcessor.getRootEntity(context.getEntity()).setSelect(rootQuery);

@@ -47,7 +47,7 @@ class GET_CompoundIdIT extends DbTest {
         tester.target("/e32")
                 .queryParam("id1", 1)
                 .queryParam("id2", 1)
-                .get().wasOk().bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"aaa\"}");
+                .get().wasOk().bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"name\":\"aaa\"}");
     }
 
 

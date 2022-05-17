@@ -100,7 +100,7 @@ public class JpaDeleteMapChangesStage extends DeleteMapChangesStage {
     protected List<Object> findAll(DeleteContext<Object> context) {
         EntityManager entityManager = JpaDeleteStartStage.entityManager(context);
         return JpaQueryBuilder.select("e")
-                .from(context.getAgEntity().getName() + " e")
+                .from(context.getAgEntity().getName(), "e")
                 .build(entityManager)
                 .getResultList();
     }

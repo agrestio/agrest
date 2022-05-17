@@ -28,7 +28,7 @@ public class JpaExpression {
         return params == null ? Collections.emptyList() : params;
     }
 
-    public String getExp() {
+    public String toJpaString() {
         return exp;
     }
 
@@ -49,7 +49,7 @@ public class JpaExpression {
             return this;
         }
 
-        String expString = reindexParams(expression.getExp(), expression.getParams().size());
+        String expString = reindexParams(expression.toJpaString(), expression.getParams().size());
         JpaExpression newExp = new JpaExpression(exp + " " + operator + " " + expString);
         getParams().forEach(newExp::addParameter);
         expression.getParams().forEach(newExp::addParameter);

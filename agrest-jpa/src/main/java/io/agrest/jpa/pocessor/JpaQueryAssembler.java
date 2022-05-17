@@ -85,11 +85,11 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
     private JpaQueryBuilder viaParentJoinQuery(String parentName, String relationship, boolean toMany) {
         if(toMany) {
             return JpaQueryBuilder.select("r")
-                    .from(parentName + " e")
-                    .from(", IN (e." + relationship + ") r");
+                    .from(parentName, "e")
+                    .from("IN (e." + relationship + ")", "r");
         } else {
             return JpaQueryBuilder.select("e." + relationship)
-                    .from(parentName + " e");
+                    .from(parentName, "e");
         }
     }
 
@@ -99,7 +99,7 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
 //        String relationship = entity.getIncoming().getName();
 //        JpaQueryBuilder select = viaParentJoinQuery(entity.getParent().getName(), relationship, entity.getIncoming().isToMany())
 //                .selectSpec("e.id")
-//                .where(createIdQualifer(entity.getParent(), parentIt));
+//                .where(createIdQualifier(entity.getParent(), parentIt));
 //        applyLimitAndOrdering(entity, select);
 //        return select;
     }
@@ -129,7 +129,7 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
     @Override
     public JpaQueryBuilder createByIdQuery(AgEntity<?> entity, Map<String, Object> idMap) {
         return JpaQueryBuilder.select("e")
-                .from(entity.getName() + " e")
+                .from(entity.getName(), "e")
                 .where(createIdQualifier(idMap, "e"));
     }
 
@@ -150,7 +150,7 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
     }
 
     protected <T> JpaQueryBuilder createBaseQuery(ResourceEntity<T> entity) {
-        return JpaQueryBuilder.select("e").from(entity.getName() + " e");
+        return JpaQueryBuilder.select("e").from(entity.getName(), "e");
     }
 
     private <T> void applyLimitAndOrdering(ResourceEntity<T> entity, JpaQueryBuilder query) {
