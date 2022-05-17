@@ -11,4 +11,4 @@
 - [ ] limit/offset (what is intended logic here?)
 - [ ] `incompatibility` get id from the related objects (part of the two-way relationship problem), see PUT_Related_IT.testToMany_Join(),
   results in request not being idempotent
-- review TODOs in the code
+- [ ] review TODOs in the code
