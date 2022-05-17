@@ -22,7 +22,7 @@ public class GET_Related_IT extends DbTest {
 
     @BQTestTool
     static final AgJpaTester tester = tester(Resource.class)
-            .entities(E3.class, E2.class,  E18.class,E17.class, E12E13.class,E13.class,E12.class, E30.class, E29.class)
+            .entities(E3.class, E2.class, E18.class, E17.class, E12E13.class, E13.class, E12.class, E30.class, E29.class)
             .build();
 
     @Test
@@ -42,8 +42,6 @@ public class GET_Related_IT extends DbTest {
                 .matrixParam("parentId2", 1)
                 .get().wasOk().bodyEquals(2, "{\"id\":1,\"name\":\"xxx\"},{\"id\":2,\"name\":\"yyy\"}");
     }
-
-
 
     @Test
     public void testValidRel_ToOne_CompoundId() {
@@ -130,23 +128,6 @@ public class GET_Related_IT extends DbTest {
                 .bodyEquals(1, "{\"id\":{\"db:e12_id\":12,\"db:e13_id\":16},\"e12\":{\"id\":12},\"e13\":{\"id\":16}}");
     }
 
-    @Test
-    public void testByParentCompoundDbId() {
-
-        tester.e29().insertColumns("ID1", "ID2")
-                .values(1, 15)
-                .values(2, 35).exec();
-
-        tester.e30().insertColumns("ID", "E29_ID1", "E29_ID2")
-                .values(1, 1, 15)
-                .values(2, 2, 35)
-                .values(3, 1, 15).exec();
-
-        tester.target("/e30_compound_db/1/15")
-                .get().wasOk()
-                .bodyEquals(2, "{\"id\":1}", "{\"id\":3}");
-    }
-
     @Path("")
     public static class Resource {
 
@@ -200,21 +181,6 @@ public class GET_Related_IT extends DbTest {
             parentIds.put(E17.ID2, parentId2);
 
             return AgJaxrs.select(E18.class, config).parent(E17.class, parentIds, E17.E18S).clientParams(uriInfo.getQueryParameters()).get();
-        }
-
-
-        @GET
-        @Path("e30_compound_db/{parent_id1}/{parent_id2}")
-        public DataResponse<E30> getByParentCompoundDbId(
-                @Context UriInfo uriInfo,
-                @PathParam("parent_id1") Integer parentId1,
-                @PathParam("parent_id2") Integer parentId2) {
-
-            Map<String, Object> ids = new HashMap<>();
-            ids.put("db:" + E29.ID1, parentId1);
-            ids.put(E29.ID2PROP, parentId2);
-
-            return AgJaxrs.select(E30.class, config).clientParams(uriInfo.getQueryParameters()).parent(E29.class, ids, E29.E30S).get();
         }
     }
 }

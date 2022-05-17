@@ -72,7 +72,7 @@ public class PUT_CompoundIdIT extends DbTest {
                 .queryParam("id1", 1)
                 .queryParam("id2", 1)
                 .put("{\"name\":\"xxx\"}")
-                .wasOk().bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"xxx\"}");
+                .wasOk().bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"name\":\"xxx\"}");
 
         tester.e32().matcher().eq("ID1", 1).eq("ID2", 1).eq("NAME", "xxx").assertOneMatch();
     }

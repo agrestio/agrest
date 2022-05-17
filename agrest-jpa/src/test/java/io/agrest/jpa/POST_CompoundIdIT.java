@@ -1,8 +1,6 @@
 package io.agrest.jpa;
 
-
 import io.agrest.DataResponse;
-import io.agrest.SimpleResponse;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.jpa.model.*;
 import io.agrest.jpa.unit.AgJpaTester;
@@ -23,9 +21,8 @@ public class POST_CompoundIdIT extends DbTest {
 
     @BQTestTool
     static final AgJpaTester tester = tester(POST_CompoundIdIT.Resource.class)
-            .entities( E17.class, E31.class, E32.class)
+            .entities(E17.class, E31.class, E32.class)
             .build();
-
 
 
     @Test
@@ -58,9 +55,8 @@ public class POST_CompoundIdIT extends DbTest {
                 .queryParam("id2", 1)
                 .post("{\"name\":\"xxx\"}")
                 .wasCreated()
-                .bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"xxx\"}");
+                .bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"name\":\"xxx\"}");
     }
-
 
 
     @Path("")
