@@ -3,6 +3,7 @@ package io.agrest.cayenne;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.agrest.jaxrs2.AgJaxrs;
@@ -15,12 +16,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
+import java.time.LocalDateTime;
 
 public class GET_ExpIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class)
+            .entities(E2.class, E3.class, E4.class)
             .build();
 
     @Test
@@ -110,6 +112,20 @@ public class GET_ExpIT extends DbTest {
         tester.target("/e2")
                 .queryParam("include", "id")
                 .queryParam("exp", "[\"name = $b or name = $b or id = $a\", \"xxx\", 1]")
+                .get()
+                .wasOk().bodyEquals(1, "{\"id\":1}");
+    }
+
+    @Test
+    public void testList_Params_Timestamp() {
+
+        tester.e4().insertColumns("id", "c_timestamp")
+                .values(1, LocalDateTime.of(2017, 2, 3, 5, 6, 7))
+                .values(4, LocalDateTime.of(2016, 2, 4, 5, 6, 8)).exec();
+
+        tester.target("/e4")
+                .queryParam("include", "id")
+                .queryParam("exp", "[\"cTimestamp > $ts\", \"2016-06-01T00:00:00\"]")
                 .get()
                 .wasOk().bodyEquals(1, "{\"id\":1}");
     }
@@ -288,6 +304,12 @@ public class GET_ExpIT extends DbTest {
         @Path("e3")
         public DataResponse<E3> getE3(@Context UriInfo uriInfo) {
             return AgJaxrs.select(E3.class, config).clientParams(uriInfo.getQueryParameters()).get();
+        }
+
+        @GET
+        @Path("e4")
+        public DataResponse<E4> getE4(@Context UriInfo uriInfo) {
+            return AgJaxrs.select(E4.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
     }
 }
