@@ -21,6 +21,7 @@ import io.bootique.jersey.JerseyModule;
 import io.bootique.jersey.JerseyModuleExtender;
 import io.bootique.jetty.junit5.JettyTester;
 import io.bootique.junit5.BQTestScope;
+import io.bootique.junit5.scope.BQAfterMethodCallback;
 import io.bootique.junit5.scope.BQAfterScopeCallback;
 import io.bootique.junit5.scope.BQBeforeMethodCallback;
 import io.bootique.junit5.scope.BQBeforeScopeCallback;
@@ -44,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Agrest endpoints. Under the hood combines multiple Bootique JUnit 5 tools. Users must annotate AgCayenneTester field
  * with {@link io.bootique.junit5.BQTestTool} to tie it to the JUnit 5 lifecycle.
  */
-public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
+public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback, BQAfterMethodCallback {
 
     private DbTester<?> db;
     private String cayenneProject;
@@ -245,8 +246,6 @@ public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallb
         this.cayenneInScope = createCayenneInScope();
         this.appInScope = createAppInScope(this.jettyInScope, this.cayenneInScope);
 
-        getCayenneInScope().beforeScope(scope, context);
-
         CommandOutcome result = appInScope.run();
         assertTrue(result.isSuccess());
         assertTrue(result.forkedToBackground());
@@ -263,6 +262,11 @@ public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallb
     @Override
     public void beforeMethod(BQTestScope scope, ExtensionContext context) {
         getCayenneInScope().beforeMethod(scope, context);
+    }
+
+    @Override
+    public void afterMethod(BQTestScope scope, ExtensionContext context) {
+        getCayenneInScope().afterMethod(scope, context);
     }
 
     protected CayenneTester createCayenneInScope() {
