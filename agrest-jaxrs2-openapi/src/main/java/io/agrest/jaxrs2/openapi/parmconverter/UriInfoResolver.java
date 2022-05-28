@@ -37,6 +37,7 @@ public class UriInfoResolver {
         resolved.parameters.add(createIncludeParam());
         resolved.parameters.add(createExcludeParam());
         resolved.parameters.add(createSortParam());
+        resolved.parameters.add(createDirectionParam());
         resolved.parameters.add(createDirParam());
         resolved.parameters.add(createExpParam());
         resolved.parameters.add(createCayenneExpParam());
@@ -61,6 +62,20 @@ public class UriInfoResolver {
         return queryParam(AgProtocol.sort);
     }
 
+    protected Parameter createDirectionParam() {
+        Schema<String> dirSchema = new StringSchema()
+                .addEnumItem(Direction.asc.name())
+                .addEnumItem(Direction.asc_ci.name())
+                .addEnumItem(Direction.desc.name())
+                .addEnumItem(Direction.desc_ci.name());
+
+        return queryParam(AgProtocol.direction).schema(dirSchema);
+    }
+
+    /**
+     * @deprecated since 5.0 {@link AgProtocol#dir} was deprecated in favor of {@link AgProtocol#direction}
+     */
+    @Deprecated
     protected Parameter createDirParam() {
         Schema<String> dirSchema = new StringSchema()
                 .addEnumItem(Direction.asc.name())
@@ -68,7 +83,7 @@ public class UriInfoResolver {
                 .addEnumItem(Direction.desc.name())
                 .addEnumItem(Direction.desc_ci.name());
 
-        return queryParam(AgProtocol.dir).schema(dirSchema);
+        return queryParam(AgProtocol.dir).schema(dirSchema).deprecated(true);
     }
 
     protected Parameter createExpParam() {
@@ -77,7 +92,7 @@ public class UriInfoResolver {
     }
 
     /**
-     * @deprecated since 4.1 in favor of {@link AgProtocol#exp}, but will be supported indefinitely for backwards compatibility.
+     * @deprecated since 4.1 {@link AgProtocol#cayenneExp} was deprecated in favor of {@link AgProtocol#exp}
      */
     @Deprecated
     protected Parameter createCayenneExpParam() {
