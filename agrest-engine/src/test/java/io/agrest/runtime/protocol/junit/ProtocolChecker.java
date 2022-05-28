@@ -3,10 +3,10 @@ package io.agrest.runtime.protocol.junit;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.processor.select.SelectContext;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ProtocolChecker {
@@ -41,14 +41,14 @@ public class ProtocolChecker {
     }
 
     public ProtocolChecker assertAttributes(String... expectedAttributes) {
-        String expectedAsString = asList(expectedAttributes).stream().sorted().collect(Collectors.joining(","));
+        String expectedAsString = Arrays.stream(expectedAttributes).sorted().collect(Collectors.joining(","));
         String actualAsString = context.getEntity().getAttributes().keySet().stream().sorted().collect(Collectors.joining(","));
         assertEquals(expectedAsString, actualAsString);
         return this;
     }
 
     public ProtocolChecker assertRelationships(String... expectedRelationships) {
-        String expectedAsString = asList(expectedRelationships).stream().sorted().collect(Collectors.joining(","));
+        String expectedAsString = Arrays.stream(expectedRelationships).sorted().collect(Collectors.joining(","));
         String actualAsString = context.getEntity().getChildren().keySet().stream().sorted().collect(Collectors.joining(","));
         assertEquals(expectedAsString, actualAsString);
         return this;

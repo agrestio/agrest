@@ -4,7 +4,7 @@ import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.junit.AgPojoTester;
-import io.agrest.protocol.Dir;
+import io.agrest.protocol.Direction;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.protocol.junit.ProtocolTester;
 import io.bootique.junit5.BQTest;
@@ -48,7 +48,7 @@ public class Protocol_v12_Latest_Test {
         ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .parseRequest()
-                .assertSort(new Sort("name", Dir.ASC));
+                .assertSort(new Sort("name", Direction.asc));
     }
 
     @Test
@@ -57,16 +57,16 @@ public class Protocol_v12_Latest_Test {
                 .param("sort", "name")
                 .param("direction", "DESC")
                 .parseRequest()
-                .assertSort(new Sort("name", Dir.DESC));
+                .assertSort(new Sort("name", Direction.desc));
     }
 
     @Test
-    public void testSort_SortPathAndDir_LC() {
+    public void testSort_SortPathAndDir_lc() {
         ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "desc")
                 .parseRequest()
-                .assertSort(new Sort("name", Dir.DESC));
+                .assertSort(new Sort("name", Direction.desc));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class Protocol_v12_Latest_Test {
         ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "{\"path\":\"name\",\"direction\":\"ASC_CI\"}")
                 .parseRequest()
-                .assertSort(new Sort("name", Dir.ASC_CI));
+                .assertSort(new Sort("name", Direction.asc_ci));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class Protocol_v12_Latest_Test {
         ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "[{\"path\":\"name\",\"direction\":\"asc_ci\"},{\"path\":\"dateOfBirth\",\"direction\":\"desc_ci\"}]")
                 .parseRequest()
-                .assertSort(new Sort("name", Dir.ASC_CI), new Sort("dateOfBirth", Dir.DESC_CI));
+                .assertSort(new Sort("name", Direction.asc_ci), new Sort("dateOfBirth", Direction.desc_ci));
     }
 
 

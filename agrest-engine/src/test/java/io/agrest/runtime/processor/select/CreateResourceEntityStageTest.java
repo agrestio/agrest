@@ -8,7 +8,7 @@ import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.meta.AgDataMap;
 import io.agrest.meta.LazyAgDataMap;
-import io.agrest.protocol.Dir;
+import io.agrest.protocol.Direction;
 import io.agrest.protocol.Exclude;
 import io.agrest.protocol.Exp;
 import io.agrest.protocol.Include;
@@ -354,7 +354,7 @@ public class CreateResourceEntityStageTest {
 
         assertEquals(1, resourceEntity.getOrderings().size());
         Sort o1 = resourceEntity.getOrderings().iterator().next();
-        assertEquals(new Sort("n", Dir.ASC), o1);
+        assertEquals(new Sort("n", Direction.asc), o1);
     }
 
     @Test
@@ -365,7 +365,7 @@ public class CreateResourceEntityStageTest {
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
-                .addOrdering(new Sort("n", Dir.ASC))
+                .addOrdering(new Sort("n", Direction.asc))
                 .build());
 
         stage.execute(context);
@@ -374,7 +374,7 @@ public class CreateResourceEntityStageTest {
 
         assertEquals(1, resourceEntity.getOrderings().size());
         Sort o1 = resourceEntity.getOrderings().iterator().next();
-        assertEquals(new Sort("n", Dir.ASC), o1);
+        assertEquals(new Sort("n", Direction.asc), o1);
     }
 
     @Test
@@ -385,7 +385,7 @@ public class CreateResourceEntityStageTest {
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
-                .addOrdering(new Sort("n", Dir.DESC))
+                .addOrdering(new Sort("n", Direction.desc))
                 .build());
 
         stage.execute(context);
@@ -394,7 +394,7 @@ public class CreateResourceEntityStageTest {
 
         assertEquals(1, resourceEntity.getOrderings().size());
         Sort o1 = resourceEntity.getOrderings().iterator().next();
-        assertEquals(new Sort("n", Dir.DESC), o1);
+        assertEquals(new Sort("n", Direction.desc), o1);
     }
 
     @Test
@@ -405,16 +405,16 @@ public class CreateResourceEntityStageTest {
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
-                .addOrdering(new Sort("m", Dir.DESC))
-                .addOrdering(new Sort("n", Dir.ASC)).build());
+                .addOrdering(new Sort("m", Direction.desc))
+                .addOrdering(new Sort("n", Direction.asc)).build());
 
         stage.execute(context);
 
         ResourceEntity<Ts> resourceEntity = context.getEntity();
 
         assertEquals(2, resourceEntity.getOrderings().size());
-        assertEquals(new Sort("m", Dir.DESC), resourceEntity.getOrderings().get(0));
-        assertEquals(new Sort("n", Dir.ASC), resourceEntity.getOrderings().get(1));
+        assertEquals(new Sort("m", Direction.desc), resourceEntity.getOrderings().get(0));
+        assertEquals(new Sort("n", Direction.asc), resourceEntity.getOrderings().get(1));
     }
 
     @Test

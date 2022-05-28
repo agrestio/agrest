@@ -4,7 +4,7 @@ import io.agrest.AgRequestBuilder;
 import io.agrest.RootResourceEntity;
 import io.agrest.cayenne.cayenne.main.E1;
 import io.agrest.cayenne.unit.CayenneNoDbTest;
-import io.agrest.protocol.Dir;
+import io.agrest.protocol.Direction;
 import io.agrest.protocol.Exp;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -22,7 +22,7 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
     public void testCreateRootQuery_Ordering() {
 
         RootResourceEntity<E1> entity = getResourceEntity(E1.class);
-        entity.getOrderings().add(new Sort("name", Dir.ASC));
+        entity.getOrderings().add(new Sort("name", Direction.asc));
         SelectContext<E1> c = new SelectContext<>(E1.class,
                 mock(AgRequestBuilder.class),
                 mock(Injector.class));
@@ -31,7 +31,7 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
         ObjectSelect<E1> q1 = queryAssembler.createRootQuery(c);
         assertEquals(asList(E1.NAME.asc()), q1.getOrderings());
 
-        entity.getOrderings().add(new Sort("name", Dir.DESC));
+        entity.getOrderings().add(new Sort("name", Direction.desc));
         ObjectSelect<E1> q2 = queryAssembler.createRootQuery(c);
         assertEquals(asList(E1.NAME.asc(), E1.NAME.desc()), q2.getOrderings());
     }

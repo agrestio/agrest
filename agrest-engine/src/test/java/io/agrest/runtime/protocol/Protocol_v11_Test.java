@@ -3,7 +3,7 @@ package io.agrest.runtime.protocol;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.junit.AgPojoTester;
-import io.agrest.protocol.Dir;
+import io.agrest.protocol.Direction;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.protocol.junit.ProtocolTester;
 import io.bootique.junit5.BQTest;
@@ -29,7 +29,7 @@ public class Protocol_v11_Test {
                 .param("sort", "name")
                 .param("dir", "DESC")
                 .parseRequest()
-                .assertSort(new Sort("name", Dir.DESC));
+                .assertSort(new Sort("name", Direction.desc));
     }
 
     @Test
@@ -37,7 +37,7 @@ public class Protocol_v11_Test {
         ProtocolTester.test(Pojo.class, tester.runtime())
                 .param("sort", "{\"property\":\"name\",\"direction\":\"ASC_CI\"}")
                 .parseRequest()
-                .assertSort(new Sort("name", Dir.ASC_CI));
+                .assertSort(new Sort("name", Direction.asc_ci));
     }
 
     public static class Pojo {

@@ -6,7 +6,7 @@ import io.agrest.EntityParent;
 import io.agrest.NestedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
-import io.agrest.protocol.Dir;
+import io.agrest.protocol.Direction;
 import io.agrest.protocol.Sort;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.path.PathOps;
@@ -282,15 +282,15 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
                 toSortOrder(sort.getDirection()));
     }
 
-    private SortOrder toSortOrder(Dir direction) {
+    private SortOrder toSortOrder(Direction direction) {
         switch (direction) {
-            case ASC:
+            case asc:
                 return SortOrder.ASCENDING;
-            case ASC_CI:
+            case asc_ci:
                 return SortOrder.ASCENDING_INSENSITIVE;
-            case DESC_CI:
+            case desc_ci:
                 return SortOrder.DESCENDING_INSENSITIVE;
-            case DESC:
+            case desc:
                 return SortOrder.DESCENDING;
             default:
                 throw new IllegalArgumentException("Missing or unexpected sort direction: " + direction);

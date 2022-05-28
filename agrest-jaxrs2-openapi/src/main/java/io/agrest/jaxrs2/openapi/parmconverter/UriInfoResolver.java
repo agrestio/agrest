@@ -2,7 +2,7 @@ package io.agrest.jaxrs2.openapi.parmconverter;
 
 import io.agrest.jaxrs2.openapi.TypeWrapper;
 import io.agrest.protocol.AgProtocol;
-import io.agrest.protocol.Dir;
+import io.agrest.protocol.Direction;
 import io.swagger.v3.jaxrs2.ResolvedParameter;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
@@ -63,10 +63,10 @@ public class UriInfoResolver {
 
     protected Parameter createDirParam() {
         Schema<String> dirSchema = new StringSchema()
-                .addEnumItem(Dir.ASC.name())
-                .addEnumItem(Dir.ASC_CI.name())
-                .addEnumItem(Dir.DESC.name())
-                .addEnumItem(Dir.DESC_CI.name());
+                .addEnumItem(Direction.asc.name())
+                .addEnumItem(Direction.asc_ci.name())
+                .addEnumItem(Direction.desc.name())
+                .addEnumItem(Direction.desc_ci.name());
 
         return queryParam(AgProtocol.dir).schema(dirSchema);
     }

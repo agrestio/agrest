@@ -1,6 +1,6 @@
 package io.agrest.runtime.protocol;
 
-import io.agrest.protocol.Dir;
+import io.agrest.protocol.Direction;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.jackson.JacksonService;
 import org.junit.jupiter.api.BeforeAll;
@@ -31,13 +31,13 @@ public class SortParserTest {
         assertEquals(3, orderings.size());
 
         assertEquals("name", orderings.get(0).getProperty());
-        assertEquals(Dir.ASC, orderings.get(0).getDirection());
+        assertEquals(Direction.asc, orderings.get(0).getDirection());
 
         assertEquals("address", orderings.get(1).getProperty());
-        assertEquals(Dir.ASC, orderings.get(1).getDirection());
+        assertEquals(Direction.asc, orderings.get(1).getDirection());
 
         assertEquals("city", orderings.get(2).getProperty());
-        assertEquals(Dir.DESC_CI, orderings.get(2).getDirection());
+        assertEquals(Direction.desc_ci, orderings.get(2).getDirection());
     }
 
     @Test
@@ -47,7 +47,7 @@ public class SortParserTest {
 
         assertEquals(1, orderings.size());
         assertEquals("name", orderings.get(0).getProperty());
-        assertEquals(Dir.ASC, orderings.get(0).getDirection());
+        assertEquals(Direction.asc, orderings.get(0).getDirection());
     }
 
     @Test
@@ -57,7 +57,7 @@ public class SortParserTest {
 
         assertEquals(1, orderings.size());
         assertEquals("name", orderings.get(0).getProperty());
-        assertEquals(Dir.ASC, orderings.get(0).getDirection());
+        assertEquals(Direction.asc, orderings.get(0).getDirection());
     }
 
     @Test
@@ -67,7 +67,7 @@ public class SortParserTest {
 
         assertEquals(1, orderings.size());
         assertEquals("name", orderings.get(0).getProperty());
-        assertEquals(Dir.ASC, orderings.get(0).getDirection());
+        assertEquals(Direction.asc, orderings.get(0).getDirection());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class SortParserTest {
 
         assertEquals(1, orderings.size());
         assertEquals("name", orderings.get(0).getProperty());
-        assertEquals(Dir.DESC, orderings.get(0).getDirection());
+        assertEquals(Direction.desc, orderings.get(0).getDirection());
     }
 
     @Test
@@ -87,7 +87,7 @@ public class SortParserTest {
 
         assertEquals(1, orderings.size());
         assertEquals("name", orderings.get(0).getProperty());
-        assertEquals(Dir.ASC_CI, orderings.get(0).getDirection());
+        assertEquals(Direction.asc_ci, orderings.get(0).getDirection());
     }
 
     @Test
@@ -97,6 +97,6 @@ public class SortParserTest {
 
         assertEquals(1, orderings.size());
         assertEquals("name", orderings.get(0).getProperty());
-        assertEquals(Dir.DESC_CI, orderings.get(0).getDirection());
+        assertEquals(Direction.desc_ci, orderings.get(0).getDirection());
     }
 }

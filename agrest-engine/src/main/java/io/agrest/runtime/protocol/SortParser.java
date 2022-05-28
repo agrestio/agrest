@@ -3,21 +3,17 @@ package io.agrest.runtime.protocol;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
 import io.agrest.PathConstants;
-import io.agrest.protocol.Dir;
+import io.agrest.protocol.Direction;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.jackson.IJacksonService;
 import org.apache.cayenne.di.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class SortParser implements ISortParser {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SortParser.class);
 
     private static final String JSON_KEY_PROPERTY = "property";
     private static final String JSON_KEY_DIRECTION = "direction";
@@ -69,11 +65,12 @@ public class SortParser implements ISortParser {
         return orderings;
     }
 
-    private Dir parseDir(String unparsedDir) {
+    private Direction parseDirection(String unparsed) {
         try {
-            return Dir.valueOf(unparsedDir);
+            // "direction" is case-insensitive in the protocol since 1.2
+            return Direction.valueOf(unparsed.toLowerCase());
         } catch (IllegalArgumentException e) {
-            throw AgException.badRequest("'dir' is invalid: %s", unparsedDir);
+            throw AgException.badRequest("'direction' is invalid: %s", unparsed);
         }
     }
 
@@ -87,15 +84,6 @@ public class SortParser implements ISortParser {
 
         JsonNode propertyNode = node.get(JSON_KEY_PROPERTY);
         if (propertyNode == null || !propertyNode.isTextual()) {
-
-            // this is a hack for Sencha bug, passing us null sorters
-            // per LF-189... So allowing for lax property name checking as a result
-            // TODO: move this to Sencha package?
-            if (propertyNode != null && propertyNode.isNull()) {
-                LOGGER.info("ignoring NULL sort property");
-                return;
-            }
-
             throw AgException.badRequest("Bad sort spec: %s", node);
         }
 
@@ -106,7 +94,7 @@ public class SortParser implements ISortParser {
                 directionNode != null ? directionNode.asText() : null);
     }
 
-    private void appendPath(List<Sort> orderings, String path, String unparsedDir) {
+    private void appendPath(List<Sort> orderings, String path, String unparsedDirection) {
         IncludeMerger.checkTooLong(path);
 
         int dot = path.indexOf(PathConstants.DOT);
@@ -119,7 +107,9 @@ public class SortParser implements ISortParser {
             throw AgException.badRequest("Ordering ends with dot: %s", path);
         }
 
-        Dir dir = unparsedDir != null && !unparsedDir.isEmpty() ? parseDir(unparsedDir) : Dir.ASC;
-        orderings.add(new Sort(path, dir));
+        Direction direction = unparsedDirection != null && !unparsedDirection.isEmpty()
+                ? parseDirection(unparsedDirection)
+                : Direction.asc;
+        orderings.add(new Sort(path, direction));
     }
 }

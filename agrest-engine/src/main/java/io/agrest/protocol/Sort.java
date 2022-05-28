@@ -10,13 +10,13 @@ import java.util.Objects;
 public class Sort {
 
     private final String property;
-    private final Dir direction;
+    private final Direction direction;
 
     public Sort(String property) {
-        this(property, Dir.ASC);
+        this(property, Direction.asc);
     }
 
-    public Sort(String property, Dir direction) {
+    public Sort(String property, Direction direction) {
         this.property = Objects.requireNonNull(property);
         this.direction = Objects.requireNonNull(direction);
     }
@@ -25,7 +25,7 @@ public class Sort {
         return property;
     }
 
-    public Dir getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 
@@ -41,5 +41,10 @@ public class Sort {
     @Override
     public int hashCode() {
         return Objects.hash(property, direction);
+    }
+
+    @Override
+    public String toString() {
+        return "order by " + property + " " + direction;
     }
 }

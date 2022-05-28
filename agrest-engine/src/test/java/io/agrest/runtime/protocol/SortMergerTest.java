@@ -4,7 +4,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
-import io.agrest.protocol.Dir;
+import io.agrest.protocol.Direction;
 import io.agrest.protocol.Sort;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
@@ -45,8 +45,8 @@ public class SortMergerTest {
         merger.merge(entity, asList(new Sort("a"), new Sort("b")));
 
         assertEquals(2, entity.getOrderings().size());
-        assertEquals(new Sort("a", Dir.ASC), entity.getOrderings().get(0));
-        assertEquals(new Sort("b", Dir.ASC), entity.getOrderings().get(1));
+        assertEquals(new Sort("a", Direction.asc), entity.getOrderings().get(0));
+        assertEquals(new Sort("b", Direction.asc), entity.getOrderings().get(1));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class SortMergerTest {
         merger.merge(entity, Collections.singletonList(new Sort("a")));
 
         assertEquals(1, entity.getOrderings().size());
-        assertEquals(new Sort("a", Dir.ASC), entity.getOrderings().get(0));
+        assertEquals(new Sort("a", Direction.asc), entity.getOrderings().get(0));
     }
 
     public static class Tr {

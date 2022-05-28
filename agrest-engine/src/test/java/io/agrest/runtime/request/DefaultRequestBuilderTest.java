@@ -2,7 +2,7 @@ package io.agrest.runtime.request;
 
 import io.agrest.AgException;
 import io.agrest.AgRequest;
-import io.agrest.protocol.Dir;
+import io.agrest.protocol.Direction;
 import io.agrest.protocol.Sort;
 import io.agrest.protocol.exp.SimpleExp;
 import io.agrest.runtime.jackson.IJacksonService;
@@ -158,7 +158,7 @@ public class DefaultRequestBuilderTest {
         assertEquals(1, request.getOrderings().size());
         Sort ordering = request.getOrderings().get(0);
         assertEquals("rtss", ordering.getProperty());
-        assertEquals(Dir.ASC, ordering.getDirection());
+        assertEquals(Direction.asc, ordering.getDirection());
     }
 
     @Test
@@ -174,7 +174,7 @@ public class DefaultRequestBuilderTest {
 
         Sort ordering = request.getOrderings().get(0);
         assertEquals("rtss", ordering.getProperty());
-        assertEquals(Dir.DESC, ordering.getDirection());
+        assertEquals(Direction.desc, ordering.getDirection());
     }
 
     @Test
@@ -202,9 +202,9 @@ public class DefaultRequestBuilderTest {
         Sort o2 = request.getOrderings().get(1);
 
         assertEquals("a", o1.getProperty());
-        assertEquals(Dir.DESC, o1.getDirection());
+        assertEquals(Direction.desc, o1.getDirection());
         assertEquals("b", o2.getProperty());
-        assertEquals(Dir.ASC, o2.getDirection());
+        assertEquals(Direction.asc, o2.getDirection());
     }
 
     @Test
@@ -222,9 +222,9 @@ public class DefaultRequestBuilderTest {
         Sort o2 = request.getOrderings().get(1);
 
         assertEquals("a", o1.getProperty());
-        assertEquals(Dir.DESC, o1.getDirection());
+        assertEquals(Direction.desc, o1.getDirection());
         assertEquals("a", o2.getProperty());
-        assertEquals(Dir.ASC, o2.getDirection());
+        assertEquals(Direction.asc, o2.getDirection());
     }
 
     @Test

@@ -9,10 +9,10 @@ public class SortTest {
 
     @Test
     public void testEquals() {
-        Sort s1 = new Sort("a", Dir.ASC);
-        Sort s2 = new Sort("a", Dir.ASC);
-        Sort s3 = new Sort("b", Dir.ASC);
-        Sort s4 = new Sort("a", Dir.ASC_CI);
+        Sort s1 = new Sort("a", Direction.asc);
+        Sort s2 = new Sort("a", Direction.asc);
+        Sort s3 = new Sort("b", Direction.asc);
+        Sort s4 = new Sort("a", Direction.asc_ci);
 
         assertEquals(s1, s1);
         assertEquals(s1, s2);
