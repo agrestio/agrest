@@ -25,6 +25,7 @@
 * #541 Remove deprecated metadata responses
 * #557 Upgrade Jackson to 2.13.2.x
 * #558 JacksonService swallows parse exception cause
+* #561 Protocol changes - v1.2 
 
 ## Release 4.10
 
