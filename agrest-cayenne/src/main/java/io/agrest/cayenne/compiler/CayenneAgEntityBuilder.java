@@ -12,10 +12,10 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
-import io.agrest.meta.DefaultAgAttribute;
-import io.agrest.meta.DefaultAgEntity;
-import io.agrest.meta.DefaultAgIdPart;
-import io.agrest.meta.DefaultAgRelationship;
+import io.agrest.meta.DefaultAttribute;
+import io.agrest.meta.DefaultEntity;
+import io.agrest.meta.DefaultIdPart;
+import io.agrest.meta.DefaultRelationship;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
@@ -120,7 +120,7 @@ public class CayenneAgEntityBuilder<T> {
             Class<?> type = typeForName(a.getType());
             String name = a.getName();
             // by default adding attributes as readable and writable... @AgAttribute annotation on a getter may override this
-            addAttribute(new DefaultAgAttribute(name, type, true, true, DataObjectPropertyReader.reader(name)));
+            addAttribute(new DefaultAttribute(name, type, true, true, DataObjectPropertyReader.reader(name)));
         }
 
         for (ObjRelationship r : cayenneEntity.getRelationships()) {
@@ -135,7 +135,7 @@ public class CayenneAgEntityBuilder<T> {
 
             Class<?> targetEntityType = cayenneResolver.getClassDescriptor(r.getTargetEntityName()).getObjectClass();
 
-            addRelationship(new DefaultAgRelationship(
+            addRelationship(new DefaultRelationship(
                     r.getName(),
                     // 'schema.getEntity' will compile the entity on the fly if needed
                     schema.getEntity(targetEntityType),
@@ -154,7 +154,7 @@ public class CayenneAgEntityBuilder<T> {
             AgIdPart id;
             if (attribute == null) {
 
-                id = new DefaultAgIdPart(
+                id = new DefaultIdPart(
                         // TODO: we are exposing DB column name here
                         ASTDbPath.DB_PREFIX + pk.getName(),
                         typeForName(TypesMapping.getJavaBySqlType(pk.getType())),
@@ -163,7 +163,7 @@ public class CayenneAgEntityBuilder<T> {
                         ObjectIdValueReader.reader(pk.getName())
                 );
             } else {
-                id = new DefaultAgIdPart(
+                id = new DefaultIdPart(
                         attribute.getName(),
                         typeForName(attribute.getType()),
                         true,
@@ -222,7 +222,7 @@ public class CayenneAgEntityBuilder<T> {
         buildCayenneEntity();
         buildAnnotatedProperties();
 
-        return new DefaultAgEntity<>(
+        return new DefaultEntity<>(
                 cayenneEntity.getName(),
                 type,
                 ids,

@@ -26,7 +26,7 @@ public class AgEntityOverlayTest {
     public void testResolve_AddAttribute() {
         RootDataResolver<P1> r1 = mock(RootDataResolver.class);
 
-        AgEntity<P1> e = new DefaultAgEntity(
+        AgEntity<P1> e = new DefaultEntity(
                 "p1", P1.class,
                 Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(),
                 r1,
@@ -51,7 +51,7 @@ public class AgEntityOverlayTest {
         RootDataResolver<P1> r1 = mock(RootDataResolver.class);
         RootDataResolver<P1> r2 = mock(RootDataResolver.class);
 
-        AgEntity<P1> e = new DefaultAgEntity(
+        AgEntity<P1> e = new DefaultEntity(
                 "p1", P1.class,
                 Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(),
                 r1,
@@ -73,7 +73,7 @@ public class AgEntityOverlayTest {
     @Test
     public void testResolve_RootResolverFunction() {
 
-        AgEntity<P1> e = new DefaultAgEntity(
+        AgEntity<P1> e = new DefaultEntity(
                 "p1", P1.class,
                 Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(),
                 mock(RootDataResolver.class),

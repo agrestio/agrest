@@ -5,9 +5,9 @@ import io.agrest.resolver.NestedDataResolver;
 import java.util.Objects;
 
 /**
- * @since 1.12
+ * @since 5.0
  */
-public class DefaultAgRelationship implements AgRelationship {
+public class DefaultRelationship implements AgRelationship {
 
     private final String name;
     private final AgEntity<?> targetEntity;
@@ -16,7 +16,7 @@ public class DefaultAgRelationship implements AgRelationship {
     private final boolean writable;
     private final NestedDataResolver<?> dataResolver;
 
-    public DefaultAgRelationship(
+    public DefaultRelationship(
             String name,
             AgEntity<?> targetEntity,
             boolean toMany,

@@ -3,9 +3,9 @@ package io.agrest.meta;
 import io.agrest.property.PropertyReader;
 
 /**
- * @since 4.1
+ * @since 5.0
  */
-public class DefaultAgIdPart implements AgIdPart {
+public class DefaultIdPart implements AgIdPart {
 
     private final String name;
     private final Class<?> javaType;
@@ -13,7 +13,7 @@ public class DefaultAgIdPart implements AgIdPart {
     private final boolean writable;
     private final PropertyReader reader;
 
-    public DefaultAgIdPart(
+    public DefaultIdPart(
             String name,
             Class<?> javaType,
             boolean readable,

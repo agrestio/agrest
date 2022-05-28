@@ -3,16 +3,16 @@ package io.agrest.meta;
 import io.agrest.property.PropertyReader;
 
 /**
- * @since 4.7
+ * @since 5.0
  */
-public class DefaultAgAttributeOverlay extends BasePropertyOverlay implements AgAttributeOverlay {
+public class DefaultAttributeOverlay extends BasePropertyOverlay implements AgAttributeOverlay {
 
     private final Class<?> javaType;
     private final Boolean readable;
     private final Boolean writable;
     private final PropertyReader propertyReader;
 
-    public DefaultAgAttributeOverlay(
+    public DefaultAttributeOverlay(
             String name,
             Class<?> sourceType,
             Class<?> javaType,
@@ -45,7 +45,7 @@ public class DefaultAgAttributeOverlay extends BasePropertyOverlay implements Ag
         boolean writable = this.writable != null ? this.writable : overlaid.isWritable();
         PropertyReader propertyReader = this.propertyReader != null ? this.propertyReader : overlaid.getPropertyReader();
 
-        return new DefaultAgAttribute(name, javaType, readable, writable, propertyReader);
+        return new DefaultAttribute(name, javaType, readable, writable, propertyReader);
     }
 
     private AgAttribute resolveNew() {
@@ -53,7 +53,7 @@ public class DefaultAgAttributeOverlay extends BasePropertyOverlay implements Ag
         // we can't use properties from the overlaid attribute, so make sure we have all the required ones present,
         // and provide defaults where possible
 
-        return new DefaultAgAttribute(name,
+        return new DefaultAttribute(name,
                 requiredProperty("javaType", javaType),
 
                 // using the defaults from @AgAttribute annotation

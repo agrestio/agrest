@@ -41,7 +41,7 @@ class AgEntityOverlayResolver {
             while (it.hasNext()) {
                 Map.Entry<String, AgIdPart> e = it.next();
                 if (e.getValue().isReadable()) {
-                    e.setValue(new DefaultAgIdPart(name, e.getValue().getType(), false, e.getValue().isWritable(), e.getValue().getReader()));
+                    e.setValue(new DefaultIdPart(name, e.getValue().getType(), false, e.getValue().isWritable(), e.getValue().getReader()));
                 }
             }
 
@@ -51,7 +51,7 @@ class AgEntityOverlayResolver {
         AgIdPart id = ids.get(name);
         if (id != null) {
             if (id.isReadable()) {
-                ids.put(name, new DefaultAgIdPart(name, id.getType(), false, id.isWritable(), id.getReader()));
+                ids.put(name, new DefaultIdPart(name, id.getType(), false, id.isWritable(), id.getReader()));
             }
 
             return;
@@ -60,7 +60,7 @@ class AgEntityOverlayResolver {
         AgAttribute a = attributes.get(name);
         if (a != null) {
             if (a.isReadable()) {
-                attributes.put(name, new DefaultAgAttribute(name, a.getType(), false, a.isWritable(), a.getPropertyReader()));
+                attributes.put(name, new DefaultAttribute(name, a.getType(), false, a.isWritable(), a.getPropertyReader()));
             }
 
             return;
@@ -69,7 +69,7 @@ class AgEntityOverlayResolver {
         AgRelationship r = relationships.get(name);
         if (r != null) {
             if (r.isReadable()) {
-                relationships.put(name, new DefaultAgRelationship(name, r.getTargetEntity(), r.isToMany(), false, r.isWritable(), r.getResolver()));
+                relationships.put(name, new DefaultRelationship(name, r.getTargetEntity(), r.isToMany(), false, r.isWritable(), r.getResolver()));
             }
 
             return;
@@ -84,7 +84,7 @@ class AgEntityOverlayResolver {
             while (it.hasNext()) {
                 Map.Entry<String, AgIdPart> e = it.next();
                 if (e.getValue().isWritable()) {
-                    e.setValue(new DefaultAgIdPart(name, e.getValue().getType(), e.getValue().isReadable(), false, e.getValue().getReader()));
+                    e.setValue(new DefaultIdPart(name, e.getValue().getType(), e.getValue().isReadable(), false, e.getValue().getReader()));
                 }
             }
 
@@ -94,7 +94,7 @@ class AgEntityOverlayResolver {
         AgIdPart id = ids.get(name);
         if (id != null) {
             if (id.isWritable()) {
-                ids.put(name, new DefaultAgIdPart(name, id.getType(), id.isReadable(), false, id.getReader()));
+                ids.put(name, new DefaultIdPart(name, id.getType(), id.isReadable(), false, id.getReader()));
             }
 
             return;
@@ -103,7 +103,7 @@ class AgEntityOverlayResolver {
         AgAttribute a = attributes.get(name);
         if (a != null) {
             if (a.isWritable()) {
-                attributes.put(name, new DefaultAgAttribute(name, a.getType(), a.isReadable(), false, a.getPropertyReader()));
+                attributes.put(name, new DefaultAttribute(name, a.getType(), a.isReadable(), false, a.getPropertyReader()));
             }
 
             return;
@@ -112,7 +112,7 @@ class AgEntityOverlayResolver {
         AgRelationship r = relationships.get(name);
         if (r != null) {
             if (r.isWritable()) {
-                relationships.put(name, new DefaultAgRelationship(name, r.getTargetEntity(), r.isToMany(), r.isReadable(), false, r.getResolver()));
+                relationships.put(name, new DefaultRelationship(name, r.getTargetEntity(), r.isToMany(), r.isReadable(), false, r.getResolver()));
             }
 
             return;

@@ -22,7 +22,7 @@ public class AnnotationsAgEntityCompiler implements AgEntityCompiler {
 
     @Override
     public <T> AgEntity<T> compile(Class<T> type, AgSchema schema) {
-        return new LazyAgEntity<>(type, () -> doCompile(type, schema));
+        return new LazyEntity<>(type, () -> doCompile(type, schema));
     }
 
     private <T> AgEntity<T> doCompile(Class<T> type, AgSchema schema) {

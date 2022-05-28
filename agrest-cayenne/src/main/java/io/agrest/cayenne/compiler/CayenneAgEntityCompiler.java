@@ -10,7 +10,7 @@ import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.LazyAgEntity;
+import io.agrest.meta.LazyEntity;
 import io.agrest.resolver.NestedDataResolver;
 import io.agrest.resolver.RootDataResolver;
 import org.apache.cayenne.di.Inject;
@@ -50,7 +50,7 @@ public class CayenneAgEntityCompiler implements AgEntityCompiler {
 
         ObjEntity objEntity = cayenneEntityResolver.getObjEntity(type);
         return objEntity != null
-                ? new LazyAgEntity<>(type, () -> doCompile(type, schema))
+                ? new LazyEntity<>(type, () -> doCompile(type, schema))
                 : null;
     }
 

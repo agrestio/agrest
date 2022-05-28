@@ -10,9 +10,9 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * @since 1.12
+ * @since 5.0
  */
-public class DefaultAgEntity<T> implements AgEntity<T> {
+public class DefaultEntity<T> implements AgEntity<T> {
 
     private final String name;
     private final Class<T> type;
@@ -27,7 +27,7 @@ public class DefaultAgEntity<T> implements AgEntity<T> {
     private final Map<String, AgAttribute> attributes;
     private final Map<String, AgRelationship> relationships;
 
-    public DefaultAgEntity(
+    public DefaultEntity(
             String name,
             Class<T> type,
             Map<String, AgIdPart> ids,

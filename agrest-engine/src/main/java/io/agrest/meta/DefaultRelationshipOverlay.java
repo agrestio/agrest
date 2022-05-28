@@ -6,9 +6,9 @@ import io.agrest.resolver.NestedDataResolver;
  * {@link AgRelationshipOverlay} that internally defines full relationship semantics, and can either redefine an existing
  * relationship or introduce an entirely new one.
  *
- * @since 3.4
+ * @since 5.0
  */
-public class DefaultAgRelationshipOverlay extends BasePropertyOverlay implements AgRelationshipOverlay {
+public class DefaultRelationshipOverlay extends BasePropertyOverlay implements AgRelationshipOverlay {
 
     private final Class<?> targetType;
     private final Boolean toMany;
@@ -16,7 +16,7 @@ public class DefaultAgRelationshipOverlay extends BasePropertyOverlay implements
     private final Boolean writable;
     private final NestedDataResolver<?> resolver;
 
-    public DefaultAgRelationshipOverlay(
+    public DefaultRelationshipOverlay(
             String name,
             Class<?> sourceType,
             Class<?> targetType,
@@ -55,7 +55,7 @@ public class DefaultAgRelationshipOverlay extends BasePropertyOverlay implements
                 ? schema.getEntity(this.targetType)
                 : overlaid.getTargetEntity();
 
-        return new DefaultAgRelationship(name, targetEntity, toMany, readable, writable, resolver);
+        return new DefaultRelationship(name, targetEntity, toMany, readable, writable, resolver);
     }
 
     private AgRelationship resolveNew(AgSchema schema) {
@@ -63,7 +63,7 @@ public class DefaultAgRelationshipOverlay extends BasePropertyOverlay implements
         // we can't use defaults from the overlaid relationship, so make sure we have all the required ones present,
         // and provide defaults where possible
 
-        return new DefaultAgRelationship(name,
+        return new DefaultRelationship(name,
                 schema.getEntity(requiredProperty("targetType", targetType)),
                 requiredProperty("toMany", toMany),
 

@@ -11,13 +11,13 @@ import java.util.Collection;
 import java.util.function.Supplier;
 
 /**
- * @since 2.0
+ * @since 5.0
  */
-public class LazyAgEntity<T> extends BaseLazyAgEntity<T, AgEntity<T>> implements AgEntity<T> {
+public class LazyEntity<T> extends BaseLazyEntity<T, AgEntity<T>> implements AgEntity<T> {
 
     private final Class<T> type;
 
-    public LazyAgEntity(Class<T> type, Supplier<AgEntity<T>> delegateSupplier) {
+    public LazyEntity(Class<T> type, Supplier<AgEntity<T>> delegateSupplier) {
         super(delegateSupplier);
         this.type = type;
     }

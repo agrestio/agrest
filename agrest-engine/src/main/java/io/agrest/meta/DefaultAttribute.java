@@ -3,9 +3,9 @@ package io.agrest.meta;
 import io.agrest.property.PropertyReader;
 
 /**
- * @since 1.12
+ * @since 5.0
  */
-public class DefaultAgAttribute implements AgAttribute {
+public class DefaultAttribute implements AgAttribute {
 
     private final String name;
     private final Class<?> javaType;
@@ -13,7 +13,7 @@ public class DefaultAgAttribute implements AgAttribute {
     private final boolean writable;
     private final PropertyReader propertyReader;
 
-    public DefaultAgAttribute(
+    public DefaultAttribute(
             String name,
             Class<?> javaType,
             boolean readable,

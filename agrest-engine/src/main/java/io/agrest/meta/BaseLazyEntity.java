@@ -4,14 +4,14 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * @since 2.0
+ * @since 5.0
  */
-public abstract class BaseLazyAgEntity<T, E extends AgEntity<T>> {
+public abstract class BaseLazyEntity<T, E extends AgEntity<T>> {
 
     private Supplier<E> delegateSupplier;
     private volatile E delegate;
 
-    public BaseLazyAgEntity(Supplier<E> delegateSupplier) {
+    public BaseLazyEntity(Supplier<E> delegateSupplier) {
         this.delegateSupplier = Objects.requireNonNull(delegateSupplier);
     }
 

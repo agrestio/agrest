@@ -15,7 +15,7 @@ import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.converter.valuestring.ValueStringConvertersProvider;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.ValueEncodersProvider;
-import io.agrest.meta.DefaultAgAttribute;
+import io.agrest.meta.DefaultAttribute;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
 import io.agrest.runtime.encoder.EncoderService;
@@ -79,7 +79,7 @@ public class EncoderServiceTest extends CayenneNoDbTest {
         ToManyResourceEntity<E3> e3Descriptor = getToManyChildEntity(E3.class, descriptor, E2.E3S.getName());
         e3Descriptor.includeId();
         CayenneProcessor.getOrCreateNestedEntity(e3Descriptor);
-        e3Descriptor.addAttribute(new DefaultAgAttribute("name", String.class, true, true, o -> ((E3)o).getName()), false);
+        e3Descriptor.addAttribute(new DefaultAttribute("name", String.class, true, true, o -> ((E3)o).getName()), false);
         descriptor.getChildren().put(E2.E3S.getName(), e3Descriptor);
 
         ObjectContext context = mockCayennePersister.newContext();

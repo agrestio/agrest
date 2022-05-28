@@ -13,10 +13,10 @@ import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgIdPart;
-import io.agrest.meta.DefaultAgAttribute;
-import io.agrest.meta.DefaultAgEntity;
-import io.agrest.meta.DefaultAgIdPart;
-import io.agrest.meta.DefaultAgRelationship;
+import io.agrest.meta.DefaultAttribute;
+import io.agrest.meta.DefaultEntity;
+import io.agrest.meta.DefaultIdPart;
+import io.agrest.meta.DefaultRelationship;
 import io.agrest.resolver.ReaderBasedResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
@@ -108,7 +108,7 @@ public class AnnotationsAgEntityBuilder<T> {
         if (aAtt != null) {
 
             if (checkValidAttributeType(type, m.getGenericReturnType())) {
-                addAttribute(new DefaultAgAttribute(name, type, aAtt.readable(), aAtt.writable(), getter::getValue));
+                addAttribute(new DefaultAttribute(name, type, aAtt.readable(), aAtt.writable(), getter::getValue));
             } else {
                 // still return true after validation failure... this is an attribute, just not a proper one
                 LOGGER.warn("Invalid attribute type for " + this.name + "." + name + ". Skipping.");
@@ -121,7 +121,7 @@ public class AnnotationsAgEntityBuilder<T> {
         if (aId != null) {
 
             if (checkValidIdType(type)) {
-                addId(new DefaultAgIdPart(name, type, aId.readable(), aId.writable(), getter::getValue));
+                addId(new DefaultIdPart(name, type, aId.readable(), aId.writable(), getter::getValue));
             } else {
                 // still return true after validation failure... this is an attribute, just not a proper one
                 LOGGER.warn("Invalid ID attribute type for " + this.name + "." + name + ". Skipping.");
@@ -195,7 +195,7 @@ public class AnnotationsAgEntityBuilder<T> {
                 toMany = true;
             }
 
-            addRelationship(new DefaultAgRelationship(
+            addRelationship(new DefaultRelationship(
                     getter.getName(),
                     schema.getEntity(targetType),
                     toMany,
@@ -213,7 +213,7 @@ public class AnnotationsAgEntityBuilder<T> {
      */
     protected AgEntity<T> buildEntity() {
         collectProperties();
-        return new DefaultAgEntity<>(
+        return new DefaultEntity<>(
                 name,
                 type,
                 ids,
