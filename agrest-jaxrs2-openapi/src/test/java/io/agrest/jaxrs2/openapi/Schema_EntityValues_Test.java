@@ -127,7 +127,7 @@ public class Schema_EntityValues_Test {
         Schema time = props.get("m");
         assertNull(time.getName());
         assertEquals("string", time.getType());
-        assertNull(time.getFormat(), "Somehow Open API spec does not define a format for 'time'");
+        assertEquals("partial-time", time.getFormat());
     }
 
     @ParameterizedTest

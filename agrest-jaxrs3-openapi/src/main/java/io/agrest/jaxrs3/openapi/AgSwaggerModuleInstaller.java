@@ -7,6 +7,7 @@ import io.agrest.jaxrs3.openapi.modelconverter.AgValueModelConverter;
 import io.agrest.runtime.AgRuntime;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.util.PrimitiveType;
 import jakarta.ws.rs.core.Feature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,8 @@ public class AgSwaggerModuleInstaller implements AgFeatureProvider {
     public Feature feature(AgRuntime runtime) {
 
         LOGGER.info("initializing Agrest Swagger model converters");
+
+        PrimitiveType.enablePartialTime();
 
         installConverter(runtime.service(AgValueModelConverter.class));
         installConverter(runtime.service(AgProtocolModelConverter.class));
