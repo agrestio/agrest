@@ -20,6 +20,14 @@ objects instead).
 Instead of endpoint generation from the OpenAPI model, we offer code-first documentation approach via "agrest-jaxrs-openapi"
 module.
 
+### Ag protocol v1.2 - protocol changes [#561](https://github.com/agrestio/agrest/issues/561)
+This primarily affects client-side developers. There were some Agrest protocol changes introduced. The current version 
+of the protocol is called "1.2". Most of the changes are backwards-compatible (i.e. the previous protocol v1.1 
+assumptions should work). Though we still encourage client implementors to use the new flavor. One potentially breaking 
+change is the removal of `"success":boolean` property from the "simple" response object returned from some POST/PUT and 
+all DELETE requests. The clients should not be checking `"success":boolean` in the JSON body anymore, and should 
+instead check the response HTTP status codes. This is common sense, and we hope most of the clients were doing that already. 
+
 ### Multi-property ID format changed for Cayenne objects [#521](https://github.com/agrestio/agrest/issues/521)
 Entities can have single-value and multi-value IDs. Single-value id is represented in JSON as `"id":val`. Multi-value 
 - as `"id":{"p1":v1, "p2":v2}`. This representation is used for both request bodies (POST, PUT), and responses 
