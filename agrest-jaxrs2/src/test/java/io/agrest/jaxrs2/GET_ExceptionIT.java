@@ -20,7 +20,7 @@ public class GET_ExceptionIT extends PojoTest {
     public void testNoData() {
         tester.target("/nodata").get()
                 .wasNotFound()
-                .bodyEquals("{\"success\":false,\"message\":\"request failed\"}");
+                .bodyEquals("{\"message\":\"request failed\"}");
     }
 
     @Test
@@ -28,7 +28,7 @@ public class GET_ExceptionIT extends PojoTest {
         tester.target("/nodata/th").get()
                 .wasServerError()
                 .mediaTypeEquals(MediaType.APPLICATION_JSON_TYPE)
-                .bodyEquals("{\"success\":false,\"message\":\"request failed with th\"}");
+                .bodyEquals("{\"message\":\"request failed with th\"}");
     }
 
     @Path("nodata")

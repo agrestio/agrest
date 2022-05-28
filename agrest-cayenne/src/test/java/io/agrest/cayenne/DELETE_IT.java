@@ -40,7 +40,7 @@ public class DELETE_IT extends DbTest {
         tester.target("/e4")
                 .delete()
                 .wasOk()
-                .bodyEquals("{\"success\":true}");
+                .bodyEquals("{}");
 
         tester.e4().matcher().assertNoMatches();
     }
@@ -51,7 +51,7 @@ public class DELETE_IT extends DbTest {
         tester.target("/e4")
                 .delete()
                 .wasOk()
-                .bodyEquals("{\"success\":true}");
+                .bodyEquals("{}");
     }
 
     @Test
@@ -64,7 +64,7 @@ public class DELETE_IT extends DbTest {
         tester.target("/e4/8")
                 .delete()
                 .wasOk()
-                .bodyEquals("{\"success\":true}");
+                .bodyEquals("{}");
 
         tester.e4().matcher().assertOneMatch();
     }
@@ -77,7 +77,7 @@ public class DELETE_IT extends DbTest {
         tester.target("/e17").queryParam("id1", 1).queryParam("id2", 1)
                 .delete()
                 .wasOk()
-                .bodyEquals("{\"success\":true}");
+                .bodyEquals("{}");
 
         tester.e17().matcher().assertOneMatch();
         tester.e17().matcher().eq("id2", 2).eq("id2", 2).eq("name", "bbb").assertOneMatch();
@@ -91,7 +91,7 @@ public class DELETE_IT extends DbTest {
         tester.target("/e4/7")
                 .delete()
                 .wasNotFound()
-                .bodyEquals("{\"success\":false,\"message\":\"No object for ID '7' and entity 'E4'\"}");
+                .bodyEquals("{\"message\":\"No object for ID '7' and entity 'E4'\"}");
 
         tester.e4().matcher().assertMatches(1);
     }
@@ -106,12 +106,12 @@ public class DELETE_IT extends DbTest {
         tester.target("/e4/8")
                 .delete()
                 .wasOk()
-                .bodyEquals("{\"success\":true}");
+                .bodyEquals("{}");
 
         tester.target("/e4/8")
                 .delete()
                 .wasNotFound()
-                .bodyEquals("{\"success\":false,\"message\":\"No object for ID '8' and entity 'E4'\"}");
+                .bodyEquals("{\"message\":\"No object for ID '8' and entity 'E4'\"}");
     }
 
     @Test
@@ -122,7 +122,7 @@ public class DELETE_IT extends DbTest {
         tester.target("/e24/1")
                 .delete()
                 .wasOk()
-                .bodyEquals("{\"success\":true}");
+                .bodyEquals("{}");
     }
 
     @Test
@@ -142,7 +142,7 @@ public class DELETE_IT extends DbTest {
         tester.target("/e2/2/e3s")
                 .delete()
                 .wasOk()
-                .bodyEquals("{\"success\":true}");
+                .bodyEquals("{}");
 
         tester.e3().matcher().assertMatches(2);
         tester.e3().matcher().eq("id_", 1).assertOneMatch();

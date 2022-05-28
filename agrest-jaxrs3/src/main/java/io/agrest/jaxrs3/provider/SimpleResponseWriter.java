@@ -57,7 +57,6 @@ public class SimpleResponseWriter implements MessageBodyWriter<SimpleResponse> {
 
     protected void writeData(SimpleResponse t, JsonGenerator out) throws IOException {
         out.writeStartObject();
-        out.writeBooleanField("success", t.isSuccess());
 
         if (t.getMessage() != null) {
             out.writeStringField("message", t.getMessage());

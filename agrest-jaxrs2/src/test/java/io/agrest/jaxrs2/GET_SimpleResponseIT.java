@@ -19,11 +19,11 @@ public class GET_SimpleResponseIT extends PojoTest {
 
         tester.target("/simple").get()
                 .wasOk()
-                .bodyEquals("{\"success\":true,\"message\":\"Hi!\"}");
+                .bodyEquals("{\"message\":\"Hi!\"}");
 
         tester.target("/simple/2").get()
                 .wasOk()
-                .bodyEquals("{\"success\":false,\"message\":\"Hi2!\"}");
+                .bodyEquals("{\"message\":\"Hi2!\"}");
     }
 
     @Path("simple")
@@ -31,13 +31,13 @@ public class GET_SimpleResponseIT extends PojoTest {
 
         @GET
         public SimpleResponse get() {
-            return SimpleResponse.of(200, true, "Hi!");
+            return SimpleResponse.of(200, "Hi!");
         }
 
         @GET
         @Path("2")
         public SimpleResponse get2() {
-            return SimpleResponse.of(200, false, "Hi2!");
+            return SimpleResponse.of(200, "Hi2!");
         }
     }
 }

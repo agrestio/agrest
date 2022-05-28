@@ -40,7 +40,7 @@ public class POST_NaturalIdIT extends DbTest {
                 .queryParam("exclude", "age", "description")
                 .post("{\"id\":\"John\"}")
                 .wasBadRequest()
-                .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E20' with id {name:John} - already exists\"}");
+                .bodyEquals("{\"message\":\"Can't create 'E20' with id {name:John} - already exists\"}");
     }
 
     @Test
@@ -57,7 +57,7 @@ public class POST_NaturalIdIT extends DbTest {
         tester.target("/multi-id").queryParam("exclude", "description")
                 .post("{\"id\":{\"age\":18,\"name\":\"John\"}}")
                 .wasBadRequest()
-                .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E21' with id {name:John,age:18} - already exists\"}");
+                .bodyEquals("{\"message\":\"Can't create 'E21' with id {name:John,age:18} - already exists\"}");
     }
 
     @Test
@@ -73,7 +73,7 @@ public class POST_NaturalIdIT extends DbTest {
         tester.target("/mixed-multi-id")
                 .post("{\"id\":{\"db:id1\":18,\"id2Prop\":345}}")
                 .wasBadRequest()
-                .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E29' with id {id2Prop:345,db:id1:18} - already exists\"}");
+                .bodyEquals("{\"message\":\"Can't create 'E29' with id {id2Prop:345,db:id1:18} - already exists\"}");
     }
 
     @Path("")

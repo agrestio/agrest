@@ -5,35 +5,29 @@ package io.agrest;
  */
 public class SimpleResponse extends AgResponse {
 
-	protected final boolean success;
 	protected final String message;
 
 	/**
 	 * @since 5.0
 	 */
-	public static SimpleResponse of(int status, boolean success) {
-		return new SimpleResponse(status, success, null);
+	public static SimpleResponse of(int status) {
+		return new SimpleResponse(status, null);
 	}
 
 	/**
 	 * @since 5.0
 	 */
-	public static SimpleResponse of(int status, boolean success, String message) {
-		return new SimpleResponse(status, success, message);
+	public static SimpleResponse of(int status, String message) {
+		return new SimpleResponse(status, message);
 	}
 
-	protected SimpleResponse(int status, boolean success, String message) {
+	protected SimpleResponse(int status, String message) {
 		super(status);
-		this.success = success;
 		this.message = message;
 	}
 
 	public String getMessage() {
 		return message;
-	}
-
-	public boolean isSuccess() {
-		return success;
 	}
 
 }

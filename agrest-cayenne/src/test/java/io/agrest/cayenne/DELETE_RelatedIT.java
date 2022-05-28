@@ -42,7 +42,7 @@ public class DELETE_RelatedIT extends DbTest {
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
-        tester.target("/e8/1/e7s").delete().wasOk().bodyEquals("{\"success\":true}");
+        tester.target("/e8/1/e7s").delete().wasOk().bodyEquals("{}");
         tester.e7().matcher().eq("e8_id", 1).assertNoMatches();
     }
 
@@ -61,7 +61,7 @@ public class DELETE_RelatedIT extends DbTest {
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
-        tester.target("/e2/1/e3s/9").delete().wasOk().bodyEquals("{\"success\":true}");
+        tester.target("/e2/1/e3s/9").delete().wasOk().bodyEquals("{}");
 
         tester.e3().matcher().eq("id_", 9).eq("e2_id", null).assertOneMatch();
     }
@@ -81,7 +81,7 @@ public class DELETE_RelatedIT extends DbTest {
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
-        tester.target("/e3/9/e2/1").delete().wasOk().bodyEquals("{\"success\":true}");
+        tester.target("/e3/9/e2/1").delete().wasOk().bodyEquals("{}");
 
         tester.e3().matcher().eq("id_", 9).eq("e2_id", null).assertOneMatch();
     }
@@ -101,7 +101,7 @@ public class DELETE_RelatedIT extends DbTest {
                 .values(8, "yyy", 1)
                 .values(9, "zzz", 1).exec();
 
-        tester.target("/e3/9/e2").delete().wasOk().bodyEquals("{\"success\":true}");
+        tester.target("/e3/9/e2").delete().wasOk().bodyEquals("{}");
         tester.e3().matcher().eq("id_", 9).eq("e2_id", null).assertOneMatch();
     }
 
@@ -110,7 +110,7 @@ public class DELETE_RelatedIT extends DbTest {
         tester.target("/e2/1/dummyRel/9")
                 .delete()
                 .wasBadRequest()
-                .bodyEquals("{\"success\":false,\"message\":\"Invalid relationship: 'dummyRel'\"}");
+                .bodyEquals("{\"message\":\"Invalid relationship: 'dummyRel'\"}");
     }
 
     @Test
@@ -118,7 +118,7 @@ public class DELETE_RelatedIT extends DbTest {
         tester.target("/e2/22/e3s/9")
                 .delete()
                 .wasNotFound()
-                .bodyEquals("{\"success\":false,\"message\":\"No object for ID '22' and entity 'E2'\"}");
+                .bodyEquals("{\"message\":\"No object for ID '22' and entity 'E2'\"}");
     }
 
     @Path("e2")

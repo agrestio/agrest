@@ -147,7 +147,7 @@ public class PUT_Related_IT extends DbTest {
         tester.target("/e3/8/e2/24")
                 .put("{\"name\":\"123\"}")
                 .wasBadRequest()
-                .bodyEquals("{\"success\":false,\"message\":\"Can't create 'E2' with fixed id\"}");
+                .bodyEquals("{\"message\":\"Can't create 'E2' with fixed id\"}");
 
         tester.e2().matcher().assertNoMatches();
     }
@@ -220,7 +220,7 @@ public class PUT_Related_IT extends DbTest {
         tester.target("/e2/15/e3s")
                 .put("[ {\"name\":\"newname\"} ]")
                 .wasBadRequest()
-                .bodyEquals("{\"success\":false,\"message\":\"Request is not idempotent.\"}");
+                .bodyEquals("{\"message\":\"Request is not idempotent.\"}");
 
         tester.e3().matcher().assertMatches(3);
         tester.e3().matcher().eq("e2_id", 15).assertMatches(2);

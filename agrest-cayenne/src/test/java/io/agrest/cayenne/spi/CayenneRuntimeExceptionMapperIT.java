@@ -28,7 +28,7 @@ public class CayenneRuntimeExceptionMapperIT extends DbTest {
     public void testException() {
         String cayenneVersion = CayenneRuntimeException.getExceptionLabel();
         String expected = String.format(
-                "{\"success\":false,\"message\":\"CayenneRuntimeException %s_something_w_cayenne_\"}",
+                "{\"message\":\"CayenneRuntimeException %s_something_w_cayenne_\"}",
                 cayenneVersion);
 
         tester.target("/g1").get()

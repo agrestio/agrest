@@ -39,7 +39,7 @@ public class GET_NaturalIdIT extends DbTest {
         tester.target("/single-id/John").queryParam("exclude", "age", "description")
                 .get()
                 .wasServerError()
-                .bodyEquals("{\"success\":false,\"message\":\"Found more than one object for ID 'John' and entity 'E20'\"}");
+                .bodyEquals("{\"message\":\"Found more than one object for ID 'John' and entity 'E20'\"}");
     }
 
     @Test
@@ -61,7 +61,7 @@ public class GET_NaturalIdIT extends DbTest {
                 .queryParam("exclude", "description")
                 .get()
                 .wasServerError()
-                .bodyEquals("{\"success\":false,\"message\":\"Found more than one object for ID '{name:John,age:18}' and entity 'E21'\"}");
+                .bodyEquals("{\"message\":\"Found more than one object for ID '{name:John,age:18}' and entity 'E21'\"}");
     }
 
     @Path("")

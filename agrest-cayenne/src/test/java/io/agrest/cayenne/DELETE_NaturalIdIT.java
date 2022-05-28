@@ -35,7 +35,7 @@ public class DELETE_NaturalIdIT extends DbTest {
 
         tester.target("/single-id/John").delete()
                 .wasOk()
-                .bodyEquals("{\"success\":true}");
+                .bodyEquals("{}");
 
         tester.e20().matcher().assertOneMatch();
         tester.e20().matcher().eq("name_col", "Brian").assertOneMatch();
@@ -53,7 +53,7 @@ public class DELETE_NaturalIdIT extends DbTest {
                 .queryParam("name", "John")
                 .delete()
                 .wasOk()
-                .bodyEquals("{\"success\":true}");
+                .bodyEquals("{}");
 
         tester.e21().matcher().assertOneMatch();
         tester.e21().matcher().eq("name", "Brian").eq("age", 27).assertOneMatch();

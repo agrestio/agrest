@@ -49,7 +49,7 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
      * @since 1.24
      */
     public SimpleResponse createSimpleResponse() {
-        return SimpleResponse.of(getStatus(), true);
+        return SimpleResponse.of(getStatus());
     }
 
     @Override

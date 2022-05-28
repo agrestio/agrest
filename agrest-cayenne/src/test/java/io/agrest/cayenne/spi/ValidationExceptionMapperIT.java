@@ -32,7 +32,7 @@ public class ValidationExceptionMapperIT extends DbTest {
     public void testException() {
         tester.target("/g1").get()
                 .wasBadRequest()
-                .bodyEquals("{\"success\":false,\"message\":\"Object validation failed. There were 1 failure(s).\"}");
+                .bodyEquals("{\"message\":\"Object validation failed. There were 1 failure(s).\"}");
     }
 
     @Path("")

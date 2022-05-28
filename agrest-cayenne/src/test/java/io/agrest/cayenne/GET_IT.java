@@ -137,7 +137,7 @@ public class GET_IT extends DbTest {
                 .queryParam("include", "id")
                 .get()
                 .wasBadRequest()
-                .bodyEquals("{\"success\":false,\"message\":\"Invalid path 'xyz' for 'E4'\"}");
+                .bodyEquals("{\"message\":\"Invalid path 'xyz' for 'E4'\"}");
     }
 
     @Test
@@ -194,7 +194,7 @@ public class GET_IT extends DbTest {
     public void testById_NotFound() {
         tester.target("/e4/2").get()
                 .wasNotFound()
-                .bodyEquals("{\"success\":false,\"message\":\"No object for ID '2' and entity 'E4'\"}");
+                .bodyEquals("{\"message\":\"No object for ID '2' and entity 'E4'\"}");
     }
 
     @Test

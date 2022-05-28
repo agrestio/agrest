@@ -40,12 +40,12 @@ public class AgRuntimeBuilder_ExceptionMappersIT extends PojoTest {
         // override standard mapper
         tester.target("/agexception").get()
                 .wasServerError()
-                .bodyEquals("{\"success\":false,\"message\":\"_ag__ag_exception_\"}");
+                .bodyEquals("{\"message\":\"_ag__ag_exception_\"}");
 
         // install custom mapper
         tester.target("/testexception").get()
                 .wasServerError()
-                .bodyEquals("{\"success\":false,\"message\":\"_test__test_exception_\"}");
+                .bodyEquals("{\"message\":\"_test__test_exception_\"}");
     }
 
     @Path("")

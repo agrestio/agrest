@@ -24,7 +24,7 @@ public class JaxrsAgExceptionMapperIT extends PojoTest {
     public void testException() {
         tester.target("/p1").get()
                 .wasForbidden()
-                .bodyEquals("{\"success\":false,\"message\":\"_was_forbidden_\"}");
+                .bodyEquals("{\"message\":\"_was_forbidden_\"}");
     }
 
     @Path("")

@@ -39,7 +39,7 @@ public class GET_Resolvers_PojoToPersistentIT extends DbTest {
                 .queryParam("include", "e25")
                 .get()
                 .wasServerError()
-                .bodyEquals("{\"success\":false,\"message\":\"Entity 'PX1' is not mapped in Cayenne, so its relationship 'e25' can't be resolved with a Cayenne resolver\"}");
+                .bodyEquals("{\"message\":\"Entity 'PX1' is not mapped in Cayenne, so its relationship 'e25' can't be resolved with a Cayenne resolver\"}");
     }
 
     @Path("")
@@ -68,8 +68,8 @@ public class GET_Resolvers_PojoToPersistentIT extends DbTest {
                         .get();
             } catch (AgException e) {
 
-                // leak the underlying exception message to the client, so we can make an assertion
-                return SimpleResponse.of(500, false, e.getCause().getMessage());
+                // intentionally leaking the underlying exception message to the client, so we can make an assertion
+                return SimpleResponse.of(500, e.getCause().getMessage());
             }
         }
 

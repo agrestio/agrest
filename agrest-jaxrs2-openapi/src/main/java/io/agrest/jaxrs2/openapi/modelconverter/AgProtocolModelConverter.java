@@ -116,12 +116,10 @@ public class AgProtocolModelConverter extends AgModelConverter {
 
         String name = "SimpleResponse";
         Map<String, Schema> properties = new HashMap<>();
-        properties.put("success", new BooleanSchema());
         properties.put("message", new StringSchema());
 
         Schema schema = new ObjectSchema()
                 .name(name)
-                .required(asList("success"))
                 .properties(properties);
 
         return onSchemaResolved(type, context, schema);

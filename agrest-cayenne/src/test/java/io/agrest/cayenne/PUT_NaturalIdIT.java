@@ -56,7 +56,7 @@ public class PUT_NaturalIdIT extends DbTest {
 
         tester.target("/single-id/John").put("{\"age\":28,\"description\":\"zzz\"}")
                 .wasServerError()
-                .bodyEquals("{\"success\":false,\"message\":\"Found more than one object for ID 'John' and entity 'E20'\"}");
+                .bodyEquals("{\"message\":\"Found more than one object for ID 'John' and entity 'E20'\"}");
     }
 
     @Test
@@ -87,7 +87,7 @@ public class PUT_NaturalIdIT extends DbTest {
                 .queryParam("name", "John")
                 .put("{\"age\":28,\"description\":\"zzz\"}")
                 .wasServerError()
-                .bodyEquals("{\"success\":false,\"message\":\"Found more than one object for ID '{name:John,age:18}' and entity 'E21'\"}");
+                .bodyEquals("{\"message\":\"Found more than one object for ID '{name:John,age:18}' and entity 'E21'\"}");
     }
 
     @Test
@@ -97,7 +97,7 @@ public class PUT_NaturalIdIT extends DbTest {
 
         tester.target("/natural-id-in-payload")
                 .put("[{\"exposedId\":12,\"name\":\"Joe\"}, {\"exposedId\":10,\"name\":\"Ana\"}]")
-                .wasOk().bodyEquals("{\"success\":true}");
+                .wasOk().bodyEquals("{}");
 
         tester.e23().matcher().assertMatches(2);
     }
@@ -109,7 +109,7 @@ public class PUT_NaturalIdIT extends DbTest {
 
         tester.target("/natural-id-in-payload")
                 .put("[{\"id\":12,\"name\":\"Joe\"}, {\"id\":10,\"name\":\"Ana\"}]")
-                .wasOk().bodyEquals("{\"success\":true}");
+                .wasOk().bodyEquals("{}");
 
         tester.e23().matcher().assertMatches(2);
     }
