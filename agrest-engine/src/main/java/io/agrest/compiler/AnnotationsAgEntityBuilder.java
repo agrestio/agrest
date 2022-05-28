@@ -9,7 +9,7 @@ import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.reflect.BeanAnalyzer;
 import io.agrest.reflect.PropertyGetter;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgIdPart;
@@ -43,7 +43,7 @@ public class AnnotationsAgEntityBuilder<T> {
 
     private final Class<T> type;
     private final String name;
-    private final AgDataMap agDataMap;
+    private final AgSchema schema;
     private AgEntityOverlay<T> overlay;
     private RootDataResolver<T> rootDataResolver;
 
@@ -51,10 +51,10 @@ public class AnnotationsAgEntityBuilder<T> {
     private final Map<String, io.agrest.meta.AgAttribute> attributes;
     private final Map<String, io.agrest.meta.AgRelationship> relationships;
 
-    public AnnotationsAgEntityBuilder(Class<T> type, AgDataMap agDataMap) {
+    public AnnotationsAgEntityBuilder(Class<T> type, AgSchema schema) {
         this.type = type;
         this.name = type.getSimpleName();
-        this.agDataMap = agDataMap;
+        this.schema = schema;
 
         this.ids = new HashMap<>();
         this.attributes = new HashMap<>();
@@ -197,7 +197,7 @@ public class AnnotationsAgEntityBuilder<T> {
 
             addRelationship(new DefaultAgRelationship(
                     getter.getName(),
-                    agDataMap.getEntity(targetType),
+                    schema.getEntity(targetType),
                     toMany,
                     aRel.readable(),
                     aRel.writable(),
@@ -230,6 +230,6 @@ public class AnnotationsAgEntityBuilder<T> {
      * @since 4.8
      */
     protected AgEntity<T> applyOverlay(AgEntity<T> entity) {
-        return overlay != null ? overlay.resolve(agDataMap, entity) : entity;
+        return overlay != null ? overlay.resolve(schema, entity) : entity;
     }
 }

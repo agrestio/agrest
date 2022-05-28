@@ -5,7 +5,7 @@ import io.agrest.AgObjectId;
 import io.agrest.EntityParent;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.processor.CayenneUtil;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.delete.DeleteContext;
@@ -29,11 +29,11 @@ import java.util.List;
  */
 public class CayenneDeleteMapChangesStage extends DeleteMapChangesStage {
 
-    private final AgDataMap dataMap;
+    private final AgSchema schema;
     private final IPathResolver pathResolver;
 
-    public CayenneDeleteMapChangesStage(@Inject AgDataMap dataMap, @Inject IPathResolver pathResolver) {
-        this.dataMap = dataMap;
+    public CayenneDeleteMapChangesStage(@Inject AgSchema schema, @Inject IPathResolver pathResolver) {
+        this.schema = schema;
         this.pathResolver = pathResolver;
     }
 
@@ -62,7 +62,7 @@ public class CayenneDeleteMapChangesStage extends DeleteMapChangesStage {
         if (context.isById()) {
             return findById(context);
         } else if (context.getParent() != null) {
-            return findByParent(context, dataMap.getEntity(context.getParent().getType()));
+            return findByParent(context, schema.getEntity(context.getParent().getType()));
         }
         // delete all !!
         else {

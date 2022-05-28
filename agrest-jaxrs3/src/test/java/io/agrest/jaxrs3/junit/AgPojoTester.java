@@ -10,7 +10,7 @@ import io.agrest.jaxrs3.pojo.model.P9;
 import io.agrest.jaxrs3.pojo.runtime.PojoFetchStage;
 import io.agrest.jaxrs3.pojo.runtime.PojoSelectProcessorFactoryProvider;
 import io.agrest.jaxrs3.pojo.runtime.PojoStore;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.AgRuntimeBuilder;
@@ -90,7 +90,7 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
     }
 
     public <T> AgEntity<T> entity(Class<T> type) {
-        return runtime().service(AgDataMap.class).getEntity(type);
+        return runtime().service(AgSchema.class).getEntity(type);
     }
 
     public <T> Map<Object, T> bucket(Class<T> type) {

@@ -20,15 +20,15 @@ import java.util.Objects;
 public class ResourceEntityTreeBuilder {
 
     private final ResourceEntity<?> rootEntity;
-    private final AgDataMap agDataMap;
+    private final AgSchema schema;
     private final Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
 
     public ResourceEntityTreeBuilder(
             ResourceEntity<?> rootEntity,
-            AgDataMap agDataMap,
+            AgSchema schema,
             Map<Class<?>, AgEntityOverlay<?>> entityOverlays) {
 
-        this.agDataMap = Objects.requireNonNull(agDataMap);
+        this.schema = Objects.requireNonNull(schema);
         this.rootEntity = Objects.requireNonNull(rootEntity);
         this.entityOverlays = entityOverlays != null ? entityOverlays : Collections.emptyMap();
     }
@@ -104,7 +104,7 @@ public class ResourceEntityTreeBuilder {
         //  Currently we optimistically assume that no request processing code would rely on "incoming.target"
         AgEntity<?> target = incoming.getTargetEntity();
         AgEntityOverlay targetOverlay = entityOverlays.get(target.getType());
-        AgEntity<?> overlaidTarget = targetOverlay != null ? targetOverlay.resolve(agDataMap, target) : target;
+        AgEntity<?> overlaidTarget = targetOverlay != null ? targetOverlay.resolve(schema, target) : target;
 
         return incoming.isToMany()
                 ? new ToManyResourceEntity<>(overlaidTarget, parent, incoming)

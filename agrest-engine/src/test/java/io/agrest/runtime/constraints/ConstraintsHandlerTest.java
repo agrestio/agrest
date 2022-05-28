@@ -8,9 +8,9 @@ import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.LazyAgDataMap;
+import io.agrest.meta.LazySchema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -22,19 +22,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ConstraintsHandlerTest {
 
     private static ConstraintsHandler constraintsHandler;
-    private static AgDataMap dataMap;
+    private static AgSchema schema;
 
     @BeforeAll
     public static void before() {
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
+        schema = new LazySchema(Collections.singletonList(compiler));
         constraintsHandler = new ConstraintsHandler();
     }
 
     @Test
     public void testConstrainResponse_FetchOffset() {
 
-        AgEntity<Tr> entity = dataMap.getEntity(Tr.class);
+        AgEntity<Tr> entity = schema.getEntity(Tr.class);
 
         SizeConstraints s1 = new SizeConstraints().fetchOffset(5);
         SizeConstraints s2 = new SizeConstraints().fetchOffset(0);
@@ -67,7 +67,7 @@ public class ConstraintsHandlerTest {
     @Test
     public void testConstrainResponse_FetchLimit() {
 
-        AgEntity<Tr> entity = dataMap.getEntity(Tr.class);
+        AgEntity<Tr> entity = schema.getEntity(Tr.class);
 
         SizeConstraints s1 = new SizeConstraints().fetchLimit(5);
         SizeConstraints s2 = new SizeConstraints().fetchLimit(0);

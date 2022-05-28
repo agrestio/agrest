@@ -28,7 +28,7 @@ import io.agrest.converter.valuestring.ValueStringConvertersProvider;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.ValueEncoders;
 import io.agrest.encoder.ValueEncodersProvider;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.runtime.constraints.ConstraintsHandler;
 import io.agrest.runtime.constraints.IConstraintsHandler;
@@ -54,7 +54,7 @@ import io.agrest.runtime.entity.SizeMerger;
 import io.agrest.runtime.entity.SortMerger;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
-import io.agrest.runtime.meta.LazyAgDataMapProvider;
+import io.agrest.runtime.meta.LazySchemaProvider;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.delete.provider.DeleteProcessorFactoryProvider;
 import io.agrest.runtime.processor.delete.stage.DeleteAuthorizeChangesStage;
@@ -255,7 +255,7 @@ public class AgCoreModule implements Module {
 
         binder.bind(IEncoderService.class).to(EncoderService.class);
         binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);
-        binder.bind(AgDataMap.class).toProvider(LazyAgDataMapProvider.class);
+        binder.bind(AgSchema.class).toProvider(LazySchemaProvider.class);
         binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
 
         binder.bind(IJacksonService.class).to(JacksonService.class);

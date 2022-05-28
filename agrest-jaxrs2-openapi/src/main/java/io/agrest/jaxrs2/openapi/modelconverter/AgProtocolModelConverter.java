@@ -3,7 +3,7 @@ package io.agrest.jaxrs2.openapi.modelconverter;
 import io.agrest.*;
 import io.agrest.jaxrs2.openapi.TypeWrapper;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import io.swagger.v3.core.converter.AnnotatedType;
@@ -31,10 +31,10 @@ public class AgProtocolModelConverter extends AgModelConverter {
     private static final Logger LOGGER = LoggerFactory.getLogger(AgProtocolModelConverter.class);
     private final static String BASE_AG_PACKAGE = AgException.class.getPackage().getName();
 
-    private final AgDataMap dataMap;
+    private final AgSchema schema;
 
-    public AgProtocolModelConverter(@Inject AgDataMap dataMap) {
-        this.dataMap = Objects.requireNonNull(dataMap);
+    public AgProtocolModelConverter(@Inject AgSchema schema) {
+        this.schema = Objects.requireNonNull(schema);
     }
 
     @Override
@@ -143,7 +143,7 @@ public class AgProtocolModelConverter extends AgModelConverter {
     protected Schema resolveAsParameterizedEntityUpdate(AnnotatedType type, ModelConverterContext context, TypeWrapper wrapped) {
 
         TypeWrapper entityType = wrapped.containedType(0);
-        AgEntity<?> agEntity = dataMap.getEntity(entityType.getRawClass());
+        AgEntity<?> agEntity = schema.getEntity(entityType.getRawClass());
         String name = "EntityUpdate(" + agEntity.getName() + ")";
         Map<String, Schema> properties = new HashMap<>();
 
@@ -179,11 +179,11 @@ public class AgProtocolModelConverter extends AgModelConverter {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AgProtocolModelConverter that = (AgProtocolModelConverter) o;
-        return dataMap.equals(that.dataMap);
+        return schema.equals(that.schema);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dataMap);
+        return Objects.hash(schema);
     }
 }

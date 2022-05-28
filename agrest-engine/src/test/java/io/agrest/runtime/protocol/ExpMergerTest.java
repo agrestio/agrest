@@ -7,8 +7,8 @@ import io.agrest.annotation.AgId;
 import io.agrest.protocol.Exp;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.meta.AgDataMap;
-import io.agrest.meta.LazyAgDataMap;
+import io.agrest.meta.AgSchema;
+import io.agrest.meta.LazySchema;
 import io.agrest.runtime.entity.ExpMerger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExpMergerTest {
 
-    private static AgDataMap dataMap;
+    private static AgSchema schema;
     private static ExpMerger merger;
     private ResourceEntity<Tr> entity;
 
@@ -29,13 +29,13 @@ public class ExpMergerTest {
     public static void beforeAll() {
 
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
+        schema = new LazySchema(Collections.singletonList(compiler));
         merger = new ExpMerger();
     }
 
     @BeforeEach
     public void beforeEach() {
-        entity = new RootResourceEntity<>(dataMap.getEntity(Tr.class));
+        entity = new RootResourceEntity<>(schema.getEntity(Tr.class));
     }
 
     @Test

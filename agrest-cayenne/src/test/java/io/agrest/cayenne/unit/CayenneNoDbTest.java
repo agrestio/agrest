@@ -13,9 +13,9 @@ import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneQueryAssembler;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.LazyAgDataMap;
+import io.agrest.meta.LazySchema;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
@@ -42,7 +42,7 @@ public abstract class CayenneNoDbTest {
 
     protected ICayennePersister mockCayennePersister;
     protected IPathResolver pathDescriptorManager;
-    protected AgDataMap dataMap;
+    protected AgSchema schema;
     protected CayenneQueryAssembler queryAssembler;
 
     @BeforeAll
@@ -66,7 +66,7 @@ public abstract class CayenneNoDbTest {
     }
 
     @BeforeEach
-    public void initAgDataMap() {
+    public void initAgSchema() {
 
         ObjectContext sharedContext = runtime.newContext();
 
@@ -75,10 +75,10 @@ public abstract class CayenneNoDbTest {
         when(mockCayennePersister.sharedContext()).thenReturn(sharedContext);
         when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());
 
-        this.dataMap = new LazyAgDataMap(createEntityCompilers());
+        this.schema = new LazySchema(createEntityCompilers());
         this.pathDescriptorManager = new PathResolver();
         this.queryAssembler = new CayenneQueryAssembler(
-                () -> dataMap,
+                () -> schema,
                 mockCayennePersister,
                 pathDescriptorManager,
                 new CayenneExpParser(),
@@ -98,7 +98,7 @@ public abstract class CayenneNoDbTest {
     }
 
     protected <T> AgEntity<T> getAgEntity(Class<T> type) {
-        return dataMap.getEntity(type);
+        return schema.getEntity(type);
     }
 
     protected ObjEntity getEntity(Class<?> type) {

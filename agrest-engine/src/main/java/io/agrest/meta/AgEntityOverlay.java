@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
-import static java.util.Arrays.asList;
-
 /**
  * A mutable collection of entity properties that allow the application code to override and customize {@link AgEntity}
  * structure either globally or per-request.
@@ -73,7 +71,7 @@ public class AgEntityOverlay<T> {
      *
      * @since 4.8
      */
-    public AgEntity<T> resolve(AgDataMap agDataMap, AgEntity<T> maybeOverlaid) {
+    public AgEntity<T> resolve(AgSchema schema, AgEntity<T> maybeOverlaid) {
 
         // TODO: support null entity like we do for overlaid Attributes and Relationships?
         Objects.requireNonNull(maybeOverlaid);
@@ -82,7 +80,7 @@ public class AgEntityOverlay<T> {
             return maybeOverlaid;
         }
 
-        AgEntityOverlayResolver resolver = new AgEntityOverlayResolver(agDataMap, maybeOverlaid);
+        AgEntityOverlayResolver resolver = new AgEntityOverlayResolver(schema, maybeOverlaid);
 
         getAttributeOverlays().forEach(resolver::loadAttributeOverlay);
         getRelationshipOverlays().forEach(resolver::loadRelationshipOverlay);

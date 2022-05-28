@@ -11,7 +11,7 @@ import io.agrest.cayenne.path.PathOps;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
@@ -43,18 +43,18 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
     private final IConstraintsHandler constraintsHandler;
     private final EntityResolver entityResolver;
     private final IPathResolver pathResolver;
-    private final AgDataMap dataMap;
+    private final AgSchema schema;
 
     public CayenneUpdateApplyServerParamsStage(
             @Inject IPathResolver pathResolver,
             @Inject IConstraintsHandler constraintsHandler,
             @Inject ICayennePersister persister,
-            @Inject AgDataMap dataMap) {
+            @Inject AgSchema schema) {
 
         this.pathResolver = pathResolver;
         this.constraintsHandler = constraintsHandler;
         this.entityResolver = persister.entityResolver();
-        this.dataMap = dataMap;
+        this.schema = schema;
     }
 
     @Override
@@ -284,7 +284,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
             sourceToTargetJoins.put(join.getSourceName(), join.getTargetName());
         }
 
-        AgEntity<?> parentEntity = dataMap.getEntity(parentType);
+        AgEntity<?> parentEntity = schema.getEntity(parentType);
 
         Map<String, String> parentAgKeysToChildDbPaths = new HashMap<>();
         for (AgIdPart idPart : parentEntity.getIdParts()) {

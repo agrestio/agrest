@@ -5,7 +5,7 @@ import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
 import io.agrest.protocol.Include;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.di.Inject;
 
@@ -15,20 +15,20 @@ import java.util.Map;
 
 public class IncludeMerger implements IIncludeMerger {
 
-    protected AgDataMap dataMap;
+    protected AgSchema schema;
     protected ISortMerger sortMerger;
     protected IExpMerger expMerger;
     protected IMapByMerger mapByMerger;
     protected ISizeMerger sizeMerger;
 
     public IncludeMerger(
-            @Inject AgDataMap dataMap,
+            @Inject AgSchema schema,
             @Inject IExpMerger expMerger,
             @Inject ISortMerger sortMerger,
             @Inject IMapByMerger mapByMerger,
             @Inject ISizeMerger sizeMerger) {
 
-        this.dataMap = dataMap;
+        this.schema = schema;
         this.sortMerger = sortMerger;
         this.expMerger = expMerger;
         this.mapByMerger = mapByMerger;
@@ -55,7 +55,7 @@ public class IncludeMerger implements IIncludeMerger {
         // that are NOT expanded are those that are "phantom" entities included as a part of the longer path.
 
         PhantomTrackingResourceEntityTreeBuilder treeBuilder
-                = new PhantomTrackingResourceEntityTreeBuilder(entity, dataMap, overlays);
+                = new PhantomTrackingResourceEntityTreeBuilder(entity, schema, overlays);
 
         for (Include include : includes) {
             mergeInclude(entity, include, treeBuilder, overlays);

@@ -9,10 +9,10 @@ import io.agrest.annotation.AgRelationship;
 import io.agrest.protocol.Include;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.LazyAgDataMap;
+import io.agrest.meta.LazySchema;
 import io.agrest.resolver.ThrowingNestedDataResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,26 +28,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class IncludeMergerTest {
 
-    private AgDataMap dataMap;
+    private AgSchema schema;
     private IncludeMerger includeMerger;
 
     @BeforeEach
     public void setUp() {
 
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        this.dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
+        this.schema = new LazySchema(Collections.singletonList(compiler));
 
         IExpMerger expMerger = new ExpMerger();
         ISortMerger sortMerger = new SortMerger();
-        IMapByMerger mapByMerger = new MapByMerger(dataMap);
+        IMapByMerger mapByMerger = new MapByMerger(schema);
         ISizeMerger sizeMerger = new SizeMerger();
-        this.includeMerger = new IncludeMerger(dataMap, expMerger, sortMerger, mapByMerger, sizeMerger);
+        this.includeMerger = new IncludeMerger(schema, expMerger, sortMerger, mapByMerger, sizeMerger);
     }
 
     @Test
     public void testMergeNothing() {
 
-        AgEntity<X> entity = dataMap.getEntity(X.class);
+        AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
         includeMerger.merge(root, asList(), Collections.emptyMap());
 
@@ -59,7 +59,7 @@ public class IncludeMergerTest {
     @Test
     public void testMergeAttributes() {
 
-        AgEntity<X> entity = dataMap.getEntity(X.class);
+        AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
         includeMerger.merge(root, asList(new Include("name")), Collections.emptyMap());
 
@@ -71,7 +71,7 @@ public class IncludeMergerTest {
     @Test
     public void testMergeAttributesAndRelationships() {
 
-        AgEntity<X> entity = dataMap.getEntity(X.class);
+        AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
         includeMerger.merge(root, asList(new Include("name"), new Include("ys")), Collections.emptyMap());
 
@@ -83,7 +83,7 @@ public class IncludeMergerTest {
     @Test
     public void testMerge_AttributesAndRelationships_OverlappedPath() {
 
-        AgEntity<X> entity = dataMap.getEntity(X.class);
+        AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
         includeMerger.merge(root, asList(
                 new Include("name"),
@@ -103,7 +103,7 @@ public class IncludeMergerTest {
 
         NestedResourceEntity<?> zChild = yChild.getChild("z");
         assertNotNull(zChild);
-        assertEquals(dataMap.getEntity(Z.class).getAttributes().size(), zChild.getAttributes().size());
+        assertEquals(schema.getEntity(Z.class).getAttributes().size(), zChild.getAttributes().size());
         assertTrue(zChild.isIdIncluded());
         assertEquals(0, zChild.getChildren().size());
     }
@@ -120,8 +120,8 @@ public class IncludeMergerTest {
                 .overlay(Y.class)
                 .redefineRelationshipResolver("z", (t, r) -> ThrowingNestedDataResolver.getInstance()));
 
-        AgEntity<X> entity = dataMap.getEntity(X.class);
-        AgEntity<X> entityOverlaid = ((AgEntityOverlay<X>) overlays.get(X.class)).resolve(dataMap, entity);
+        AgEntity<X> entity = schema.getEntity(X.class);
+        AgEntity<X> entityOverlaid = ((AgEntityOverlay<X>) overlays.get(X.class)).resolve(schema, entity);
         ResourceEntity<X> root = new RootResourceEntity<>(entityOverlaid);
 
         includeMerger.merge(root, asList(
@@ -142,7 +142,7 @@ public class IncludeMergerTest {
 
         NestedResourceEntity<?> zChild = yChild.getChild("z");
         assertNotNull(zChild);
-        assertEquals(dataMap.getEntity(Z.class).getAttributes().size(), zChild.getAttributes().size());
+        assertEquals(schema.getEntity(Z.class).getAttributes().size(), zChild.getAttributes().size());
         assertTrue(zChild.isIdIncluded());
         assertEquals(0, zChild.getChildren().size());
     }

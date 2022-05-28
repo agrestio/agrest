@@ -3,7 +3,7 @@ package io.agrest.compiler;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.LazyAgDataMap;
+import io.agrest.meta.LazySchema;
 import io.agrest.pojo.model.P8;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ public class AnnotationsAgEntityCompilerTest {
     @Test
     public void testCompile() {
         AgEntity<Entity> entity = new AnnotationsAgEntityCompiler(Collections.emptyMap())
-                .compile(Entity.class, new LazyAgDataMap(compilers));
+                .compile(Entity.class, new LazySchema(compilers));
         assertNotNull(entity);
         assertEquals(1, entity.getIdParts().size());
         assertEquals(1, entity.getAttributes().size());
@@ -35,7 +35,7 @@ public class AnnotationsAgEntityCompilerTest {
     @Test
     public void testCompile_CollectionAttributes() {
         AgEntity<P8> entity = new AnnotationsAgEntityCompiler(Collections.emptyMap())
-                .compile(P8.class, new LazyAgDataMap(compilers));
+                .compile(P8.class, new LazySchema(compilers));
         assertNotNull(entity);
         assertEquals(1, entity.getIdParts().size());
         assertEquals(7, entity.getAttributes().size());
@@ -52,7 +52,7 @@ public class AnnotationsAgEntityCompilerTest {
     @Test
     public void testCompile_EntityWithNoAnnotations() {
         AgEntity<EntityNoAnnotations> entity = new AnnotationsAgEntityCompiler(Collections.emptyMap())
-                .compile(EntityNoAnnotations.class, new LazyAgDataMap(compilers));
+                .compile(EntityNoAnnotations.class, new LazySchema(compilers));
         assertNotNull(entity);
         assertTrue(entity.getAttributes().isEmpty());
     }

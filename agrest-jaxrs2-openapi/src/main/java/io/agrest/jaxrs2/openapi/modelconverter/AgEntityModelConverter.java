@@ -26,13 +26,13 @@ public class AgEntityModelConverter extends AgModelConverter {
 
     public static final String BINDING_ENTITY_PACKAGES = "openapi-entity";
 
-    private final AgDataMap dataMap;
+    private final AgSchema schema;
     private final List<String> entityPackages;
 
     public AgEntityModelConverter(
-            @Inject AgDataMap dataMap,
+            @Inject AgSchema schema,
             @Inject(BINDING_ENTITY_PACKAGES) List<String> entityPackages) {
-        this.dataMap = Objects.requireNonNull(dataMap);
+        this.schema = Objects.requireNonNull(schema);
         this.entityPackages = Objects.requireNonNull(entityPackages);
     }
 
@@ -43,7 +43,7 @@ public class AgEntityModelConverter extends AgModelConverter {
 
             Package p = wrapped.getRawClass().getPackage();
 
-            // Since AgDataMap would lazily compile an entity from any Java class,
+            // Since AgSchema would lazily compile an entity from any Java class,
             // we need to start with a more deterministic filter for the model classes
             return p != null && entityPackages.contains(p.getName());
         }
@@ -56,7 +56,7 @@ public class AgEntityModelConverter extends AgModelConverter {
 
         LOGGER.debug("resolve AgEntity ({}}", wrapped);
 
-        AgEntity<?> agEntity = dataMap.getEntity(wrapped.getRawClass());
+        AgEntity<?> agEntity = schema.getEntity(wrapped.getRawClass());
         String name = agEntity.getName();
 
         // ensure stable property ordering
@@ -112,12 +112,12 @@ public class AgEntityModelConverter extends AgModelConverter {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AgEntityModelConverter that = (AgEntityModelConverter) o;
-        return dataMap.equals(that.dataMap) &&
+        return schema.equals(that.schema) &&
                 entityPackages.equals(that.entityPackages);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dataMap, entityPackages);
+        return Objects.hash(schema, entityPackages);
     }
 }

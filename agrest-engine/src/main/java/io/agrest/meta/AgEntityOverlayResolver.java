@@ -8,13 +8,13 @@ import java.util.Map;
 
 class AgEntityOverlayResolver {
 
-    final AgDataMap dataMap;
+    final AgSchema schema;
     final Map<String, AgIdPart> ids;
     final Map<String, AgAttribute> attributes;
     final Map<String, AgRelationship> relationships;
 
-    AgEntityOverlayResolver(AgDataMap dataMap, AgEntity<?> sourceEntity) {
-        this.dataMap = dataMap;
+    AgEntityOverlayResolver(AgSchema schema, AgEntity<?> sourceEntity) {
+        this.schema = schema;
 
         this.ids = new HashMap<>();
         sourceEntity.getIdParts().forEach(p -> ids.put(p.getName(), p));
@@ -31,7 +31,7 @@ class AgEntityOverlayResolver {
     }
 
     void loadRelationshipOverlay(AgRelationshipOverlay overlay) {
-        relationships.put(overlay.getName(), overlay.resolve(relationships.get(overlay.getName()), dataMap));
+        relationships.put(overlay.getName(), overlay.resolve(relationships.get(overlay.getName()), schema));
     }
 
     void makeUnreadable(String name) {

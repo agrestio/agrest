@@ -3,7 +3,7 @@ package io.agrest.compiler;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
-import io.agrest.meta.LazyAgDataMap;
+import io.agrest.meta.LazySchema;
 import io.agrest.pojo.model.P3;
 import io.agrest.pojo.model.P4;
 import io.agrest.pojo.model.P5;
@@ -28,7 +28,7 @@ public class AnnotationsAgEntityBuilderTest {
 	@Test
 	public void testBuild_Default() {
 
-		AgEntity<P3> p3e = new AnnotationsAgEntityBuilder<>(P3.class, new LazyAgDataMap(COMPILERS)).build();
+		AgEntity<P3> p3e = new AnnotationsAgEntityBuilder<>(P3.class, new LazySchema(COMPILERS)).build();
 		assertNotNull(p3e);
 		assertEquals("P3", p3e.getName());
 
@@ -44,7 +44,7 @@ public class AnnotationsAgEntityBuilderTest {
 	@Test
 	public void testToOneRelationship() {
 
-		AgEntity<P4> p4e = new AnnotationsAgEntityBuilder<>(P4.class, new LazyAgDataMap(COMPILERS)).build();
+		AgEntity<P4> p4e = new AnnotationsAgEntityBuilder<>(P4.class, new LazySchema(COMPILERS)).build();
 		assertNotNull(p4e);
 		assertEquals("P4", p4e.getName());
 
@@ -60,7 +60,7 @@ public class AnnotationsAgEntityBuilderTest {
 	@Test
 	public void testToManyRelationship() {
 
-		AgEntity<P5> p5e = new AnnotationsAgEntityBuilder<>(P5.class, new LazyAgDataMap(COMPILERS)).build();
+		AgEntity<P5> p5e = new AnnotationsAgEntityBuilder<>(P5.class, new LazySchema(COMPILERS)).build();
 
 		assertNotNull(p5e);
 		assertEquals("P5", p5e.getName());

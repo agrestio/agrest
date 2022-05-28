@@ -3,9 +3,9 @@ package io.agrest.runtime.constraints;
 import io.agrest.RootResourceEntity;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.LazyAgDataMap;
+import io.agrest.meta.LazySchema;
 import io.agrest.junit.ResourceEntityUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,19 +19,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ConstraintsHandlerWithDefaultsTest {
 
     private static ConstraintsHandler constraintsHandler;
-    private static AgDataMap dataMap;
+    private static AgSchema schema;
 
     @BeforeAll
     public static void before() {
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
+        schema = new LazySchema(Collections.singletonList(compiler));
         constraintsHandler = new ConstraintsHandler();
     }
 
     @Test
     public void testConstrainResponse_Default() {
 
-        AgEntity<Tr> entity = dataMap.getEntity(Tr.class);
+        AgEntity<Tr> entity = schema.getEntity(Tr.class);
 
         RootResourceEntity<Tr> te1 = new RootResourceEntity<>(entity);
         ResourceEntityUtils.appendAttribute(te1, "a", Integer.class, true, true, Tr::getA);
@@ -46,7 +46,7 @@ public class ConstraintsHandlerWithDefaultsTest {
     @Test
     public void testConstrainResponse_None() {
 
-        AgEntity<Ts> entity = dataMap.getEntity(Ts.class);
+        AgEntity<Ts> entity = schema.getEntity(Ts.class);
 
         RootResourceEntity<Ts> te1 = new RootResourceEntity<>(entity);
         ResourceEntityUtils.appendAttribute(te1, "m", String.class, true, true, Ts::getM);

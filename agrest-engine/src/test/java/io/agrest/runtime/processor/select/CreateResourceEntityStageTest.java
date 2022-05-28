@@ -6,8 +6,8 @@ import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.meta.AgDataMap;
-import io.agrest.meta.LazyAgDataMap;
+import io.agrest.meta.AgSchema;
+import io.agrest.meta.LazySchema;
 import io.agrest.protocol.Direction;
 import io.agrest.protocol.Exclude;
 import io.agrest.protocol.Exp;
@@ -52,18 +52,18 @@ public class CreateResourceEntityStageTest {
     public static void beforeAll() {
 
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        AgDataMap dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
+        AgSchema schema = new LazySchema(Collections.singletonList(compiler));
 
         // prepare create entity stage
         IExpMerger expMerger = new ExpMerger();
         ISortMerger sortMerger = new SortMerger();
-        IMapByMerger mapByMerger = new MapByMerger(dataMap);
+        IMapByMerger mapByMerger = new MapByMerger(schema);
         ISizeMerger sizeMerger = new SizeMerger();
-        IIncludeMerger includeMerger = new IncludeMerger(dataMap, expMerger, sortMerger, mapByMerger, sizeMerger);
+        IIncludeMerger includeMerger = new IncludeMerger(schema, expMerger, sortMerger, mapByMerger, sizeMerger);
         IExcludeMerger excludeMerger = new ExcludeMerger();
 
         stage = new SelectCreateResourceEntityStage(
-                dataMap,
+                schema,
                 expMerger,
                 sortMerger,
                 mapByMerger,

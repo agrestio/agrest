@@ -5,8 +5,8 @@ import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.meta.AgDataMap;
-import io.agrest.meta.LazyAgDataMap;
+import io.agrest.meta.AgSchema;
+import io.agrest.meta.LazySchema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,17 +16,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EntityPathCacheTest {
 
-    private AgDataMap dataMap;
+    private AgSchema schema;
 
     @BeforeEach
     public void setUp() {
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        this.dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
+        this.schema = new LazySchema(Collections.singletonList(compiler));
     }
 
     @Test
     public void testGetOrCreate_Attribute() {
-        EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
+        EntityPathCache cache = new EntityPathCache(schema.getEntity(X.class));
         PathDescriptor pd = cache.getOrCreate("name");
         assertNotNull(pd);
         assertTrue(pd.isAttributeOrId());
@@ -37,7 +37,7 @@ public class EntityPathCacheTest {
 
     @Test
     public void testGetOrCreate_Relationship() {
-        EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
+        EntityPathCache cache = new EntityPathCache(schema.getEntity(X.class));
         PathDescriptor pd = cache.getOrCreate("y");
         assertNotNull(pd);
         assertFalse(pd.isAttributeOrId());
@@ -48,7 +48,7 @@ public class EntityPathCacheTest {
 
     @Test
     public void testGetOrCreate_RelatedAttribute() {
-        EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
+        EntityPathCache cache = new EntityPathCache(schema.getEntity(X.class));
         PathDescriptor pd = cache.getOrCreate("y.name");
         assertNotNull(pd);
         assertTrue(pd.isAttributeOrId());
@@ -59,13 +59,13 @@ public class EntityPathCacheTest {
 
     @Test
     public void tesGetOrCreate_BadPath() {
-        EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
+        EntityPathCache cache = new EntityPathCache(schema.getEntity(X.class));
         assertThrows(AgException.class, () -> cache.getOrCreate("y.xyz"));
     }
 
     @Test
     public void testGetOrCreate_OuterRelatedAttribute() {
-        EntityPathCache cache = new EntityPathCache(dataMap.getEntity(X.class));
+        EntityPathCache cache = new EntityPathCache(schema.getEntity(X.class));
         PathDescriptor pd = cache.getOrCreate("y+.name");
         assertNotNull(pd);
         assertTrue(pd.isAttributeOrId());

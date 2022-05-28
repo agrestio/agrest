@@ -1,7 +1,7 @@
 package io.agrest.runtime.processor.update.stage;
 
 import io.agrest.EntityUpdate;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
@@ -16,12 +16,12 @@ import java.util.Collection;
  */
 public class UpdateParseRequestStage implements Processor<UpdateContext<?>> {
 
-    private AgDataMap dataMap;
+    private AgSchema schema;
     private IEntityUpdateParser updateParser;
 
-    public UpdateParseRequestStage(@Inject AgDataMap dataMap, @Inject IEntityUpdateParser updateParser) {
+    public UpdateParseRequestStage(@Inject AgSchema schema, @Inject IEntityUpdateParser updateParser) {
         this.updateParser = updateParser;
-        this.dataMap = dataMap;
+        this.schema = schema;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class UpdateParseRequestStage implements Processor<UpdateContext<?>> {
         // Parse updates payload..
         // skip parsing if we already received EntityUpdates collection parsed by MessageBodyReader
         if (context.getUpdates() == null) {
-            AgEntity<T> entity = dataMap.getEntity(context.getType());
+            AgEntity<T> entity = schema.getEntity(context.getType());
             Collection<EntityUpdate<T>> updates = updateParser.parse(entity, context.getEntityData());
             context.setUpdates(updates);
         }

@@ -21,13 +21,13 @@ public class AnnotationsAgEntityCompiler implements AgEntityCompiler {
     }
 
     @Override
-    public <T> AgEntity<T> compile(Class<T> type, AgDataMap dataMap) {
-        return new LazyAgEntity<>(type, () -> doCompile(type, dataMap));
+    public <T> AgEntity<T> compile(Class<T> type, AgSchema schema) {
+        return new LazyAgEntity<>(type, () -> doCompile(type, schema));
     }
 
-    private <T> AgEntity<T> doCompile(Class<T> type, AgDataMap dataMap) {
+    private <T> AgEntity<T> doCompile(Class<T> type, AgSchema schema) {
         LOGGER.debug("compiling entity of type {}", type);
-        AgEntity<T> entity = new AnnotationsAgEntityBuilder<>(type, dataMap)
+        AgEntity<T> entity = new AnnotationsAgEntityBuilder<>(type, schema)
                 .overlay(overlays.get(type.getName()))
                 .build();
 

@@ -1,6 +1,6 @@
 package io.agrest.compiler;
 
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 
 /**
@@ -13,9 +13,9 @@ public interface AgEntityCompiler {
 
     /**
      * Produces {@link AgEntity} for a given Java type. May return null to indicate that a given type
-     * can not be handled by this compiler.
+     * can not be handled by this compiler, and should be passed to the next compiler in the chain.
      *
      * @since 2.0
      */
-    <T> AgEntity<T> compile(Class<T> type, AgDataMap dataMap);
+    <T> AgEntity<T> compile(Class<T> type, AgSchema schema);
 }

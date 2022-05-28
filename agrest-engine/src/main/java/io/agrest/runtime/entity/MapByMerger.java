@@ -5,7 +5,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.ToManyResourceEntity;
 import io.agrest.ToOneResourceEntity;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
@@ -20,10 +20,10 @@ public class MapByMerger implements IMapByMerger {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MapByMerger.class);
 
-    private final AgDataMap dataMap;
+    private final AgSchema schema;
 
-    public MapByMerger(@Inject AgDataMap dataMap) {
-        this.dataMap = dataMap;
+    public MapByMerger(@Inject AgSchema schema) {
+        this.schema = schema;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class MapByMerger implements IMapByMerger {
                 ? mapByCompanionEntity((NestedResourceEntity) entity)
                 : mapByCompanionEntity((RootResourceEntity) entity);
 
-        new ResourceEntityTreeBuilder(mapByCompanionEntity, dataMap, overlays).inflatePath(mapByPath);
+        new ResourceEntityTreeBuilder(mapByCompanionEntity, schema, overlays).inflatePath(mapByPath);
         entity.mapBy(mapByCompanionEntity, mapByPath);
     }
 

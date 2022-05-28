@@ -2,7 +2,7 @@ package io.agrest.runtime;
 
 import io.agrest.NestedResourceEntity;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.pojo.model.P1;
@@ -27,7 +27,7 @@ public class AgRuntimeBuilder_OverlayTest {
         X x = new X();
         x.setName("aname");
 
-        AgEntity<X> entity = runtime.service(AgDataMap.class).getEntity(X.class);
+        AgEntity<X> entity = runtime.service(AgSchema.class).getEntity(X.class);
         assertNotNull(entity);
 
         AgAttribute x_adHoc = entity.getAttribute("adHoc");
@@ -52,7 +52,7 @@ public class AgRuntimeBuilder_OverlayTest {
         x.setName("aname");
         x.setPhoneNumber("3333333");
 
-        AgEntity<X> entity = runtime.service(AgDataMap.class).getEntity(X.class);
+        AgEntity<X> entity = runtime.service(AgSchema.class).getEntity(X.class);
         assertNotNull(entity);
 
         AgAttribute replaced = entity.getAttribute("phoneNumber");
@@ -76,7 +76,7 @@ public class AgRuntimeBuilder_OverlayTest {
                 .entityOverlay(AgEntity.overlay(X.class).redefineRelationshipResolver("y", (t, n) -> resolver))
                 .build();
 
-        AgDataMap metadata = runtime.service(AgDataMap.class);
+        AgSchema metadata = runtime.service(AgSchema.class);
 
         AgEntity<X> entity = metadata.getEntity(X.class);
         assertNotNull(entity);
@@ -106,7 +106,7 @@ public class AgRuntimeBuilder_OverlayTest {
                 .entityOverlay(AgEntity.overlay(X.class).redefineRelationshipResolver("adHoc", (t, n) -> resolver))
                 .build();
 
-        AgDataMap metadata = runtime.service(AgDataMap.class);
+        AgSchema metadata = runtime.service(AgSchema.class);
         AgEntity<X> entity = metadata.getEntity(X.class);
         assertThrows(IllegalStateException.class, () -> entity.getRelationship("adHoc"));
     }
@@ -122,7 +122,7 @@ public class AgRuntimeBuilder_OverlayTest {
                 .entityOverlay(AgEntity.overlay(X.class).redefineToMany("y", A.class, (t, n) -> resolver))
                 .build();
 
-        AgDataMap metadata = runtime.service(AgDataMap.class);
+        AgSchema metadata = runtime.service(AgSchema.class);
 
         AgEntity<X> entity = metadata.getEntity(X.class);
         assertNotNull(entity);
@@ -151,7 +151,7 @@ public class AgRuntimeBuilder_OverlayTest {
                 .entityOverlay(AgEntity.overlay(X.class).redefineToOne("adHoc", A.class, true, true, (t, n) -> resolver))
                 .build();
 
-        AgDataMap metadata = runtime.service(AgDataMap.class);
+        AgSchema metadata = runtime.service(AgSchema.class);
 
         AgEntity<X> entity = metadata.getEntity(X.class);
         assertNotNull(entity);
@@ -178,7 +178,7 @@ public class AgRuntimeBuilder_OverlayTest {
                 .entityOverlay(AgEntity.overlay(X.class).writablePropFilter(b -> b.property("phoneNumber", false)))
                 .build();
 
-        AgEntity<X> entity = runtime.service(AgDataMap.class).getEntity(X.class);
+        AgEntity<X> entity = runtime.service(AgSchema.class).getEntity(X.class);
         AgAttribute phone = entity.getAttribute("phoneNumber");
         assertNotNull(phone);
         assertFalse(phone.isReadable());

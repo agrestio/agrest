@@ -10,5 +10,5 @@ public interface AgRelationshipOverlay {
     /**
      * Resolves relationship overlay to a relationship.
      */
-    AgRelationship resolve(AgRelationship maybeOverlaid, AgDataMap agDataMap);
+    AgRelationship resolve(AgRelationship maybeOverlaid, AgSchema schema);
 }

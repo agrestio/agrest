@@ -39,7 +39,7 @@ public class AgEntityOverlayTest {
         AgEntityOverlay<P1> attributeOverlay = AgEntity.overlay(P1.class)
                 .redefineAttribute("a1", String.class, P1::getName);
 
-        AgEntity<P1> eo = attributeOverlay.resolve(mock(AgDataMap.class), e);
+        AgEntity<P1> eo = attributeOverlay.resolve(mock(AgSchema.class), e);
         assertEquals("p1", eo.getName());
         assertEquals(P1.class, eo.getType());
         assertEquals(r1, eo.getDataResolver());
@@ -64,7 +64,7 @@ public class AgEntityOverlayTest {
         AgEntityOverlay<P1> resolverOnly = AgEntity.overlay(P1.class)
                 .redefineDataResolver(r2);
 
-        AgEntity<P1> eo = resolverOnly.resolve(mock(AgDataMap.class), e);
+        AgEntity<P1> eo = resolverOnly.resolve(mock(AgSchema.class), e);
         assertEquals("p1", eo.getName());
         assertEquals(P1.class, eo.getType());
         assertEquals(r2, eo.getDataResolver());
@@ -86,7 +86,7 @@ public class AgEntityOverlayTest {
         List<P1> p1s = asList(new P1(), new P1());
 
         AgEntityOverlay<P1> resolverOnly = AgEntity.overlay(P1.class).redefineDataResolver(c -> p1s);
-        AgEntity<P1> eo = resolverOnly.resolve(mock(AgDataMap.class), e);
+        AgEntity<P1> eo = resolverOnly.resolve(mock(AgSchema.class), e);
 
         SelectContext<P1> context = new SelectContext<>(
                 P1.class,

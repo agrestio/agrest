@@ -13,7 +13,7 @@ import io.agrest.cayenne.path.PathOps;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.exp.ICayenneExpParser;
 import io.agrest.cayenne.exp.ICayenneExpPostProcessor;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -45,7 +45,7 @@ import java.util.function.Consumer;
  */
 public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
-    private final Provider<AgDataMap> dataMap;
+    private final Provider<AgSchema> schema;
     private final EntityResolver entityResolver;
     private final IPathResolver pathResolver;
     private final ICayenneExpParser qualifierParser;
@@ -53,16 +53,16 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
     public CayenneQueryAssembler(
 
-            // AgDataMap is not yet available when we are first creating CayenneQueryAssembler,
+            // AgSchema is not yet available when we are first creating CayenneQueryAssembler,
             // so injecting provider for lazy init
-            @Inject Provider<AgDataMap> dataMap,
+            @Inject Provider<AgSchema> schema,
 
             @Inject ICayennePersister persister,
             @Inject IPathResolver pathResolver,
             @Inject ICayenneExpParser qualifierParser,
             @Inject ICayenneExpPostProcessor qualifierPostProcessor) {
 
-        this.dataMap = dataMap;
+        this.schema = schema;
         this.entityResolver = persister.entityResolver();
         this.pathResolver = pathResolver;
         this.qualifierParser = qualifierParser;
@@ -80,7 +80,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         if (parent != null) {
             query.and(CayenneUtil.parentQualifier(
                     pathResolver,
-                    dataMap.get().getEntity(parent.getType()),
+                    schema.get().getEntity(parent.getType()),
                     parent,
                     entityResolver));
         }

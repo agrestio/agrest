@@ -13,20 +13,20 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class LazyAgDataMapTest {
+public class LazySchemaTest {
 
-	private static AgDataMap dataMap;
+	private static AgSchema schema;
 
 	@BeforeAll
 	public static void before() {
 		AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-		dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
+		schema = new LazySchema(Collections.singletonList(compiler));
 	}
 
 	@Test
 	public void testGetAgEntity_NoRelationships() {
 
-		AgEntity<Tr> tr = dataMap.getEntity(Tr.class);
+		AgEntity<Tr> tr = schema.getEntity(Tr.class);
 		assertNotNull(tr);
 		assertEquals("Tr", tr.getName());
 		assertSame(Tr.class, tr.getType());
@@ -41,7 +41,7 @@ public class LazyAgDataMapTest {
 	@Test
 	public void testGetAgEntity_Relationships() {
 
-		AgEntity<Ts> ts = dataMap.getEntity(Ts.class);
+		AgEntity<Ts> ts = schema.getEntity(Ts.class);
 		assertNotNull(ts);
 		assertEquals("Ts", ts.getName());
 		assertSame(Ts.class, ts.getType());

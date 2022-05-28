@@ -7,7 +7,7 @@ import io.agrest.cayenne.processor.select.ViaQueryResolver;
 import io.agrest.cayenne.processor.select.ViaQueryWithParentExpResolver;
 import io.agrest.cayenne.processor.select.ViaQueryWithParentIdsResolver;
 import io.agrest.compiler.AgEntityCompiler;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.LazyAgEntity;
@@ -46,11 +46,11 @@ public class CayenneAgEntityCompiler implements AgEntityCompiler {
     }
 
     @Override
-    public <T> AgEntity<T> compile(Class<T> type, AgDataMap dataMap) {
+    public <T> AgEntity<T> compile(Class<T> type, AgSchema schema) {
 
         ObjEntity objEntity = cayenneEntityResolver.getObjEntity(type);
         return objEntity != null
-                ? new LazyAgEntity<>(type, () -> doCompile(type, dataMap))
+                ? new LazyAgEntity<>(type, () -> doCompile(type, schema))
                 : null;
     }
 
@@ -71,9 +71,9 @@ public class CayenneAgEntityCompiler implements AgEntityCompiler {
         );
     }
 
-    private <T> AgEntity<T> doCompile(Class<T> type, AgDataMap dataMap) {
+    private <T> AgEntity<T> doCompile(Class<T> type, AgSchema schema) {
         LOGGER.debug("compiling Cayenne entity for type: {}", type);
-        return new CayenneAgEntityBuilder<>(type, dataMap, cayenneEntityResolver)
+        return new CayenneAgEntityBuilder<>(type, schema, cayenneEntityResolver)
                 .overlay(entityOverlays.get(type.getName()))
                 .rootDataResolver(defaultRootResolver)
                 .nestedDataResolver(defaultNestedResolver)

@@ -2,7 +2,7 @@ package io.agrest.runtime.processor.select.stage;
 
 import io.agrest.AgRequest;
 import io.agrest.RootResourceEntity;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
@@ -21,7 +21,7 @@ import org.apache.cayenne.di.Inject;
  */
 public class SelectCreateResourceEntityStage implements Processor<SelectContext<?>> {
 
-    private AgDataMap dataMap;
+    private AgSchema schema;
     private IExpMerger expMerger;
     private ISortMerger sortMerger;
     private IMapByMerger mapByMerger;
@@ -30,7 +30,7 @@ public class SelectCreateResourceEntityStage implements Processor<SelectContext<
     private IExcludeMerger excludeMerger;
 
     public SelectCreateResourceEntityStage(
-            @Inject AgDataMap dataMap,
+            @Inject AgSchema schema,
             @Inject IExpMerger expMerger,
             @Inject ISortMerger sortMerger,
             @Inject IMapByMerger mapByMerger,
@@ -38,7 +38,7 @@ public class SelectCreateResourceEntityStage implements Processor<SelectContext<
             @Inject IIncludeMerger includeMerger,
             @Inject IExcludeMerger excludeMerger) {
 
-        this.dataMap = dataMap;
+        this.schema = schema;
         this.sortMerger = sortMerger;
         this.expMerger = expMerger;
         this.mapByMerger = mapByMerger;
@@ -55,10 +55,10 @@ public class SelectCreateResourceEntityStage implements Processor<SelectContext<
 
     protected <T> void doExecute(SelectContext<T> context) {
         AgEntityOverlay<T> overlay = context.getEntityOverlay(context.getType());
-        AgEntity<T> entity = dataMap.getEntity(context.getType());
+        AgEntity<T> entity = schema.getEntity(context.getType());
 
         RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(
-                overlay != null ? overlay.resolve(dataMap, entity) : entity
+                overlay != null ? overlay.resolve(schema, entity) : entity
         );
 
         AgRequest request = context.getRequest();

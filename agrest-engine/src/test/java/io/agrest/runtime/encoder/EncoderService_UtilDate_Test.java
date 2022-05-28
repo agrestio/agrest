@@ -13,9 +13,9 @@ import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.ValueEncodersProvider;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.LazyAgDataMap;
+import io.agrest.meta.LazySchema;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.runtime.semantics.RelationshipMapper;
 import io.agrest.junit.ResourceEntityUtils;
@@ -56,8 +56,8 @@ public class EncoderService_UtilDate_Test {
                 new RelationshipMapper());
 
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        AgDataMap dataMap = new LazyAgDataMap(Collections.singletonList(compiler));
-        this.utilDateEntity = dataMap.getEntity(PUtilDate.class);
+        AgSchema schema = new LazySchema(Collections.singletonList(compiler));
+        this.utilDateEntity = schema.getEntity(PUtilDate.class);
     }
 
     /**

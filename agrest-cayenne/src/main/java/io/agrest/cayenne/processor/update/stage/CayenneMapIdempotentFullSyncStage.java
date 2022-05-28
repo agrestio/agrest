@@ -9,7 +9,7 @@ import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.exp.ICayenneExpParser;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -26,11 +26,11 @@ import java.util.List;
  */
 public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreateOrUpdateStage {
 
-    private final AgDataMap dataMap;
+    private final AgSchema schema;
     private final IPathResolver pathResolver;
 
     public CayenneMapIdempotentFullSyncStage(
-            @Inject AgDataMap dataMap,
+            @Inject AgSchema schema,
             @Inject IPathResolver pathResolver,
             @Inject ICayenneExpParser qualifierParser,
             @Inject ICayenneQueryAssembler queryAssembler,
@@ -38,7 +38,7 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
 
         super(qualifierParser, queryAssembler, persister);
 
-        this.dataMap = dataMap;
+        this.schema = schema;
         this.pathResolver = pathResolver;
     }
 
@@ -80,7 +80,7 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
 
         EntityParent<?> parent = context.getParent();
         Expression rootQualifier = parent != null ?
-                CayenneUtil.parentQualifier(pathResolver, dataMap.getEntity(parent.getType()), parent, entityResolver)
+                CayenneUtil.parentQualifier(pathResolver, schema.getEntity(parent.getType()), parent, entityResolver)
                 : null;
 
         buildRootQuery(context.getEntity(), rootQualifier);

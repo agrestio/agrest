@@ -7,7 +7,7 @@ import io.agrest.EntityUpdate;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneUtil;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.ProcessorOutcome;
@@ -44,15 +44,15 @@ import java.util.Set;
  */
 public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
 
-    private final AgDataMap dataMap;
+    private final AgSchema schema;
     private final EntityResolver entityResolver;
     private final IPathResolver pathResolver;
 
     public CayenneMergeChangesStage(
-            @Inject AgDataMap dataMap,
+            @Inject AgSchema schema,
             @Inject ICayennePersister persister,
             @Inject IPathResolver pathResolver) {
-        this.dataMap = dataMap;
+        this.schema = schema;
         this.entityResolver = persister.entityResolver();
         this.pathResolver = pathResolver;
     }
@@ -335,7 +335,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
         ObjectContext objectContext = CayenneUpdateStartStage.cayenneContext(context);
 
         ObjEntity parentEntity = objectContext.getEntityResolver().getObjEntity(parent.getType());
-        AgEntity<?> parentAgEntity = dataMap.getEntity(context.getParent().getType());
+        AgEntity<?> parentAgEntity = schema.getEntity(context.getParent().getType());
         final DataObject parentObject = (DataObject) CayenneUtil.findById(
                 pathResolver,
                 objectContext,

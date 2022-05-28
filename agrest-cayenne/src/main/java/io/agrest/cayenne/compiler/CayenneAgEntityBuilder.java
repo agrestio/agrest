@@ -7,7 +7,7 @@ import io.agrest.access.ReadFilter;
 import io.agrest.access.UpdateAuthorizer;
 import io.agrest.compiler.AnnotationsAgEntityBuilder;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgIdPart;
@@ -43,7 +43,7 @@ public class CayenneAgEntityBuilder<T> {
 
     private final EntityResolver cayenneResolver;
     private final Class<T> type;
-    private final AgDataMap agDataMap;
+    private final AgSchema schema;
     private final ObjEntity cayenneEntity;
     private final Map<String, AgIdPart> ids;
     private final Map<String, AgAttribute> attributes;
@@ -53,12 +53,12 @@ public class CayenneAgEntityBuilder<T> {
     private RootDataResolver<T> rootDataResolver;
     private NestedDataResolver<T> nestedDataResolver;
 
-    public CayenneAgEntityBuilder(Class<T> type, AgDataMap agDataMap, EntityResolver cayenneResolver) {
+    public CayenneAgEntityBuilder(Class<T> type, AgSchema schema, EntityResolver cayenneResolver) {
 
         this.cayenneResolver = cayenneResolver;
 
         this.type = type;
-        this.agDataMap = agDataMap;
+        this.schema = schema;
         this.cayenneEntity = cayenneResolver.getObjEntity(type);
 
         this.ids = new HashMap<>();
@@ -137,8 +137,8 @@ public class CayenneAgEntityBuilder<T> {
 
             addRelationship(new DefaultAgRelationship(
                     r.getName(),
-                    // 'agDataMap.getEntity' will compile the entity on the fly if needed
-                    agDataMap.getEntity(targetEntityType),
+                    // 'schema.getEntity' will compile the entity on the fly if needed
+                    schema.getEntity(targetEntityType),
                     r.isToMany(),
 
                     // TODO: maybe this should be "false, false" by default, giving us a default request model
@@ -184,7 +184,7 @@ public class CayenneAgEntityBuilder<T> {
         // DataObjectPropertyReader will be replaced with getter-based reader. Those two should behave exactly
         // the same, possibly with some really minor performance difference
 
-        AgEntity<T> annotatedEntity = new AnnotationsAgEntityBuilder<>(type, agDataMap).build();
+        AgEntity<T> annotatedEntity = new AnnotationsAgEntityBuilder<>(type, schema).build();
 
         if (annotatedEntity.getIdParts().size() > 0) {
 
@@ -239,6 +239,6 @@ public class CayenneAgEntityBuilder<T> {
      * @since 4.8
      */
     protected AgEntity<T> applyOverlay(AgEntity<T> entity) {
-        return overlay != null ? overlay.resolve(agDataMap, entity) : entity;
+        return overlay != null ? overlay.resolve(schema, entity) : entity;
     }
 }

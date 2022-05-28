@@ -1,7 +1,7 @@
 package io.agrest.cayenne.processor.unrelate.stage;
 
 import io.agrest.AgException;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.unrelate.UnrelateContext;
@@ -22,10 +22,10 @@ import java.util.Collection;
  */
 public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDateStoreStage {
 
-    private final AgDataMap dataMap;
+    private final AgSchema schema;
 
-    public CayenneUnrelateDataStoreStage(@Inject AgDataMap dataMap) {
-        this.dataMap = dataMap;
+    public CayenneUnrelateDataStoreStage(@Inject AgSchema schema) {
+        this.schema = schema;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDateStoreStage 
     private <T extends DataObject> void unrelateSingle(UnrelateContext<T> context, ObjectContext cayenneContext) {
 
         // validate relationship before doing anything else
-        AgRelationship relationship = dataMap
+        AgRelationship relationship = schema
                 .getEntity(context.getType())
                 .getRelationship(context.getRelationship());
 
@@ -90,7 +90,7 @@ public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDateStoreStage 
 
     private <T extends DataObject> void unrelateAll(UnrelateContext<T> context, ObjectContext cayenneContext) {
         // validate relationship before doing anything else
-        AgRelationship relationship = dataMap
+        AgRelationship relationship = schema
                 .getEntity(context.getType())
                 .getRelationship(context.getRelationship());
 

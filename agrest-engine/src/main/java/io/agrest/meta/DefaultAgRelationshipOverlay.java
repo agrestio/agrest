@@ -41,30 +41,30 @@ public class DefaultAgRelationshipOverlay extends BasePropertyOverlay implements
     }
 
     @Override
-    public AgRelationship resolve(AgRelationship maybeOverlaid, AgDataMap agDataMap) {
-        return maybeOverlaid != null ? resolveOverlaid(maybeOverlaid, agDataMap) : resolveNew(agDataMap);
+    public AgRelationship resolve(AgRelationship maybeOverlaid, AgSchema schema) {
+        return maybeOverlaid != null ? resolveOverlaid(maybeOverlaid, schema) : resolveNew(schema);
     }
 
-    private AgRelationship resolveOverlaid(AgRelationship overlaid, AgDataMap agDataMap) {
+    private AgRelationship resolveOverlaid(AgRelationship overlaid, AgSchema schema) {
         boolean toMany = this.toMany != null ? this.toMany : overlaid.isToMany();
         boolean readable = this.readable != null ? this.readable : overlaid.isReadable();
         boolean writable = this.writable != null ? this.writable : overlaid.isWritable();
 
         NestedDataResolver<?> resolver = this.resolver != null ? this.resolver : overlaid.getResolver();
         AgEntity<?> targetEntity = this.targetType != null
-                ? agDataMap.getEntity(this.targetType)
+                ? schema.getEntity(this.targetType)
                 : overlaid.getTargetEntity();
 
         return new DefaultAgRelationship(name, targetEntity, toMany, readable, writable, resolver);
     }
 
-    private AgRelationship resolveNew(AgDataMap agDataMap) {
+    private AgRelationship resolveNew(AgSchema schema) {
 
         // we can't use defaults from the overlaid relationship, so make sure we have all the required ones present,
         // and provide defaults where possible
 
         return new DefaultAgRelationship(name,
-                agDataMap.getEntity(requiredProperty("targetType", targetType)),
+                schema.getEntity(requiredProperty("targetType", targetType)),
                 requiredProperty("toMany", toMany),
 
                 // using the defaults from @AgRelationship annotation
