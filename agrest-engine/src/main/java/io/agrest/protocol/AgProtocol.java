@@ -8,18 +8,28 @@ package io.agrest.protocol;
 public enum AgProtocol {
 
     /**
-     * @deprecated since 4.1 in favor of {@link AgProtocol#exp}, but will be supported indefinitely for backwards
-     * compatibility.
+     * @deprecated in the protocol v.1.1 (Agrest 4.1) in favor of {@link AgProtocol#exp}. Will be supported indefinitely
+     * for backwards compatibility.
      */
     @Deprecated
     cayenneExp("A deprecated alias for 'exp' parameter. Expression used to filter a select result"),
 
-    dir("Sort direction. Can be one of 'ASC','ASC_CI', 'DESC', 'DESC_CI'. Used in conjunction with 'sort'."),
+    /**
+     * @deprecated in the protocol v.1.2 (Agrest 5.0) in favor of {@link AgProtocol#direction}. Will be supported
+     * indefinitely for backwards compatibility.
+     */
+    @Deprecated
+    dir("A deprecated alis for the 'direction' parameter. Sort direction. Can be one of 'ASC','ASC_CI', 'DESC', 'DESC_CI'. Used in conjunction with 'sort'."),
+
+    /**
+     * @since 5.0, protocol v1.2
+     */
+    direction("Sort direction. Can be one of 'ASC','ASC_CI', 'DESC', 'DESC_CI'. Used in conjunction with 'sort'."),
 
     exclude("Property path to exclude from response objects."),
 
     /**
-     * @since 4.1
+     * @since 4.1, protocol v1.1
      */
     exp("Expression used to filter a select result"),
 

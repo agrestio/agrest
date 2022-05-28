@@ -224,7 +224,7 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
         if (request.orderings.isEmpty()) {
             addOrdering(
                     ParameterExtractor.string(clientParams, AgProtocol.sort),
-                    ParameterExtractor.string(clientParams, AgProtocol.dir));
+                    directionFromParams(clientParams));
         }
 
         if (request.mapBy == null) {
@@ -253,7 +253,6 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
         String exp = ParameterExtractor.string(params, AgProtocol.exp);
         String cayenneExp = ParameterExtractor.string(params, AgProtocol.cayenneExp);
 
-        // keep supporting deprecated "cayenneExp" key
         // TODO: if we ever start supporting multiple "exp" keys, these two can be concatenated.
         //  For now "exp" overrides "cayenneExp"
         if (exp != null) {
@@ -261,9 +260,29 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
         }
 
         if (cayenneExp != null) {
-            LOGGER.info("*** 'cayenneExp' parameter is deprecated since Agrest 4.1. Consider replacing it with 'exp'");
+            LOGGER.info("*** 'cayenneExp' parameter is deprecated in protocol v1.1 (Agrest 4.1). Consider replacing it with 'exp'");
+            return cayenneExp;
         }
 
-        return cayenneExp;
+        return null;
+    }
+
+    private String directionFromParams(Map<String, List<String>> params) {
+
+        String direction = ParameterExtractor.string(clientParams, AgProtocol.direction);
+        String dir = ParameterExtractor.string(clientParams, AgProtocol.dir);
+
+        // TODO: if we ever start supporting multiple "exp" keys, these two can be concatenated.
+        //  For now "exp" overrides "cayenneExp"
+        if (direction != null) {
+            return direction;
+        }
+
+        if (dir != null) {
+            LOGGER.info("*** 'dir' parameter is deprecated in protocol v1.2 (Agrest 5.0). Consider replacing it with 'direction'");
+            return dir;
+        }
+
+        return null;
     }
 }
