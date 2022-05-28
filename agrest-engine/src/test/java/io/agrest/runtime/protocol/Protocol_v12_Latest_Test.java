@@ -44,7 +44,7 @@ public class Protocol_v12_Latest_Test {
     }
 
     @Test
-    public void testSort_SortPath() {
+    public void testSort_Path_ImpliedAsc() {
         ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .parseRequest()
@@ -52,16 +52,25 @@ public class Protocol_v12_Latest_Test {
     }
 
     @Test
-    public void testSort_SortPathAndDir() {
+    public void testSort_PathAndAsc() {
         ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
-                .param("direction", "DESC")
+                .param("direction", "asc")
                 .parseRequest()
-                .assertSort(new Sort("name", Direction.desc));
+                .assertSort(new Sort("name", Direction.asc));
     }
 
     @Test
-    public void testSort_SortPathAndDir_lc() {
+    public void testSort_PathAndAscCi() {
+        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+                .param("sort", "name")
+                .param("direction", "asc_ci")
+                .parseRequest()
+                .assertSort(new Sort("name", Direction.asc_ci));
+    }
+
+    @Test
+    public void testSort_PathAndDesc() {
         ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "desc")
@@ -70,9 +79,54 @@ public class Protocol_v12_Latest_Test {
     }
 
     @Test
+    public void testSort_PathAndDescCi() {
+        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+                .param("sort", "name")
+                .param("direction", "desc_ci")
+                .parseRequest()
+                .assertSort(new Sort("name", Direction.desc_ci));
+    }
+
+    @Test
+    public void testSort_PathAndAsc_UC() {
+        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+                .param("sort", "name")
+                .param("direction", "ASC")
+                .parseRequest()
+                .assertSort(new Sort("name", Direction.asc));
+    }
+
+    @Test
+    public void testSort_PathAndAscCi_UC() {
+        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+                .param("sort", "name")
+                .param("direction", "ASC_CI")
+                .parseRequest()
+                .assertSort(new Sort("name", Direction.asc_ci));
+    }
+
+    @Test
+    public void testSort_PathAndDesc_UC() {
+        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+                .param("sort", "name")
+                .param("direction", "DESC")
+                .parseRequest()
+                .assertSort(new Sort("name", Direction.desc));
+    }
+
+    @Test
+    public void testSort_PathAndDescCi_UC() {
+        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+                .param("sort", "name")
+                .param("direction", "DESC_CI")
+                .parseRequest()
+                .assertSort(new Sort("name", Direction.desc_ci));
+    }
+
+    @Test
     public void testSort_Object() {
         ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
-                .param("sort", "{\"path\":\"name\",\"direction\":\"ASC_CI\"}")
+                .param("sort", "{\"path\":\"name\",\"direction\":\"asc_ci\"}")
                 .parseRequest()
                 .assertSort(new Sort("name", Direction.asc_ci));
     }
@@ -84,7 +138,6 @@ public class Protocol_v12_Latest_Test {
                 .parseRequest()
                 .assertSort(new Sort("name", Direction.asc_ci), new Sort("dateOfBirth", Direction.desc_ci));
     }
-
 
     @Test
     public void testDefaultInclude() {

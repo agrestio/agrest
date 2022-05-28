@@ -23,9 +23,9 @@ public class SortParserTest {
     @Test
     public void testProcess_Array() {
 
-        List<Sort> orderings = parser.parse("[{\"property\":\"name\"}," +
-                "{\"property\":\"address\",\"direction\":\"ASC\"}," +
-                "{\"property\":\"city\",\"direction\":\"DESC_CI\"}]", null);
+        List<Sort> orderings = parser.parse("[{\"path\":\"name\"}," +
+                "{\"path\":\"address\",\"direction\":\"ASC\"}," +
+                "{\"path\":\"city\",\"direction\":\"DESC_CI\"}]", null);
 
         assertNotNull(orderings);
         assertEquals(3, orderings.size());
@@ -43,7 +43,7 @@ public class SortParserTest {
     @Test
     public void testProcess_Object() {
 
-        List<Sort> orderings = parser.parse("{\"property\":\"name\"}", null);
+        List<Sort> orderings = parser.parse("{\"path\":\"name\"}", null);
 
         assertEquals(1, orderings.size());
         assertEquals("name", orderings.get(0).getProperty());

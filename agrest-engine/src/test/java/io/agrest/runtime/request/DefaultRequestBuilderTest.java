@@ -150,7 +150,7 @@ public class DefaultRequestBuilderTest {
 
         Map<String, List<String>> params = Map.of(
                 "sort", List.of("rtss"),
-                "dir", List.of("ASC"));
+                "direction", List.of("ASC"));
 
         AgRequest request = builder.mergeClientParams(params).build();
 
@@ -166,7 +166,7 @@ public class DefaultRequestBuilderTest {
 
         Map<String, List<String>> params = Map.of(
                 "sort", List.of("rtss"),
-                "dir", List.of("DESC"));
+                "direction", List.of("DESC"));
 
         AgRequest request = builder.mergeClientParams(params).build();
 
@@ -182,7 +182,7 @@ public class DefaultRequestBuilderTest {
 
         Map<String, List<String>> params = Map.of(
                 "sort", List.of("xx"),
-                "dir", List.of("XYZ"));
+                "direction", List.of("XYZ"));
 
         assertThrows(AgException.class, () -> builder.mergeClientParams(params).build());
     }
@@ -191,7 +191,7 @@ public class DefaultRequestBuilderTest {
     public void testBuild_Sort() {
 
         Map<String, List<String>> params = Map.of(
-                "sort", List.of("[{\"property\":\"a\",\"direction\":\"DESC\"},{\"property\":\"b\",\"direction\":\"ASC\"}]"));
+                "sort", List.of("[{\"path\":\"a\",\"direction\":\"DESC\"},{\"path\":\"b\",\"direction\":\"ASC\"}]"));
 
         AgRequest request = builder.mergeClientParams(params).build();
 
@@ -211,7 +211,7 @@ public class DefaultRequestBuilderTest {
     public void testBuild_Sort_Dupes() {
 
         Map<String, List<String>> params = Map.of(
-                "sort", List.of("[{\"property\":\"a\",\"direction\":\"DESC\"},{\"property\":\"a\",\"direction\":\"ASC\"}]"));
+                "sort", List.of("[{\"path\":\"a\",\"direction\":\"DESC\"},{\"path\":\"a\",\"direction\":\"ASC\"}]"));
 
         AgRequest request = builder.mergeClientParams(params).build();
 
@@ -229,7 +229,7 @@ public class DefaultRequestBuilderTest {
 
     @Test
     public void testBuild_Sort_BadSpec() {
-        Map<String, List<String>> params = Map.of("sort", List.of("[{\"property\":\"p1\",\"direction\":\"DESC\"},{\"property\":\"p2\",\"direction\":\"XXX\"}]"));
+        Map<String, List<String>> params = Map.of("sort", List.of("[{\"path\":\"p1\",\"direction\":\"DESC\"},{\"path\":\"p2\",\"direction\":\"XXX\"}]"));
         assertThrows(AgException.class, () -> builder.mergeClientParams(params).build());
     }
 
