@@ -24,7 +24,7 @@ import java.util.Objects;
 import static java.util.Arrays.asList;
 
 /**
- * Provides OpenAPI Schema conversions for Agrest protocol objects. The object is stateless singelton
+ * Provides OpenAPI Schema conversions for Agrest protocol objects. The object is stateless singleton.
  */
 public class AgProtocolModelConverter extends AgModelConverter {
 
