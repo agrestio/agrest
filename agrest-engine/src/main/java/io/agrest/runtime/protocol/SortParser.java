@@ -8,6 +8,8 @@ import io.agrest.protocol.Sort;
 import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.jackson.IJacksonService;
 import org.apache.cayenne.di.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,7 +17,19 @@ import java.util.List;
 
 public class SortParser implements ISortParser {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SortParser.class);
+
+    /**
+     * @since protocol v1.2, Agrest 5.0
+     */
+    private static final String JSON_KEY_PATH = "path";
+
+    /**
+     * @deprecated since protocol v1.2, Agrest 5.0
+     */
+    @Deprecated
     private static final String JSON_KEY_PROPERTY = "property";
+
     private static final String JSON_KEY_DIRECTION = "direction";
 
     private IJacksonService jsonParser;
@@ -82,15 +96,15 @@ public class SortParser implements ISortParser {
 
     private void appendFromObject(List<Sort> orderings, JsonNode node) {
 
-        JsonNode propertyNode = node.get(JSON_KEY_PROPERTY);
-        if (propertyNode == null || !propertyNode.isTextual()) {
+        JsonNode pathNode = pathNode(node);
+        if (pathNode == null || !pathNode.isTextual()) {
             throw AgException.badRequest("Bad sort spec: %s", node);
         }
 
         JsonNode directionNode = node.get(JSON_KEY_DIRECTION);
         appendPath(
                 orderings,
-                propertyNode.asText(),
+                pathNode.asText(),
                 directionNode != null ? directionNode.asText() : null);
     }
 
@@ -111,5 +125,23 @@ public class SortParser implements ISortParser {
                 ? parseDirection(unparsedDirection)
                 : Direction.asc;
         orderings.add(new Sort(path, direction));
+    }
+
+    private JsonNode pathNode(JsonNode sortNode) {
+        JsonNode pathNode = sortNode.get(JSON_KEY_PATH);
+        if (pathNode != null) {
+            return pathNode;
+        }
+
+        JsonNode propertyNode = sortNode.get(JSON_KEY_PROPERTY);
+        if (propertyNode != null) {
+            LOGGER.info(
+                    "*** '{}' property of the sort object is deprecated in protocol v1.2 (Agrest 5.0). Consider replacing it with '{}'",
+                    JSON_KEY_PROPERTY,
+                    JSON_KEY_PATH);
+            return propertyNode;
+        }
+
+        return null;
     }
 }
