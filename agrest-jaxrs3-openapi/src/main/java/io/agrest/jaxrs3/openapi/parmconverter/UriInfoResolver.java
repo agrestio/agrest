@@ -83,7 +83,7 @@ public class UriInfoResolver {
                 .addEnumItem(Direction.desc.name())
                 .addEnumItem(Direction.desc_ci.name());
 
-        return queryParam(AgProtocol.dir).schema(dirSchema);
+        return queryParam(AgProtocol.dir).schema(dirSchema).deprecated(true);
     }
 
     protected Parameter createExpParam() {

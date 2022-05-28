@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,13 +35,9 @@ public class ParamsTest {
         PathItem pi = oapi.getPaths().get("/r/uri-info");
         Operation get = pi.getGet();
 
-        assertEquals(9, get.getParameters().size());
-        Map<String, Parameter> paramsMap = new HashMap<>();
-        get.getParameters().forEach(p -> paramsMap.put(p.getName(), p));
-
         assertEquals(
-                new HashSet<>(asList("cayenneExp", "dir", "exclude", "exp", "include", "limit", "mapBy", "sort", "start")),
-                paramsMap.keySet());
+                "cayenneExp,dir,direction,exclude,exp,include,limit,mapBy,sort,start",
+                get.getParameters().stream().map(Parameter::getName).sorted().collect(Collectors.joining(",")));
 
         // TODO assert the actual parameters
     }
@@ -66,14 +63,9 @@ public class ParamsTest {
         PathItem pi = oapi.getPaths().get("/r/mixed-params");
         Operation get = pi.getGet();
 
-        assertEquals(10, get.getParameters().size());
-        Map<String, Parameter> paramsMap = new HashMap<>();
-        get.getParameters().forEach(p -> paramsMap.put(p.getName(), p));
-
-        // TODO: Agrest should define the names enum publicly somewhere
         assertEquals(
-                new HashSet<>(asList("x", "cayenneExp", "dir", "exclude", "exp", "include", "limit", "mapBy", "sort", "start")),
-                paramsMap.keySet());
+                "cayenneExp,dir,direction,exclude,exp,include,limit,mapBy,sort,start,x",
+                get.getParameters().stream().map(Parameter::getName).sorted().collect(Collectors.joining(",")));
 
         // TODO assert the actual parameters
     }
