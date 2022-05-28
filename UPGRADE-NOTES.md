@@ -1,7 +1,7 @@
 _This document contains upgrade notes for Agrest 5.x and newer. Older versions are documented in 
 [UPGRADE-NOTES-1-4](./UPGRADE-NOTES-1-to-4.md)._
 
-## Upgrading to 5.0
+## Upgrading to 5.0.M1
 
 5.0 is a major release with a number of breaking changes. Still the upgrade should be fairly straightforward in most
 situations. Check below for individual changes that may require user attention.

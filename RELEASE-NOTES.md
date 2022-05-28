@@ -1,4 +1,4 @@
-## Release 5.0
+## Release 5.0.M1
 
 * #515 Switch to Java 11
 * #516 Upgrade jackson to 2.13.1 
