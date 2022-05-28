@@ -55,7 +55,7 @@ from Java.
 TODO: we might add a utility for DataResponse deserialization in the Agrest core. Nothing like that is 
 available yet. 
 
-### Metadata API is removed [#541](https://github.com/agrestio/agrest/issues/541)
+### Endpoint metadata API is removed [#541](https://github.com/agrestio/agrest/issues/541)
 Agrest no longer includes an API for describing Agrest endpoints metadata (`Ag.metadata(..)`). Instead, it provides 
 integration with OpenAPI / Swagger via `agrest-jaxrs2-openapi` and `agrest-jaxrs3-openapi`. Unfortunately, the two 
 ways to document endpoints (the old Agrest metadata responses vs OpenAPI) are not directly compatible. Though we feel
@@ -106,3 +106,7 @@ corresponds to `UriInfo.getQueryParameters()`.
 ### SelectStage.PARSE_REQUEST is gone [#537](https://github.com/agrestio/agrest/issues/537)
 `SelectStage.PARSE_REQUEST` is no longer needed, as protocol parameter parsing happens outside a stage, right in
 the context. If you had stage callbacks referencing this stage, you may instead reference `SelectStage.START`.
+
+### AgDataMap is renamed to AgSchema [#562](https://github.com/agrestio/agrest/issues/562)
+Injectable `AgDataMap` is renamed to `AgSchema`. If you accessed this object directly (which is not typical to do in 
+most apps), make sure you change the name in your code.
