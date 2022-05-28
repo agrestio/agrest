@@ -139,24 +139,7 @@ public class GET_IT extends DbTest {
                 .wasBadRequest()
                 .bodyEquals("{\"message\":\"Invalid path 'xyz' for 'E4'\"}");
     }
-
-    @Test
-    // this is a hack for Sencha bug, passing us null sorters per LF-189...
-    // allowing for lax property name checking as a result
-    public void testSort_Null() {
-
-        tester.e4().insertColumns("id")
-                .values(2)
-                .values(1)
-                .values(3).exec();
-
-        tester.target("/e4")
-                .queryParam("sort", "[{\"property\":null,\"direction\":\"DESC\"}]")
-                .queryParam("include", "id")
-                .get().wasOk()
-                .totalEquals(3);
-    }
-
+    
     @Test
     public void testById() {
 
