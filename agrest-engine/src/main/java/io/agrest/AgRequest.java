@@ -20,7 +20,18 @@ public interface AgRequest {
 
     Exp getExp();
 
-    List<Sort> getOrderings();
+    /**
+     * @since 5.0
+     */
+    List<Sort> getSorts();
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #getSorts()}
+     */
+    @Deprecated
+    default List<Sort> getOrderings() {
+        return getSorts();
+    }
 
     String getMapBy();
 

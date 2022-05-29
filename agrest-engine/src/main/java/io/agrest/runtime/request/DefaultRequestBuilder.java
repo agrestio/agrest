@@ -79,33 +79,33 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
     }
 
     @Override
-    public AgRequestBuilder addOrdering(String unparsedOrdering) {
-        if (unparsedOrdering != null && unparsedOrdering.length() > 0) {
-            request.orderings.addAll(sortParser.parse(unparsedOrdering, null));
+    public AgRequestBuilder addSort(String unparsedSort) {
+        if (unparsedSort != null && unparsedSort.length() > 0) {
+            request.sorts.addAll(sortParser.parse(unparsedSort, null));
         }
         return this;
     }
 
     @Override
-    public AgRequestBuilder addOrdering(String unparsedOrdering, String unparsedDir) {
-        if (unparsedOrdering != null && unparsedOrdering.length() > 0) {
-            request.orderings.addAll(sortParser.parse(unparsedOrdering, unparsedDir));
+    public AgRequestBuilder addSort(String unparsedSort, String unparsedDirection) {
+        if (unparsedSort != null && unparsedSort.length() > 0) {
+            request.sorts.addAll(sortParser.parse(unparsedSort, unparsedDirection));
         }
         return this;
     }
 
     @Override
-    public AgRequestBuilder addOrdering(Sort ordering) {
-        if (ordering != null) {
-            request.orderings.add(ordering);
+    public AgRequestBuilder addSort(Sort sort) {
+        if (sort != null) {
+            request.sorts.add(sort);
         }
         return this;
     }
 
     @Override
-    public AgRequestBuilder addOrdering(int index, Sort ordering) {
-        if (ordering != null) {
-            request.orderings.add(index, ordering);
+    public AgRequestBuilder addSort(int index, Sort sort) {
+        if (sort != null) {
+            request.sorts.add(index, sort);
         }
         return this;
     }
@@ -197,8 +197,8 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
 
         request.exp = anotherRequest.getExp();
 
-        request.orderings.clear();
-        request.orderings.addAll(anotherRequest.getOrderings());
+        request.sorts.clear();
+        request.sorts.addAll(anotherRequest.getSorts());
 
         request.mapBy = anotherRequest.getMapBy();
 
@@ -221,8 +221,8 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
             andExp(expFromParams(clientParams));
         }
 
-        if (request.orderings.isEmpty()) {
-            addOrdering(
+        if (request.sorts.isEmpty()) {
+            addSort(
                     ParameterExtractor.string(clientParams, ControlParams.sort),
                     directionFromParams(clientParams));
         }

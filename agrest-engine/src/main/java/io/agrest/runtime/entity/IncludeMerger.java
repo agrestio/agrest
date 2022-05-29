@@ -76,7 +76,7 @@ public class IncludeMerger implements IIncludeMerger {
         ResourceEntity<?> includeEntity = (path == null || path.isEmpty()) ? entity : treeBuilder.inflatePath(path);
 
         mapByMerger.merge(includeEntity, include.getMapBy(), overlays);
-        sortMerger.merge(includeEntity, include.getOrderings());
+        sortMerger.merge(includeEntity, include.getSorts());
         expMerger.merge(includeEntity, include.getExp());
         sizeMerger.merge(includeEntity, include.getStart(), include.getLimit());
     }

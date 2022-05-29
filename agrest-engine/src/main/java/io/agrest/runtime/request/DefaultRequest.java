@@ -14,18 +14,20 @@ import java.util.List;
  */
 public class DefaultRequest implements AgRequest {
 
+    protected final List<Include> includes;
+    protected final List<Exclude> excludes;
+    protected final List<Sort> sorts;
+
     protected Exp exp;
-    protected List<Sort> orderings;
     protected String mapBy;
     protected Integer start;
     protected Integer limit;
-    protected List<Include> includes;
-    protected List<Exclude> excludes;
+
 
     protected DefaultRequest() {
         this.includes = new ArrayList<>();
         this.excludes = new ArrayList<>();
-        this.orderings = new ArrayList<>();
+        this.sorts = new ArrayList<>();
     }
 
     @Override
@@ -44,8 +46,8 @@ public class DefaultRequest implements AgRequest {
     }
 
     @Override
-    public List<Sort> getOrderings() {
-        return orderings;
+    public List<Sort> getSorts() {
+        return sorts;
     }
 
     @Override

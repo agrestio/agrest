@@ -27,13 +27,58 @@ public interface AgRequestBuilder {
 
     AgRequestBuilder addExclude(String unparsedExclude);
 
-    AgRequestBuilder addOrdering(String unparsedOrdering);
+    /**
+     * @since 5.0
+     */
+    AgRequestBuilder addSort(String unparsedSort);
 
-    AgRequestBuilder addOrdering(String unparsedOrdering, String unparsedDir);
 
-    AgRequestBuilder addOrdering(Sort ordering);
+    /**
+     * @deprecated since 5.0 in favor of {@link #addSort(String)}
+     */
+    @Deprecated
+    default AgRequestBuilder addOrdering(String unparsedSort) {
+        return addSort(unparsedSort);
+    }
 
-    AgRequestBuilder addOrdering(int index, Sort ordering);
+    /**
+     * @since 5.0
+     */
+    AgRequestBuilder addSort(String unparsedSort, String unparsedDirection);
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #addSort(String, String)}
+     */
+    @Deprecated
+    default AgRequestBuilder addOrdering(String unparsedSort, String unparsedDirection) {
+        return addSort(unparsedSort, unparsedDirection);
+    }
+
+    /**
+     * @since 5.0
+     */
+    AgRequestBuilder addSort(Sort sort);
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #addSort(Sort)}
+     */
+    @Deprecated
+    default AgRequestBuilder addOrdering(Sort sort) {
+        return addSort(sort);
+    }
+
+    /**
+     * @since 5.0
+     */
+    AgRequestBuilder addSort(int index, Sort sort);
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #addSort(int, Sort)}
+     */
+    @Deprecated
+    default AgRequestBuilder addOrdering(int index, Sort sort) {
+        return addSort(index, sort);
+    }
 
     /**
      * @since 4.4

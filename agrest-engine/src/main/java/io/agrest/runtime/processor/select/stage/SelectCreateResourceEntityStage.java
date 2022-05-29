@@ -66,7 +66,7 @@ public class SelectCreateResourceEntityStage implements Processor<SelectContext<
         sizeMerger.merge(resourceEntity, request.getStart(), request.getLimit());
         includeMerger.merge(resourceEntity, request.getIncludes(), context.getEntityOverlays());
         excludeMerger.merge(resourceEntity, request.getExcludes());
-        sortMerger.merge(resourceEntity, request.getOrderings());
+        sortMerger.merge(resourceEntity, request.getSorts());
         mapByMerger.merge(resourceEntity, request.getMapBy(), context.getEntityOverlays());
         expMerger.merge(resourceEntity, request.getExp());
 

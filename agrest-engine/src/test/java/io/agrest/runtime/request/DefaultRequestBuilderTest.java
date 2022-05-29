@@ -51,7 +51,7 @@ public class DefaultRequestBuilderTest {
 
         assertNotNull(request);
         assertNull(request.getExp());
-        assertTrue(request.getOrderings().isEmpty());
+        assertTrue(request.getSorts().isEmpty());
         assertNull(request.getMapBy());
         assertNull(request.getLimit());
         assertNull(request.getStart());
@@ -140,8 +140,8 @@ public class DefaultRequestBuilderTest {
         Map<String, List<String>> params = Map.of("sort", List.of("rtss"));
         AgRequest request = builder.mergeClientParams(params).build();
 
-        assertNotNull(request.getOrderings());
-        Sort ordering = request.getOrderings().get(0);
+        assertNotNull(request.getSorts());
+        Sort ordering = request.getSorts().get(0);
         assertEquals("rtss", ordering.getPath());
     }
 
@@ -154,9 +154,9 @@ public class DefaultRequestBuilderTest {
 
         AgRequest request = builder.mergeClientParams(params).build();
 
-        assertNotNull(request.getOrderings());
-        assertEquals(1, request.getOrderings().size());
-        Sort ordering = request.getOrderings().get(0);
+        assertNotNull(request.getSorts());
+        assertEquals(1, request.getSorts().size());
+        Sort ordering = request.getSorts().get(0);
         assertEquals("rtss", ordering.getPath());
         assertEquals(Direction.asc, ordering.getDirection());
     }
@@ -170,9 +170,9 @@ public class DefaultRequestBuilderTest {
 
         AgRequest request = builder.mergeClientParams(params).build();
 
-        assertNotNull(request.getOrderings());
+        assertNotNull(request.getSorts());
 
-        Sort ordering = request.getOrderings().get(0);
+        Sort ordering = request.getSorts().get(0);
         assertEquals("rtss", ordering.getPath());
         assertEquals(Direction.desc, ordering.getDirection());
     }
@@ -195,11 +195,11 @@ public class DefaultRequestBuilderTest {
 
         AgRequest request = builder.mergeClientParams(params).build();
 
-        assertNotNull(request.getOrderings());
-        assertEquals(2, request.getOrderings().size());
+        assertNotNull(request.getSorts());
+        assertEquals(2, request.getSorts().size());
 
-        Sort o1 = request.getOrderings().get(0);
-        Sort o2 = request.getOrderings().get(1);
+        Sort o1 = request.getSorts().get(0);
+        Sort o2 = request.getSorts().get(1);
 
         assertEquals("a", o1.getPath());
         assertEquals(Direction.desc, o1.getDirection());
@@ -215,11 +215,11 @@ public class DefaultRequestBuilderTest {
 
         AgRequest request = builder.mergeClientParams(params).build();
 
-        assertNotNull(request.getOrderings());
-        assertEquals(2, request.getOrderings().size());
+        assertNotNull(request.getSorts());
+        assertEquals(2, request.getSorts().size());
 
-        Sort o1 = request.getOrderings().get(0);
-        Sort o2 = request.getOrderings().get(1);
+        Sort o1 = request.getSorts().get(0);
+        Sort o2 = request.getSorts().get(1);
 
         assertEquals("a", o1.getPath());
         assertEquals(Direction.desc, o1.getDirection());

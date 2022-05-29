@@ -161,7 +161,7 @@ public class GET_AgRequestIT extends DbTest {
         @Path("e4_sort")
         public DataResponse<E4> getE4_sort(@Context UriInfo uriInfo) {
 
-            AgRequest agRequest = AgJaxrs.request(config).addOrdering(new Sort("id")).build();
+            AgRequest agRequest = AgJaxrs.request(config).addSort(new Sort("id")).build();
 
             return AgJaxrs.select(E4.class, config)
                     .clientParams(uriInfo.getQueryParameters())

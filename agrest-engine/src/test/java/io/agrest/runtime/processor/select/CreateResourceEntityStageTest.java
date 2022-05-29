@@ -346,7 +346,7 @@ public class CreateResourceEntityStageTest {
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
-                .addOrdering(new Sort("n")).build());
+                .addSort(new Sort("n")).build());
 
         stage.execute(context);
 
@@ -365,7 +365,7 @@ public class CreateResourceEntityStageTest {
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
-                .addOrdering(new Sort("n", Direction.asc))
+                .addSort(new Sort("n", Direction.asc))
                 .build());
 
         stage.execute(context);
@@ -385,7 +385,7 @@ public class CreateResourceEntityStageTest {
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
-                .addOrdering(new Sort("n", Direction.desc))
+                .addSort(new Sort("n", Direction.desc))
                 .build());
 
         stage.execute(context);
@@ -405,8 +405,8 @@ public class CreateResourceEntityStageTest {
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
-                .addOrdering(new Sort("m", Direction.desc))
-                .addOrdering(new Sort("n", Direction.asc)).build());
+                .addSort(new Sort("m", Direction.desc))
+                .addSort(new Sort("n", Direction.asc)).build());
 
         stage.execute(context);
 

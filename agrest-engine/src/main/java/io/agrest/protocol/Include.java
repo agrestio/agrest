@@ -12,7 +12,7 @@ import java.util.Objects;
 public class Include {
 
     private final Exp exp;
-    private final List<Sort> orderings;
+    private final List<Sort> sorts;
     private final String mapBy;
     private final String path;
     private final Integer start;
@@ -25,14 +25,14 @@ public class Include {
     public Include(
             String path,
             Exp exp,
-            List<Sort> orderings,
+            List<Sort> sorts,
             String mapBy,
             Integer start,
             Integer limit) {
 
         this.path = Objects.requireNonNull(path);
         this.exp = exp;
-        this.orderings = Objects.requireNonNull(orderings);
+        this.sorts = Objects.requireNonNull(sorts);
         this.mapBy = mapBy;
         this.start = start;
         this.limit = limit;
@@ -58,8 +58,16 @@ public class Include {
         return exp;
     }
 
+    public List<Sort> getSorts() {
+        return sorts;
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #getSorts()}
+     */
+    @Deprecated
     public List<Sort> getOrderings() {
-        return orderings;
+        return getSorts();
     }
 
     @Override
