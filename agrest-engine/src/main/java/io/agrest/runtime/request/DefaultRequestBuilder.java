@@ -2,7 +2,7 @@ package io.agrest.runtime.request;
 
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
-import io.agrest.protocol.AgProtocol;
+import io.agrest.protocol.ControlParams;
 import io.agrest.protocol.Exclude;
 import io.agrest.protocol.Exp;
 import io.agrest.protocol.Include;
@@ -223,35 +223,35 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
 
         if (request.orderings.isEmpty()) {
             addOrdering(
-                    ParameterExtractor.string(clientParams, AgProtocol.sort),
+                    ParameterExtractor.string(clientParams, ControlParams.sort),
                     directionFromParams(clientParams));
         }
 
         if (request.mapBy == null) {
-            mapBy(ParameterExtractor.string(clientParams, AgProtocol.mapBy));
+            mapBy(ParameterExtractor.string(clientParams, ControlParams.mapBy));
         }
 
         if (request.includes.isEmpty()) {
-            addIncludes(ParameterExtractor.strings(clientParams, AgProtocol.include));
+            addIncludes(ParameterExtractor.strings(clientParams, ControlParams.include));
         }
 
         if (request.excludes.isEmpty()) {
-            addExcludes(ParameterExtractor.strings(clientParams, AgProtocol.exclude));
+            addExcludes(ParameterExtractor.strings(clientParams, ControlParams.exclude));
         }
 
         if (request.start == null) {
-            start(ParameterExtractor.integerObject(clientParams, AgProtocol.start));
+            start(ParameterExtractor.integerObject(clientParams, ControlParams.start));
         }
 
         if (request.limit == null) {
-            limit(ParameterExtractor.integerObject(clientParams, AgProtocol.limit));
+            limit(ParameterExtractor.integerObject(clientParams, ControlParams.limit));
         }
 
     }
 
     private String expFromParams(Map<String, List<String>> params) {
-        String exp = ParameterExtractor.string(params, AgProtocol.exp);
-        String cayenneExp = ParameterExtractor.string(params, AgProtocol.cayenneExp);
+        String exp = ParameterExtractor.string(params, ControlParams.exp);
+        String cayenneExp = ParameterExtractor.string(params, ControlParams.cayenneExp);
 
         // TODO: if we ever start supporting multiple "exp" keys, these two can be concatenated.
         //  For now "exp" overrides "cayenneExp"
@@ -260,7 +260,7 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
         }
 
         if (cayenneExp != null) {
-            LOGGER.info("*** 'cayenneExp' parameter is deprecated in protocol v1.1 (Agrest 4.1). Consider replacing it with 'exp'");
+            LOGGER.info("*** 'cayenneExp' control parameter is deprecated in protocol v1.1 (Agrest 4.1). Consider replacing it with 'exp'");
             return cayenneExp;
         }
 
@@ -269,8 +269,8 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
 
     private String directionFromParams(Map<String, List<String>> params) {
 
-        String direction = ParameterExtractor.string(clientParams, AgProtocol.direction);
-        String dir = ParameterExtractor.string(clientParams, AgProtocol.dir);
+        String direction = ParameterExtractor.string(clientParams, ControlParams.direction);
+        String dir = ParameterExtractor.string(clientParams, ControlParams.dir);
 
         // TODO: if we ever start supporting multiple "exp" keys, these two can be concatenated.
         //  For now "exp" overrides "cayenneExp"
@@ -279,7 +279,7 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
         }
 
         if (dir != null) {
-            LOGGER.info("*** 'dir' parameter is deprecated in protocol v1.2 (Agrest 5.0). Consider replacing it with 'direction'");
+            LOGGER.info("*** 'dir' control parameter is deprecated in protocol v1.2 (Agrest 5.0). Consider replacing it with 'direction'");
             return dir;
         }
 

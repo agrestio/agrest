@@ -1,4 +1,4 @@
-package io.agrest.protocol.exp;
+package io.agrest.exp;
 
 import io.agrest.protocol.Exp;
 
@@ -39,6 +39,6 @@ public class SimpleExp implements Exp {
 
     @Override
     public String toString() {
-        return template;
+        return "exp " + template;
     }
 }

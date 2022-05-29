@@ -4,7 +4,7 @@ import io.agrest.AgException;
 import io.agrest.AgRequest;
 import io.agrest.protocol.Direction;
 import io.agrest.protocol.Sort;
-import io.agrest.protocol.exp.SimpleExp;
+import io.agrest.exp.SimpleExp;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.runtime.protocol.ExcludeParser;
@@ -142,7 +142,7 @@ public class DefaultRequestBuilderTest {
 
         assertNotNull(request.getOrderings());
         Sort ordering = request.getOrderings().get(0);
-        assertEquals("rtss", ordering.getProperty());
+        assertEquals("rtss", ordering.getPath());
     }
 
     @Test
@@ -157,7 +157,7 @@ public class DefaultRequestBuilderTest {
         assertNotNull(request.getOrderings());
         assertEquals(1, request.getOrderings().size());
         Sort ordering = request.getOrderings().get(0);
-        assertEquals("rtss", ordering.getProperty());
+        assertEquals("rtss", ordering.getPath());
         assertEquals(Direction.asc, ordering.getDirection());
     }
 
@@ -173,7 +173,7 @@ public class DefaultRequestBuilderTest {
         assertNotNull(request.getOrderings());
 
         Sort ordering = request.getOrderings().get(0);
-        assertEquals("rtss", ordering.getProperty());
+        assertEquals("rtss", ordering.getPath());
         assertEquals(Direction.desc, ordering.getDirection());
     }
 
@@ -201,9 +201,9 @@ public class DefaultRequestBuilderTest {
         Sort o1 = request.getOrderings().get(0);
         Sort o2 = request.getOrderings().get(1);
 
-        assertEquals("a", o1.getProperty());
+        assertEquals("a", o1.getPath());
         assertEquals(Direction.desc, o1.getDirection());
-        assertEquals("b", o2.getProperty());
+        assertEquals("b", o2.getPath());
         assertEquals(Direction.asc, o2.getDirection());
     }
 
@@ -221,9 +221,9 @@ public class DefaultRequestBuilderTest {
         Sort o1 = request.getOrderings().get(0);
         Sort o2 = request.getOrderings().get(1);
 
-        assertEquals("a", o1.getProperty());
+        assertEquals("a", o1.getPath());
         assertEquals(Direction.desc, o1.getDirection());
-        assertEquals("a", o2.getProperty());
+        assertEquals("a", o2.getPath());
         assertEquals(Direction.asc, o2.getDirection());
     }
 

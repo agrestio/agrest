@@ -1,21 +1,21 @@
 package io.agrest.protocol;
 
 /**
- * Defines Agrest protocol query parameter names.
+ * Defines control parameters from the Agrest Protocol.
  *
  * @since 4.1
  */
-public enum AgProtocol {
+public enum ControlParams {
 
     /**
-     * @deprecated in the protocol v.1.1 (Agrest 4.1) in favor of {@link AgProtocol#exp}. Will be supported indefinitely
+     * @deprecated in the protocol v.1.1 (Agrest 4.1) in favor of {@link ControlParams#exp}. Will be supported indefinitely
      * for backwards compatibility.
      */
     @Deprecated
     cayenneExp("A deprecated alias for 'exp' parameter. Expression used to filter a select result"),
 
     /**
-     * @deprecated in the protocol v.1.2 (Agrest 5.0) in favor of {@link AgProtocol#direction}. Will be supported
+     * @deprecated in the protocol v.1.2 (Agrest 5.0) in favor of {@link ControlParams#direction}. Will be supported
      * indefinitely for backwards compatibility.
      */
     @Deprecated
@@ -45,7 +45,7 @@ public enum AgProtocol {
 
     public final String description;
 
-    AgProtocol(String description) {
+    ControlParams(String description) {
         this.description = description;
     }
 }

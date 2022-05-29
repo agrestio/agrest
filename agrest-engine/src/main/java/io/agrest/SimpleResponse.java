@@ -1,9 +1,11 @@
 package io.agrest;
 
+import io.agrest.protocol.MessageResponse;
+
 /**
  * A response object that represents a 'Simple Document' from Agrest protocol .
  */
-public class SimpleResponse extends AgResponse {
+public class SimpleResponse extends AgResponse implements MessageResponse {
 
 	protected final String message;
 
@@ -26,8 +28,8 @@ public class SimpleResponse extends AgResponse {
 		this.message = message;
 	}
 
+	@Override
 	public String getMessage() {
 		return message;
 	}
-
 }

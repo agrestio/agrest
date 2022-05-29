@@ -278,7 +278,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
     protected Ordering toOrdering(ResourceEntity<?> entity, Sort sort) {
         return new Ordering(
-                pathResolver.resolve(entity.getAgEntity(), sort.getProperty()).getPathExp(),
+                pathResolver.resolve(entity.getAgEntity(), sort.getPath()).getPathExp(),
                 toSortOrder(sort.getDirection()));
     }
 

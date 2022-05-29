@@ -1,4 +1,4 @@
-package io.agrest.protocol.exp;
+package io.agrest.exp;
 
 import java.util.Arrays;
 import java.util.Objects;

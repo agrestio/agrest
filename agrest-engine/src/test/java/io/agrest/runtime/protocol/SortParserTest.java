@@ -30,13 +30,13 @@ public class SortParserTest {
         assertNotNull(orderings);
         assertEquals(3, orderings.size());
 
-        assertEquals("name", orderings.get(0).getProperty());
+        assertEquals("name", orderings.get(0).getPath());
         assertEquals(Direction.asc, orderings.get(0).getDirection());
 
-        assertEquals("address", orderings.get(1).getProperty());
+        assertEquals("address", orderings.get(1).getPath());
         assertEquals(Direction.asc, orderings.get(1).getDirection());
 
-        assertEquals("city", orderings.get(2).getProperty());
+        assertEquals("city", orderings.get(2).getPath());
         assertEquals(Direction.desc_ci, orderings.get(2).getDirection());
     }
 
@@ -46,7 +46,7 @@ public class SortParserTest {
         List<Sort> orderings = parser.parse("{\"path\":\"name\"}", null);
 
         assertEquals(1, orderings.size());
-        assertEquals("name", orderings.get(0).getProperty());
+        assertEquals("name", orderings.get(0).getPath());
         assertEquals(Direction.asc, orderings.get(0).getDirection());
     }
 
@@ -56,7 +56,7 @@ public class SortParserTest {
         List<Sort> orderings = parser.parse("name", null);
 
         assertEquals(1, orderings.size());
-        assertEquals("name", orderings.get(0).getProperty());
+        assertEquals("name", orderings.get(0).getPath());
         assertEquals(Direction.asc, orderings.get(0).getDirection());
     }
 
@@ -66,7 +66,7 @@ public class SortParserTest {
         List<Sort> orderings = parser.parse("name", "ASC");
 
         assertEquals(1, orderings.size());
-        assertEquals("name", orderings.get(0).getProperty());
+        assertEquals("name", orderings.get(0).getPath());
         assertEquals(Direction.asc, orderings.get(0).getDirection());
     }
 
@@ -76,7 +76,7 @@ public class SortParserTest {
         List<Sort> orderings = parser.parse("name", "DESC");
 
         assertEquals(1, orderings.size());
-        assertEquals("name", orderings.get(0).getProperty());
+        assertEquals("name", orderings.get(0).getPath());
         assertEquals(Direction.desc, orderings.get(0).getDirection());
     }
 
@@ -86,7 +86,7 @@ public class SortParserTest {
         List<Sort> orderings = parser.parse("name", "ASC_CI");
 
         assertEquals(1, orderings.size());
-        assertEquals("name", orderings.get(0).getProperty());
+        assertEquals("name", orderings.get(0).getPath());
         assertEquals(Direction.asc_ci, orderings.get(0).getDirection());
     }
 
@@ -96,7 +96,7 @@ public class SortParserTest {
         List<Sort> orderings = parser.parse("name", "DESC_CI");
 
         assertEquals(1, orderings.size());
-        assertEquals("name", orderings.get(0).getProperty());
+        assertEquals("name", orderings.get(0).getPath());
         assertEquals(Direction.desc_ci, orderings.get(0).getDirection());
     }
 }

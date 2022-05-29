@@ -9,6 +9,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
+import io.agrest.protocol.ControlParams;
 import io.agrest.runtime.processor.update.UpdateContext;
 
 import java.util.Collection;
@@ -69,7 +70,7 @@ public interface UpdateBuilder<T> {
 
     /**
      * Sets client parameters for this request. Agrest would recognize the keys in the "params" that match the
-     * "Agrest Protocol" as defined in {@link io.agrest.protocol.AgProtocol} enum.
+     * "Agrest Protocol" as defined in {@link ControlParams} enum.
      *
      * @since 5.0
      */

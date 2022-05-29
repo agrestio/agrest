@@ -55,14 +55,14 @@ public class PojoFetchStage implements Processor<SelectContext<?>> {
     private <T> Comparator<T> toComparator(AgEntity<T> entity, Sort s) {
 
         Function<T, ? extends Comparable> keyReader;
-        AgAttribute attribute = entity.getAttribute(s.getProperty());
+        AgAttribute attribute = entity.getAttribute(s.getPath());
         if (attribute != null) {
             keyReader = t -> (Comparable) attribute.getPropertyReader().value(t);
         }
-        else if (PathConstants.ID_PK_ATTRIBUTE.equals(s.getProperty())) {
+        else if (PathConstants.ID_PK_ATTRIBUTE.equals(s.getPath())) {
             keyReader = t -> readId(t, entity.getIdReader());
         } else {
-            throw new RuntimeException("Can't find sort property reader for '" + s.getProperty() + "'");
+            throw new RuntimeException("Can't find sort property reader for '" + s.getPath() + "'");
         }
 
         return (Comparator<T>) Comparator.comparing(keyReader);

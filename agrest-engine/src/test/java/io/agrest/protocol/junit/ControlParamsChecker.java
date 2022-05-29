@@ -1,5 +1,6 @@
-package io.agrest.runtime.protocol.junit;
+package io.agrest.protocol.junit;
 
+import io.agrest.protocol.Exp;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.processor.select.SelectContext;
 
@@ -9,45 +10,44 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ProtocolChecker {
+public class ControlParamsChecker {
 
     private final SelectContext<?> context;
 
-    public ProtocolChecker(SelectContext<?> context) {
+    public ControlParamsChecker(SelectContext<?> context) {
         this.context = context;
     }
 
-    public ProtocolChecker assertExp(String expectedExp) {
-        // TODO: may require proper "toString" in exps other than SimpleExp
-        assertEquals(expectedExp, context.getEntity().getExp().toString());
+    public ControlParamsChecker assertExp(Exp expectedExp) {
+        assertEquals(expectedExp, context.getEntity().getExp());
         return this;
     }
 
-    public ProtocolChecker assertSort(Sort... expectedOrderings) {
+    public ControlParamsChecker assertSort(Sort... expectedOrderings) {
         List<Sort> actualOrderings = context.getEntity().getOrderings();
         assertEquals(expectedOrderings.length, actualOrderings.size());
         assertArrayEquals(expectedOrderings, actualOrderings.toArray(new Sort[0]));
         return this;
     }
 
-    public ProtocolChecker assertIdIncluded() {
+    public ControlParamsChecker assertIdIncluded() {
         assertTrue(context.getEntity().isIdIncluded());
         return this;
     }
 
-    public ProtocolChecker assertIdExcluded() {
+    public ControlParamsChecker assertIdExcluded() {
         assertFalse(context.getEntity().isIdIncluded());
         return this;
     }
 
-    public ProtocolChecker assertAttributes(String... expectedAttributes) {
+    public ControlParamsChecker assertAttributes(String... expectedAttributes) {
         String expectedAsString = Arrays.stream(expectedAttributes).sorted().collect(Collectors.joining(","));
         String actualAsString = context.getEntity().getAttributes().keySet().stream().sorted().collect(Collectors.joining(","));
         assertEquals(expectedAsString, actualAsString);
         return this;
     }
 
-    public ProtocolChecker assertRelationships(String... expectedRelationships) {
+    public ControlParamsChecker assertRelationships(String... expectedRelationships) {
         String expectedAsString = Arrays.stream(expectedRelationships).sorted().collect(Collectors.joining(","));
         String actualAsString = context.getEntity().getChildren().keySet().stream().sorted().collect(Collectors.joining(","));
         assertEquals(expectedAsString, actualAsString);

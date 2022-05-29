@@ -64,6 +64,6 @@ public class Include {
 
     @Override
     public String toString() {
-        return "[Include:" + path + "]";
+        return "include " + path;
     }
 }

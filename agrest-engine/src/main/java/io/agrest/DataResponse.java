@@ -2,6 +2,7 @@ package io.agrest;
 
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.GenericEncoder;
+import io.agrest.protocol.CollectionResponse;
 
 import java.util.Collections;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.Objects;
 /**
  * A response object that represents a 'Collection Document' from Agrest protocol.
  */
-public class DataResponse<T> extends AgResponse {
+public class DataResponse<T> extends AgResponse implements CollectionResponse<T> {
 
     private final List<? extends T> data;
     private final int total;
@@ -73,6 +74,7 @@ public class DataResponse<T> extends AgResponse {
      *
      * @since 5.0
      */
+    @Override
     public List<? extends T> getData() {
         return data;
     }
@@ -94,6 +96,7 @@ public class DataResponse<T> extends AgResponse {
      * response.
      * @since 5.0
      */
+    @Override
     public int getTotal() {
         return total;
     }

@@ -1,15 +1,20 @@
 package io.agrest;
 
 import io.agrest.meta.AgEntity;
+import io.agrest.protocol.UpdateRequest;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Contains update data of a single object.
  *
  * @since 1.3
  */
-public class EntityUpdate<T> {
+public class EntityUpdate<T> implements UpdateRequest<T> {
 
     private final AgEntity<T> entity;
     private final Map<String, Object> values;

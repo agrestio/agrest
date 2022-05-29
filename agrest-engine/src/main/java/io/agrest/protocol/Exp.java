@@ -1,11 +1,16 @@
 package io.agrest.protocol;
 
-import io.agrest.protocol.exp.*;
+import io.agrest.exp.CompositeExp;
+import io.agrest.exp.ExpVisitor;
+import io.agrest.exp.KeyValueExp;
+import io.agrest.exp.NamedParamsExp;
+import io.agrest.exp.PositionalParamsExp;
+import io.agrest.exp.SimpleExp;
 
 import java.util.Map;
 
 /**
- * Represents {@link AgProtocol#exp} protocol parameter.
+ * Represents {@link ControlParams#exp} protocol parameter.
  *
  * @since 4.4
  */

@@ -19,6 +19,6 @@ public class Exclude {
 
     @Override
     public String toString() {
-        return "[Exclude:" + path + "]";
+        return "exclude " + path;
     }
 }

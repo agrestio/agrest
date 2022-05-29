@@ -136,7 +136,7 @@ public class SortParser implements ISortParser {
         JsonNode propertyNode = sortNode.get(JSON_KEY_PROPERTY);
         if (propertyNode != null) {
             LOGGER.info(
-                    "*** '{}' property of the sort object is deprecated in protocol v1.2 (Agrest 5.0). Consider replacing it with '{}'",
+                    "*** '{}' property of the 'sort' object is deprecated in protocol v1.2 (Agrest 5.0). Consider replacing it with '{}'",
                     JSON_KEY_PROPERTY,
                     JSON_KEY_PATH);
             return propertyNode;

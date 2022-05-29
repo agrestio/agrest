@@ -2,12 +2,12 @@ package io.agrest.cayenne.exp;
 
 import io.agrest.AgException;
 import io.agrest.protocol.Exp;
-import io.agrest.protocol.exp.CompositeExp;
-import io.agrest.protocol.exp.ExpVisitor;
-import io.agrest.protocol.exp.KeyValueExp;
-import io.agrest.protocol.exp.NamedParamsExp;
-import io.agrest.protocol.exp.PositionalParamsExp;
-import io.agrest.protocol.exp.SimpleExp;
+import io.agrest.exp.CompositeExp;
+import io.agrest.exp.ExpVisitor;
+import io.agrest.exp.KeyValueExp;
+import io.agrest.exp.NamedParamsExp;
+import io.agrest.exp.PositionalParamsExp;
+import io.agrest.exp.SimpleExp;
 import io.agrest.cayenne.path.PathOps;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;

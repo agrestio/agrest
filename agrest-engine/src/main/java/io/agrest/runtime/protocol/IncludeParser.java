@@ -3,7 +3,7 @@ package io.agrest.runtime.protocol;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
 import io.agrest.PathConstants;
-import io.agrest.protocol.AgProtocol;
+import io.agrest.protocol.ControlParams;
 import io.agrest.protocol.Include;
 import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.jackson.IJacksonService;
@@ -26,19 +26,19 @@ public class IncludeParser implements IIncludeParser {
     /**
      * @since 4.1
      */
-    private static final String INCLUDE_EXP = AgProtocol.exp.name();
+    private static final String INCLUDE_EXP = ControlParams.exp.name();
 
     /**
-     * @deprecated since 4.1 in favor of {@link AgProtocol#exp}, but will be supported indefinitely for backwards
+     * @deprecated since 4.1 in favor of {@link ControlParams#exp}, but will be supported indefinitely for backwards
      * compatibility.
      */
     @Deprecated
-    private static final String INCLUDE_CAYENNE_EXP = AgProtocol.cayenneExp.name();
-    private static final String INCLUDE_LIMIT = AgProtocol.limit.name();
-    private static final String INCLUDE_MAP_BY = AgProtocol.mapBy.name();
-    private static final String INCLUDE_SORT = AgProtocol.sort.name();
-    private static final String INCLUDE_START = AgProtocol.start.name();
-    private static final String INCLUDE_INCLUDE = AgProtocol.include.name();
+    private static final String INCLUDE_CAYENNE_EXP = ControlParams.cayenneExp.name();
+    private static final String INCLUDE_LIMIT = ControlParams.limit.name();
+    private static final String INCLUDE_MAP_BY = ControlParams.mapBy.name();
+    private static final String INCLUDE_SORT = ControlParams.sort.name();
+    private static final String INCLUDE_START = ControlParams.start.name();
+    private static final String INCLUDE_INCLUDE = ControlParams.include.name();
 
     private final IJacksonService jsonParser;
     private final IExpParser expParser;

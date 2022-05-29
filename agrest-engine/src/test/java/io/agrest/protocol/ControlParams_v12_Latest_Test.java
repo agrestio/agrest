@@ -1,12 +1,10 @@
-package io.agrest.runtime.protocol;
+package io.agrest.protocol;
 
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.junit.AgPojoTester;
-import io.agrest.protocol.Direction;
-import io.agrest.protocol.Sort;
-import io.agrest.runtime.protocol.junit.ProtocolTester;
+import io.agrest.protocol.junit.ControlParamsTester;
 import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -19,7 +17,7 @@ import java.util.List;
  * Tests the latest version of the protocol
  */
 @BQTest
-public class Protocol_v12_Latest_Test {
+public class ControlParams_v12_Latest_Test {
 
     // TODO: start, limit, mapBy
 
@@ -30,22 +28,22 @@ public class Protocol_v12_Latest_Test {
 
     @Test
     public void testExp() {
-        ProtocolTester.test(Pojo.class, tester.runtime())
+        ControlParamsTester.test(Pojo.class, tester.runtime())
                 .param("exp", "name = 'Joe'")
                 .parseRequest()
-                .assertExp("name = 'Joe'");
+                .assertExp(Exp.simple("name = 'Joe'"));
     }
 
     @Test
     public void testSort_None() {
-        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+        ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .parseRequest()
                 .assertSort();
     }
 
     @Test
     public void testSort_Path_ImpliedAsc() {
-        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+        ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .parseRequest()
                 .assertSort(new Sort("name", Direction.asc));
@@ -53,7 +51,7 @@ public class Protocol_v12_Latest_Test {
 
     @Test
     public void testSort_PathAndAsc() {
-        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+        ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "asc")
                 .parseRequest()
@@ -62,7 +60,7 @@ public class Protocol_v12_Latest_Test {
 
     @Test
     public void testSort_PathAndAscCi() {
-        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+        ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "asc_ci")
                 .parseRequest()
@@ -71,7 +69,7 @@ public class Protocol_v12_Latest_Test {
 
     @Test
     public void testSort_PathAndDesc() {
-        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+        ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "desc")
                 .parseRequest()
@@ -80,7 +78,7 @@ public class Protocol_v12_Latest_Test {
 
     @Test
     public void testSort_PathAndDescCi() {
-        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+        ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "desc_ci")
                 .parseRequest()
@@ -89,7 +87,7 @@ public class Protocol_v12_Latest_Test {
 
     @Test
     public void testSort_PathAndAsc_UC() {
-        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+        ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "ASC")
                 .parseRequest()
@@ -98,7 +96,7 @@ public class Protocol_v12_Latest_Test {
 
     @Test
     public void testSort_PathAndAscCi_UC() {
-        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+        ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "ASC_CI")
                 .parseRequest()
@@ -107,7 +105,7 @@ public class Protocol_v12_Latest_Test {
 
     @Test
     public void testSort_PathAndDesc_UC() {
-        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+        ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "DESC")
                 .parseRequest()
@@ -116,7 +114,7 @@ public class Protocol_v12_Latest_Test {
 
     @Test
     public void testSort_PathAndDescCi_UC() {
-        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+        ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "DESC_CI")
                 .parseRequest()
@@ -125,7 +123,7 @@ public class Protocol_v12_Latest_Test {
 
     @Test
     public void testSort_Object() {
-        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+        ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "{\"path\":\"name\",\"direction\":\"asc_ci\"}")
                 .parseRequest()
                 .assertSort(new Sort("name", Direction.asc_ci));
@@ -133,7 +131,7 @@ public class Protocol_v12_Latest_Test {
 
     @Test
     public void testSort_ObjectArray() {
-        ProtocolTester.test(Protocol_v11_Test.Pojo.class, tester.runtime())
+        ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "[{\"path\":\"name\",\"direction\":\"asc_ci\"},{\"path\":\"dateOfBirth\",\"direction\":\"desc_ci\"}]")
                 .parseRequest()
                 .assertSort(new Sort("name", Direction.asc_ci), new Sort("dateOfBirth", Direction.desc_ci));
@@ -141,7 +139,7 @@ public class Protocol_v12_Latest_Test {
 
     @Test
     public void testDefaultInclude() {
-        ProtocolTester.test(Pojo.class, tester.runtime())
+        ControlParamsTester.test(Pojo.class, tester.runtime())
                 .parseRequest()
                 .assertIdIncluded()
                 .assertAttributes("dateOfBirth", "name")
@@ -150,7 +148,7 @@ public class Protocol_v12_Latest_Test {
 
     @Test
     public void testInclude() {
-        ProtocolTester.test(Pojo.class, tester.runtime())
+        ControlParamsTester.test(Pojo.class, tester.runtime())
                 .param("include", "id", "name")
                 .parseRequest()
                 .assertIdIncluded()
@@ -160,7 +158,7 @@ public class Protocol_v12_Latest_Test {
 
     @Test
     public void testInclude_Related() {
-        ProtocolTester.test(Pojo.class, tester.runtime())
+        ControlParamsTester.test(Pojo.class, tester.runtime())
                 .param("include", "id", "name", "details")
                 .parseRequest()
                 .assertIdIncluded()
@@ -170,7 +168,7 @@ public class Protocol_v12_Latest_Test {
 
     @Test
     public void testExclude() {
-        ProtocolTester.test(Pojo.class, tester.runtime())
+        ControlParamsTester.test(Pojo.class, tester.runtime())
                 .param("exclude", "id", "name")
                 .parseRequest()
                 .assertIdExcluded()

@@ -1,7 +1,7 @@
 package io.agrest.jaxrs3.openapi.parmconverter;
 
 import io.agrest.jaxrs3.openapi.TypeWrapper;
-import io.agrest.protocol.AgProtocol;
+import io.agrest.protocol.ControlParams;
 import io.agrest.protocol.Direction;
 import io.swagger.v3.jaxrs2.ResolvedParameter;
 import io.swagger.v3.oas.models.media.Schema;
@@ -50,16 +50,16 @@ public class UriInfoResolver {
 
     protected Parameter createIncludeParam() {
         // TODO: detailed schema
-        return queryParam(AgProtocol.include);
+        return queryParam(ControlParams.include);
     }
 
     protected Parameter createExcludeParam() {
-        return queryParam(AgProtocol.exclude);
+        return queryParam(ControlParams.exclude);
     }
 
     protected Parameter createSortParam() {
         // TODO: detailed schema
-        return queryParam(AgProtocol.sort);
+        return queryParam(ControlParams.sort);
     }
 
     protected Parameter createDirectionParam() {
@@ -69,11 +69,11 @@ public class UriInfoResolver {
                 .addEnumItem(Direction.desc.name())
                 .addEnumItem(Direction.desc_ci.name());
 
-        return queryParam(AgProtocol.direction).schema(dirSchema);
+        return queryParam(ControlParams.direction).schema(dirSchema);
     }
 
     /**
-     * @deprecated since 5.0 {@link AgProtocol#dir} was deprecated in favor of {@link AgProtocol#direction}
+     * @deprecated since 5.0 {@link ControlParams#dir} was deprecated in favor of {@link ControlParams#direction}
      */
     @Deprecated
     protected Parameter createDirParam() {
@@ -83,36 +83,36 @@ public class UriInfoResolver {
                 .addEnumItem(Direction.desc.name())
                 .addEnumItem(Direction.desc_ci.name());
 
-        return queryParam(AgProtocol.dir).schema(dirSchema).deprecated(true);
+        return queryParam(ControlParams.dir).schema(dirSchema).deprecated(true);
     }
 
     protected Parameter createExpParam() {
         // TODO: detailed schema
-        return queryParam(AgProtocol.exp);
+        return queryParam(ControlParams.exp);
     }
 
     /**
-     * @deprecated since 4.1 {@link AgProtocol#cayenneExp} was deprecated in favor of {@link AgProtocol#exp}
+     * @deprecated since 4.1 {@link ControlParams#cayenneExp} was deprecated in favor of {@link ControlParams#exp}
      */
     @Deprecated
     protected Parameter createCayenneExpParam() {
         // TODO: detailed schema
-        return queryParam(AgProtocol.cayenneExp).deprecated(true);
+        return queryParam(ControlParams.cayenneExp).deprecated(true);
     }
 
     protected Parameter createMapByParam() {
-        return queryParam(AgProtocol.mapBy);
+        return queryParam(ControlParams.mapBy);
     }
 
     protected Parameter createStartParam() {
-        return queryParam(AgProtocol.start);
+        return queryParam(ControlParams.start);
     }
 
     protected Parameter createLimitParam() {
-        return queryParam(AgProtocol.limit);
+        return queryParam(ControlParams.limit);
     }
 
-    protected Parameter queryParam(AgProtocol param) {
+    protected Parameter queryParam(ControlParams param) {
         return new QueryParameter()
                 .name(param.name())
                 .description(param.description);

@@ -7,10 +7,7 @@ package io.agrest.protocol;
  */
 public enum Direction {
     asc,
-
     asc_ci,
-
     desc,
-
     desc_ci;
 }
