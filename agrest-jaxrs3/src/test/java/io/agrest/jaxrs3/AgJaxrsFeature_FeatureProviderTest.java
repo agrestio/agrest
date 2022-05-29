@@ -19,28 +19,28 @@ public class AgJaxrsFeature_FeatureProviderTest {
     @Test
     public void testFeature() {
         inRuntime(
-                AgJaxrsFeature.builder().feature(new LocalTestFeature()),
+                AgJaxrsFeature.builder(AgRuntime.build()).feature(new LocalTestFeature()),
                 this::assertLocalTestFeatureActive);
     }
 
     @Test
     public void testFeatureProvider() {
         inRuntime(
-                AgJaxrsFeature.builder().feature(new LocalTestFeatureProvider()),
+                AgJaxrsFeature.builder(AgRuntime.build()).feature(new LocalTestFeatureProvider()),
                 this::assertLocalTestFeatureActive);
     }
 
     @Test
     public void testAutoLoadFeaturesDefault() {
         inRuntime(
-                AgJaxrsFeature.builder(),
+                AgJaxrsFeature.builder(AgRuntime.build()),
                 this::assertTestFeatureActive);
     }
 
     @Test
     public void testDoNotAutoLoadFeatures() {
         inRuntime(
-                AgJaxrsFeature.builder().doNotAutoLoadFeatures(),
+                AgJaxrsFeature.builder(AgRuntime.build()).doNotAutoLoadFeatures(),
                 this::assertTestFeatureNotActive);
     }
 

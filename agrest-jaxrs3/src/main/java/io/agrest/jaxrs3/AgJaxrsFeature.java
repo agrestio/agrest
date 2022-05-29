@@ -22,10 +22,19 @@ public class AgJaxrsFeature implements Feature {
     private final Collection<Feature> features;
 
     /**
+     * Builds an AgJaxrsFeature with the provided runtime.
+     *
+     * @see #builder(AgRuntime)
+     */
+    public static AgJaxrsFeature build(AgRuntime runtime) {
+        return builder(runtime).build();
+    }
+
+    /**
      * Starts a builder to configure Agrest for the JAX-RS environment.
      */
-    public static AgJaxrsFeatureBuilder builder() {
-        return new AgJaxrsFeatureBuilder();
+    public static AgJaxrsFeatureBuilder builder(AgRuntime runtime) {
+        return new AgJaxrsFeatureBuilder(runtime);
     }
 
     static AgRuntime getRuntime(Configuration configuration) {

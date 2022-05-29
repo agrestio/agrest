@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ServiceLoader;
 
 /**
@@ -26,15 +27,16 @@ import java.util.ServiceLoader;
  */
 public class AgJaxrsFeatureBuilder {
 
+    private final AgRuntime runtime;
     private final Map<Class, Class<? extends MessageBodyReader>> bodyReaders;
     private final Map<Class, Class<? extends MessageBodyWriter>> bodyWriters;
     private final List<AgFeatureProvider> featureProviders;
     private final List<Feature> features;
     private boolean autoLoadFeatures;
-    private AgRuntime runtime;
 
-    protected AgJaxrsFeatureBuilder() {
+    protected AgJaxrsFeatureBuilder(AgRuntime runtime) {
 
+        this.runtime = Objects.requireNonNull(runtime);
         this.autoLoadFeatures = true;
         this.featureProviders = new ArrayList<>(5);
         this.features = new ArrayList<>(5);
@@ -58,8 +60,6 @@ public class AgJaxrsFeatureBuilder {
     }
 
     public AgJaxrsFeature build() {
-
-        AgRuntime runtime = getOrCreateRuntime();
 
         List<Class<?>> providers = new ArrayList<>();
 
@@ -109,25 +109,6 @@ public class AgJaxrsFeatureBuilder {
     public AgJaxrsFeatureBuilder feature(AgFeatureProvider featureProvider) {
         featureProviders.add(featureProvider);
         return this;
-    }
-
-    /**
-     * Sets an AgRuntime to be used in JAX-RS environment. If not set, a default runtime is created by the
-     * {@link #build()} method.
-     *
-     * @return this builder instance
-     */
-    public AgJaxrsFeatureBuilder runtime(AgRuntime runtime) {
-        this.runtime = runtime;
-        return this;
-    }
-
-    private AgRuntime getOrCreateRuntime() {
-        return this.runtime != null ? this.runtime : createRuntime();
-    }
-
-    private AgRuntime createRuntime() {
-        return AgRuntime.builder().build();
     }
 
     private List<Feature> features(AgRuntime runtime) {

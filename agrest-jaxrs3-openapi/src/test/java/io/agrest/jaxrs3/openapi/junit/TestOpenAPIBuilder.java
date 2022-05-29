@@ -49,7 +49,7 @@ public class TestOpenAPIBuilder {
 
         // even though we don't start a JAX-RS runtime, the side effect of initializing AgJaxrsFeature is invoking
         // AgSwaggerModuleInstaller
-        AgJaxrsFeature.builder().runtime(runtime).build();
+        AgJaxrsFeature.build(runtime);
 
         SwaggerConfiguration swaggerConfig = new SwaggerConfiguration()
                 .resourcePackages(packages)

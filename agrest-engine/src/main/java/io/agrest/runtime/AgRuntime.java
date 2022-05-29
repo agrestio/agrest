@@ -47,6 +47,16 @@ public class AgRuntime {
     private final UnrelateProcessorFactory unrelateProcessorFactory;
 
     /**
+     * Creates and returns a default Agrest runtime
+     *
+     * @see #builder()
+     * @since 5.0
+     */
+    public static AgRuntime build() {
+        return new AgRuntimeBuilder().build();
+    }
+
+    /**
      * Creates and returns a builder of Agrest runtime.
      *
      * @since 5.0
