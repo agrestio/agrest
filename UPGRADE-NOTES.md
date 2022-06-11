@@ -17,8 +17,8 @@ objects instead).
 
 ### "agrest-openapi-designfirst" was removed [#518](https://github.com/agrestio/agrest/issues/518)
 "agrest-openapi-designfirst" extensions module was removed. It wasn't well-maintained and didn't work that well. 
-Instead of endpoint generation from the OpenAPI model, we offer code-first documentation approach via "agrest-jaxrs-openapi"
-module.
+Instead of endpoint generation from the OpenAPI model, we offer code-first documentation approach via 
+"agrest-jaxrs2-openapi" and "agrest-jaxrs3-openapi" modules.
 
 ### Ag protocol v1.2 - protocol changes [#561](https://github.com/agrestio/agrest/issues/561)
 This primarily affects client-side developers. There were some Agrest protocol changes introduced. The current version 
@@ -79,7 +79,7 @@ application dependencies.
 * `agrest-openapi` got renamed to `agrest-jaxrs2-openapi` and will require renaming in Maven
 pom.xml or Gradle scripts.
 
-### (JAX-RS) Starting the stack [#537](https://github.com/agrestio/agrest/issues/537)
+### (JAX-RS) Starting the stack [#537](https://github.com/agrestio/agrest/issues/537), [#565](https://github.com/agrestio/agrest/issues/565)
 As JAX-RS is no longer a part of Agrest core, and comes from two separate modules (`agrest-jaxrs2` and `agrest-jaxrs3`), 
 Agrest runtime startup in a JAX-RS environment looks different:
 ```java
@@ -87,7 +87,7 @@ Agrest runtime startup in a JAX-RS environment looks different:
 
 ServerRuntime cayenneRuntime = ...;
 
-Module cayenneModule = AgCayenneBuilder.build(cayenneRuntime);
+AgCayenneModule cayenneModule = AgCayenneModule.build(cayenneRuntime);
 AgRuntime runtime = AgRuntime.builder().module(cayenneModule).build();
 AgJaxrsFeature feature = AgJaxrsFeature.runtime(runtime).build();
 

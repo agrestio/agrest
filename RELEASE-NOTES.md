@@ -29,6 +29,7 @@
 * #561 Protocol changes - v1.2 
 * #562 Term refactoring: AgDataMap > AgSchema
 * #563 Upgrade to Cayenne 4.2.RC1
+* #565 Move static builder methods from AgCayenneBuilder to AgCayenneModule
 
 ## Release 4.10
 
