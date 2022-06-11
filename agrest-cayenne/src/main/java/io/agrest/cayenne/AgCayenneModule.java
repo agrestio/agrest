@@ -87,7 +87,7 @@ public class AgCayenneModule implements Module {
         return builder().runtime(cayenneRuntime);
     }
 
-    public AgCayenneModule(ICayennePersister persister) {
+    protected AgCayenneModule(ICayennePersister persister) {
         this.persister = Objects.requireNonNull(persister);
     }
 
