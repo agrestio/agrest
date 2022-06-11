@@ -1,23 +1,66 @@
 package io.agrest.jaxrs2.openapi;
 
 import io.agrest.jaxrs2.openapi.modelconverter.AgEntityModelConverter;
-import io.agrest.jaxrs2.openapi.modelconverter.AgProtocolModelConverter;
-import io.agrest.jaxrs2.openapi.modelconverter.AgValueModelConverter;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.ListBuilder;
 import org.apache.cayenne.di.Module;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 public class AgSwaggerModule implements Module {
 
-    public static ListBuilder<String> contributeEntityPackages(Binder binder) {
-        return binder.bindList(String.class, AgEntityModelConverter.BINDING_ENTITY_PACKAGES);
+    private final Set<String> entityPackages;
+
+    /**
+     * @since 5.0
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
+     * @since 5.0
+     */
+    public static AgSwaggerModule build() {
+        return builder().build();
+    }
+
+
+    protected AgSwaggerModule(Set<String> entityPackages) {
+        this.entityPackages = entityPackages;
     }
 
     @Override
     public void configure(Binder binder) {
-        binder.bindList(String.class, AgEntityModelConverter.BINDING_ENTITY_PACKAGES);
-        binder.bind(AgValueModelConverter.class).toInstance(AgValueModelConverter.getInstance());
-        binder.bind(AgProtocolModelConverter.class).to(AgProtocolModelConverter.class);
-        binder.bind(AgEntityModelConverter.class).to(AgEntityModelConverter.class);
+        ListBuilder<String> diPackages = binder.bindList(String.class, AgEntityModelConverter.BINDING_ENTITY_PACKAGES);
+        entityPackages.forEach(diPackages::add);
+    }
+
+    public static class Builder {
+        private final Set<String> entityPackages;
+
+        private Builder() {
+            this.entityPackages = new LinkedHashSet<>();
+        }
+
+        public AgSwaggerModule build() {
+            return new AgSwaggerModule(entityPackages);
+        }
+
+        public Builder entityPackage(Package aPackage) {
+            return entityPackage(aPackage.getName());
+        }
+
+        public Builder entityPackage(String aPackage) {
+            entityPackages.add(aPackage);
+            return this;
+        }
+
+        public Builder entityPackages(String... packages) {
+            Collections.addAll(entityPackages, packages);
+            return this;
+        }
     }
 }
