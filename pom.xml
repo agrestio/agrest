@@ -35,7 +35,7 @@
 
         <!-- Custom properties (mostly framework versions) -->
         <slf4j-version>1.7.25</slf4j-version>
-        <cayenne-version>4.2.B1</cayenne-version>
+        <cayenne-version>4.2.RC1</cayenne-version>
         <jaxrs-version>2.1.6</jaxrs-version>
         <jackson-version>2.11.3</jackson-version>
         <openapi-generator-version>5.2.0</openapi-generator-version>
