@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.protocol.Exp;
 
 /**
- * Parsing of CayenneExp query parameter from string or nested in Json values.
+ * Parsing of CayenneExp query parameter from string or related in JSON values.
  *
  * @since 2.13
  */

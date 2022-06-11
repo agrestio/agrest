@@ -26,7 +26,7 @@ public abstract class ResourceEntity<T> {
 
     private final Map<String, AgAttribute> attributes;
     private final Set<String> defaultAttributes;
-    private final Map<String, NestedResourceEntity<?>> children;
+    private final Map<String, RelatedResourceEntity<?>> children;
     private final Map<String, Object> requestProperties;
 
     private String mapByPath;
@@ -146,18 +146,18 @@ public abstract class ResourceEntity<T> {
     /**
      * @since 3.7
      */
-    public NestedResourceEntity<?> removeChild(String name) {
+    public RelatedResourceEntity<?> removeChild(String name) {
         return children.remove(name);
     }
 
-    public Map<String, NestedResourceEntity<?>> getChildren() {
+    public Map<String, RelatedResourceEntity<?>> getChildren() {
         return children;
     }
 
     /**
      * @since 1.1
      */
-    public NestedResourceEntity<?> getChild(String name) {
+    public RelatedResourceEntity<?> getChild(String name) {
         return children.get(name);
     }
 

@@ -1,6 +1,6 @@
 package io.agrest.cayenne.processor.select.stage;
 
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
@@ -36,29 +36,29 @@ public class CayenneSelectApplyServerParamsStage extends SelectApplyServerParams
         }
 
         if (entity.getMapBy() != null) {
-            for (NestedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
-                tagNestedEntity(child);
+            for (RelatedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
+                tagRelatedEntity(child);
             }
         }
 
-        for (NestedResourceEntity<?> child : entity.getChildren().values()) {
-            tagNestedEntity(child);
+        for (RelatedResourceEntity<?> child : entity.getChildren().values()) {
+            tagRelatedEntity(child);
         }
     }
 
-    private void tagNestedEntity(NestedResourceEntity<?> entity) {
+    private void tagRelatedEntity(RelatedResourceEntity<?> entity) {
         if (entityResolver.getObjEntity(entity.getName()) != null) {
-            CayenneProcessor.getOrCreateNestedEntity(entity);
+            CayenneProcessor.getOrCreateRelatedEntity(entity);
         }
 
         if (entity.getMapBy() != null) {
-            for (NestedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
-                tagNestedEntity(child);
+            for (RelatedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
+                tagRelatedEntity(child);
             }
         }
 
-        for (NestedResourceEntity<?> child : entity.getChildren().values()) {
-            tagNestedEntity(child);
+        for (RelatedResourceEntity<?> child : entity.getChildren().values()) {
+            tagRelatedEntity(child);
         }
     }
 }

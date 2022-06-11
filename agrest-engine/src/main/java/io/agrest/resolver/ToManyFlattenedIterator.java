@@ -1,6 +1,6 @@
 package io.agrest.resolver;
 
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 
 import java.util.Iterator;
 import java.util.List;
@@ -14,7 +14,7 @@ public class ToManyFlattenedIterator<T> extends ToOneFlattenedIterator<T> {
     private List<T> nextList;
     private int nextPos;
 
-    public ToManyFlattenedIterator(Iterator<?> parentIt, PropertyReader property) {
+    public ToManyFlattenedIterator(Iterator<?> parentIt, DataReader property) {
         super(parentIt, property);
     }
 
@@ -42,7 +42,7 @@ public class ToManyFlattenedIterator<T> extends ToOneFlattenedIterator<T> {
                 Object parent = parentIt.next();
                 if (parent != null) {
                     // TODO: handle Set or Map relationships
-                    List<T> maybeNextList = (List<T>) parentProperty.value(parent);
+                    List<T> maybeNextList = (List<T>) parentProperty.read(parent);
                     if (maybeNextList != null && !maybeNextList.isEmpty()) {
                         nextList = maybeNextList;
                     }

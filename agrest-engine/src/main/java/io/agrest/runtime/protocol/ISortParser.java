@@ -6,7 +6,7 @@ import io.agrest.protocol.Sort;
 import java.util.List;
 
 /**
- * Parsing of Sort and Dir query parameters from string or nested in Json values.
+ * Parsing of Sort and Dir query parameters from string or related in JSON values.
  *
  * @since 2.13
  */

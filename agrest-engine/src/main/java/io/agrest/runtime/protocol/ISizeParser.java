@@ -3,7 +3,7 @@ package io.agrest.runtime.protocol;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- * Parsing of Start and Limit query parameters from string or nested in Json values.
+ * Parsing of Start and Limit query parameters from string or related in JSON values.
  *
  * @since 2.13
  */

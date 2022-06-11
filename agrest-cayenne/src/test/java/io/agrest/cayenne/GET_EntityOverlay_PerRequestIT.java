@@ -140,7 +140,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
     }
 
     @Test
-    public void test_OverlaidRelationship_ExpOnParent_NestedToOne() {
+    public void test_OverlaidRelationship_ExpOnParent_RelatedToOne() {
 
         tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
 
@@ -162,7 +162,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
     }
 
     @Test
-    public void test_OverlaidNestedExclude() {
+    public void test_OverlaidRelatedExclude() {
 
         tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
         tester.e3().insertColumns("id_", "name", "phone_number", "e2_id")

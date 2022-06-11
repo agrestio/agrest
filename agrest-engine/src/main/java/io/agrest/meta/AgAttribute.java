@@ -1,6 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 
 /**
  * Represents an entity "simple" property.
@@ -27,7 +27,7 @@ public interface AgAttribute {
     boolean isWritable();
 
     /**
-     * @since 2.10
+     * @since 5.0
      */
-    PropertyReader getPropertyReader();
+    DataReader getDataReader();
 }

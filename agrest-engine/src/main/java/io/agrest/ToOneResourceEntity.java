@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * @since 4.8
  */
-public class ToOneResourceEntity<T> extends NestedResourceEntity<T> {
+public class ToOneResourceEntity<T> extends RelatedResourceEntity<T> {
 
     private final Map<AgObjectId, T> dataByParent;
 

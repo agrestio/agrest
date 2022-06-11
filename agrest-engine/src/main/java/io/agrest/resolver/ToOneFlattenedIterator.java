@@ -1,6 +1,6 @@
 package io.agrest.resolver;
 
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -11,10 +11,10 @@ import java.util.NoSuchElementException;
 public class ToOneFlattenedIterator<T> implements Iterator<T> {
 
     protected final Iterator<?> parentIt;
-    protected final PropertyReader parentProperty;
+    protected final DataReader parentProperty;
     protected T next;
 
-    public ToOneFlattenedIterator(Iterator<?> parentIt, PropertyReader parentProperty) {
+    public ToOneFlattenedIterator(Iterator<?> parentIt, DataReader parentProperty) {
         this.parentIt = parentIt;
         this.parentProperty = parentProperty;
         rewind();
@@ -46,7 +46,7 @@ public class ToOneFlattenedIterator<T> implements Iterator<T> {
             while (next == null && parentIt.hasNext()) {
                 Object parent = parentIt.next();
                 if (parent != null) {
-                    next = (T) parentProperty.value(parent);
+                    next = (T) parentProperty.read(parent);
                 }
             }
 

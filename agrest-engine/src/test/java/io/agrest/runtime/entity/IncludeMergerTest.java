@@ -1,6 +1,6 @@
 package io.agrest.runtime.entity;
 
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.annotation.AgAttribute;
@@ -13,7 +13,7 @@ import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.LazySchema;
-import io.agrest.resolver.ThrowingNestedDataResolver;
+import io.agrest.resolver.ThrowingRelatedDataResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -95,13 +95,13 @@ public class IncludeMergerTest {
         assertFalse(root.isIdIncluded());
         assertEquals(1, root.getChildren().size());
 
-        NestedResourceEntity<?> yChild = root.getChild("ys");
+        RelatedResourceEntity<?> yChild = root.getChild("ys");
         assertNotNull(yChild);
         assertEquals(1, yChild.getAttributes().size());
         assertFalse(yChild.isIdIncluded());
         assertEquals(1, yChild.getChildren().size());
 
-        NestedResourceEntity<?> zChild = yChild.getChild("z");
+        RelatedResourceEntity<?> zChild = yChild.getChild("z");
         assertNotNull(zChild);
         assertEquals(schema.getEntity(Z.class).getAttributes().size(), zChild.getAttributes().size());
         assertTrue(zChild.isIdIncluded());
@@ -114,11 +114,11 @@ public class IncludeMergerTest {
         Map<Class<?>, AgEntityOverlay<?>> overlays = new HashMap<>();
         overlays.put(X.class, AgEntity
                 .overlay(X.class)
-                .redefineRelationshipResolver("ys", (t, r) -> ThrowingNestedDataResolver.getInstance()));
+                .redefineRelatedDataResolver("ys", (t, r) -> ThrowingRelatedDataResolver.getInstance()));
 
         overlays.put(Y.class, AgEntity
                 .overlay(Y.class)
-                .redefineRelationshipResolver("z", (t, r) -> ThrowingNestedDataResolver.getInstance()));
+                .redefineRelatedDataResolver("z", (t, r) -> ThrowingRelatedDataResolver.getInstance()));
 
         AgEntity<X> entity = schema.getEntity(X.class);
         AgEntity<X> entityOverlaid = ((AgEntityOverlay<X>) overlays.get(X.class)).resolve(schema, entity);
@@ -134,13 +134,13 @@ public class IncludeMergerTest {
         assertFalse(root.isIdIncluded());
         assertEquals(1, root.getChildren().size());
 
-        NestedResourceEntity<?> yChild = root.getChild("ys");
+        RelatedResourceEntity<?> yChild = root.getChild("ys");
         assertNotNull(yChild);
         assertEquals(1, yChild.getAttributes().size());
         assertFalse(yChild.isIdIncluded());
         assertEquals(1, yChild.getChildren().size());
 
-        NestedResourceEntity<?> zChild = yChild.getChild("z");
+        RelatedResourceEntity<?> zChild = yChild.getChild("z");
         assertNotNull(zChild);
         assertEquals(schema.getEntity(Z.class).getAttributes().size(), zChild.getAttributes().size());
         assertTrue(zChild.isIdIncluded());

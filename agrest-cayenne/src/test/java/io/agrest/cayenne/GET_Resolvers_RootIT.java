@@ -92,13 +92,13 @@ public class GET_Resolvers_RootIT extends DbTest {
         @Path("e2_standard_query")
         public DataResponse<E2> e2_standard_query(@Context UriInfo uriInfo) {
 
-            // non-standard nested resolver
+            // non-standard related resolver
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
                     // this is what Ag uses by default, but let's see if it still works as an override
                     .redefineDataResolverFactory(CayenneResolvers.rootViaQuery())
-                    // check how a combination of custom root and nested resolvers works
-                    .redefineRelationshipResolver("e3s", CayenneResolvers.nestedViaParentPrefetch());
+                    // check how a combination of custom root and related resolvers works
+                    .redefineRelatedDataResolver("e3s", CayenneResolvers.relatedViaParentPrefetch());
 
             return AgJaxrs.select(E2.class, config)
                     .entityOverlay(e2Overlay)
@@ -110,12 +110,12 @@ public class GET_Resolvers_RootIT extends DbTest {
         @Path("e2_custom_query")
         public DataResponse<E2> e2_custom_query(@Context UriInfo uriInfo) {
 
-            // non-standard nested resolver
+            // non-standard related resolver
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
                     .redefineDataResolver(new CustomE2Resolver())
-                    // check how a combination of custom root and Cayenne nested resolvers works
-                    .redefineRelationshipResolver("e3s", CayenneResolvers.nestedViaQueryWithParentIds());
+                    // check how a combination of custom root and Cayenne related resolvers works
+                    .redefineRelatedDataResolver("e3s", CayenneResolvers.relatedViaQueryWithParentIds());
 
             return AgJaxrs.select(E2.class, config)
                     .entityOverlay(e2Overlay)

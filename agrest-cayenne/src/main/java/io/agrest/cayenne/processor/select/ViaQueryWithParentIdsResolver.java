@@ -1,6 +1,6 @@
 package io.agrest.cayenne.processor.select;
 
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 /**
- * A nested resolver that waits for the parent query to complete, and resolves its entity objects based on the collection
+ * A related resolver that waits for the parent query to complete, and resolves its entity objects based on the collection
  * of IDs from the parent result.
  *
  * @since 3.4
@@ -24,13 +24,13 @@ public class ViaQueryWithParentIdsResolver<T extends DataObject> extends ViaQuer
     }
 
     @Override
-    public void onParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context) {
+    public void onParentQueryAssembled(RelatedResourceEntity<T> entity, SelectContext<?> context) {
         // no query here... we need to have access to parent objects before we can build our query
     }
 
     @Override
     protected Iterable<T> doOnParentDataResolved(
-            NestedResourceEntity<T> entity,
+            RelatedResourceEntity<T> entity,
             Iterable<?> parentData,
             SelectContext<?> context) {
 
@@ -47,7 +47,7 @@ public class ViaQueryWithParentIdsResolver<T extends DataObject> extends ViaQuer
             return Collections.emptyList();
         }
 
-        CayenneProcessor.getNestedEntity(entity).setSelect(select);
+        CayenneProcessor.getRelatedEntity(entity).setSelect(select);
         afterQueryAssembled(entity, context);
         return super.doOnParentDataResolved(entity, parentData, context);
     }

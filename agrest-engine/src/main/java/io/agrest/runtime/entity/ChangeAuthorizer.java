@@ -63,7 +63,7 @@ public class ChangeAuthorizer implements IChangeAuthorizer {
         }
 
         if (op.getObject() != null) {
-            Object id = op.getEntity().getIdReader().value(op.getObject());
+            Object id = op.getEntity().getIdReader().read(op.getObject());
             return id instanceof Map && ((Map) id).size() == 1 ? ((Map) id).values().iterator().next() : id;
         }
 

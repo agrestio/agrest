@@ -1,6 +1,6 @@
 package io.agrest.cayenne.processor;
 
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 
@@ -10,13 +10,13 @@ import io.agrest.RootResourceEntity;
 public class CayenneProcessor {
 
     private static final String CAYENNE_ROOT_ENTITY_KEY = CayenneRootResourceEntityExt.class.getName();
-    private static final String CAYENNE_NESTED_ENTITY_KEY = CayenneNestedResourceEntityExt.class.getName();
+    private static final String CAYENNE_RELATED_ENTITY_KEY = CayenneRelatedResourceEntityExt.class.getName();
 
     /**
      * @since 5.0
      */
     public static CayenneResourceEntityExt getEntity(ResourceEntity<?> entity) {
-        String key = (entity instanceof RootResourceEntity) ? CAYENNE_ROOT_ENTITY_KEY : CAYENNE_NESTED_ENTITY_KEY;
+        String key = (entity instanceof RootResourceEntity) ? CAYENNE_ROOT_ENTITY_KEY : CAYENNE_RELATED_ENTITY_KEY;
         return entity.getRequestProperty(key);
     }
 
@@ -51,26 +51,26 @@ public class CayenneProcessor {
     /**
      * @since 5.0
      */
-    public static <T> CayenneNestedResourceEntityExt getNestedEntity(NestedResourceEntity<T> entity) {
-        return entity.getRequestProperty(CAYENNE_NESTED_ENTITY_KEY);
+    public static <T> CayenneRelatedResourceEntityExt getRelatedEntity(RelatedResourceEntity<T> entity) {
+        return entity.getRequestProperty(CAYENNE_RELATED_ENTITY_KEY);
     }
 
     /**
      * @since 5.0
      */
-    public static <T> CayenneNestedResourceEntityExt getOrCreateNestedEntity(NestedResourceEntity<T> entity) {
+    public static <T> CayenneRelatedResourceEntityExt getOrCreateRelatedEntity(RelatedResourceEntity<T> entity) {
 
-        CayenneNestedResourceEntityExt ext = getNestedEntity(entity);
+        CayenneRelatedResourceEntityExt ext = getRelatedEntity(entity);
         if (ext != null) {
             return ext;
         }
 
-        CayenneNestedResourceEntityExt newExt = new CayenneNestedResourceEntityExt();
-        entity.setRequestProperty(CAYENNE_NESTED_ENTITY_KEY, newExt);
+        CayenneRelatedResourceEntityExt newExt = new CayenneRelatedResourceEntityExt();
+        entity.setRequestProperty(CAYENNE_RELATED_ENTITY_KEY, newExt);
 
         // copy MapBy owner's query to MapBy to ensure its own resolvers work properly
         if (entity.getMapBy() != null) {
-            entity.getMapBy().setRequestProperty(CAYENNE_NESTED_ENTITY_KEY, newExt);
+            entity.getMapBy().setRequestProperty(CAYENNE_RELATED_ENTITY_KEY, newExt);
         }
 
         return newExt;

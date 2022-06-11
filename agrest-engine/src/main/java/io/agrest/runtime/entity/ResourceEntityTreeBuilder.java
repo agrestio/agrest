@@ -1,7 +1,7 @@
 package io.agrest.runtime.entity;
 
 import io.agrest.AgException;
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
 import io.agrest.ToManyResourceEntity;
@@ -98,7 +98,7 @@ public class ResourceEntityTreeBuilder {
                 : childEntity;
     }
 
-    protected NestedResourceEntity<?> createChildEntity(ResourceEntity<?> parent, AgRelationship incoming) {
+    protected RelatedResourceEntity<?> createChildEntity(ResourceEntity<?> parent, AgRelationship incoming) {
 
         // TODO: If the target is overlaid, we need to overlay the "incoming" relationship as well for model consistency...
         //  Currently we optimistically assume that no request processing code would rely on "incoming.target"

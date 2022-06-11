@@ -3,7 +3,7 @@ package io.agrest.cayenne.processor;
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
 import io.agrest.EntityParent;
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.protocol.Direction;
@@ -89,7 +89,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
     }
 
     @Override
-    public <T> ColumnSelect<Object[]> createQueryWithParentQualifier(NestedResourceEntity<T> entity) {
+    public <T> ColumnSelect<Object[]> createQueryWithParentQualifier(RelatedResourceEntity<T> entity) {
 
         ColumnSelect<Object[]> query = createBaseQuery(entity).columns(queryColumns(entity));
 
@@ -106,7 +106,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
     /**
      * @since 5.0
      */
-    public <T> Property<?>[] queryColumns(NestedResourceEntity<T> entity) {
+    public <T> Property<?>[] queryColumns(RelatedResourceEntity<T> entity) {
 
         // Use Cayenne metadata for query building. Agrest metadata may be missing some important parts like ids
         // (e.g. see https://github.com/agrestio/agrest/issues/473)
@@ -135,7 +135,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
     // using dbpaths for all expression operations on the theory that some object paths can be unidirectional, and
     // hence may be missing for some relationships (although all "incoming" relationships along the parents chain
     // should be present, no?)
-    protected Expression resolveParentQualifier(NestedResourceEntity<?> entity, String outgoingDbPath) {
+    protected Expression resolveParentQualifier(RelatedResourceEntity<?> entity, String outgoingDbPath) {
 
         ResourceEntity<?> parent = entity.getParent();
         CayenneResourceEntityExt parentExt = CayenneProcessor.getEntity(parent);
@@ -180,7 +180,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
                             fullDbPath);
         }
 
-        return resolveParentQualifier((NestedResourceEntity) parent, fullDbPath);
+        return resolveParentQualifier((RelatedResourceEntity) parent, fullDbPath);
     }
 
     private String concatWithParentDbPath(ObjRelationship incoming, String outgoingDbPath) {
@@ -189,7 +189,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
     }
 
     @Override
-    public <T, P> ColumnSelect<Object[]> createQueryWithParentIdsQualifier(NestedResourceEntity<T> entity, Iterator<P> parentData) {
+    public <T, P> ColumnSelect<Object[]> createQueryWithParentIdsQualifier(RelatedResourceEntity<T> entity, Iterator<P> parentData) {
 
         ColumnSelect<Object[]> query = createBaseQuery(entity).columns(queryColumns(entity));
 

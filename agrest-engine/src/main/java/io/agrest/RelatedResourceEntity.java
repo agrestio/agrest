@@ -2,28 +2,27 @@ package io.agrest;
 
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
-import io.agrest.resolver.NestedDataResolver;
+import io.agrest.resolver.RelatedDataResolver;
 
 /**
  * @param <T>
- * @since 3.4
+ * @since 5.0
  */
-public abstract class NestedResourceEntity<T> extends ResourceEntity<T> {
+public abstract class RelatedResourceEntity<T> extends ResourceEntity<T> {
 
     private final ResourceEntity<?> parent;
     private final AgRelationship incoming;
-    private NestedDataResolver<T> resolver;
+    private RelatedDataResolver<T> resolver;
 
-    public NestedResourceEntity(
+    public RelatedResourceEntity(
             AgEntity<T> agEntity,
-            // TODO: Instead of AgRelationship introduce some kind of RERelationship that has references to both parent and child
             ResourceEntity<?> parent,
             AgRelationship incoming) {
 
         super(agEntity);
         this.incoming = incoming;
         this.parent = parent;
-        this.resolver = (NestedDataResolver<T>) incoming.getResolver();
+        this.resolver = (RelatedDataResolver<T>) incoming.getDataResolver();
     }
 
     /**
@@ -47,11 +46,11 @@ public abstract class NestedResourceEntity<T> extends ResourceEntity<T> {
         return incoming;
     }
 
-    public NestedDataResolver<T> getResolver() {
+    public RelatedDataResolver<T> getResolver() {
         return resolver;
     }
 
-    public void setResolver(NestedDataResolver<T> resolver) {
+    public void setResolver(RelatedDataResolver<T> resolver) {
         this.resolver = resolver;
     }
 

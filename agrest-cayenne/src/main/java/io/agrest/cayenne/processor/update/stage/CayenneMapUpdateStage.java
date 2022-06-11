@@ -3,7 +3,7 @@ package io.agrest.cayenne.processor.update.stage;
 import io.agrest.AgException;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityUpdate;
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.ResourceEntity;
@@ -11,7 +11,7 @@ import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.protocol.Exp;
 import io.agrest.cayenne.persister.ICayennePersister;
-import io.agrest.cayenne.processor.CayenneNestedResourceEntityExt;
+import io.agrest.cayenne.processor.CayenneRelatedResourceEntityExt;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.exp.ICayenneExpParser;
@@ -198,16 +198,16 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
 
         ObjectSelect<T> query = ObjectSelect.query(entity.getType()).where(qualifier);
 
-        for (Map.Entry<String, NestedResourceEntity<?>> e : entity.getChildren().entrySet()) {
-            buildNestedQuery(e.getValue(), query.getWhere());
+        for (Map.Entry<String, RelatedResourceEntity<?>> e : entity.getChildren().entrySet()) {
+            buildRelatedQuery(e.getValue(), query.getWhere());
         }
 
         CayenneProcessor.getRootEntity(entity).setSelect(query);
         return query;
     }
 
-    protected ColumnSelect<Object[]> buildNestedQuery(
-            NestedResourceEntity<?> entity,
+    protected ColumnSelect<Object[]> buildRelatedQuery(
+            RelatedResourceEntity<?> entity,
             Expression parentQualifier) {
 
         ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getName());
@@ -222,38 +222,38 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
                 .where(translateExpressionToSource(incomingObjRelationship, parentQualifier))
                 .columns(queryAssembler.queryColumns(entity));
 
-        for (Map.Entry<String, NestedResourceEntity<?>> e : entity.getChildren().entrySet()) {
-            buildNestedQuery(e.getValue(), query.getWhere());
+        for (Map.Entry<String, RelatedResourceEntity<?>> e : entity.getChildren().entrySet()) {
+            buildRelatedQuery(e.getValue(), query.getWhere());
         }
 
-        CayenneProcessor.getNestedEntity(entity).setSelect(query);
+        CayenneProcessor.getRelatedEntity(entity).setSelect(query);
         return query;
     }
 
     protected <T> List<T> fetchRootEntity(ObjectContext context, RootResourceEntity<T> entity) {
 
         List<T> objects = CayenneProcessor.getRootEntity(entity).getSelect().select(context);
-        for (NestedResourceEntity<?> c : entity.getChildren().values()) {
-            fetchNestedEntity(context, c);
+        for (RelatedResourceEntity<?> c : entity.getChildren().values()) {
+            fetchRelatedEntity(context, c);
         }
 
         return objects;
     }
 
-    protected <T> void fetchNestedEntity(ObjectContext context, NestedResourceEntity<T> entity) {
+    protected <T> void fetchRelatedEntity(ObjectContext context, RelatedResourceEntity<T> entity) {
 
-        CayenneNestedResourceEntityExt ext = CayenneProcessor.getNestedEntity(entity);
+        CayenneRelatedResourceEntityExt ext = CayenneProcessor.getRelatedEntity(entity);
         if (ext != null && ext.getSelect() != null) {
             List<Object[]> objects = ext.getSelect().select(context);
             assignChildrenToParent(entity, objects);
 
-            for (NestedResourceEntity<?> c : entity.getChildren().values()) {
-                fetchNestedEntity(context, c);
+            for (RelatedResourceEntity<?> c : entity.getChildren().values()) {
+                fetchRelatedEntity(context, c);
             }
         }
     }
 
-    protected <T> void assignChildrenToParent(NestedResourceEntity<T> entity, List<Object[]> objects) {
+    protected <T> void assignChildrenToParent(RelatedResourceEntity<T> entity, List<Object[]> objects) {
 
         ResourceEntity<?> parentEntity = entity.getParent();
         for (Object[] row : objects) {

@@ -1,16 +1,16 @@
 package io.agrest.cayenne.processor.select;
 
 import io.agrest.AgException;
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
-import io.agrest.cayenne.compiler.DataObjectPropertyReader;
-import io.agrest.cayenne.processor.CayenneNestedResourceEntityExt;
+import io.agrest.cayenne.compiler.DataObjectDataReader;
+import io.agrest.cayenne.processor.CayenneRelatedResourceEntityExt;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.CayenneRootResourceEntityExt;
 import io.agrest.processor.ProcessingContext;
-import io.agrest.property.PropertyReader;
-import io.agrest.resolver.BaseNestedDataResolver;
+import io.agrest.reader.DataReader;
+import io.agrest.resolver.BaseRelatedDataResolver;
 import io.agrest.resolver.ToManyFlattenedIterator;
 import io.agrest.resolver.ToOneFlattenedIterator;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -24,7 +24,7 @@ import org.apache.cayenne.query.ObjectSelect;
  *
  * @since 3.4
  */
-public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject> {
+public class ViaParentPrefetchResolver extends BaseRelatedDataResolver<DataObject> {
 
     private final int prefetchSemantics;
 
@@ -33,7 +33,7 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
     }
 
     @Override
-    protected void doOnParentQueryAssembled(NestedResourceEntity<DataObject> entity, SelectContext<?> context) {
+    protected void doOnParentQueryAssembled(RelatedResourceEntity<DataObject> entity, SelectContext<?> context) {
         // add prefetch to the (grand)parent query
 
         ResourceEntity<?> parent = entity.getParent();
@@ -41,20 +41,20 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
         if (parent instanceof RootResourceEntity) {
             addRootPrefetch((RootResourceEntity) parent, parentPath, prefetchSemantics);
         } else {
-            addNestedPrefetch((NestedResourceEntity<?>) parent, parentPath, prefetchSemantics);
+            addRelatedPrefetch((RelatedResourceEntity<?>) parent, parentPath, prefetchSemantics);
         }
     }
 
     @Override
     protected Iterable<DataObject> doOnParentDataResolved(
-            NestedResourceEntity<DataObject> entity,
+            RelatedResourceEntity<DataObject> entity,
             Iterable<?> parentData,
             SelectContext<?> context) {
         return iterableData(entity, (Iterable<DataObject>) parentData, context);
     }
 
-    protected void addNestedPrefetch(NestedResourceEntity<?> entity, String path, int prefetchSemantics) {
-        CayenneNestedResourceEntityExt ext = CayenneProcessor.getNestedEntity(entity);
+    protected void addRelatedPrefetch(RelatedResourceEntity<?> entity, String path, int prefetchSemantics) {
+        CayenneRelatedResourceEntityExt ext = CayenneProcessor.getRelatedEntity(entity);
         if (ext == null) {
             throw AgException.internalServerError(
                     "Entity '%s' is not handled by Cayenne. Can not use prefetch resolver for path '%s'",
@@ -73,7 +73,7 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
         if (parent instanceof RootResourceEntity) {
             addRootPrefetch((RootResourceEntity) parent, parentPath, prefetchSemantics);
         } else {
-            addNestedPrefetch((NestedResourceEntity<?>) parent, parentPath, prefetchSemantics);
+            addRelatedPrefetch((RelatedResourceEntity<?>) parent, parentPath, prefetchSemantics);
         }
     }
 
@@ -101,19 +101,19 @@ public class ViaParentPrefetchResolver extends BaseNestedDataResolver<DataObject
 
 
     @Override
-    public PropertyReader reader(NestedResourceEntity<DataObject> entity, ProcessingContext<?> context) {
+    public DataReader dataReader(RelatedResourceEntity<DataObject> entity, ProcessingContext<?> context) {
 
         // TODO: what about multi-step prefetches? How do we locate parent then?
 
-        // assuming the parent is a DataObject. CayenneNestedDataResolverBuilder ensures that it is
-        return DataObjectPropertyReader.reader(entity.getIncoming().getName());
+        // assuming the parent is a DataObject. CayenneRelatedDataResolverBuilder ensures that it is
+        return DataObjectDataReader.reader(entity.getIncoming().getName());
     }
 
     protected Iterable<DataObject> iterableData(
-            NestedResourceEntity<DataObject> entity,
+            RelatedResourceEntity<DataObject> entity,
             Iterable<? extends DataObject> parentData,
             ProcessingContext<?> context) {
-        PropertyReader reader = reader(entity, context);
+        DataReader reader = this.dataReader(entity, context);
         return entity.getIncoming().isToMany()
                 ? () -> new ToManyFlattenedIterator<>(parentData.iterator(), reader)
                 : () -> new ToOneFlattenedIterator<>(parentData.iterator(), reader);

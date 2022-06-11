@@ -3,7 +3,7 @@ package io.agrest.encoder;
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.AgException;
 import io.agrest.converter.valuestring.ValueStringConverter;
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 
 import java.io.IOException;
 import java.util.*;
@@ -12,14 +12,14 @@ import java.util.Map.Entry;
 public class MapByEncoder implements Encoder {
 
     private final String mapByPath;
-    private final List<PropertyReader> mapByReaders;
+    private final List<DataReader> mapByReaders;
     private final Encoder collectionEncoder;
     private final boolean byId;
     private final ValueStringConverter fieldNameConverter;
 
     public MapByEncoder(
             String mapByPath,
-            List<PropertyReader> mapByReaders,
+            List<DataReader> mapByReaders,
             Encoder collectionEncoder,
             boolean byId,
             ValueStringConverter fieldNameConverter) {
@@ -59,12 +59,12 @@ public class MapByEncoder implements Encoder {
     private Object mapByValue(Object object) {
         Object result = object;
 
-        for (PropertyReader reader : mapByReaders) {
+        for (DataReader reader : mapByReaders) {
             if (result == null) {
                 break;
             }
 
-            result = reader.value(result);
+            result = reader.read(result);
         }
 
         return result;

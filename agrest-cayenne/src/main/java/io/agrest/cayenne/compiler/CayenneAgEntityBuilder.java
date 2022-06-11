@@ -16,7 +16,7 @@ import io.agrest.meta.DefaultAttribute;
 import io.agrest.meta.DefaultEntity;
 import io.agrest.meta.DefaultIdPart;
 import io.agrest.meta.DefaultRelationship;
-import io.agrest.resolver.NestedDataResolver;
+import io.agrest.resolver.RelatedDataResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
 import org.apache.cayenne.dba.TypesMapping;
@@ -50,8 +50,8 @@ public class CayenneAgEntityBuilder<T> {
     private final Map<String, AgRelationship> relationships;
 
     private AgEntityOverlay<T> overlay;
-    private RootDataResolver<T> rootDataResolver;
-    private NestedDataResolver<T> nestedDataResolver;
+    private RootDataResolver<T> dataResolver;
+    private RelatedDataResolver<T> relatedDataResolver;
 
     public CayenneAgEntityBuilder(Class<T> type, AgSchema schema, EntityResolver cayenneResolver) {
 
@@ -71,13 +71,19 @@ public class CayenneAgEntityBuilder<T> {
         return this;
     }
 
-    public CayenneAgEntityBuilder<T> rootDataResolver(RootDataResolver<T> resolver) {
-        this.rootDataResolver = resolver;
+    /**
+     * @since 5.0
+     */
+    public CayenneAgEntityBuilder<T> dataResolver(RootDataResolver<T> dataResolver) {
+        this.dataResolver = dataResolver;
         return this;
     }
 
-    public CayenneAgEntityBuilder<T> nestedDataResolver(NestedDataResolver<T> resolver) {
-        this.nestedDataResolver = resolver;
+    /**
+     * @since 5.0
+     */
+    public CayenneAgEntityBuilder<T> relatedDataResolver(RelatedDataResolver<T> relatedDataResolver) {
+        this.relatedDataResolver = relatedDataResolver;
         return this;
     }
 
@@ -120,7 +126,7 @@ public class CayenneAgEntityBuilder<T> {
             Class<?> type = typeForName(a.getType());
             String name = a.getName();
             // by default adding attributes as readable and writable... @AgAttribute annotation on a getter may override this
-            addAttribute(new DefaultAttribute(name, type, true, true, DataObjectPropertyReader.reader(name)));
+            addAttribute(new DefaultAttribute(name, type, true, true, DataObjectDataReader.reader(name)));
         }
 
         for (ObjRelationship r : cayenneEntity.getRelationships()) {
@@ -145,7 +151,7 @@ public class CayenneAgEntityBuilder<T> {
                     //  (i.e. all attributes, no relationships)
                     true,
                     true,
-                    nestedDataResolver));
+                    relatedDataResolver));
         }
 
         for (DbAttribute pk : cayenneEntity.getDbEntity().getPrimaryKeys()) {
@@ -168,7 +174,7 @@ public class CayenneAgEntityBuilder<T> {
                         typeForName(attribute.getType()),
                         true,
                         true,
-                        DataObjectPropertyReader.reader(attribute.getName()));
+                        DataObjectDataReader.reader(attribute.getName()));
             }
 
             addId(id);
@@ -181,7 +187,7 @@ public class CayenneAgEntityBuilder<T> {
         // attributes or relationship during merge... they have no references to parent and can be used as is.
 
         // Note that overriding Cayenne attributes with annotated attributes will have a slight side effect -
-        // DataObjectPropertyReader will be replaced with getter-based reader. Those two should behave exactly
+        // DataObjectDataReader will be replaced with getter-based reader. Those two should behave exactly
         // the same, possibly with some really minor performance difference
 
         AgEntity<T> annotatedEntity = new AnnotationsAgEntityBuilder<>(type, schema).build();
@@ -228,7 +234,7 @@ public class CayenneAgEntityBuilder<T> {
                 ids,
                 attributes,
                 relationships,
-                rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance(),
+                dataResolver != null ? dataResolver : ThrowingRootDataResolver.getInstance(),
                 ReadFilter.allowsAllFilter(),
                 CreateAuthorizer.allowsAllFilter(),
                 UpdateAuthorizer.allowsAllFilter(),

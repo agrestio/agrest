@@ -1,7 +1,7 @@
 package io.agrest.runtime.constraints;
 
 import io.agrest.EntityUpdate;
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.meta.AgAttribute;
@@ -61,7 +61,7 @@ class EntityConstraintHandler {
                 }
 
                 // updates are not hierarchical yet, so no need to recursively process the "child"
-                NestedResourceEntity<?> child = entity.getChild(name);
+                RelatedResourceEntity<?> child = entity.getChild(name);
                 if (child != null) {
                     if (child.getIncoming().isWritable()) {
                         LOGGER.info("Relationship not allowed, removing: {} for id {}", name, u.getId());
@@ -106,10 +106,10 @@ class EntityConstraintHandler {
             }
         }
 
-        Iterator<Entry<String, NestedResourceEntity<?>>> rit = entity.getChildren().entrySet().iterator();
+        Iterator<Entry<String, RelatedResourceEntity<?>>> rit = entity.getChildren().entrySet().iterator();
         while (rit.hasNext()) {
 
-            Entry<String, NestedResourceEntity<?>> r = rit.next();
+            Entry<String, RelatedResourceEntity<?>> r = rit.next();
             if (r.getValue().getIncoming().isReadable()) {
                 constrainForRead(r.getValue());
             } else {

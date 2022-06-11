@@ -1,6 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 
 /**
  * @since 5.0
@@ -10,7 +10,7 @@ public class DefaultAttributeOverlay extends BasePropertyOverlay implements AgAt
     private final Class<?> javaType;
     private final Boolean readable;
     private final Boolean writable;
-    private final PropertyReader propertyReader;
+    private final DataReader dataReader;
 
     public DefaultAttributeOverlay(
             String name,
@@ -18,7 +18,7 @@ public class DefaultAttributeOverlay extends BasePropertyOverlay implements AgAt
             Class<?> javaType,
             Boolean readable,
             Boolean writable,
-            PropertyReader propertyReader) {
+            DataReader dataReader) {
 
         super(name, sourceType);
 
@@ -26,7 +26,7 @@ public class DefaultAttributeOverlay extends BasePropertyOverlay implements AgAt
         this.javaType = javaType;
         this.readable = readable;
         this.writable = writable;
-        this.propertyReader = propertyReader;
+        this.dataReader = dataReader;
     }
 
     @Override
@@ -43,9 +43,9 @@ public class DefaultAttributeOverlay extends BasePropertyOverlay implements AgAt
         Class<?> javaType = this.javaType != null ? this.javaType : overlaid.getType();
         boolean readable = this.readable != null ? this.readable : overlaid.isReadable();
         boolean writable = this.writable != null ? this.writable : overlaid.isWritable();
-        PropertyReader propertyReader = this.propertyReader != null ? this.propertyReader : overlaid.getPropertyReader();
+        DataReader dataReader = this.dataReader != null ? this.dataReader : overlaid.getDataReader();
 
-        return new DefaultAttribute(name, javaType, readable, writable, propertyReader);
+        return new DefaultAttribute(name, javaType, readable, writable, dataReader);
     }
 
     private AgAttribute resolveNew() {
@@ -60,6 +60,6 @@ public class DefaultAttributeOverlay extends BasePropertyOverlay implements AgAt
                 propertyOrDefault(readable, true),
                 propertyOrDefault(writable, true),
 
-                requiredProperty("propertyReader", propertyReader));
+                requiredProperty("dataReader", dataReader));
     }
 }

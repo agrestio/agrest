@@ -1,6 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.resolver.NestedDataResolver;
+import io.agrest.resolver.RelatedDataResolver;
 
 /**
  * @since 1.12
@@ -27,8 +27,8 @@ public interface AgRelationship {
     boolean isWritable();
 
     /**
-     * @return a default data resolver for the target entity of this relationship
-     * @since 3.4
+     * @return the data resolver for the target entity of this relationship
+     * @since 5.0
      */
-    NestedDataResolver<?> getResolver();
+    RelatedDataResolver<?> getDataResolver();
 }

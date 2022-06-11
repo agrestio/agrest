@@ -1,6 +1,6 @@
 package io.agrest.encoder;
 
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 
 /**
  * Encapsulates how certain data is extracted and encoded from entity objects.
@@ -10,13 +10,13 @@ import io.agrest.property.PropertyReader;
 public class EncodableProperty {
 
     private Encoder encoder;
-    private final PropertyReader reader;
+    private final DataReader reader;
 
-    public static EncodableProperty property(PropertyReader reader) {
+    public static EncodableProperty property(DataReader reader) {
         return new EncodableProperty(reader, GenericEncoder.encoder());
     }
 
-    private EncodableProperty(PropertyReader reader, Encoder encoder) {
+    private EncodableProperty(DataReader reader, Encoder encoder) {
         this.encoder = encoder;
         this.reader = reader;
     }
@@ -31,7 +31,7 @@ public class EncodableProperty {
         return encoder;
     }
 
-    public PropertyReader getReader() {
+    public DataReader getReader() {
         return reader;
     }
 }

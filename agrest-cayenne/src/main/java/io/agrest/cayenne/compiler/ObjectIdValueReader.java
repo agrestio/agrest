@@ -1,14 +1,14 @@
 package io.agrest.cayenne.compiler;
 
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 import org.apache.cayenne.ObjectId;
 import org.apache.cayenne.Persistent;
 
-public class ObjectIdValueReader implements PropertyReader {
+public class ObjectIdValueReader implements DataReader {
 
     private final String snapshotKey;
 
-    public static PropertyReader reader(String snapshotKey) {
+    public static DataReader reader(String snapshotKey) {
         return new ObjectIdValueReader(snapshotKey);
     }
 
@@ -17,7 +17,7 @@ public class ObjectIdValueReader implements PropertyReader {
     }
 
     @Override
-    public Object value(Object object) {
+    public Object read(Object object) {
         ObjectId id = ((Persistent) object).getObjectId();
         if (id.isTemporary()) {
             // can only extract properties from permanent IDs

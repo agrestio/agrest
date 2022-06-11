@@ -78,7 +78,7 @@ public class EncoderServiceTest extends CayenneNoDbTest {
 
         ToManyResourceEntity<E3> e3Descriptor = getToManyChildEntity(E3.class, descriptor, E2.E3S.getName());
         e3Descriptor.includeId();
-        CayenneProcessor.getOrCreateNestedEntity(e3Descriptor);
+        CayenneProcessor.getOrCreateRelatedEntity(e3Descriptor);
         e3Descriptor.addAttribute(new DefaultAttribute("name", String.class, true, true, o -> ((E3)o).getName()), false);
         descriptor.getChildren().put(E2.E3S.getName(), e3Descriptor);
 

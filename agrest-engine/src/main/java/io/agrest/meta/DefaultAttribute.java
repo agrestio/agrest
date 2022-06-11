@@ -1,6 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 
 /**
  * @since 5.0
@@ -11,19 +11,19 @@ public class DefaultAttribute implements AgAttribute {
     private final Class<?> javaType;
     private final boolean readable;
     private final boolean writable;
-    private final PropertyReader propertyReader;
+    private final DataReader dataReader;
 
     public DefaultAttribute(
             String name,
             Class<?> javaType,
             boolean readable,
             boolean writable,
-            PropertyReader propertyReader) {
+            DataReader dataReader) {
         this.name = name;
         this.javaType = javaType;
         this.readable = readable;
         this.writable = writable;
-        this.propertyReader = propertyReader;
+        this.dataReader = dataReader;
     }
 
     @Override
@@ -56,8 +56,8 @@ public class DefaultAttribute implements AgAttribute {
      * @since 2.10
      */
     @Override
-    public PropertyReader getPropertyReader() {
-        return propertyReader;
+    public DataReader getDataReader() {
+        return dataReader;
     }
 
     @Override

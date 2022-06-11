@@ -1,46 +1,46 @@
 package io.agrest.cayenne.processor.select;
 
 import io.agrest.AgException;
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.CayenneResourceEntityExt;
 import io.agrest.processor.ProcessingContext;
-import io.agrest.property.PropertyReader;
-import io.agrest.resolver.NestedDataResolver;
+import io.agrest.reader.DataReader;
+import io.agrest.resolver.RelatedDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
 
 /**
  * @since 4.8
  */
-public class ContextualCayenneNestedDataResolver<T> implements NestedDataResolver<T> {
+public class ContextualCayenneRelatedDataResolver<T> implements RelatedDataResolver<T> {
 
-    private final NestedDataResolver<T> parentQueryResolver;
-    private final NestedDataResolver<T> parentIdsResolver;
+    private final RelatedDataResolver<T> parentQueryResolver;
+    private final RelatedDataResolver<T> parentIdsResolver;
 
-    public ContextualCayenneNestedDataResolver(
-            NestedDataResolver<T> parentQueryResolver,
-            NestedDataResolver<T> parentIdsResolver) {
+    public ContextualCayenneRelatedDataResolver(
+            RelatedDataResolver<T> parentQueryResolver,
+            RelatedDataResolver<T> parentIdsResolver) {
 
         this.parentQueryResolver = parentQueryResolver;
         this.parentIdsResolver = parentIdsResolver;
     }
 
     @Override
-    public void onParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context) {
+    public void onParentQueryAssembled(RelatedResourceEntity<T> entity, SelectContext<?> context) {
         pickResolver(entity).onParentQueryAssembled(entity, context);
     }
 
     @Override
-    public void onParentDataResolved(NestedResourceEntity<T> entity, Iterable<?> parentData, SelectContext<?> context) {
+    public void onParentDataResolved(RelatedResourceEntity<T> entity, Iterable<?> parentData, SelectContext<?> context) {
         pickResolver(entity).onParentDataResolved(entity, parentData, context);
     }
 
     @Override
-    public PropertyReader reader(NestedResourceEntity<T> entity, ProcessingContext<?> context) {
-        return pickResolver(entity).reader(entity, context);
+    public DataReader dataReader(RelatedResourceEntity<T> entity, ProcessingContext<?> context) {
+        return pickResolver(entity).dataReader(entity, context);
     }
 
-    protected NestedDataResolver<T> pickResolver(NestedResourceEntity<T> entity) {
+    protected RelatedDataResolver<T> pickResolver(RelatedResourceEntity<T> entity) {
         CayenneResourceEntityExt parentExt = CayenneProcessor.getEntity(entity.getParent());
 
         // depending on the parent Cayenne semantics, we have some choices to make

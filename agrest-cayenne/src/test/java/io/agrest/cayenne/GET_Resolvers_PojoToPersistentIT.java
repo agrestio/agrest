@@ -11,7 +11,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.cayenne.pojo.model.PX1;
 import io.agrest.cayenne.pojo.runtime.PX1RootResolver;
-import io.agrest.resolver.NestedDataResolverFactory;
+import io.agrest.resolver.RelatedDataResolverFactory;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -73,14 +73,14 @@ public class GET_Resolvers_PojoToPersistentIT extends DbTest {
             }
         }
 
-        NestedDataResolverFactory resolverFactory(GET_Resolvers_CombinationsIT.Overlay o) {
+        RelatedDataResolverFactory resolverFactory(GET_Resolvers_CombinationsIT.Overlay o) {
             switch (o) {
                 case joint:
-                    return CayenneResolvers.nestedViaParentPrefetch();
+                    return CayenneResolvers.relatedViaParentPrefetch();
                 case parentExp:
-                    return CayenneResolvers.nestedViaQueryWithParentExp();
+                    return CayenneResolvers.relatedViaQueryWithParentExp();
                 case parentId:
-                    return CayenneResolvers.nestedViaQueryWithParentIds();
+                    return CayenneResolvers.relatedViaQueryWithParentIds();
                 default:
                     throw new IllegalStateException("?");
             }

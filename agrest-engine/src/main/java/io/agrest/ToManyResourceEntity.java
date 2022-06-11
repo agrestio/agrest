@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @since 4.8
  */
-public class ToManyResourceEntity<T> extends NestedResourceEntity<T> {
+public class ToManyResourceEntity<T> extends RelatedResourceEntity<T> {
 
     private final Map<AgObjectId, List<T>> dataByParent;
 

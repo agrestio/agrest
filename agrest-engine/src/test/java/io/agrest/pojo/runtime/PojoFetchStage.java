@@ -6,7 +6,7 @@ import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
 
@@ -57,7 +57,7 @@ public class PojoFetchStage implements Processor<SelectContext<?>> {
         Function<T, ? extends Comparable> keyReader;
         AgAttribute attribute = entity.getAttribute(s.getPath());
         if (attribute != null) {
-            keyReader = t -> (Comparable) attribute.getPropertyReader().value(t);
+            keyReader = t -> (Comparable) attribute.getDataReader().read(t);
         }
         else if (PathConstants.ID_PK_ATTRIBUTE.equals(s.getPath())) {
             keyReader = t -> readId(t, entity.getIdReader());
@@ -68,12 +68,12 @@ public class PojoFetchStage implements Processor<SelectContext<?>> {
         return (Comparator<T>) Comparator.comparing(keyReader);
     }
 
-    private Comparable readId(Object object, PropertyReader idReader) {
+    private Comparable readId(Object object, DataReader idReader) {
         if (object == null) {
             return null;
         }
 
-        Map<String, Object> id = (Map<String, Object>) idReader.value(object);
+        Map<String, Object> id = (Map<String, Object>) idReader.read(object);
         assertEquals(1, id.size(), () -> "Unexpected id size " + id.size() + " for object " + object.getClass());
         return (Comparable) id.values().iterator().next();
     }

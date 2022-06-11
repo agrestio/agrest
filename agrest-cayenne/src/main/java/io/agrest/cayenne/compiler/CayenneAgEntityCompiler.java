@@ -2,7 +2,7 @@ package io.agrest.cayenne.compiler;
 
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
-import io.agrest.cayenne.processor.select.ContextualCayenneNestedDataResolver;
+import io.agrest.cayenne.processor.select.ContextualCayenneRelatedDataResolver;
 import io.agrest.cayenne.processor.select.ViaQueryResolver;
 import io.agrest.cayenne.processor.select.ViaQueryWithParentExpResolver;
 import io.agrest.cayenne.processor.select.ViaQueryWithParentIdsResolver;
@@ -11,7 +11,7 @@ import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.LazyEntity;
-import io.agrest.resolver.NestedDataResolver;
+import io.agrest.resolver.RelatedDataResolver;
 import io.agrest.resolver.RootDataResolver;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.EntityResolver;
@@ -30,8 +30,8 @@ public class CayenneAgEntityCompiler implements AgEntityCompiler {
 
     private final EntityResolver cayenneEntityResolver;
     private final Map<String, AgEntityOverlay> entityOverlays;
-    private final RootDataResolver defaultRootResolver;
-    private final NestedDataResolver defaultNestedResolver;
+    private final RootDataResolver<?> defaultRootResolver;
+    private final RelatedDataResolver<?> defaultRelatedDataResolver;
 
     public CayenneAgEntityCompiler(
             @Inject ICayennePersister cayennePersister,
@@ -42,7 +42,7 @@ public class CayenneAgEntityCompiler implements AgEntityCompiler {
         this.entityOverlays = entityOverlays;
 
         this.defaultRootResolver = createDefaultRootResolver(queryAssembler, cayennePersister);
-        this.defaultNestedResolver = createDefaultNestedResolver(queryAssembler, cayennePersister);
+        this.defaultRelatedDataResolver = createDefaultRelatedResolver(queryAssembler, cayennePersister);
     }
 
     @Override
@@ -61,11 +61,11 @@ public class CayenneAgEntityCompiler implements AgEntityCompiler {
         return new ViaQueryResolver(queryAssembler, cayennePersister);
     }
 
-    protected NestedDataResolver<?> createDefaultNestedResolver(
+    protected RelatedDataResolver<?> createDefaultRelatedResolver(
             ICayenneQueryAssembler queryAssembler,
             ICayennePersister cayennePersister) {
 
-        return new ContextualCayenneNestedDataResolver<>(
+        return new ContextualCayenneRelatedDataResolver<>(
                 new ViaQueryWithParentExpResolver(queryAssembler, cayennePersister),
                 new ViaQueryWithParentIdsResolver<>(queryAssembler, cayennePersister)
         );
@@ -75,8 +75,8 @@ public class CayenneAgEntityCompiler implements AgEntityCompiler {
         LOGGER.debug("compiling Cayenne entity for type: {}", type);
         return new CayenneAgEntityBuilder<>(type, schema, cayenneEntityResolver)
                 .overlay(entityOverlays.get(type.getName()))
-                .rootDataResolver(defaultRootResolver)
-                .nestedDataResolver(defaultNestedResolver)
+                .dataResolver(defaultRootResolver)
+                .relatedDataResolver(defaultRelatedDataResolver)
                 .build();
     }
 }

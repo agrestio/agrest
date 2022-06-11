@@ -1,6 +1,6 @@
 package io.agrest.runtime.encoder;
 
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.encoder.EncodableProperty;
 import io.agrest.encoder.Encoder;
@@ -10,7 +10,7 @@ import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.ProcessingContext;
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 import org.apache.cayenne.di.Inject;
 
 import java.util.Collection;
@@ -32,7 +32,7 @@ public class EncodablePropertyFactory implements IEncodablePropertyFactory {
     @Override
     public EncodableProperty getAttributeProperty(ResourceEntity<?> entity, AgAttribute attribute) {
         return EncodableProperty
-                .property(attribute.getPropertyReader())
+                .property(attribute.getDataReader())
                 .encodedWith(getEncoder(attribute.getType()));
     }
 
@@ -43,8 +43,8 @@ public class EncodablePropertyFactory implements IEncodablePropertyFactory {
             Encoder relatedEncoder,
             ProcessingContext<?> context) {
 
-        NestedResourceEntity childEntity = entity.getChild(relationship.getName());
-        PropertyReader reader = relationship.getResolver().reader(childEntity, context);
+        RelatedResourceEntity childEntity = entity.getChild(relationship.getName());
+        DataReader reader = relationship.getDataResolver().dataReader(childEntity, context);
 
         return EncodableProperty
                 .property(reader)

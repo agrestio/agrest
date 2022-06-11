@@ -1,6 +1,6 @@
 package io.agrest.runtime.entity;
 
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.ToManyResourceEntity;
@@ -37,13 +37,13 @@ public class MapByMerger implements IMapByMerger {
             return;
         }
 
-        if (entity instanceof NestedResourceEntity && !((NestedResourceEntity) entity).getIncoming().isToMany()) {
+        if (entity instanceof RelatedResourceEntity && !((RelatedResourceEntity) entity).getIncoming().isToMany()) {
             LOGGER.info("Ignoring 'mapBy : {}' for to-one relationship property", mapByPath);
             return;
         }
 
-        ResourceEntity<?> mapByCompanionEntity = entity instanceof NestedResourceEntity
-                ? mapByCompanionEntity((NestedResourceEntity) entity)
+        ResourceEntity<?> mapByCompanionEntity = entity instanceof RelatedResourceEntity
+                ? mapByCompanionEntity((RelatedResourceEntity) entity)
                 : mapByCompanionEntity((RootResourceEntity) entity);
 
         new ResourceEntityTreeBuilder(mapByCompanionEntity, schema, overlays).inflatePath(mapByPath);
@@ -54,7 +54,7 @@ public class MapByMerger implements IMapByMerger {
         return new RootResourceEntity<>(entity.getAgEntity());
     }
 
-    protected <T> NestedResourceEntity<?> mapByCompanionEntity(NestedResourceEntity<T> entity) {
+    protected <T> RelatedResourceEntity<?> mapByCompanionEntity(RelatedResourceEntity<T> entity) {
         return entity instanceof ToOneResourceEntity
                 ? new ToOneResourceEntity<>(entity.getAgEntity(), entity.getParent(), entity.getIncoming())
                 : new ToManyResourceEntity<>(entity.getAgEntity(), entity.getParent(), entity.getIncoming());

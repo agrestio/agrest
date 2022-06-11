@@ -1,6 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.resolver.NestedDataResolver;
+import io.agrest.resolver.RelatedDataResolver;
 
 import java.util.Objects;
 
@@ -14,7 +14,7 @@ public class DefaultRelationship implements AgRelationship {
     private final boolean toMany;
     private final boolean readable;
     private final boolean writable;
-    private final NestedDataResolver<?> dataResolver;
+    private final RelatedDataResolver<?> dataResolver;
 
     public DefaultRelationship(
             String name,
@@ -22,7 +22,7 @@ public class DefaultRelationship implements AgRelationship {
             boolean toMany,
             boolean readable,
             boolean writable,
-            NestedDataResolver<?> dataResolver) {
+            RelatedDataResolver<?> dataResolver) {
 
         this.name = name;
         this.toMany = toMany;
@@ -64,7 +64,7 @@ public class DefaultRelationship implements AgRelationship {
     }
 
     @Override
-    public NestedDataResolver<?> getResolver() {
+    public RelatedDataResolver<?> getDataResolver() {
         return dataResolver;
     }
 

@@ -3,12 +3,12 @@ package io.agrest.cayenne.processor.update.stage;
 import io.agrest.AgObjectId;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityUpdate;
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.SimpleObjectId;
 import io.agrest.ToManyResourceEntity;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.stage.UpdateFillResponseStage;
 import org.apache.cayenne.DataObject;
@@ -56,7 +56,7 @@ public abstract class CayenneFillResponseStage extends UpdateFillResponseStage {
                 if (o != null && seen.add(o.getObjectId())) {
                     objects.add(o);
 
-                    // TODO: child entities should be seeded via a special NestedDataResolver to read from parent
+                    // TODO: child entities should be seeded via a special RelatedDataResolver to read from parent
                     //  instead of manually traversing objects
                     assignChildrenToParent(o, context.getEntity());
                 }
@@ -68,13 +68,13 @@ public abstract class CayenneFillResponseStage extends UpdateFillResponseStage {
 
     protected void assignChildrenToParent(DataObject root, ResourceEntity<?> entity) {
 
-        PropertyReader idReader = entity.getAgEntity().getIdReader();
-        Map<String, NestedResourceEntity<?>> children = entity.getChildren();
+        DataReader idReader = entity.getAgEntity().getIdReader();
+        Map<String, RelatedResourceEntity<?>> children = entity.getChildren();
 
         if (!children.isEmpty()) {
 
-            for (Map.Entry<String, NestedResourceEntity<?>> e : children.entrySet()) {
-                NestedResourceEntity childEntity = e.getValue();
+            for (Map.Entry<String, RelatedResourceEntity<?>> e : children.entrySet()) {
+                RelatedResourceEntity childEntity = e.getValue();
 
                 Object result = root.readPropertyDirectly(e.getKey());
                 if (result == null || result instanceof Fault) {
@@ -82,7 +82,7 @@ public abstract class CayenneFillResponseStage extends UpdateFillResponseStage {
                 }
 
                 // TODO: getIdSnapshot() will not prefix keys with "db". Must use AgIdParts to resolve the ID
-                Map<String, Object> idMap = (Map<String, Object>) idReader.value(root);
+                Map<String, Object> idMap = (Map<String, Object>) idReader.read(root);
                 AgObjectId id = idMap.size() > 1
                         ? new CompoundObjectId(idMap)
                         : new SimpleObjectId(idMap.values().iterator().next());

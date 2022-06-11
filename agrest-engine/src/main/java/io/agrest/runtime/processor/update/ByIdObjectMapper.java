@@ -61,7 +61,7 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
         Map<String, Object> idMap = new HashMap<>();
 
         for (AgIdPart id : entity.getIdParts()) {
-            idMap.put(id.getName(), id.getReader().value(object));
+            idMap.put(id.getName(), id.getDataReader().read(object));
         }
 
         return idMap;

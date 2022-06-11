@@ -19,7 +19,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_Resolvers_Nested_ToManyIT extends DbTest {
+public class GET_Resolvers_Related_ToManyIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
@@ -91,7 +91,7 @@ public class GET_Resolvers_Nested_ToManyIT extends DbTest {
 
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineRelationshipResolver("e3s", CayenneResolvers.nestedViaParentPrefetch());
+                    .redefineRelatedDataResolver("e3s", CayenneResolvers.relatedViaParentPrefetch());
 
             return AgJaxrs.select(E2.class, config)
                     .entityOverlay(e2Overlay)
@@ -105,7 +105,7 @@ public class GET_Resolvers_Nested_ToManyIT extends DbTest {
 
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineRelationshipResolver("e3s", CayenneResolvers.nestedViaQueryWithParentIds());
+                    .redefineRelatedDataResolver("e3s", CayenneResolvers.relatedViaQueryWithParentIds());
 
             return AgJaxrs.select(E2.class, config)
                     .entityOverlay(e2Overlay)

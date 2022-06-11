@@ -1,14 +1,15 @@
 package io.agrest.cayenne.processor;
 
+import io.agrest.RelatedResourceEntity;
 import org.apache.cayenne.query.ColumnSelect;
 
 /**
- * Stores Cayenne-related per nested entity request state. A presence in a {@link io.agrest.NestedResourceEntity} tags it
+ * Stores Cayenne-related per related entity request state. A presence in a {@link RelatedResourceEntity} tags it
  * as Cayenne-managed.
  *
  * @since 5.0
  */
-public class CayenneNestedResourceEntityExt implements CayenneResourceEntityExt {
+public class CayenneRelatedResourceEntityExt implements CayenneResourceEntityExt {
 
     private ColumnSelect<Object[]> select;
 

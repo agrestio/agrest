@@ -28,7 +28,7 @@ public class EntityNoIdEncoder extends AbstractEncoder {
         for (Map.Entry<String, EncodableProperty> e : encoders.entrySet()) {
             EncodableProperty p = e.getValue();
             String propertyName = e.getKey();
-            Object v = object == null ? null : p.getReader().value(object);
+            Object v = object == null ? null : p.getReader().read(object);
             p.getEncoder().encode(propertyName, v, out);
         }
     }

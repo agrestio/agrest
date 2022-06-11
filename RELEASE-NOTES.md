@@ -30,6 +30,7 @@
 * #562 Term refactoring: AgDataMap > AgSchema
 * #563 Upgrade to Cayenne 4.2.RC1
 * #565 Move static builder methods from AgCayenneBuilder to AgCayenneModule
+* #567 Terminology refactoring: "reader", "resolver", "dataResolver", "nestedEntity"
 
 ## Release 4.10
 

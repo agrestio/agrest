@@ -1,7 +1,7 @@
 package io.agrest.runtime.entity;
 
 import io.agrest.AgObjectId;
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.ToManyResourceEntity;
@@ -35,7 +35,7 @@ public class ResultFilter implements IResultFilter {
     }
 
     protected void filterChildren(ResourceEntity<?> entity) {
-        for (NestedResourceEntity<?> child : entity.getChildren().values()) {
+        for (RelatedResourceEntity<?> child : entity.getChildren().values()) {
             if (child instanceof ToOneResourceEntity) {
                 filterToOne((ToOneResourceEntity<?>) child);
             } else {

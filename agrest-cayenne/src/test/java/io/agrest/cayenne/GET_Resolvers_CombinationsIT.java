@@ -10,7 +10,7 @@ import io.agrest.cayenne.unit.DbTest;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.resolver.NestedDataResolverFactory;
+import io.agrest.resolver.RelatedDataResolverFactory;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -167,11 +167,11 @@ public class GET_Resolvers_CombinationsIT extends DbTest {
 
             AgEntityOverlay<E5> o1 = AgEntity
                     .overlay(E5.class)
-                    .redefineRelationshipResolver(E5.E3S.getName(), resolverFactory(e5o));
+                    .redefineRelatedDataResolver(E5.E3S.getName(), resolverFactory(e5o));
 
             AgEntityOverlay<E3> o2 = AgEntity
                     .overlay(E3.class)
-                    .redefineRelationshipResolver(E3.E2.getName(), resolverFactory(e3o));
+                    .redefineRelatedDataResolver(E3.E2.getName(), resolverFactory(e3o));
 
             return AgJaxrs.select(E5.class, config)
                     .entityOverlay(o1)
@@ -189,11 +189,11 @@ public class GET_Resolvers_CombinationsIT extends DbTest {
 
             AgEntityOverlay<E3> o1 = AgEntity
                     .overlay(E3.class)
-                    .redefineRelationshipResolver(E3.E5.getName(), resolverFactory(e3o));
+                    .redefineRelatedDataResolver(E3.E5.getName(), resolverFactory(e3o));
 
             AgEntityOverlay<E5> o2 = AgEntity
                     .overlay(E5.class)
-                    .redefineRelationshipResolver(E5.E15S.getName(), resolverFactory(e5o));
+                    .redefineRelatedDataResolver(E5.E15S.getName(), resolverFactory(e5o));
 
             return AgJaxrs.select(E3.class, config)
                     .entityOverlay(o1)
@@ -202,14 +202,14 @@ public class GET_Resolvers_CombinationsIT extends DbTest {
                     .get();
         }
 
-        NestedDataResolverFactory resolverFactory(Overlay o) {
+        RelatedDataResolverFactory resolverFactory(Overlay o) {
             switch (o) {
                 case joint:
-                    return CayenneResolvers.nestedViaParentPrefetch();
+                    return CayenneResolvers.relatedViaParentPrefetch();
                 case parentExp:
-                    return CayenneResolvers.nestedViaQueryWithParentExp();
+                    return CayenneResolvers.relatedViaQueryWithParentExp();
                 case parentId:
-                    return CayenneResolvers.nestedViaQueryWithParentIds();
+                    return CayenneResolvers.relatedViaQueryWithParentIds();
                 default:
                     throw new IllegalStateException("?");
             }

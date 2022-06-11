@@ -6,10 +6,10 @@ import io.agrest.access.ReadFilter;
 import io.agrest.access.UpdateAuthorizer;
 import io.agrest.access.PropertyFilteringRulesBuilder;
 import io.agrest.access.PropertyFilter;
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 import io.agrest.resolver.BaseRootDataResolver;
-import io.agrest.resolver.NestedDataResolver;
-import io.agrest.resolver.NestedDataResolverFactory;
+import io.agrest.resolver.RelatedDataResolver;
+import io.agrest.resolver.RelatedDataResolverFactory;
 import io.agrest.resolver.ReaderBasedResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.RootDataResolverFactory;
@@ -52,17 +52,17 @@ public class AgEntityOverlay<T> {
         this.deleteAuthorizer = DeleteAuthorizer.allowsAllFilter();
     }
 
-    private static PropertyReader fromFunction(Function<?, ?> f) {
-        // lose generics. PropertyReader is not parameterized
+    private static DataReader fromFunction(Function<?, ?> f) {
+        // lose generics. DataReader is not parameterized
         Function fx = f;
         return fx::apply;
     }
 
-    private static <T> NestedDataResolver<T> resolverForReader(Function<?, T> reader) {
+    private static <T> RelatedDataResolver<T> resolverForReader(Function<?, T> reader) {
         return new ReaderBasedResolver<>(fromFunction(reader));
     }
 
-    static <T> NestedDataResolver<T> resolverForListReader(Function<?, List<T>> reader) {
+    static <T> RelatedDataResolver<T> resolverForListReader(Function<?, List<T>> reader) {
         return new ReaderBasedResolver<>(fromFunction(reader));
     }
 
@@ -268,12 +268,12 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * Redefines nested resolver for a named relationship.
+     * Redefines related resolver for a named relationship.
      *
-     * @since 3.4
+     * @since 5.0
      */
-    public AgEntityOverlay<T> redefineRelationshipResolver(String name, NestedDataResolverFactory resolverFactory) {
-        NestedDataResolver<?> resolver = resolverFactory.resolver(type, name);
+    public AgEntityOverlay<T> redefineRelatedDataResolver(String name, RelatedDataResolverFactory resolverFactory) {
+        RelatedDataResolver<?> resolver = resolverFactory.resolver(type, name);
         relationships.put(name, new DefaultRelationshipOverlay(name, type, null, null, null, null, resolver));
         return this;
     }
@@ -281,9 +281,9 @@ public class AgEntityOverlay<T> {
     /**
      * Adds an overlay for an existing named relationship, replacing its default resolving strategy.
      *
-     * @since 3.4
+     * @since 5.0
      */
-    public AgEntityOverlay<T> redefineRelationshipResolver(String name, Function<T, ?> reader) {
+    public AgEntityOverlay<T> redefineRelatedDataResolver(String name, Function<T, ?> reader) {
         relationships.put(name, new DefaultRelationshipOverlay(name, type, null, null, null, null, resolverForReader(reader)));
         return this;
     }
@@ -294,8 +294,8 @@ public class AgEntityOverlay<T> {
      *
      * @since 3.4
      */
-    public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, NestedDataResolverFactory resolverFactory) {
-        NestedDataResolver<?> resolver = resolverFactory.resolver(type, name);
+    public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, RelatedDataResolverFactory resolverFactory) {
+        RelatedDataResolver<?> resolver = resolverFactory.resolver(type, name);
         relationships.put(name, new DefaultRelationshipOverlay(name, type, targetType, false, null, null, resolver));
         return this;
     }
@@ -306,8 +306,8 @@ public class AgEntityOverlay<T> {
      *
      * @since 4.7
      */
-    public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, boolean readable, boolean writable, NestedDataResolverFactory resolverFactory) {
-        NestedDataResolver<?> resolver = resolverFactory.resolver(type, name);
+    public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, boolean readable, boolean writable, RelatedDataResolverFactory resolverFactory) {
+        RelatedDataResolver<?> resolver = resolverFactory.resolver(type, name);
         relationships.put(name, new DefaultRelationshipOverlay(name, type, targetType, false, readable, writable, resolver));
         return this;
     }
@@ -318,8 +318,8 @@ public class AgEntityOverlay<T> {
      *
      * @since 3.4
      */
-    public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, NestedDataResolverFactory resolverFactory) {
-        NestedDataResolver<?> resolver = resolverFactory.resolver(type, name);
+    public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, RelatedDataResolverFactory resolverFactory) {
+        RelatedDataResolver<?> resolver = resolverFactory.resolver(type, name);
         relationships.put(name, new DefaultRelationshipOverlay(name, type, targetType, true, null, null, resolver));
         return this;
     }
@@ -330,8 +330,8 @@ public class AgEntityOverlay<T> {
      *
      * @since 4.7
      */
-    public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, boolean readable, boolean writable, NestedDataResolverFactory resolverFactory) {
-        NestedDataResolver<?> resolver = resolverFactory.resolver(type, name);
+    public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, boolean readable, boolean writable, RelatedDataResolverFactory resolverFactory) {
+        RelatedDataResolver<?> resolver = resolverFactory.resolver(type, name);
         relationships.put(name, new DefaultRelationshipOverlay(name, type, targetType, true, readable, writable, resolver));
         return this;
     }
@@ -410,7 +410,7 @@ public class AgEntityOverlay<T> {
      * @since 4.9
      */
     public AgEntityOverlay<T> redefineDataResolver(Function<SelectContext<T>, List<T>> reader) {
-        this.rootDataResolver = new BaseRootDataResolver<T>() {
+        this.rootDataResolver = new BaseRootDataResolver<>() {
 
             @Override
             protected List<T> doFetchData(SelectContext<T> context) {

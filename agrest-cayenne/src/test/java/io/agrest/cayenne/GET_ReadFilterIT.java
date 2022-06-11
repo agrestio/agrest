@@ -61,7 +61,7 @@ public class GET_ReadFilterIT extends DbTest {
     }
 
     @Test
-    public void testNestedFilter_ToOne() {
+    public void testRelatedFilter_ToOne() {
 
         tester.e2().insertColumns("id_")
                 .values(2)
@@ -83,7 +83,7 @@ public class GET_ReadFilterIT extends DbTest {
     }
 
     @Test
-    public void testNestedFilter_ToMany() {
+    public void testRelatedFilter_ToMany() {
 
         tester.e2().insertColumns("id_")
                 .values(2)

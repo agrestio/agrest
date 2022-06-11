@@ -67,7 +67,7 @@ public class PUT_ReadFilterIT extends DbTest {
     }
 
     @Test
-    public void testInStack_Nested() {
+    public void testInStack_Related() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "a")

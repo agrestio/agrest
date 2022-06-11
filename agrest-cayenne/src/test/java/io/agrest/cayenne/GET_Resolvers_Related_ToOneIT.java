@@ -19,7 +19,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_Resolvers_Nested_ToOneIT extends DbTest {
+public class GET_Resolvers_Related_ToOneIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
@@ -153,10 +153,10 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
         @Path("e3_joint_prefetch")
         public DataResponse<E3> e3_joint_prefetch(@Context UriInfo uriInfo) {
 
-            // non-standard nested resolver
+            // non-standard related resolver
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
-                    .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaParentPrefetch());
+                    .redefineRelatedDataResolver("e2", CayenneResolvers.relatedViaParentPrefetch());
 
             return AgJaxrs.select(E3.class, config)
                     .entityOverlay(e3Overlay)
@@ -168,10 +168,10 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
         @Path("e3_query_with_parent_ids")
         public DataResponse<E3> e3_query_with_parent_ids(@Context UriInfo uriInfo) {
 
-            // non-standard nested resolver
+            // non-standard related resolver
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
-                    .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaQueryWithParentIds());
+                    .redefineRelatedDataResolver("e2", CayenneResolvers.relatedViaQueryWithParentIds());
 
             return AgJaxrs.select(E3.class, config)
                     .entityOverlay(e3Overlay)
@@ -183,11 +183,11 @@ public class GET_Resolvers_Nested_ToOneIT extends DbTest {
         @Path("e3_query_with_parent_qualifier")
         public DataResponse<E3> e3_query_with_parent_qualifier(@Context UriInfo uriInfo) {
 
-            // non-standard nested resolver
+            // non-standard related resolver
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
                     // this is actually the standard strategy, but let's see how it works if installed via a request-scoped overlay
-                    .redefineRelationshipResolver("e2", CayenneResolvers.nestedViaQueryWithParentExp());
+                    .redefineRelatedDataResolver("e2", CayenneResolvers.relatedViaQueryWithParentExp());
 
             return AgJaxrs.select(E3.class, config)
                     .entityOverlay(e3Overlay)

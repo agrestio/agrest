@@ -4,7 +4,7 @@ import io.agrest.access.CreateAuthorizer;
 import io.agrest.access.DeleteAuthorizer;
 import io.agrest.access.ReadFilter;
 import io.agrest.access.UpdateAuthorizer;
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
@@ -60,18 +60,18 @@ public interface AgEntity<T> {
      *
      * @since 4.2
      */
-    default PropertyReader getIdReader() {
+    default DataReader getIdReader() {
         Collection<AgIdPart> ids = getIdParts();
         switch (ids.size()) {
             case 0:
                 throw new IllegalStateException("Can't create ID reader. No id parts defined for entity '" + getName() + "'");
             case 1:
                 AgIdPart id = ids.iterator().next();
-                return o -> Collections.singletonMap(id.getName(), id.getReader().value(o));
+                return o -> Collections.singletonMap(id.getName(), id.getDataReader().read(o));
             default:
                 return o -> {
                     Map<String, Object> values = new HashMap<>();
-                    ids.forEach(idx -> values.put(idx.getName(), idx.getReader().value(o)));
+                    ids.forEach(idx -> values.put(idx.getName(), idx.getDataReader().read(o)));
                     return values;
                 };
         }

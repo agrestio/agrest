@@ -45,7 +45,7 @@ public class AnnotationsAgEntityBuilder<T> {
     private final String name;
     private final AgSchema schema;
     private AgEntityOverlay<T> overlay;
-    private RootDataResolver<T> rootDataResolver;
+    private RootDataResolver<T> dataResolver;
 
     private final Map<String, AgIdPart> ids;
     private final Map<String, io.agrest.meta.AgAttribute> attributes;
@@ -66,8 +66,8 @@ public class AnnotationsAgEntityBuilder<T> {
         return this;
     }
 
-    public AnnotationsAgEntityBuilder<T> rootDataResolver(RootDataResolver<T> resolver) {
-        this.rootDataResolver = resolver;
+    public AnnotationsAgEntityBuilder<T> dataResolver(RootDataResolver<T> dataResolver) {
+        this.dataResolver = dataResolver;
         return this;
     }
 
@@ -219,7 +219,7 @@ public class AnnotationsAgEntityBuilder<T> {
                 ids,
                 attributes,
                 relationships,
-                rootDataResolver != null ? rootDataResolver : ThrowingRootDataResolver.getInstance(),
+                dataResolver != null ? dataResolver : ThrowingRootDataResolver.getInstance(),
                 ReadFilter.allowsAllFilter(),
                 CreateAuthorizer.allowsAllFilter(),
                 UpdateAuthorizer.allowsAllFilter(),

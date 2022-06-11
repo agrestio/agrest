@@ -1,6 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.resolver.NestedDataResolver;
+import io.agrest.resolver.RelatedDataResolver;
 
 /**
  * {@link AgRelationshipOverlay} that internally defines full relationship semantics, and can either redefine an existing
@@ -14,7 +14,7 @@ public class DefaultRelationshipOverlay extends BasePropertyOverlay implements A
     private final Boolean toMany;
     private final Boolean readable;
     private final Boolean writable;
-    private final NestedDataResolver<?> resolver;
+    private final RelatedDataResolver<?> resolver;
 
     public DefaultRelationshipOverlay(
             String name,
@@ -23,7 +23,7 @@ public class DefaultRelationshipOverlay extends BasePropertyOverlay implements A
             Boolean toMany,
             Boolean readable,
             Boolean writable,
-            NestedDataResolver<?> resolver) {
+            RelatedDataResolver<?> resolver) {
 
         super(name, sourceType);
 
@@ -50,7 +50,7 @@ public class DefaultRelationshipOverlay extends BasePropertyOverlay implements A
         boolean readable = this.readable != null ? this.readable : overlaid.isReadable();
         boolean writable = this.writable != null ? this.writable : overlaid.isWritable();
 
-        NestedDataResolver<?> resolver = this.resolver != null ? this.resolver : overlaid.getResolver();
+        RelatedDataResolver<?> resolver = this.resolver != null ? this.resolver : overlaid.getDataResolver();
         AgEntity<?> targetEntity = this.targetType != null
                 ? schema.getEntity(this.targetType)
                 : overlaid.getTargetEntity();

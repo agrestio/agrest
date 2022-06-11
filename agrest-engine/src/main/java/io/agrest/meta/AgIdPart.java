@@ -1,6 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 
 /**
  * Represents one a possibly multiple values in an entity id.
@@ -23,5 +23,8 @@ public interface AgIdPart {
      */
     boolean isWritable();
 
-    PropertyReader getReader();
+    /**
+     * @since 5.0
+     */
+    DataReader getDataReader();
 }

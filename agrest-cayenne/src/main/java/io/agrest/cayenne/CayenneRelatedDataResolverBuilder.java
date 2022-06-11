@@ -6,18 +6,18 @@ import io.agrest.cayenne.processor.select.ViaParentPrefetchResolver;
 import io.agrest.cayenne.processor.select.ViaQueryWithParentExpResolver;
 import io.agrest.cayenne.processor.select.ViaQueryWithParentIdsResolver;
 import io.agrest.processor.ProcessingContext;
-import io.agrest.resolver.ContextAwareNestedDataResolver;
-import io.agrest.resolver.NestedDataResolver;
+import io.agrest.resolver.ContextAwareRelatedDataResolver;
+import io.agrest.resolver.RelatedDataResolver;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.PrefetchTreeNode;
 
-class CayenneNestedDataResolverBuilder {
+class CayenneRelatedDataResolverBuilder {
 
-    static NestedDataResolver<?> viaQueryWithParentExp(Class<?> parentType, String relationshipName) {
-        return new ContextAwareNestedDataResolver<>(c -> viaQueryWithParentExp(parentType, relationshipName, c));
+    static RelatedDataResolver<?> viaQueryWithParentExp(Class<?> parentType, String relationshipName) {
+        return new ContextAwareRelatedDataResolver<>(c -> viaQueryWithParentExp(parentType, relationshipName, c));
     }
 
-    private static NestedDataResolver<?> viaQueryWithParentExp(Class<?> parentType, String relationshipName, ProcessingContext<?> context) {
+    private static RelatedDataResolver<?> viaQueryWithParentExp(Class<?> parentType, String relationshipName, ProcessingContext<?> context) {
         ICayennePersister persister = context.service(ICayennePersister.class);
         ICayenneQueryAssembler queryAssembler = context.service(ICayenneQueryAssembler.class);
 
@@ -25,11 +25,11 @@ class CayenneNestedDataResolverBuilder {
         return new ViaQueryWithParentExpResolver(queryAssembler, persister);
     }
 
-    static NestedDataResolver<?> viaQueryWithParentIds(Class<?> parentType, String relationshipName) {
-        return new ContextAwareNestedDataResolver<>(c -> viaQueryWithParentIds(parentType, relationshipName, c));
+    static RelatedDataResolver<?> viaQueryWithParentIds(Class<?> parentType, String relationshipName) {
+        return new ContextAwareRelatedDataResolver<>(c -> viaQueryWithParentIds(parentType, relationshipName, c));
     }
 
-    private static NestedDataResolver<?> viaQueryWithParentIds(Class<?> parentType, String relationshipName, ProcessingContext<?> context) {
+    private static RelatedDataResolver<?> viaQueryWithParentIds(Class<?> parentType, String relationshipName, ProcessingContext<?> context) {
         ICayennePersister persister = context.service(ICayennePersister.class);
         ICayenneQueryAssembler queryAssembler = context.service(ICayenneQueryAssembler.class);
 
@@ -37,11 +37,11 @@ class CayenneNestedDataResolverBuilder {
         return new ViaQueryWithParentIdsResolver(queryAssembler, persister);
     }
 
-    static NestedDataResolver<?> viaParentPrefetch(Class<?> parentType, String relationshipName) {
-        return new ContextAwareNestedDataResolver<>(c -> viaParentPrefetch(parentType, relationshipName, c));
+    static RelatedDataResolver<?> viaParentPrefetch(Class<?> parentType, String relationshipName) {
+        return new ContextAwareRelatedDataResolver<>(c -> viaParentPrefetch(parentType, relationshipName, c));
     }
 
-    private static NestedDataResolver<?> viaParentPrefetch(Class<?> parentType, String relationshipName, ProcessingContext<?> context) {
+    private static RelatedDataResolver<?> viaParentPrefetch(Class<?> parentType, String relationshipName, ProcessingContext<?> context) {
         ICayennePersister persister = context.service(ICayennePersister.class);
         validateParent(parentType, relationshipName, persister);
         return new ViaParentPrefetchResolver(PrefetchTreeNode.JOINT_PREFETCH_SEMANTICS);

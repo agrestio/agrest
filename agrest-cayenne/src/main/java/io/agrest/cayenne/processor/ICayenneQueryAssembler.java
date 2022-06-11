@@ -1,6 +1,6 @@
 package io.agrest.cayenne.processor;
 
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.exp.property.Property;
 import org.apache.cayenne.query.ColumnSelect;
@@ -15,13 +15,13 @@ public interface ICayenneQueryAssembler {
 
     <T> ObjectSelect<T> createRootQuery(SelectContext<T> context);
 
-    <T> ColumnSelect<Object[]> createQueryWithParentQualifier(NestedResourceEntity<T> entity);
+    <T> ColumnSelect<Object[]> createQueryWithParentQualifier(RelatedResourceEntity<T> entity);
 
     <T, P> ColumnSelect<Object[]> createQueryWithParentIdsQualifier(
-            NestedResourceEntity<T> entity,
+            RelatedResourceEntity<T> entity,
             Iterator<P> parentData);
 
-    <T> Property<?>[] queryColumns(NestedResourceEntity<T> entity);
+    <T> Property<?>[] queryColumns(RelatedResourceEntity<T> entity);
 
 }
 

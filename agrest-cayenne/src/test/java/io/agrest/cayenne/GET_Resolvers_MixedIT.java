@@ -112,11 +112,11 @@ public class GET_Resolvers_MixedIT extends DbTest {
 
             AgEntityOverlay<E5> o1 = AgEntity
                     .overlay(E5.class)
-                    .redefineRelationshipResolver(E5.E3S.getName(), CayenneResolvers.nestedViaQueryWithParentIds());
+                    .redefineRelatedDataResolver(E5.E3S.getName(), CayenneResolvers.relatedViaQueryWithParentIds());
 
             AgEntityOverlay<E3> o2 = AgEntity
                     .overlay(E3.class)
-                    .redefineRelationshipResolver(E3.E2.getName(), CayenneResolvers.nestedViaParentPrefetch());
+                    .redefineRelatedDataResolver(E3.E2.getName(), CayenneResolvers.relatedViaParentPrefetch());
 
             return AgJaxrs.select(E5.class, config)
                     .entityOverlay(o1)

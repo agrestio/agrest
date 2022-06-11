@@ -1,7 +1,7 @@
 package io.agrest.runtime.encoder;
 
 import io.agrest.AgException;
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.encoder.DataResponseEncoder;
@@ -15,7 +15,7 @@ import io.agrest.encoder.MapByEncoder;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.ProcessingContext;
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 import io.agrest.runtime.semantics.IRelationshipMapper;
 
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class DataEncoderFactory {
         return entityEncoder(resourceEntity, context);
     }
 
-    protected Encoder nestedToManyEncoder(ResourceEntity<?> entity, ProcessingContext<?> context) {
+    protected Encoder relatedToManyEncoder(ResourceEntity<?> entity, ProcessingContext<?> context) {
         Encoder elementEncoder = collectionElementEncoder(entity, context);
         ListEncoder listEncoder = new ListEncoder(elementEncoder);
         return entity.getMapBy() != null ? mapByEncoder(entity, listEncoder, context) : listEncoder;
@@ -97,13 +97,13 @@ public class DataEncoderFactory {
             entries.add(entry(attribute.getName(), property));
         }
 
-        for (Map.Entry<String, NestedResourceEntity<?>> e : entity.getChildren().entrySet()) {
+        for (Map.Entry<String, RelatedResourceEntity<?>> e : entity.getChildren().entrySet()) {
 
             // read relationship vis child entity to account for overlays
             AgRelationship relationship = entity.getChild(e.getKey()).getIncoming();
 
             Encoder encoder = relationship.isToMany()
-                    ? nestedToManyEncoder(e.getValue(), context)
+                    ? relatedToManyEncoder(e.getValue(), context)
                     : toOneEncoder(e.getValue(), context);
 
             EncodableProperty property = propertyFactory.getRelationshipProperty(
@@ -136,7 +136,7 @@ public class DataEncoderFactory {
 
     protected MapByEncoder mapByEncoder(
             ResourceEntity<?> mapBy,
-            List<PropertyReader> readerChain,
+            List<DataReader> readerChain,
             Encoder encoder,
             String mapByPath,
             ProcessingContext<?> context) {
@@ -169,7 +169,7 @@ public class DataEncoderFactory {
         // descend into relationship
         if (!mapBy.getChildren().isEmpty()) {
 
-            Map.Entry<String, NestedResourceEntity<?>> child = mapBy.getChildren().entrySet().iterator().next();
+            Map.Entry<String, RelatedResourceEntity<?>> child = mapBy.getChildren().entrySet().iterator().next();
 
             // TODO: to account for overlaid relationships (and avoid NPEs), we should not access agEntity...
             //  instead should look for incoming rel of a child ResourceEntity.. Is is present in MapBy case?
@@ -193,8 +193,8 @@ public class DataEncoderFactory {
 
         if (!mapBy.getChildren().isEmpty()) {
 
-            String pathSegment = (mapBy instanceof NestedResourceEntity)
-                    ? ((NestedResourceEntity<?>) mapBy).getIncoming().getName()
+            String pathSegment = (mapBy instanceof RelatedResourceEntity)
+                    ? ((RelatedResourceEntity<?>) mapBy).getIncoming().getName()
                     : "";
 
             throw AgException.badRequest(

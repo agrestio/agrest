@@ -1,6 +1,6 @@
 package io.agrest.meta;
 
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 
 /**
  * @since 5.0
@@ -11,14 +11,14 @@ public class DefaultIdPart implements AgIdPart {
     private final Class<?> javaType;
     private final boolean readable;
     private final boolean writable;
-    private final PropertyReader reader;
+    private final DataReader reader;
 
     public DefaultIdPart(
             String name,
             Class<?> javaType,
             boolean readable,
             boolean writable,
-            PropertyReader reader) {
+            DataReader reader) {
         this.name = name;
         this.javaType = javaType;
         this.readable = readable;
@@ -53,7 +53,7 @@ public class DefaultIdPart implements AgIdPart {
     }
 
     @Override
-    public PropertyReader getReader() {
+    public DataReader getDataReader() {
         return reader;
     }
 
