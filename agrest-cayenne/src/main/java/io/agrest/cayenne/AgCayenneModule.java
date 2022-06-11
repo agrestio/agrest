@@ -2,14 +2,19 @@ package io.agrest.cayenne;
 
 import io.agrest.cayenne.compiler.CayenneAgEntityCompiler;
 import io.agrest.cayenne.encoder.JsonEncoder;
+import io.agrest.cayenne.exp.CayenneExpParser;
+import io.agrest.cayenne.exp.CayenneExpPostProcessor;
+import io.agrest.cayenne.exp.ICayenneExpParser;
+import io.agrest.cayenne.exp.ICayenneExpPostProcessor;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.path.PathResolver;
+import io.agrest.cayenne.persister.CayennePersister;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneQueryAssembler;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.processor.delete.stage.CayenneDeleteInDataStoreStage;
-import io.agrest.cayenne.processor.delete.stage.CayenneDeleteStartStage;
 import io.agrest.cayenne.processor.delete.stage.CayenneDeleteMapChangesStage;
+import io.agrest.cayenne.processor.delete.stage.CayenneDeleteStartStage;
 import io.agrest.cayenne.processor.select.stage.CayenneSelectApplyServerParamsStage;
 import io.agrest.cayenne.processor.unrelate.stage.CayenneUnrelateDataStoreStage;
 import io.agrest.cayenne.processor.unrelate.stage.CayenneUnrelateStartStage;
@@ -27,10 +32,6 @@ import io.agrest.cayenne.processor.update.stage.CayenneUpdateCommitStage;
 import io.agrest.cayenne.processor.update.stage.CayenneUpdateStartStage;
 import io.agrest.cayenne.spi.CayenneRuntimeExceptionMapper;
 import io.agrest.cayenne.spi.ValidationExceptionMapper;
-import io.agrest.cayenne.exp.ICayenneExpParser;
-import io.agrest.cayenne.exp.ICayenneExpPostProcessor;
-import io.agrest.cayenne.exp.CayenneExpParser;
-import io.agrest.cayenne.exp.CayenneExpPostProcessor;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.converter.jsonvalue.JsonValueConverter;
@@ -51,6 +52,7 @@ import io.agrest.runtime.processor.update.stage.UpdateMergeChangesStage;
 import io.agrest.runtime.processor.update.stage.UpdateStartStage;
 import io.agrest.spi.AgExceptionMapper;
 import org.apache.cayenne.CayenneRuntimeException;
+import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.Key;
 import org.apache.cayenne.di.Module;
@@ -65,6 +67,25 @@ import java.util.Objects;
 public class AgCayenneModule implements Module {
 
     private final ICayennePersister persister;
+
+    /**
+     * A shortcut that creates a Agrest Cayenne extension based on Cayenne runtime and default settings.
+     */
+    public static AgCayenneModule build(ServerRuntime cayenneRuntime) {
+        return builder(cayenneRuntime).build();
+    }
+
+    /**
+     * A shortcut that creates an AgCayenneBuilder, setting its Cayenne runtime. The caller can continue customizing
+     * the returned builder.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static Builder builder(ServerRuntime cayenneRuntime) {
+        return builder().runtime(cayenneRuntime);
+    }
 
     public AgCayenneModule(ICayennePersister persister) {
         this.persister = Objects.requireNonNull(persister);
@@ -120,5 +141,27 @@ public class AgCayenneModule implements Module {
         // Cayenne overrides for unrelate stages
         binder.bind(UnrelateStartStage.class).to(CayenneUnrelateStartStage.class);
         binder.bind(UnrelateUpdateDateStoreStage.class).to(CayenneUnrelateDataStoreStage.class);
+    }
+
+    public static class Builder {
+
+        private ICayennePersister persister;
+
+        private Builder() {
+        }
+
+        public Builder runtime(ServerRuntime cayenneRuntime) {
+            this.persister = new CayennePersister(cayenneRuntime);
+            return this;
+        }
+
+        public Builder persister(ICayennePersister persister) {
+            this.persister = persister;
+            return this;
+        }
+
+        public AgCayenneModule build() {
+            return new AgCayenneModule(persister);
+        }
     }
 }

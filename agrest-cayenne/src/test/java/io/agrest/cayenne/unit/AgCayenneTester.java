@@ -1,6 +1,6 @@
 package io.agrest.cayenne.unit;
 
-import io.agrest.cayenne.AgCayenneBuilder;
+import io.agrest.cayenne.AgCayenneModule;
 import io.agrest.cayenne.persister.CayennePersister;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.jaxrs2.junit.AgHttpTester;
@@ -374,7 +374,7 @@ public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallb
         AgRuntime provideAgRuntime(ServerRuntime runtime) {
             ICayennePersister persister = new CayennePersister(runtime);
             AgRuntimeBuilder agBuilder = AgRuntime.builder()
-                    .module(AgCayenneBuilder.builder().persister(persister).build());
+                    .module(AgCayenneModule.builder().persister(persister).build());
 
             return customizer.apply(agBuilder, persister).build();
         }
