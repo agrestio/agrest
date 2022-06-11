@@ -28,6 +28,7 @@
 * #558 JacksonService swallows parse exception cause
 * #561 Protocol changes - v1.2 
 * #562 Term refactoring: AgDataMap > AgSchema
+* #563 Upgrade to Cayenne 4.2.RC1
 
 ## Release 4.10
 
