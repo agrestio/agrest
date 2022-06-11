@@ -69,23 +69,27 @@ public class AgCayenneModule implements Module {
     private final ICayennePersister persister;
 
     /**
-     * A shortcut that creates a Agrest Cayenne extension based on Cayenne runtime and default settings.
-     */
-    public static AgCayenneModule build(ServerRuntime cayenneRuntime) {
-        return builder(cayenneRuntime).build();
-    }
-
-    /**
-     * A shortcut that creates an AgCayenneBuilder, setting its Cayenne runtime. The caller can continue customizing
-     * the returned builder.
+     * Creates a builder of the {@link AgCayenneModule}. The caller can continue customizing the returned builder.
      */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * Creates a builder of the {@link AgCayenneModule}, setting its Cayenne runtime. The caller can continue customizing
+     * the returned builder.
+     */
     public static Builder builder(ServerRuntime cayenneRuntime) {
         return builder().runtime(cayenneRuntime);
     }
+
+    /**
+     * Creates a Agrest Cayenne extension based on Cayenne runtime and default settings.
+     */
+    public static AgCayenneModule build(ServerRuntime cayenneRuntime) {
+        return builder(cayenneRuntime).build();
+    }
+
 
     protected AgCayenneModule(ICayennePersister persister) {
         this.persister = Objects.requireNonNull(persister);
@@ -114,7 +118,7 @@ public class AgCayenneModule implements Module {
 
         // Cayenne overrides for select stages
         binder.bind(SelectApplyServerParamsStage.class).to(CayenneSelectApplyServerParamsStage.class);
-        
+
         // Cayenne overrides for update stages
         binder.bind(UpdateStartStage.class).to(CayenneUpdateStartStage.class);
         binder.bind(UpdateApplyServerParamsStage.class).to(CayenneUpdateApplyServerParamsStage.class);
