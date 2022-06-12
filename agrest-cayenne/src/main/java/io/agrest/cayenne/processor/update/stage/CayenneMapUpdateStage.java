@@ -3,19 +3,19 @@ package io.agrest.cayenne.processor.update.stage;
 import io.agrest.AgException;
 import io.agrest.CompoundObjectId;
 import io.agrest.EntityUpdate;
-import io.agrest.RelatedResourceEntity;
 import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.SimpleObjectId;
-import io.agrest.protocol.Exp;
-import io.agrest.cayenne.persister.ICayennePersister;
-import io.agrest.cayenne.processor.CayenneRelatedResourceEntityExt;
-import io.agrest.cayenne.processor.CayenneProcessor;
-import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.exp.ICayenneExpParser;
-import io.agrest.meta.AgAttribute;
+import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.cayenne.processor.CayenneProcessor;
+import io.agrest.cayenne.processor.CayenneRelatedResourceEntityExt;
+import io.agrest.cayenne.processor.ICayenneQueryAssembler;
+import io.agrest.meta.AgIdPart;
+import io.agrest.protocol.Exp;
 import io.agrest.runtime.processor.update.ByIdObjectMapperFactory;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
@@ -136,7 +136,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
             if (key == null) {
                 noId.add(u);
             } else {
-                withId.merge(key, u, (oldVal, newVal) -> oldVal.merge(newVal));
+                withId.merge(key, u, EntityUpdate::merge);
             }
         }
 
@@ -263,7 +263,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
             } else if (row.length > 2) {
 
                 Map<String, Object> compoundKeys = new LinkedHashMap<>();
-                AgAttribute[] idAttributes = parentEntity.getAgEntity().getIdParts().toArray(new AgAttribute[0]);
+                AgIdPart[] idAttributes = parentEntity.getAgEntity().getIdParts().toArray(new AgIdPart[0]);
                 if (idAttributes.length == (row.length - 1)) {
                     for (int i = 1; i < row.length; i++) {
                         compoundKeys.put(idAttributes[i - 1].getName(), row[i]);

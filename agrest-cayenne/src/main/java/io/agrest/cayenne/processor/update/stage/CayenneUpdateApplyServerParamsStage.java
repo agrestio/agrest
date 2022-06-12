@@ -206,7 +206,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
                 }
 
                 // TODO: pretty sure this case has no unit tests
-                Map<String, Object> pkMap = (Map) pk.iterator().next();
+                Map<String, Object> pkMap = (Map<String, Object>) pk.iterator().next();
                 for (DbJoin join : outgoingJoins) {
                     // 'getSourceName' and 'getTargetName' assumes AgEntity's id attribute name is based on DbAttribute name
                     u.getOrCreateId().putIfAbsent(ASTDbPath.DB_PREFIX + join.getSourceName(), pkMap.get(join.getTargetName()));
@@ -255,7 +255,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
 
                 for (EntityUpdate<T> u : context.getUpdates()) {
                     Map<String, Object> updateId = u.getOrCreateId();
-                    idTranslated.forEach((k, v) -> updateId.putIfAbsent(k, v));
+                    idTranslated.forEach(updateId::putIfAbsent);
                 }
             }
         }
