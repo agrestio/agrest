@@ -6,7 +6,7 @@
      (e.g. "bootique-bom"). As a result have to duplicate certain distribution-related sections.
     -->
     <groupId>io.agrest</groupId>
-    <version>5.0.M1</version>
+    <version>5.0.M2-SNAPSHOT</version>
     <artifactId>agrest-bom</artifactId>
     <packaging>pom</packaging>
     <name>agrest-bom: Bill of Materials w/all public modules</name>
@@ -41,7 +41,7 @@
         <connection>scm:git:https://github.com/agrestio/agrest</connection>
         <developerConnection>scm:git:ssh://git@github.com/agrestio/agrest</developerConnection>
         <url>https://github.com/agrestio/agrest</url>
-        <tag>agrest-parent-5.0.M1</tag>
+        <tag>agrest-parent-5.0.M1-SNAPSHOT</tag>
     </scm>
 
     <distributionManagement>
