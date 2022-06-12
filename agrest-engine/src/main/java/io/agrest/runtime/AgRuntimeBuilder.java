@@ -24,14 +24,12 @@ public class AgRuntimeBuilder {
     private final List<AgModuleProvider> moduleProviders;
     private final List<Module> modules;
     private final Map<String, AgEntityOverlay> entityOverlays;
-    private final Map<String, Class<? extends AgExceptionMapper>> exceptionMappers;
 
     private boolean autoLoadModules;
 
     protected AgRuntimeBuilder() {
         this.autoLoadModules = true;
         this.entityOverlays = new HashMap<>();
-        this.exceptionMappers = new HashMap<>();
         this.moduleProviders = new ArrayList<>(5);
         this.modules = new ArrayList<>(5);
     }
@@ -114,7 +112,7 @@ public class AgRuntimeBuilder {
 
 
     private Module createCoreModule() {
-        return new AgCoreModule(entityOverlays, exceptionMappers);
+        return new AgCoreModule(entityOverlays);
     }
 
     private void loadAutoLoadableModules(Collection<Module> collector) {

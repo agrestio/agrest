@@ -28,8 +28,8 @@ import io.agrest.converter.valuestring.ValueStringConvertersProvider;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.ValueEncoders;
 import io.agrest.encoder.ValueEncodersProvider;
-import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntityOverlay;
+import io.agrest.meta.AgSchema;
 import io.agrest.runtime.constraints.ConstraintsHandler;
 import io.agrest.runtime.constraints.IConstraintsHandler;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
@@ -116,7 +116,6 @@ import io.agrest.spi.AgExceptionDefaultMapper;
 import io.agrest.spi.AgExceptionMapper;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.Key;
-import org.apache.cayenne.di.MapBuilder;
 import org.apache.cayenne.di.Module;
 
 import java.math.BigDecimal;
@@ -137,14 +136,9 @@ import java.util.Map;
 public class AgCoreModule implements Module {
 
     private final Map<String, AgEntityOverlay> entityOverlays;
-    private final Map<String, Class<? extends AgExceptionMapper>> exceptionMappers;
 
-    protected AgCoreModule(
-            Map<String, AgEntityOverlay> entityOverlays,
-            Map<String, Class<? extends AgExceptionMapper>> exceptionMappers) {
-
+    protected AgCoreModule(Map<String, AgEntityOverlay> entityOverlays) {
         this.entityOverlays = entityOverlays;
-        this.exceptionMappers = exceptionMappers;
     }
 
     @Override
@@ -154,10 +148,8 @@ public class AgCoreModule implements Module {
 
         binder.bindMap(AgEntityOverlay.class).putAll(entityOverlays);
 
-        MapBuilder<AgExceptionMapper> mapperBuilder = binder
-                .bindMap(AgExceptionMapper.class)
+        binder.bindMap(AgExceptionMapper.class)
                 .put(AgException.class.getName(), AgExceptionDefaultMapper.class);
-        exceptionMappers.forEach(mapperBuilder::put);
 
         binder.bind(AgExceptionMappers.class).to(AgExceptionMappers.class);
 
