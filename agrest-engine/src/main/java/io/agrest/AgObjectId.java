@@ -9,6 +9,14 @@ import java.util.Map;
  */
 public interface AgObjectId {
 
+    static AgObjectId of(Object idValue) {
+        return new SimpleObjectId(idValue);
+    }
+
+    static AgObjectId ofMap(Map<String, Object> idMap) {
+        return new CompoundObjectId(idMap);
+    }
+
     int size();
 
     /**

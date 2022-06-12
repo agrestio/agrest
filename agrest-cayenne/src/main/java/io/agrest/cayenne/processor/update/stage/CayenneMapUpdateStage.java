@@ -1,14 +1,13 @@
 package io.agrest.cayenne.processor.update.stage;
 
 import io.agrest.AgException;
-import io.agrest.CompoundObjectId;
+import io.agrest.AgObjectId;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
-import io.agrest.SimpleObjectId;
 import io.agrest.cayenne.exp.ICayenneExpParser;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
@@ -259,7 +258,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         for (Object[] row : objects) {
 
             if (row.length == 2) {
-                entity.addData(new SimpleObjectId(row[1]), (T) row[0]);
+                entity.addData(AgObjectId.of(row[1]), (T) row[0]);
             } else if (row.length > 2) {
 
                 Map<String, Object> compoundKeys = new LinkedHashMap<>();
@@ -269,7 +268,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
                         compoundKeys.put(idAttributes[i - 1].getName(), row[i]);
                     }
                 }
-                entity.addData(new CompoundObjectId(compoundKeys), (T) row[0]);
+                entity.addData(AgObjectId.ofMap(compoundKeys), (T) row[0]);
             }
         }
     }

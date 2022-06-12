@@ -1,11 +1,9 @@
 package io.agrest.runtime;
 
 import io.agrest.AgObjectId;
-import io.agrest.CompoundObjectId;
 import io.agrest.DeleteBuilder;
 import io.agrest.DeleteStage;
 import io.agrest.EntityParent;
-import io.agrest.SimpleObjectId;
 import io.agrest.SimpleResponse;
 import io.agrest.access.DeleteAuthorizer;
 import io.agrest.meta.AgEntity;
@@ -34,13 +32,13 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 
     @Override
     public DeleteBuilder<T> byId(Object id) {
-        context.addId(new SimpleObjectId(id));
+        context.addId(AgObjectId.of(id));
         return this;
     }
 
     @Override
     public DeleteBuilder<T> byId(Map<String, Object> id) {
-        context.addId(new CompoundObjectId(id));
+        context.addId(AgObjectId.ofMap(id));
         return this;
     }
 

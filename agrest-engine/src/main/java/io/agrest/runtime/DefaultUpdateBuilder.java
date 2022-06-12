@@ -1,12 +1,11 @@
 package io.agrest.runtime;
 
+import io.agrest.AgObjectId;
 import io.agrest.AgRequest;
-import io.agrest.CompoundObjectId;
 import io.agrest.DataResponse;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapperFactory;
-import io.agrest.SimpleObjectId;
 import io.agrest.SimpleResponse;
 import io.agrest.UpdateBuilder;
 import io.agrest.UpdateStage;
@@ -48,13 +47,13 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
     @Override
     public UpdateBuilder<T> byId(Object id) {
-        context.setId(new SimpleObjectId(id));
+        context.setId(AgObjectId.of(id));
         return this;
     }
 
     @Override
     public UpdateBuilder<T> byId(Map<String, Object> id) {
-        context.setId(new CompoundObjectId(id));
+        context.setId(AgObjectId.ofMap(id));
         return this;
     }
 

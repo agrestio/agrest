@@ -17,7 +17,7 @@ public class SimpleObjectId extends BaseObjectId {
 
     private final Object id;
 
-    public SimpleObjectId(Object id) {
+    protected SimpleObjectId(Object id) {
         this.id = Objects.requireNonNull(id);
     }
 

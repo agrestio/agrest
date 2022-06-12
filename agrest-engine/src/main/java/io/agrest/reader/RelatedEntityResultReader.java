@@ -1,9 +1,7 @@
 package io.agrest.reader;
 
 import io.agrest.AgObjectId;
-import io.agrest.CompoundObjectId;
 import io.agrest.RelatedResourceEntity;
-import io.agrest.SimpleObjectId;
 
 import java.util.Map;
 import java.util.Objects;
@@ -33,9 +31,9 @@ public abstract class RelatedEntityResultReader<T extends RelatedResourceEntity<
             case 0:
                 throw new RuntimeException("ID is empty for '" + entity.getName() + "'");
             case 1:
-                return new SimpleObjectId(id.values().iterator().next());
+                return AgObjectId.of(id.values().iterator().next());
             default:
-                return new CompoundObjectId(id);
+                return AgObjectId.ofMap(id);
         }
     }
 }

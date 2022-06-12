@@ -1,11 +1,9 @@
 package io.agrest.cayenne.processor.update.stage;
 
 import io.agrest.AgObjectId;
-import io.agrest.CompoundObjectId;
 import io.agrest.EntityUpdate;
 import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
-import io.agrest.SimpleObjectId;
 import io.agrest.ToManyResourceEntity;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.reader.DataReader;
@@ -84,8 +82,8 @@ public abstract class CayenneFillResponseStage extends UpdateFillResponseStage {
                 // TODO: getIdSnapshot() will not prefix keys with "db". Must use AgIdParts to resolve the ID
                 Map<String, Object> idMap = (Map<String, Object>) idReader.read(root);
                 AgObjectId id = idMap.size() > 1
-                        ? new CompoundObjectId(idMap)
-                        : new SimpleObjectId(idMap.values().iterator().next());
+                        ? AgObjectId.ofMap(idMap)
+                        : AgObjectId.of(idMap.values().iterator().next());
 
                 if (childEntity instanceof ToManyResourceEntity) {
                     List r = (List) result;

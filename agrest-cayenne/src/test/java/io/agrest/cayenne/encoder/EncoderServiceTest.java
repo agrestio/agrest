@@ -1,9 +1,9 @@
 package io.agrest.cayenne.encoder;
 
+import io.agrest.AgObjectId;
 import io.agrest.DataResponse;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
-import io.agrest.SimpleObjectId;
 import io.agrest.ToManyResourceEntity;
 import io.agrest.cayenne.cayenne.main.E1;
 import io.agrest.cayenne.cayenne.main.E19;
@@ -105,8 +105,8 @@ public class EncoderServiceTest extends CayenneNoDbTest {
 
         // saves result set in ResourceEntity
         descriptor.setData(Collections.singletonList(e2));
-        e3Descriptor.addData(new SimpleObjectId(7), e31);
-        e3Descriptor.addData(new SimpleObjectId(7), e32);
+        e3Descriptor.addData(AgObjectId.of(7), e31);
+        e3Descriptor.addData(AgObjectId.of(7), e32);
 
         assertEquals("{\"data\":[{\"id\":7,\"e3s\":[{\"id\":5,\"name\":\"31\"},{\"id\":6,\"name\":\"32\"}]}],\"total\":1}",
                 toJson(e2, descriptor));

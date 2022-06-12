@@ -15,11 +15,11 @@ public class EntityParent<P> {
     private final AgObjectId id;
 
     public EntityParent(Class<P> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
-        this(parentType, relationshipFromParent, new CompoundObjectId(parentIds));
+        this(parentType, relationshipFromParent, AgObjectId.ofMap(parentIds));
     }
 
     public EntityParent(Class<P> parentType, Object parentId, String relationshipFromParent) {
-        this(parentType, relationshipFromParent, new SimpleObjectId(parentId));
+        this(parentType, relationshipFromParent, AgObjectId.of(parentId));
     }
 
     protected EntityParent(Class<P> parentType, String relationshipFromParent, AgObjectId id) {

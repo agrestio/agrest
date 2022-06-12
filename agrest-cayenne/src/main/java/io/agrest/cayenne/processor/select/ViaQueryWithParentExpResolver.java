@@ -1,13 +1,12 @@
 package io.agrest.cayenne.processor.select;
 
-import io.agrest.CompoundObjectId;
+import io.agrest.AgObjectId;
 import io.agrest.RelatedResourceEntity;
-import io.agrest.SimpleObjectId;
 import io.agrest.ToManyResourceEntity;
 import io.agrest.ToOneResourceEntity;
 import io.agrest.cayenne.persister.ICayennePersister;
-import io.agrest.cayenne.processor.CayenneRelatedResourceEntityExt;
 import io.agrest.cayenne.processor.CayenneProcessor;
+import io.agrest.cayenne.processor.CayenneRelatedResourceEntityExt;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
@@ -94,7 +93,7 @@ public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseRel
             T object = (T) row[0];
 
             if (row.length == 2) {
-                entity.addData(new SimpleObjectId(row[1]), object);
+                entity.addData(AgObjectId.of(row[1]), object);
             } else {
 
                 Map<String, Object> idParts = new LinkedHashMap<>();
@@ -102,7 +101,7 @@ public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseRel
                     idParts.put(idAttributes[i - 1].getName(), row[i]);
                 }
 
-                entity.addData(new CompoundObjectId(idParts), object);
+                entity.addData(AgObjectId.ofMap(idParts), object);
             }
         }
     }

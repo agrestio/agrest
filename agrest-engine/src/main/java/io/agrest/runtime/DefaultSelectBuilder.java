@@ -1,12 +1,11 @@
 package io.agrest.runtime;
 
+import io.agrest.AgObjectId;
 import io.agrest.AgRequest;
-import io.agrest.CompoundObjectId;
 import io.agrest.DataResponse;
 import io.agrest.EntityParent;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
-import io.agrest.SimpleObjectId;
 import io.agrest.SizeConstraints;
 import io.agrest.encoder.Encoder;
 import io.agrest.meta.AgEntity;
@@ -104,13 +103,13 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     @Override
     public SelectBuilder<T> byId(Object id) {
         // TODO: return a special builder that will preserve 'byId' strategy on select
-        context.setId(new SimpleObjectId(id));
+        context.setId(AgObjectId.of(id));
         return this;
     }
 
     @Override
     public SelectBuilder<T> byId(Map<String, Object> id) {
-        context.setId(new CompoundObjectId(id));
+        context.setId(AgObjectId.ofMap(id));
         return this;
     }
 

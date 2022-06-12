@@ -14,7 +14,7 @@ public class CompoundObjectId extends BaseObjectId {
 
     private final Map<String, Object> id;
 
-    public CompoundObjectId(Map<String, Object> id) {
+    protected CompoundObjectId(Map<String, Object> id) {
         this.id = Objects.requireNonNull(id);
 
         for (Map.Entry<String, Object> e : id.entrySet()) {
