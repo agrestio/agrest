@@ -51,13 +51,13 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 
     @Override
     public DeleteBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
-        context.setParent(new EntityParent<>(parentType, parentId, relationshipFromParent));
+        context.setParent(new EntityParent<>(parentType, AgObjectId.of(parentId), relationshipFromParent));
         return this;
     }
 
     @Override
     public DeleteBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
-        context.setParent(new EntityParent<>(parentType, parentIds, relationshipFromParent));
+        context.setParent(new EntityParent<>(parentType, AgObjectId.ofMap(parentIds), relationshipFromParent));
         return this;
     }
 
