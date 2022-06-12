@@ -1,18 +1,18 @@
 package io.agrest.cayenne.processor.unrelate.stage;
 
 import io.agrest.AgException;
-import io.agrest.meta.AgSchema;
+import io.agrest.AgObjectId;
+import io.agrest.cayenne.path.IPathResolver;
+import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.meta.AgRelationship;
+import io.agrest.meta.AgSchema;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.unrelate.UnrelateContext;
 import io.agrest.runtime.processor.unrelate.stage.UnrelateUpdateDateStoreStage;
-import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.ObjectId;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.query.ObjectIdQuery;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,9 +23,13 @@ import java.util.Collection;
 public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDateStoreStage {
 
     private final AgSchema schema;
+    private final IPathResolver pathResolver;
 
-    public CayenneUnrelateDataStoreStage(@Inject AgSchema schema) {
+    public CayenneUnrelateDataStoreStage(
+            @Inject AgSchema schema,
+            @Inject IPathResolver pathResolver) {
         this.schema = schema;
+        this.pathResolver = pathResolver;
     }
 
     @Override
@@ -57,12 +61,10 @@ public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDateStoreStage 
             throw AgException.badRequest("Invalid relationship: '%s'", context.getRelationship());
         }
 
-        // TODO: #521 use CayenneUtil.parentQualifier(..)
         DataObject parent = (DataObject) getExistingObject(context.getType(), cayenneContext, context.getSourceId());
 
         Class<?> childType = relationship.getTargetEntity().getType();
 
-        // TODO: #521 use CayenneUtil.findById(..)
         // among other things this call checks that the target exists
         DataObject child = (DataObject) getExistingObject(childType, cayenneContext, context.getTargetId());
 
@@ -98,7 +100,6 @@ public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDateStoreStage 
             throw AgException.badRequest("Invalid relationship: '%s'", context.getRelationship());
         }
 
-        // TODO: #521 use CayenneUtil.parentQualifier(..)
         DataObject parent = (DataObject) getExistingObject(context.getType(), cayenneContext, context.getSourceId());
 
         if (relationship.isToMany()) {
@@ -125,8 +126,7 @@ public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDateStoreStage 
         cayenneContext.commitChanges();
     }
 
-    // TODO: use CayenneUtil.findById(..) or CayenneUtil.parentQualifier()
-    private Object getExistingObject(Class<?> type, ObjectContext context, Object id) {
+    private Object getExistingObject(Class<?> type, ObjectContext context, AgObjectId id) {
 
         Object object = getOptionalExistingObject(type, context, id);
         if (object == null) {
@@ -137,8 +137,7 @@ public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDateStoreStage 
         return object;
     }
 
-    // TODO: use CayenneUtil.findById(..) or CayenneUtil.parentQualifier
-    private Object getOptionalExistingObject(Class<?> type, ObjectContext context, Object id) {
+    private Object getOptionalExistingObject(Class<?> type, ObjectContext context, AgObjectId id) {
 
         ObjEntity entity = context.getEntityResolver().getObjEntity(type);
 
@@ -147,12 +146,8 @@ public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDateStoreStage 
             throw AgException.internalServerError("Unknown entity class: %s", type);
         }
 
-        // TODO: should we start using optimistic locking on PK by default
-        // instead of SELECT/DELETE|UPDATE?
+        // TODO: should we start using optimistic locking on PK by default instead of SELECT/DELETE|UPDATE?
 
-        String idName = entity.getPrimaryKeyNames().iterator().next();
-        ObjectIdQuery select = new ObjectIdQuery(ObjectId.of(entity.getName(), idName, id));
-
-        return Cayenne.objectForQuery(context, select);
+        return CayenneUtil.findById(pathResolver, context, type, schema.getEntity(type), id);
     }
 }

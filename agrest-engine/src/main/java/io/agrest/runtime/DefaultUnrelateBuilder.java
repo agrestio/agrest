@@ -1,9 +1,13 @@
 package io.agrest.runtime;
 
+import io.agrest.CompoundObjectId;
+import io.agrest.SimpleObjectId;
 import io.agrest.SimpleResponse;
 import io.agrest.UnrelateBuilder;
 import io.agrest.runtime.processor.unrelate.UnrelateContext;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
+
+import java.util.Map;
 
 /**
  * @since 5.0
@@ -20,7 +24,13 @@ public class DefaultUnrelateBuilder<T> implements UnrelateBuilder<T> {
 
     @Override
     public UnrelateBuilder<T> sourceId(Object id) {
-        context.setSourceId(id);
+        context.setSourceId(new SimpleObjectId(id));
+        return this;
+    }
+
+    @Override
+    public UnrelateBuilder<T> sourceId(Map<String, Object> ids) {
+        context.setSourceId(new CompoundObjectId(ids));
         return this;
     }
 
@@ -34,7 +44,14 @@ public class DefaultUnrelateBuilder<T> implements UnrelateBuilder<T> {
     @Override
     public UnrelateBuilder<T> related(String relationship, Object targetId) {
         context.setRelationship(relationship);
-        context.setTargetId(targetId);
+        context.setTargetId(new SimpleObjectId(targetId));
+        return this;
+    }
+
+    @Override
+    public UnrelateBuilder<T> related(String relationship, Map<String, Object> targetId) {
+        context.setRelationship(relationship);
+        context.setTargetId(new CompoundObjectId(targetId));
         return this;
     }
 

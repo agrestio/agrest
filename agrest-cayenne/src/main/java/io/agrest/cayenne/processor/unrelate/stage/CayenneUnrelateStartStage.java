@@ -13,14 +13,14 @@ import org.apache.cayenne.di.Inject;
  */
 public class CayenneUnrelateStartStage extends UnrelateStartStage {
 
-    private static final String UNRELATE_OBJECT_CONTEXT_ATTRIBITE = "unrelateContext";
+    private static final String UNRELATE_OBJECT_CONTEXT_ATTRIBUTE = "unrelateContext";
 
     /**
      * Returns Cayenne ObjectContext previously stored in the ProcessingContext
      * by this stage.
      */
     public static ObjectContext cayenneContext(ProcessingContext<?> context) {
-        return (ObjectContext) context.getAttribute(CayenneUnrelateStartStage.UNRELATE_OBJECT_CONTEXT_ATTRIBITE);
+        return (ObjectContext) context.getAttribute(CayenneUnrelateStartStage.UNRELATE_OBJECT_CONTEXT_ATTRIBUTE);
     }
 
     private final ICayennePersister persister;
@@ -31,7 +31,7 @@ public class CayenneUnrelateStartStage extends UnrelateStartStage {
 
     @Override
     public ProcessorOutcome execute(UnrelateContext<?> context) {
-        context.setAttribute(UNRELATE_OBJECT_CONTEXT_ATTRIBITE, persister.newContext());
+        context.setAttribute(UNRELATE_OBJECT_CONTEXT_ATTRIBUTE, persister.newContext());
         return ProcessorOutcome.CONTINUE;
     }
 }

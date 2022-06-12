@@ -1,23 +1,24 @@
 package io.agrest.runtime.processor.unrelate;
 
+import io.agrest.AgObjectId;
 import io.agrest.processor.BaseProcessingContext;
 import org.apache.cayenne.di.Injector;
 
 public class UnrelateContext<T> extends BaseProcessingContext<T> {
 
-    private Object sourceId;
+    private AgObjectId sourceId;
     private String relationship;
-    private Object targetId;
+    private AgObjectId targetId;
 
     public UnrelateContext(Class<T> type, Injector injector) {
         super(type, injector);
     }
 
-    public Object getSourceId() {
+    public AgObjectId getSourceId() {
         return sourceId;
     }
 
-    public void setSourceId(Object sourceId) {
+    public void setSourceId(AgObjectId sourceId) {
         this.sourceId = sourceId;
     }
 
@@ -29,11 +30,11 @@ public class UnrelateContext<T> extends BaseProcessingContext<T> {
         this.relationship = relationship;
     }
 
-    public Object getTargetId() {
+    public AgObjectId getTargetId() {
         return targetId;
     }
 
-    public void setTargetId(Object targetId) {
+    public void setTargetId(AgObjectId targetId) {
         this.targetId = targetId;
     }
 }
