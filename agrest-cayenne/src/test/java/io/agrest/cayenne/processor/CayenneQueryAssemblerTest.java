@@ -1,5 +1,6 @@
 package io.agrest.cayenne.processor;
 
+import io.agrest.AgObjectId;
 import io.agrest.AgRequestBuilder;
 import io.agrest.RootResourceEntity;
 import io.agrest.cayenne.cayenne.main.E1;
@@ -100,7 +101,7 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
                 E1.class,
                 mock(AgRequestBuilder.class),
                 mock(Injector.class));
-        c.setId(1);
+        c.setId(AgObjectId.of(1));
         c.setEntity(getResourceEntity(E1.class));
 
         ObjectSelect<E1> s1 = queryAssembler.createRootQuery(c);
@@ -116,7 +117,7 @@ public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
                 E1.class,
                 mock(AgRequestBuilder.class),
                 mock(Injector.class));
-        c.setId(1);
+        c.setId(AgObjectId.of(1));
         c.setEntity(getResourceEntity(E1.class));
 
         CayenneProcessor.getOrCreateRootEntity(c.getEntity()).setSelect(select);
