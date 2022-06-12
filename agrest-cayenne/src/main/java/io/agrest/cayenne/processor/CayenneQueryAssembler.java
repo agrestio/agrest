@@ -2,7 +2,7 @@ package io.agrest.cayenne.processor;
 
 import io.agrest.AgException;
 import io.agrest.AgObjectId;
-import io.agrest.EntityParent;
+import io.agrest.runtime.EntityParent;
 import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;

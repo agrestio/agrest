@@ -3,7 +3,6 @@ package io.agrest.runtime;
 import io.agrest.AgObjectId;
 import io.agrest.DeleteBuilder;
 import io.agrest.DeleteStage;
-import io.agrest.EntityParent;
 import io.agrest.SimpleResponse;
 import io.agrest.access.DeleteAuthorizer;
 import io.agrest.meta.AgEntity;

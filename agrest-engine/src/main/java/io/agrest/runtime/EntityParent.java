@@ -1,5 +1,6 @@
-package io.agrest;
+package io.agrest.runtime;
 
+import io.agrest.AgObjectId;
 import io.agrest.meta.AgEntity;
 
 import java.util.Objects;
@@ -7,7 +8,7 @@ import java.util.Objects;
 /**
  * Represents a parent in a relationship request.
  *
- * @since 1.4
+ * @since 5.0
  */
 public class EntityParent<P> {
 
@@ -20,10 +21,7 @@ public class EntityParent<P> {
         this.relationship = Objects.requireNonNull(relationshipFromParent);
         this.id = Objects.requireNonNull(id);
     }
-
-    /**
-     * @since 5.0
-     */
+    
     public AgEntity<P> getEntity() {
         return entity;
     }

@@ -3,7 +3,6 @@ package io.agrest.runtime;
 import io.agrest.AgObjectId;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
-import io.agrest.EntityParent;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
 import io.agrest.SizeConstraints;

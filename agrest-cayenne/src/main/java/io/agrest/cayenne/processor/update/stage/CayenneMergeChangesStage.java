@@ -2,7 +2,7 @@ package io.agrest.cayenne.processor.update.stage;
 
 import io.agrest.AgException;
 import io.agrest.CompoundObjectId;
-import io.agrest.EntityParent;
+import io.agrest.runtime.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.persister.ICayennePersister;

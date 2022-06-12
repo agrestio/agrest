@@ -1,7 +1,7 @@
 package io.agrest.runtime.processor.delete;
 
 import io.agrest.AgObjectId;
-import io.agrest.EntityParent;
+import io.agrest.runtime.EntityParent;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.BaseProcessingContext;

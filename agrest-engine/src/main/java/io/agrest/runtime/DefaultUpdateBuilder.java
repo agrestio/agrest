@@ -3,7 +3,6 @@ package io.agrest.runtime;
 import io.agrest.AgObjectId;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
-import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.SimpleResponse;
