@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -46,8 +47,8 @@ public class CreateResourceEntityStage_IncludeObjectTest {
     @BeforeAll
     public static void beforeAll() {
 
-        AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        AgSchema schema = new LazySchema(Collections.singletonList(compiler));
+        AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Map.of());
+        AgSchema schema = new LazySchema(List.of(compiler));
 
         // prepare create entity stage
         IExpMerger expConstructor = new ExpMerger();

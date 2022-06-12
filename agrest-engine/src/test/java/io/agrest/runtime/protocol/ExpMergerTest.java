@@ -4,18 +4,19 @@ import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
-import io.agrest.protocol.Exp;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.meta.AgSchema;
 import io.agrest.meta.LazySchema;
+import io.agrest.protocol.Exp;
 import io.agrest.runtime.entity.ExpMerger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -28,8 +29,8 @@ public class ExpMergerTest {
     @BeforeAll
     public static void beforeAll() {
 
-        AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        schema = new LazySchema(Collections.singletonList(compiler));
+        AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Map.of());
+        schema = new LazySchema(List.of(compiler));
         merger = new ExpMerger();
     }
 

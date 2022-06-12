@@ -66,8 +66,8 @@ public interface AgEntity<T> {
             case 0:
                 throw new IllegalStateException("Can't create ID reader. No id parts defined for entity '" + getName() + "'");
             case 1:
-                AgIdPart id = ids.iterator().next();
-                return o -> Collections.singletonMap(id.getName(), id.getDataReader().read(o));
+                AgIdPart idPart = ids.iterator().next();
+                return o -> Collections.singletonMap(idPart.getName(), idPart.getDataReader().read(o));
             default:
                 return o -> {
                     Map<String, Object> values = new HashMap<>();

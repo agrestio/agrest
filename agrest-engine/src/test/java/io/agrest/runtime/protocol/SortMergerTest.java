@@ -4,18 +4,19 @@ import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
-import io.agrest.protocol.Direction;
-import io.agrest.protocol.Sort;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.meta.AgSchema;
 import io.agrest.meta.LazySchema;
+import io.agrest.protocol.Direction;
+import io.agrest.protocol.Sort;
 import io.agrest.runtime.entity.SortMerger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,8 +30,8 @@ public class SortMergerTest {
 
     @BeforeAll
     public static void beforeAll() {
-        AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        schema = new LazySchema(Collections.singletonList(compiler));
+        AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Map.of());
+        schema = new LazySchema(List.of(compiler));
         merger = new SortMerger();
     }
 
@@ -52,7 +53,7 @@ public class SortMergerTest {
     @Test
     public void testMerge_Simple() {
 
-        merger.merge(entity, Collections.singletonList(new Sort("a")));
+        merger.merge(entity, List.of(new Sort("a")));
 
         assertEquals(1, entity.getOrderings().size());
         assertEquals(new Sort("a", Direction.asc), entity.getOrderings().get(0));

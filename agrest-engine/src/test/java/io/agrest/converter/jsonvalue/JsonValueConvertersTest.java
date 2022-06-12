@@ -3,6 +3,7 @@ package io.agrest.converter.jsonvalue;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,8 +17,7 @@ public class JsonValueConvertersTest {
         JsonValueConverter<?> c1 = mock(JsonValueConverter.class);
         JsonValueConverter<?> c2 = mock(JsonValueConverter.class);
 
-        JsonValueConverters factory =
-                new JsonValueConverters(Collections.singletonMap(Long.class, c1), c2);
+        JsonValueConverters factory = new JsonValueConverters(Map.of(Long.class, c1), c2);
 
         assertSame(c1, factory.converter(Long.class));
         assertSame(c2, factory.converter(Long.TYPE));

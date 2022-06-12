@@ -5,13 +5,12 @@ import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.reader.DataReader;
 import io.agrest.protocol.Sort;
+import io.agrest.reader.DataReader;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +40,7 @@ public class PojoFetchStage implements Processor<SelectContext<?>> {
             Object id = idMap.size() > 1 ? idMap : idMap.values().iterator().next();
             T object = typeBucket.get(id);
             // stores as a result into ResourceEntity
-            context.getEntity().setData(object != null ? Collections.singletonList(object) : Collections.emptyList());
+            context.getEntity().setData(object != null ? List.of(object) : List.of());
             return;
         }
 
@@ -62,8 +61,7 @@ public class PojoFetchStage implements Processor<SelectContext<?>> {
         AgAttribute attribute = entity.getAttribute(s.getPath());
         if (attribute != null) {
             keyReader = t -> (Comparable) attribute.getDataReader().read(t);
-        }
-        else if (PathConstants.ID_PK_ATTRIBUTE.equals(s.getPath())) {
+        } else if (PathConstants.ID_PK_ATTRIBUTE.equals(s.getPath())) {
             keyReader = t -> readId(t, entity.getIdReader());
         } else {
             throw new RuntimeException("Can't find sort property reader for '" + s.getPath() + "'");

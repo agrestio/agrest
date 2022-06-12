@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,7 +22,7 @@ public class EntityPathCacheTest {
     @BeforeEach
     public void setUp() {
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        this.schema = new LazySchema(Collections.singletonList(compiler));
+        this.schema = new LazySchema(List.of(compiler));
     }
 
     @Test

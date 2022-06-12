@@ -3,15 +3,15 @@ package io.agrest.runtime.constraints;
 import io.agrest.RootResourceEntity;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.meta.AgSchema;
-import io.agrest.meta.AgEntity;
-import io.agrest.meta.LazySchema;
 import io.agrest.junit.ResourceEntityUtils;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgSchema;
+import io.agrest.meta.LazySchema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,8 +23,8 @@ public class ConstraintsHandlerWithDefaultsTest {
 
     @BeforeAll
     public static void before() {
-        AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        schema = new LazySchema(Collections.singletonList(compiler));
+        AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Map.of());
+        schema = new LazySchema(List.of(compiler));
         constraintsHandler = new ConstraintsHandler();
     }
 

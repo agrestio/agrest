@@ -221,7 +221,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
             // * if more than one - throw...
 
             if (context.getUpdates().isEmpty()) {
-                context.setUpdates(Collections.singleton(new EntityUpdate<>(context.getEntity().getAgEntity())));
+                context.setUpdates(Set.of(new EntityUpdate<>(context.getEntity().getAgEntity())));
             }
 
             AgEntity<T> entity = context.getEntity().getAgEntity();

@@ -87,7 +87,7 @@ public class JsonValueConverters_PojoTest {
         T4 t4_2 = new T4(42);
         t3_expected.setT4s(Arrays.asList(t4_1, t4_2));
         T5 t5 = new T5(51);
-        t5.setT3s(Collections.singleton(new T3(11)));
+        t5.setT3s(Set.of(new T3(11)));
         t3_expected.setT5(t5);
 
         T3 t3 = reader.value(t3_objectNode);

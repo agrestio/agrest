@@ -2,7 +2,6 @@ package io.agrest.converter.jsonvalue;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -17,7 +16,7 @@ public class JsonValueConvertersProviderTest {
     @Test
     public void testConverter_Injected() {
         JsonValueConverter<?> customConverter = mock(JsonValueConverter.class);
-        Map<String, JsonValueConverter<?>> injected = Collections.singletonMap(CustomType.class.getName(), customConverter);
+        Map<String, JsonValueConverter<?>> injected = Map.of(CustomType.class.getName(), customConverter);
         assertSame(customConverter, createConverters(injected).converter(CustomType.class));
     }
 

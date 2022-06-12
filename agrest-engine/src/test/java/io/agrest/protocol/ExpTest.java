@@ -2,7 +2,7 @@ package io.agrest.protocol;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -19,8 +19,8 @@ public class ExpTest {
 
         // this is an invariant of e1, but we can't tell that until
         // the expression is parsed, so not equals
-        Exp e5 = Exp.withNamedParams("a = $1", Collections.singletonMap("1", "b"));
-        Exp e6 = Exp.withNamedParams("a = $1", Collections.singletonMap("1", "c"));
+        Exp e5 = Exp.withNamedParams("a = $1", Map.of("1", "b"));
+        Exp e6 = Exp.withNamedParams("a = $1", Map.of("1", "c"));
 
         assertEquals(e1, e1);
         assertEquals(e1, e2);

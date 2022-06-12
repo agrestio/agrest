@@ -32,6 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -104,7 +105,7 @@ public class EncoderServiceTest extends CayenneNoDbTest {
         e2.addToE3s(e32);
 
         // saves result set in ResourceEntity
-        descriptor.setData(Collections.singletonList(e2));
+        descriptor.setData(List.of(e2));
         e3Descriptor.addData(AgObjectId.of(7), e31);
         e3Descriptor.addData(AgObjectId.of(7), e32);
 
@@ -128,7 +129,7 @@ public class EncoderServiceTest extends CayenneNoDbTest {
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
         Encoder encoder = encoderService.dataEncoder(resourceEntity, mock(ProcessingContext.class));
-        return toJson(encoder, DataResponse.of(200, Collections.singletonList(object)));
+        return toJson(encoder, DataResponse.of(200, List.of(object)));
     }
 
     private String toJson(Encoder encoder, Object value) {

@@ -11,13 +11,13 @@ import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.converter.valuestring.ValueStringConvertersProvider;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.ValueEncodersProvider;
+import io.agrest.junit.ResourceEntityUtils;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazySchema;
 import io.agrest.pojo.model.P1;
 import io.agrest.pojo.model.P6;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.runtime.semantics.RelationshipMapper;
-import io.agrest.junit.ResourceEntityUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -81,6 +82,6 @@ public class EncoderService_Pojo_Test {
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
         Encoder encoder = encoderService.dataEncoder(resourceEntity, mock(ProcessingContext.class));
-        return Encoders.toJson(encoder, DataResponse.of(HttpStatus.OK, Collections.singletonList(object)));
+        return Encoders.toJson(encoder, DataResponse.of(HttpStatus.OK, List.of(object)));
     }
 }

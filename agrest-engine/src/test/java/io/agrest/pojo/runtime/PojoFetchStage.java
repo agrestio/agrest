@@ -37,7 +37,7 @@ public class PojoFetchStage implements Processor<SelectContext<?>> {
             Object id = idMap.size() > 1 ? idMap : idMap.values().iterator().next();
             T object = typeBucket.get(id);
             // stores as a result into ResourceEntity
-            context.getEntity().setData(object != null ? Collections.singletonList(object) : Collections.emptyList());
+            context.getEntity().setData(object != null ? List.of(object) : List.of());
             return;
         }
 

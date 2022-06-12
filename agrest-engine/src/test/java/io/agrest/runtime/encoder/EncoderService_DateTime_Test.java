@@ -16,12 +16,12 @@ import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.ValueEncodersProvider;
-import io.agrest.meta.AgSchema;
+import io.agrest.junit.ResourceEntityUtils;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.LazySchema;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.runtime.semantics.RelationshipMapper;
-import io.agrest.junit.ResourceEntityUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,12 +59,12 @@ public class EncoderService_DateTime_Test {
         ValueStringConverters converters = new ValueStringConverters(converterMap, GenericConverter.converter());
 
         this.encoderService = new EncoderService(
-                new EncodablePropertyFactory(new ValueEncodersProvider(converters, Collections.emptyMap()).get()),
+                new EncodablePropertyFactory(new ValueEncodersProvider(converters, Map.of()).get()),
                 converters,
                 new RelationshipMapper());
 
-        AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        AgSchema schema = new LazySchema(Collections.singletonList(compiler));
+        AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Map.of());
+        AgSchema schema = new LazySchema(List.of(compiler));
         this.dateEntity = schema.getEntity(PDate.class);
         this.timeEntity = schema.getEntity(PTime.class);
         this.dateTimeEntity = schema.getEntity(PDateTime.class);
@@ -151,7 +151,7 @@ public class EncoderService_DateTime_Test {
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
         Encoder encoder = encoderService.dataEncoder(resourceEntity, mock(ProcessingContext.class));
-        return Encoders.toJson(encoder, DataResponse.of(HttpStatus.OK, Collections.singletonList(object)));
+        return Encoders.toJson(encoder, DataResponse.of(HttpStatus.OK, List.of(object)));
     }
 
     public class PDate {

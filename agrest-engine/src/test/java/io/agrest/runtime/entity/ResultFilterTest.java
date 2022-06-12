@@ -3,7 +3,6 @@ package io.agrest.runtime.entity;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -37,7 +36,7 @@ public class ResultFilterTest {
     public void testFilterList_MatchEnd() {
         List<String> unfiltered = asList("a", "b", "ac", "bb");
         List<String> filtered = ResultFilter.filterList(unfiltered, o -> o.equals("bb"));
-        assertEquals(Collections.singletonList("bb"), filtered);
+        assertEquals(List.of("bb"), filtered);
     }
 
     @Test

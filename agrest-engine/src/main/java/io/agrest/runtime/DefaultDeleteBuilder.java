@@ -41,7 +41,7 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
         context.addId(AgObjectId.ofMap(id));
         return this;
     }
-    
+
     @Override
     public DeleteBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
         AgEntity<?> parentEntity = context.service(AgSchema.class).getEntity(parentType);

@@ -23,8 +23,8 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class GET_PojoIT extends PojoTest {
 
@@ -157,9 +157,9 @@ public class GET_PojoIT extends PojoTest {
         o1.setBooleans(Arrays.asList(true, false));
         o1.setCharacters(Arrays.asList('a', 'b', 'c'));
         o1.setDoubles(Arrays.asList(1., 2.5, 3.5));
-        o1.setStringSet(Collections.singleton("abc"));
+        o1.setStringSet(Set.of("abc"));
 
-        List<Number> numbers = Arrays.asList((byte) 0, (short) 1, 2, 3L, 4.f, 5.);
+        List<Number> numbers = List.of((byte) 0, (short) 1, 2, 3L, 4.f, 5.);
         o1.setNumberList(numbers);
         o1.setWildcardCollection(numbers);
 

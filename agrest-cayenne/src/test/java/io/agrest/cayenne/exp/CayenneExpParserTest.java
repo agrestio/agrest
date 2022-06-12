@@ -5,7 +5,7 @@ import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,7 +22,7 @@ public class CayenneExpParserTest {
 
     @Test
     public void testParseNamedParams() {
-        Expression e = parser.parse(Exp.withNamedParams("a = $a", Collections.singletonMap("a", "x")));
+        Expression e = parser.parse(Exp.withNamedParams("a = $a", Map.of("a", "x")));
         assertEquals(ExpressionFactory.exp("a = 'x'"), e);
     }
 
@@ -60,7 +60,7 @@ public class CayenneExpParserTest {
     public void testParseComposite() {
 
         Exp e0 = Exp.simple("a = 'b'");
-        Exp e1 = Exp.withNamedParams("b = $a", Collections.singletonMap("a", "x"));
+        Exp e1 = Exp.withNamedParams("b = $a", Map.of("a", "x"));
         Exp e2 = Exp.withPositionalParams("c = $a", "y");
 
         // multilevel composite with heterogeneous params

@@ -51,7 +51,7 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
     @Deprecated
     public static <T> DataResponse<T> forObject(T object) {
         Objects.requireNonNull(object);
-        return of(HttpStatus.OK, Collections.singletonList(object), 1);
+        return of(HttpStatus.OK, List.of(object), 1);
     }
 
     /**

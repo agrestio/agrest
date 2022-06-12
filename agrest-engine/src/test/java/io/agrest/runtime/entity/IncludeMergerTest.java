@@ -35,7 +35,7 @@ public class IncludeMergerTest {
     public void setUp() {
 
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-        this.schema = new LazySchema(Collections.singletonList(compiler));
+        this.schema = new LazySchema(List.of(compiler));
 
         IExpMerger expMerger = new ExpMerger();
         ISortMerger sortMerger = new SortMerger();

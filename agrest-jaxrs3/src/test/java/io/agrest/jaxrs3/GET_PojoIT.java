@@ -11,20 +11,20 @@ import io.agrest.jaxrs3.pojo.model.P6;
 import io.agrest.jaxrs3.pojo.model.P8;
 import io.agrest.jaxrs3.pojo.model.P9;
 import io.bootique.junit5.BQTestTool;
-import org.junit.jupiter.api.Test;
-
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class GET_PojoIT extends PojoTest {
 
@@ -154,10 +154,10 @@ public class GET_PojoIT extends PojoTest {
 
         P8 o1 = new P8();
         o1.setId(1);
-        o1.setBooleans(Arrays.asList(true, false));
-        o1.setCharacters(Arrays.asList('a', 'b', 'c'));
-        o1.setDoubles(Arrays.asList(1., 2.5, 3.5));
-        o1.setStringSet(Collections.singleton("abc"));
+        o1.setBooleans(List.of(true, false));
+        o1.setCharacters(List.of('a', 'b', 'c'));
+        o1.setDoubles(List.of(1., 2.5, 3.5));
+        o1.setStringSet(Set.of("abc"));
 
         List<Number> numbers = Arrays.asList((byte) 0, (short) 1, 2, 3L, 4.f, 5.);
         o1.setNumberList(numbers);

@@ -20,7 +20,7 @@ public class LazySchemaTest {
 	@BeforeAll
 	public static void before() {
 		AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Collections.emptyMap());
-		schema = new LazySchema(Collections.singletonList(compiler));
+		schema = new LazySchema(List.of(compiler));
 	}
 
 	@Test
