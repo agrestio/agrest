@@ -16,6 +16,12 @@ public class CompoundObjectId extends BaseObjectId {
 
     public CompoundObjectId(Map<String, Object> id) {
         this.id = Objects.requireNonNull(id);
+
+        for (Map.Entry<String, Object> e : id.entrySet()) {
+            if (e.getValue() == null) {
+                throw AgException.notFound("Part of compound ID is null: %s", e.getKey());
+            }
+        }
     }
 
     @Override

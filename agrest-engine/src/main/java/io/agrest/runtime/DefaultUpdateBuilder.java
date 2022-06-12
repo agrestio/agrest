@@ -1,11 +1,12 @@
 package io.agrest.runtime;
 
-import io.agrest.AgException;
 import io.agrest.AgRequest;
+import io.agrest.CompoundObjectId;
 import io.agrest.DataResponse;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapperFactory;
+import io.agrest.SimpleObjectId;
 import io.agrest.SimpleResponse;
 import io.agrest.UpdateBuilder;
 import io.agrest.UpdateStage;
@@ -47,20 +48,13 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
     @Override
     public UpdateBuilder<T> byId(Object id) {
-        context.setId(id);
+        context.setId(new SimpleObjectId(id));
         return this;
     }
 
     @Override
     public UpdateBuilder<T> byId(Map<String, Object> id) {
-
-        for (Map.Entry<String, Object> e : id.entrySet()) {
-            if (e.getValue() == null) {
-                throw AgException.notFound("Part of compound ID is null: %s", e.getKey());
-            }
-        }
-
-        context.setCompoundId(id);
+        context.setId(new CompoundObjectId(id));
         return this;
     }
 

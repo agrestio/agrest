@@ -4,13 +4,11 @@ import io.agrest.AgException;
 import io.agrest.AgObjectId;
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
-import io.agrest.CompoundObjectId;
 import io.agrest.DataResponse;
 import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.RootResourceEntity;
-import io.agrest.SimpleObjectId;
 import io.agrest.encoder.Encoder;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.BaseProcessingContext;
@@ -119,12 +117,8 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
         return id;
     }
 
-    public void setId(Object id) {
-        this.id = new SimpleObjectId(id);
-    }
-
-    public void setCompoundId(Map<String, Object> ids) {
-        this.id = new CompoundObjectId(ids);
+    public void setId(AgObjectId id) {
+        this.id = id;
     }
 
     public EntityParent<?> getParent() {

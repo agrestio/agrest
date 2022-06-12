@@ -1,9 +1,7 @@
 package io.agrest.runtime.processor.delete;
 
 import io.agrest.AgObjectId;
-import io.agrest.CompoundObjectId;
 import io.agrest.EntityParent;
-import io.agrest.SimpleObjectId;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.BaseProcessingContext;
@@ -14,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @since 1.16
@@ -38,20 +35,6 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
 
     public Collection<AgObjectId> getIds() {
         return ids;
-    }
-
-    public void addId(Object id) {
-        if (ids == null) {
-            ids = new ArrayList<>();
-        }
-        ids.add(new SimpleObjectId(id));
-    }
-
-    public void addCompoundId(Map<String, Object> ids) {
-        if (this.ids == null) {
-            this.ids = new ArrayList<>();
-        }
-        this.ids.add(new CompoundObjectId(ids));
     }
 
     public void addId(AgObjectId id) {
