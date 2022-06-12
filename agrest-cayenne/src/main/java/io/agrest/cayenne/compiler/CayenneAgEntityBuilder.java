@@ -190,6 +190,8 @@ public class CayenneAgEntityBuilder<T> {
         // DataObjectDataReader will be replaced with getter-based reader. Those two should behave exactly
         // the same, possibly with some really minor performance difference
 
+        // TODO: use Overlays here.. Overlays are intended for merging on top of entities
+
         AgEntity<T> annotatedEntity = new AnnotationsAgEntityBuilder<>(type, schema).build();
 
         if (annotatedEntity.getIdParts().size() > 0) {
