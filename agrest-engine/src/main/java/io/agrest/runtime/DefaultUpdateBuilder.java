@@ -1,6 +1,5 @@
 package io.agrest.runtime;
 
-import io.agrest.id.AgObjectId;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
@@ -8,12 +7,12 @@ import io.agrest.ObjectMapperFactory;
 import io.agrest.SimpleResponse;
 import io.agrest.UpdateBuilder;
 import io.agrest.UpdateStage;
+import io.agrest.id.AgObjectId;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgSchema;
 import io.agrest.processor.Processor;
 import io.agrest.runtime.processor.update.BaseUpdateProcessorFactory;
-import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
 
 import java.util.Collection;
@@ -85,14 +84,6 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     public UpdateBuilder<T> mapper(ObjectMapperFactory mapper) {
         context.setMapper(mapper);
         return this;
-    }
-
-    /**
-     * @since 1.20
-     */
-    @Override
-    public UpdateBuilder<T> mapper(String propertyName) {
-        return mapper(ByKeyObjectMapperFactory.byKey(propertyName));
     }
 
     /**

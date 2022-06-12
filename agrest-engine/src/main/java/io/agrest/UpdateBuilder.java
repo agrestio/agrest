@@ -10,6 +10,7 @@ import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.protocol.ControlParams;
+import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
 
 import java.util.Collection;
@@ -159,14 +160,14 @@ public interface UpdateBuilder<T> {
     UpdateBuilder<T> mapper(ObjectMapperFactory mapper);
 
     /**
-     * Sets a property name that should be used to map objects in update
-     * collection to backend objects. This overrides a default mapping by ID,
-     * and is equivalent to calling
-     * 'mapped(ByKeyObjectMapperFactory.byKey(propertyName))'.
+     * Sets a property name that should be used to map objects in update collection to backend objects. This overrides
+     * the default mapping by ID.
      *
      * @since 1.20
      */
-    UpdateBuilder<T> mapper(String propertyName);
+    default UpdateBuilder<T> mapper(String propertyName) {
+        return mapper(ByKeyObjectMapperFactory.byKey(propertyName));
+    }
 
     /**
      * Registers a consumer to be executed after a specified standard execution stage. The consumer can inspect and
