@@ -1,5 +1,6 @@
 package io.agrest;
 
+import io.agrest.id.AgObjectId;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.resolver.RelatedDataResolver;

@@ -1,6 +1,6 @@
 package io.agrest.runtime.processor.unrelate;
 
-import io.agrest.AgObjectId;
+import io.agrest.id.AgObjectId;
 import io.agrest.processor.BaseProcessingContext;
 import org.apache.cayenne.di.Injector;
 

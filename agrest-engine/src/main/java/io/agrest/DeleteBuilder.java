@@ -45,13 +45,6 @@ public interface DeleteBuilder<T> {
         return byId(id);
     }
 
-    /**
-     * @since 2.3
-     * @deprecated since 5.0 in favor of {@link #byId(Map)}.
-     */
-    @Deprecated
-    DeleteBuilder<T> id(AgObjectId id);
-
     DeleteBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent);
 
     /**

@@ -1,6 +1,6 @@
 package io.agrest.cayenne.processor.update.stage;
 
-import io.agrest.AgObjectId;
+import io.agrest.id.AgObjectId;
 import io.agrest.EntityUpdate;
 import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;

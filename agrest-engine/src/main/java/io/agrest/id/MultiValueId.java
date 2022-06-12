@@ -1,5 +1,6 @@
-package io.agrest;
+package io.agrest.id;
 
+import io.agrest.AgException;
 import io.agrest.converter.jsonvalue.Normalizer;
 import io.agrest.meta.AgIdPart;
 
@@ -8,13 +9,13 @@ import java.util.*;
 /**
  * A multi-value id.
  *
- * @since 1.24
+ * @since 5.0
  */
-public class CompoundObjectId extends BaseObjectId {
+public class MultiValueId extends BaseObjectId {
 
     private final Map<String, Object> id;
 
-    protected CompoundObjectId(Map<String, Object> id) {
+    protected MultiValueId(Map<String, Object> id) {
         this.id = Objects.requireNonNull(id);
 
         for (Map.Entry<String, Object> e : id.entrySet()) {
@@ -27,12 +28,6 @@ public class CompoundObjectId extends BaseObjectId {
     @Override
     public Object get(String attributeName) {
         return id.get(attributeName);
-    }
-
-    @Deprecated
-    @Override
-    public Object get() {
-        return id;
     }
 
     @Override
@@ -68,11 +63,11 @@ public class CompoundObjectId extends BaseObjectId {
             return true;
         }
 
-        if (!(object instanceof CompoundObjectId)) {
+        if (!(object instanceof MultiValueId)) {
             return false;
         }
 
-        return id.equals(((CompoundObjectId) object).id);
+        return id.equals(((MultiValueId) object).id);
     }
 
     @Override

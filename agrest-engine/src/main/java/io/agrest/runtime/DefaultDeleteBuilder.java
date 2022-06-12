@@ -1,6 +1,6 @@
 package io.agrest.runtime;
 
-import io.agrest.AgObjectId;
+import io.agrest.id.AgObjectId;
 import io.agrest.DeleteBuilder;
 import io.agrest.DeleteStage;
 import io.agrest.SimpleResponse;
@@ -41,14 +41,7 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
         context.addId(AgObjectId.ofMap(id));
         return this;
     }
-
-    @Deprecated
-    @Override
-    public DeleteBuilder<T> id(AgObjectId id) {
-        context.addId(id);
-        return this;
-    }
-
+    
     @Override
     public DeleteBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
         AgEntity<?> parentEntity = context.service(AgSchema.class).getEntity(parentType);

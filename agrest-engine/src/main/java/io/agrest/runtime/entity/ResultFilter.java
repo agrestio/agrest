@@ -1,6 +1,6 @@
 package io.agrest.runtime.entity;
 
-import io.agrest.AgObjectId;
+import io.agrest.id.AgObjectId;
 import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;

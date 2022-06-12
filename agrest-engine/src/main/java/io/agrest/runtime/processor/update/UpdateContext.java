@@ -1,7 +1,7 @@
 package io.agrest.runtime.processor.update;
 
 import io.agrest.AgException;
-import io.agrest.AgObjectId;
+import io.agrest.id.AgObjectId;
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
 import io.agrest.DataResponse;

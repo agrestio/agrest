@@ -1,5 +1,6 @@
-package io.agrest;
+package io.agrest.id;
 
+import io.agrest.AgException;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 

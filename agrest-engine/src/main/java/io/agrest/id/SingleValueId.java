@@ -1,4 +1,4 @@
-package io.agrest;
+package io.agrest.id;
 
 import io.agrest.converter.jsonvalue.Normalizer;
 import io.agrest.meta.AgIdPart;
@@ -11,25 +11,19 @@ import java.util.Objects;
 /**
  * A single value id.
  *
- * @since 1.24
+ * @since 5.0
  */
-public class SimpleObjectId extends BaseObjectId {
+public class SingleValueId extends BaseObjectId {
 
     private final Object id;
 
-    protected SimpleObjectId(Object id) {
+    protected SingleValueId(Object id) {
         this.id = Objects.requireNonNull(id);
     }
 
     @Override
     public Object get(String attributeName) {
         // TODO: check for valid attribute name?
-        return id;
-    }
-
-    @Deprecated
-    @Override
-    public Object get() {
         return id;
     }
 
@@ -55,11 +49,11 @@ public class SimpleObjectId extends BaseObjectId {
             return true;
         }
 
-        if (!(object instanceof SimpleObjectId)) {
+        if (!(object instanceof SingleValueId)) {
             return false;
         }
 
-        return Objects.equals(id, ((SimpleObjectId) object).id);
+        return Objects.equals(id, ((SingleValueId) object).id);
     }
 
     @Override

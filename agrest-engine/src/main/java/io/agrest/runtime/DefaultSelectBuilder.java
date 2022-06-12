@@ -1,6 +1,6 @@
 package io.agrest.runtime;
 
-import io.agrest.AgObjectId;
+import io.agrest.id.AgObjectId;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
 import io.agrest.SelectBuilder;

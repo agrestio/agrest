@@ -1,6 +1,6 @@
 package io.agrest.runtime;
 
-import io.agrest.AgObjectId;
+import io.agrest.id.AgObjectId;
 import io.agrest.SimpleResponse;
 import io.agrest.UnrelateBuilder;
 import io.agrest.runtime.processor.unrelate.UnrelateContext;

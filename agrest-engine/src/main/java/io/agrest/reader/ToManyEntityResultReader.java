@@ -1,6 +1,6 @@
 package io.agrest.reader;
 
-import io.agrest.AgObjectId;
+import io.agrest.id.AgObjectId;
 import io.agrest.ResourceEntity;
 import io.agrest.ToManyResourceEntity;
 

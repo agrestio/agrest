@@ -1,7 +1,7 @@
 package io.agrest.cayenne.processor.update.stage;
 
 import io.agrest.AgException;
-import io.agrest.CompoundObjectId;
+import io.agrest.id.MultiValueId;
 import io.agrest.runtime.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.cayenne.path.IPathResolver;
@@ -162,7 +162,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
         if (query.selectOne(objectContext) != null) {
             throw AgException.badRequest("Can't create '%s' with id %s - already exists",
                     agEntity.getName(),
-                    CompoundObjectId.mapToString(idByAgAttribute));
+                    MultiValueId.mapToString(idByAgAttribute));
         }
     }
 
@@ -178,7 +178,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
             if (maybePk == null) {
                 throw AgException.badRequest("Can't create '%s' with id %s - not an ID DB attribute: %s",
                         entity.getName(),
-                        CompoundObjectId.mapToString(idByAgAttribute),
+                        MultiValueId.mapToString(idByAgAttribute),
                         idPart.getKey());
             }
 
@@ -190,7 +190,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
                 if (objAttribute == null) {
                     throw AgException.badRequest("Can't create '%s' with id %s - unknown object attribute: %s",
                             entity.getName(),
-                            CompoundObjectId.mapToString(idByAgAttribute),
+                            MultiValueId.mapToString(idByAgAttribute),
                             idPart.getKey());
                 }
 
