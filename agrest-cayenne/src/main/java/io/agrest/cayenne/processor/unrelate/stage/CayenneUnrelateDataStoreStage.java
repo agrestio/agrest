@@ -148,6 +148,6 @@ public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDateStoreStage 
 
         // TODO: should we start using optimistic locking on PK by default instead of SELECT/DELETE|UPDATE?
 
-        return CayenneUtil.findById(pathResolver, context, type, schema.getEntity(type), id);
+        return CayenneUtil.findById(pathResolver, context, schema.getEntity(type), id);
     }
 }

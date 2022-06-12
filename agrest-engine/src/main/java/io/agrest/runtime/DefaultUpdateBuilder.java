@@ -9,7 +9,9 @@ import io.agrest.ObjectMapperFactory;
 import io.agrest.SimpleResponse;
 import io.agrest.UpdateBuilder;
 import io.agrest.UpdateStage;
+import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
+import io.agrest.meta.AgSchema;
 import io.agrest.processor.Processor;
 import io.agrest.runtime.processor.update.BaseUpdateProcessorFactory;
 import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
@@ -59,13 +61,15 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
     @Override
     public UpdateBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
-        context.setParent(new EntityParent<>(parentType, AgObjectId.of(parentId), relationshipFromParent));
+        AgEntity<?> parentEntity = context.service(AgSchema.class).getEntity(parentType);
+        context.setParent(new EntityParent<>(parentEntity, AgObjectId.of(parentId), relationshipFromParent));
         return this;
     }
 
     @Override
     public UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
-        context.setParent(new EntityParent<>(parentType, AgObjectId.ofMap(parentIds), relationshipFromParent));
+        AgEntity<?> parentEntity = context.service(AgSchema.class).getEntity(parentType);
+        context.setParent(new EntityParent<>(parentEntity, AgObjectId.ofMap(parentIds), relationshipFromParent));
         return this;
     }
 

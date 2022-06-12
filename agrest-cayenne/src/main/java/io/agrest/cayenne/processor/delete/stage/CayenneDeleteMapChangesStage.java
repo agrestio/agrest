@@ -5,7 +5,6 @@ import io.agrest.AgObjectId;
 import io.agrest.EntityParent;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.processor.CayenneUtil;
-import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.delete.DeleteContext;
@@ -29,11 +28,9 @@ import java.util.List;
  */
 public class CayenneDeleteMapChangesStage extends DeleteMapChangesStage {
 
-    private final AgSchema schema;
     private final IPathResolver pathResolver;
 
-    public CayenneDeleteMapChangesStage(@Inject AgSchema schema, @Inject IPathResolver pathResolver) {
-        this.schema = schema;
+    public CayenneDeleteMapChangesStage(@Inject IPathResolver pathResolver) {
         this.pathResolver = pathResolver;
     }
 
@@ -62,7 +59,7 @@ public class CayenneDeleteMapChangesStage extends DeleteMapChangesStage {
         if (context.isById()) {
             return findById(context);
         } else if (context.getParent() != null) {
-            return findByParent(context, schema.getEntity(context.getParent().getType()));
+            return findByParent(context, context.getParent().getEntity());
         }
         // delete all !!
         else {
@@ -79,7 +76,7 @@ public class CayenneDeleteMapChangesStage extends DeleteMapChangesStage {
 
             // TODO: batch objects retrieval into a single query
 
-            T o = CayenneUtil.findById(pathResolver, cayenneContext, context.getType(), context.getAgEntity(), id);
+            T o = CayenneUtil.findById(pathResolver, cayenneContext, context.getAgEntity(), id);
 
             if (o == null) {
                 ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(context.getType());
@@ -96,15 +93,16 @@ public class CayenneDeleteMapChangesStage extends DeleteMapChangesStage {
 
         EntityParent<?> parent = context.getParent();
         ObjectContext cayenneContext = CayenneDeleteStartStage.cayenneContext(context);
-        Object parentObject = CayenneUtil.findById(pathResolver, cayenneContext, parent.getType(), agParentEntity, parent.getId());
+        Object parentObject = CayenneUtil.findById(pathResolver, cayenneContext, agParentEntity, parent.getId());
 
         if (parentObject == null) {
-            ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(parent.getType());
+            // TODO: resolve  entity by name, not type?
+            ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(parent.getEntity().getType());
             throw AgException.notFound("No parent object for ID '%s' and entity '%s'", parent.getId(), entity.getName());
         }
 
         return ObjectSelect.query(context.getType())
-                .where(CayenneUtil.parentQualifier(pathResolver, agParentEntity, parent, cayenneContext.getEntityResolver()))
+                .where(CayenneUtil.parentQualifier(pathResolver, parent, cayenneContext.getEntityResolver()))
                 .select(CayenneDeleteStartStage.cayenneContext(context));
     }
 

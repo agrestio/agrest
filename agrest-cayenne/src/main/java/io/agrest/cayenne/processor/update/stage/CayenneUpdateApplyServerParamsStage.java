@@ -11,14 +11,13 @@ import io.agrest.cayenne.path.PathOps;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.constraints.IConstraintsHandler;
-import io.agrest.runtime.processor.update.stage.UpdateApplyServerParamsStage;
 import io.agrest.runtime.processor.update.UpdateContext;
+import io.agrest.runtime.processor.update.stage.UpdateApplyServerParamsStage;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTPath;
@@ -43,18 +42,15 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
     private final IConstraintsHandler constraintsHandler;
     private final EntityResolver entityResolver;
     private final IPathResolver pathResolver;
-    private final AgSchema schema;
 
     public CayenneUpdateApplyServerParamsStage(
             @Inject IPathResolver pathResolver,
             @Inject IConstraintsHandler constraintsHandler,
-            @Inject ICayennePersister persister,
-            @Inject AgSchema schema) {
+            @Inject ICayennePersister persister) {
 
         this.pathResolver = pathResolver;
         this.constraintsHandler = constraintsHandler;
         this.entityResolver = persister.entityResolver();
-        this.schema = schema;
     }
 
     @Override
@@ -241,7 +237,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
 
         if (parent != null && parent.getId() != null) {
 
-            Map<String, String> parentAgKeysToChildDbPaths = parentAgKeysToChildDbPaths(parent.getType(), parent.getRelationship());
+            Map<String, String> parentAgKeysToChildDbPaths = parentAgKeysToChildDbPaths(parent);
             if (!parentAgKeysToChildDbPaths.isEmpty()) {
 
                 Map<String, Object> idTranslated = new HashMap<>(5);
@@ -261,16 +257,16 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
         }
     }
 
-    private Map<String, String> parentAgKeysToChildDbPaths(Class<?> parentType, String objRelationshipFromParent) {
+    private Map<String, String> parentAgKeysToChildDbPaths(EntityParent<?> parent) {
 
         // TODO: too much Ag to Cayenne metadata translation happens here.
         //  We should cache and reuse the returned map
 
-        ObjEntity parentCayenneEntity = entityResolver.getObjEntity(parentType);
-        ObjRelationship fromParent = parentCayenneEntity.getRelationship(objRelationshipFromParent);
+        ObjEntity parentCayenneEntity = entityResolver.getObjEntity(parent.getEntity().getType());
+        ObjRelationship fromParent = parentCayenneEntity.getRelationship(parent.getRelationship());
 
         if (fromParent == null) {
-            throw AgException.internalServerError("Invalid parent relationship: '%s'", objRelationshipFromParent);
+            throw AgException.internalServerError("Invalid parent relationship: '%s'", parent.getRelationship());
         }
 
         // TODO: flattened relationships handling
@@ -284,7 +280,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
             sourceToTargetJoins.put(join.getSourceName(), join.getTargetName());
         }
 
-        AgEntity<?> parentEntity = schema.getEntity(parentType);
+        AgEntity<?> parentEntity = parent.getEntity();
 
         Map<String, String> parentAgKeysToChildDbPaths = new HashMap<>();
         for (AgIdPart idPart : parentEntity.getIdParts()) {
@@ -303,7 +299,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
         if (!sourceToTargetJoins.isEmpty()) {
             throw AgException.internalServerError(
                     "One or more parent join keys are not mapped as Ag IDs and can't be propagated over relationship '%s': %s",
-                    objRelationshipFromParent,
+                    parent.getRelationship(),
                     sourceToTargetJoins.keySet());
         }
 

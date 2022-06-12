@@ -30,22 +30,21 @@ public final class CayenneUtil {
     public static <A> A findById(
             IPathResolver pathResolver,
             ObjectContext context,
-            Class<A> type,
-            AgEntity<?> agEntity,
+            AgEntity<A> agEntity,
             AgObjectId id) {
 
-        ObjEntity entity = context.getEntityResolver().getObjEntity(type);
+        ObjEntity entity = context.getEntityResolver().getObjEntity(agEntity.getType());
 
         // sanity checking...
         if (entity == null) {
-            throw AgException.internalServerError("Unknown entity class: %s", type);
+            throw AgException.internalServerError("Unknown entity class: %s", agEntity.getType());
         }
 
         if (id == null) {
             throw AgException.badRequest("No id specified");
         }
 
-        ObjectSelect<A> query = ObjectSelect.query(type);
+        ObjectSelect<A> query = ObjectSelect.query(agEntity.getType());
         for (AgIdPart idPart : agEntity.getIdParts()) {
             ASTPath idPath = pathResolver.resolve(agEntity, idPart.getName()).getPathExp();
             query.and(ExpressionFactory.matchExp(idPath, id.get(idPart.getName())));
@@ -56,9 +55,10 @@ public final class CayenneUtil {
 
     public static Expression parentQualifier(
             IPathResolver pathResolver,
-            AgEntity<?> parentEntity,
             EntityParent<?> parent,
             EntityResolver resolver) {
+
+        AgEntity<?> parentEntity = parent.getEntity();
 
         ObjEntity parentObjEntity = resolver.getObjEntity(parentEntity.getName());
 

@@ -6,19 +6,17 @@ import io.agrest.EntityParent;
 import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
-import io.agrest.protocol.Direction;
-import io.agrest.protocol.Sort;
+import io.agrest.cayenne.exp.ICayenneExpParser;
+import io.agrest.cayenne.exp.ICayenneExpPostProcessor;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.path.PathOps;
 import io.agrest.cayenne.persister.ICayennePersister;
-import io.agrest.cayenne.exp.ICayenneExpParser;
-import io.agrest.cayenne.exp.ICayenneExpPostProcessor;
-import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
+import io.agrest.protocol.Direction;
+import io.agrest.protocol.Sort;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.di.Provider;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.parser.ASTDbPath;
@@ -45,24 +43,17 @@ import java.util.function.Consumer;
  */
 public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
-    private final Provider<AgSchema> schema;
     private final EntityResolver entityResolver;
     private final IPathResolver pathResolver;
     private final ICayenneExpParser qualifierParser;
     private final ICayenneExpPostProcessor qualifierPostProcessor;
 
     public CayenneQueryAssembler(
-
-            // AgSchema is not yet available when we are first creating CayenneQueryAssembler,
-            // so injecting provider for lazy init
-            @Inject Provider<AgSchema> schema,
-
             @Inject ICayennePersister persister,
             @Inject IPathResolver pathResolver,
             @Inject ICayenneExpParser qualifierParser,
             @Inject ICayenneExpPostProcessor qualifierPostProcessor) {
 
-        this.schema = schema;
         this.entityResolver = persister.entityResolver();
         this.pathResolver = pathResolver;
         this.qualifierParser = qualifierParser;
@@ -78,11 +69,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
         EntityParent<?> parent = context.getParent();
         if (parent != null) {
-            query.and(CayenneUtil.parentQualifier(
-                    pathResolver,
-                    schema.get().getEntity(parent.getType()),
-                    parent,
-                    entityResolver));
+            query.and(CayenneUtil.parentQualifier(pathResolver, parent, entityResolver));
         }
 
         return query;

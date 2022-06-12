@@ -78,7 +78,6 @@ public abstract class CayenneNoDbTest {
         this.schema = new LazySchema(createEntityCompilers());
         this.pathDescriptorManager = new PathResolver();
         this.queryAssembler = new CayenneQueryAssembler(
-                () -> schema,
                 mockCayennePersister,
                 pathDescriptorManager,
                 new CayenneExpParser(),

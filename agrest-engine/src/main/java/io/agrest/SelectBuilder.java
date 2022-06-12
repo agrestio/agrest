@@ -107,11 +107,6 @@ public interface SelectBuilder<T> {
     SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent);
 
     /**
-     * @since 1.7
-     */
-    SelectBuilder<T> parent(EntityParent<?> parent);
-
-    /**
      * Defines an offset for the result. Used to provide server-side pagination.
      *
      * @since 5.0
