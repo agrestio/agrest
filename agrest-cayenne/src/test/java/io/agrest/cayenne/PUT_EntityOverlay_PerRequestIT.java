@@ -105,13 +105,13 @@ public class PUT_EntityOverlay_PerRequestIT extends DbTest {
                 .exec();
 
         tester.target("/e2/11/block-e3s-write")
-                .queryParam("include", "e3s.id")
+                .queryParam("include", "e3s.id", "id", "name")
                 .put("{\"e3s\":[],\"name\":\"Nn\"}")
                 .wasOk()
                 .bodyEquals(1, "{\"id\":11,\"e3s\":[{\"id\":35}],\"name\":\"Nn\"}");
 
         tester.e2().matcher().eq("id_", 11).eq("name", "Nn").assertOneMatch();
-        tester.e3().matcher().eq("e2_id", 11).eq("name", "Nn").assertOneMatch();
+        tester.e3().matcher().eq("e2_id", 11).eq("name", "N").assertOneMatch();
     }
 
     @Test
