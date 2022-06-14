@@ -3,9 +3,10 @@ package io.agrest.runtime.constraints;
 import io.agrest.EntityUpdate;
 import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
-import io.agrest.RootResourceEntity;
 import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
+import io.agrest.meta.AgRelationship;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,53 +27,56 @@ class EntityConstraintHandler {
 
     void constrainUpdate(UpdateContext<?> context) {
 
-        RootResourceEntity<?> entity = context.getEntity();
+        AgEntity<?> entity = context.getEntity().getAgEntity();
 
-        if (entity.isIdIncluded()) {
-
-            for (AgIdPart idPart : entity.getAgEntity().getIdParts()) {
-                if (!idPart.isWritable()) {
-                    context.setIdUpdatesDisallowed(true);
-                    break;
-                }
+        for (AgIdPart idPart : entity.getIdParts()) {
+            if (!idPart.isWritable()) {
+                context.setIdUpdatesDisallowed(true);
+                break;
             }
         }
 
         for (EntityUpdate<?> u : context.getUpdates()) {
-            Iterator<String> it = u.getValues().keySet().iterator();
-            while (it.hasNext()) {
-                String name = it.next();
+            Iterator<String> valuesIt = u.getValues().keySet().iterator();
+            while (valuesIt.hasNext()) {
+                String name = valuesIt.next();
 
                 AgAttribute a = entity.getAttribute(name);
-                if (a != null) {
-
-                    if (!a.isWritable()) {
-
-                        // do not report default properties, as this wasn't a client's fault it go there..
-                        if (!context.getEntity().isDefaultAttribute(name)) {
-                            LOGGER.info("Attribute not allowed, removing: {} for id {}", name, u.getId());
-                        }
-
-                        it.remove();
-
-                    }
-
+                if (a == null) {
+                    LOGGER.debug("Attribute not recognized, removing: '{}' for id {}", name, u.getId());
+                    valuesIt.remove();
                     continue;
                 }
 
-                // updates are not hierarchical yet, so no need to recursively process the "child"
-                RelatedResourceEntity<?> child = entity.getChild(name);
-                if (child != null) {
-                    if (child.getIncoming().isWritable()) {
-                        LOGGER.info("Relationship not allowed, removing: {} for id {}", name, u.getId());
-                        it.remove();
+                if (!a.isWritable()) {
+
+                    // do not report default properties, as this wasn't a client's fault it got on the list, but
+                    // still remove it
+                    if (!context.getEntity().isDefaultAttribute(name)) {
+                        LOGGER.debug("Attribute not allowed, removing: '{}' for id {}", name, u.getId());
                     }
 
+                    valuesIt.remove();
+                }
+            }
+
+            // updates are not hierarchical yet, so only process one level of relationships. No need for recursive checks
+            Iterator<String> relatedIdsIt = u.getRelatedIds().keySet().iterator();
+            while (relatedIdsIt.hasNext()) {
+                String name = relatedIdsIt.next();
+
+                AgRelationship r = entity.getRelationship(name);
+
+                if (r == null) {
+                    LOGGER.debug("Relationship not recognized, removing: '{}' for id {}", name, u.getId());
+                    relatedIdsIt.remove();
                     continue;
                 }
 
-                // not an entity property, remove
-                it.remove();
+                if (!r.isWritable()) {
+                    LOGGER.debug("Relationship not allowed, removing: '{}' for id {}", name, u.getId());
+                    relatedIdsIt.remove();
+                }
             }
         }
     }
