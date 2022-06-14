@@ -1,8 +1,10 @@
+
 ## Release 4.10
 
 * #540 Fetch by ID with filters will return 200 even if the filter excludes the object
 * #542 4.x: "id" appears twice in the response for Ag.create() of Cayenne entity with a mapped id called "id"
 * #564 4.x: Upgrade to Cayenne 4.2.RC1
+* #569 4.x: Overlay "writablePropFilter" doesn't block relationships updates
 
 ## Release 4.9
 

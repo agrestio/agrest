@@ -96,6 +96,41 @@ public class PUT_EntityOverlay_PerRequestIT extends DbTest {
         tester.e2().matcher().eq("id_", 1).eq("name", "Nn").eq("address", "A").assertOneMatch();
     }
 
+    @Test
+    public void test_WritablePropFilter_ToManyBlocked() {
+
+        tester.e2().insertColumns("id_", "name", "address").values(11, "N", "A").exec();
+        tester.e3().insertColumns("id_", "name", "phone_number", "e2_id")
+                .values(35, "N", "P", 11)
+                .exec();
+
+        tester.target("/e2/11/block-e3s-write")
+                .queryParam("include", "e3s.id", "id", "name")
+                .put("{\"e3s\":[],\"name\":\"Nn\"}")
+                .wasOk()
+                .bodyEquals(1, "{\"id\":11,\"e3s\":[{\"id\":35}],\"name\":\"Nn\"}");
+
+        tester.e2().matcher().eq("id_", 11).eq("name", "Nn").assertOneMatch();
+        tester.e3().matcher().eq("e2_id", 11).eq("name", "N").assertOneMatch();
+    }
+
+    @Test
+    public void test_WritablePropFilter_ToOneBlocked() {
+
+        tester.e2().insertColumns("id_", "name", "address").values(11, "N", "A").exec();
+        tester.e3().insertColumns("id_", "name", "phone_number", "e2_id")
+                .values(35, "N", "P", 11)
+                .exec();
+
+        tester.target("/e3/35/block-e2-write")
+                .queryParam("include", "e2.id", "id", "name")
+                .put("{\"e2\":null,\"name\":\"Nn\"}")
+                .wasOk()
+                .bodyEquals(1, "{\"id\":35,\"e2\":{\"id\":11},\"name\":\"Nn\"}");
+
+        tester.e3().matcher().eq("id_", 35).eq("name", "Nn").eq("e2_id", 11).assertOneMatch();
+    }
+
     @Path("")
     public static class Resource {
 
@@ -168,6 +203,42 @@ public class PUT_EntityOverlay_PerRequestIT extends DbTest {
                     .createOrUpdate(E2.class)
                     .entityOverlay(e2Overlay)
                     .entityOverlay(e3Overlay)
+                    .uri(uriInfo)
+                    .id(id)
+                    .syncAndSelect(data);
+        }
+
+        @PUT
+        @Path("e2/{id}/block-e3s-write")
+        public DataResponse<E2> putE2_ToManyNotWritable(
+                @Context UriInfo uriInfo,
+                @PathParam("id") Integer id,
+                EntityUpdate<E2> data) {
+
+            AgEntityOverlay<E2> e2Overlay = AgEntity.overlay(E2.class)
+                    .writablePropFilter(p -> p.property(E2.E3S.getName(), false));
+
+            return Ag
+                    .createOrUpdate(E2.class, config)
+                    .entityOverlay(e2Overlay)
+                    .uri(uriInfo)
+                    .id(id)
+                    .syncAndSelect(data);
+        }
+
+        @PUT
+        @Path("e3/{id}/block-e2-write")
+        public DataResponse<E3> putE3_ToOneNotWritable(
+                @Context UriInfo uriInfo,
+                @PathParam("id") Integer id,
+                EntityUpdate<E3> data) {
+
+            AgEntityOverlay<E3> overlay = AgEntity.overlay(E3.class)
+                    .writablePropFilter(p -> p.property(E3.E2.getName(), false));
+
+            return Ag
+                    .createOrUpdate(E3.class, config)
+                    .entityOverlay(overlay)
                     .uri(uriInfo)
                     .id(id)
                     .syncAndSelect(data);
