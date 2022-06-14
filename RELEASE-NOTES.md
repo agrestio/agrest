@@ -1,3 +1,7 @@
+## Release 5.0.M2
+
+* #568 Overlay "writablePropFilter" doesn't block relationships updates
+
 ## Release 5.0.M1
 
 * #515 Switch to Java 11
