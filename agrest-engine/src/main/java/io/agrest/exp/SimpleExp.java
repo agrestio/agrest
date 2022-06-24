@@ -6,7 +6,9 @@ import java.util.Objects;
 
 /**
  * @since 4.4
+ * @deprecated since 5.0 as Agrest now supports fully featured parsing for the expressions
  */
+@Deprecated
 public class SimpleExp implements Exp {
 
     private final String template;
