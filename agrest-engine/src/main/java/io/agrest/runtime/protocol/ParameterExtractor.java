@@ -49,7 +49,7 @@ public abstract class ParameterExtractor {
     public static Integer integerObject(Map<String, List<String>> parameters, ControlParams param) {
 
         String value = string(parameters, param);
-        
+
         if (value == null) {
             return null;
         }
