@@ -1,3 +1,7 @@
+## Release 5.0.M3
+
+* #570 Define String constants for protocol parameters
+
 ## Release 5.0.M2
 
 * #568 Overlay "writablePropFilter" doesn't block relationships updates

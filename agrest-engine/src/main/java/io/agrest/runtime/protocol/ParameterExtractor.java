@@ -1,5 +1,7 @@
 package io.agrest.runtime.protocol;
 
+import io.agrest.protocol.ControlParams;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -11,13 +13,13 @@ import java.util.Map;
  */
 public abstract class ParameterExtractor {
 
-    public static <T extends Enum<T>> String string(Map<String, List<String>> parameters, T param) {
+    public static String string(Map<String, List<String>> parameters, ControlParams param) {
 
         List<String> strings = strings(parameters, param);
         return strings.isEmpty() ? null : strings.get(0);
     }
 
-    public static <T extends Enum<T>> List<String> strings(Map<String, List<String>> parameters, T param) {
+    public static List<String> strings(Map<String, List<String>> parameters, ControlParams param) {
         if (parameters == null) {
             return Collections.emptyList();
         }
@@ -26,10 +28,9 @@ public abstract class ParameterExtractor {
         return result != null ? result : Collections.emptyList();
     }
 
-    public static <T extends Enum<T>> int integer(Map<String, List<String>> parameters, T param) {
+    public static int integer(Map<String, List<String>> parameters, ControlParams param) {
 
-        List<String> strings = strings(parameters, param);
-        String value = strings.isEmpty() ? null : strings.get(0);
+        String value = string(parameters, param);
 
         if (value == null) {
             return -1;
@@ -45,11 +46,10 @@ public abstract class ParameterExtractor {
     /**
      * @since 3.2
      */
-    public static <T extends Enum<T>> Integer integerObject(Map<String, List<String>> parameters, T param) {
+    public static Integer integerObject(Map<String, List<String>> parameters, ControlParams param) {
 
-        List<String> strings = strings(parameters, param);
-        String value = strings.isEmpty() ? null : strings.get(0);
-
+        String value = string(parameters, param);
+        
         if (value == null) {
             return null;
         }
