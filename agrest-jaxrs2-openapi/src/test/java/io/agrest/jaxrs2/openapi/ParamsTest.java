@@ -1,6 +1,7 @@
 package io.agrest.jaxrs2.openapi;
 
 import io.agrest.DataResponse;
+import io.agrest.protocol.ControlParams;
 import org.example.entity.NonAgP1;
 import io.agrest.jaxrs2.openapi.junit.TestOpenAPIBuilder;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -84,7 +85,9 @@ public class ParamsTest {
 
         @GET
         @Path("explicit-params")
-        public DataResponse<NonAgP1> explicitParams(@QueryParam("exp") String exp, @QueryParam("sort") String sort) {
+        public DataResponse<NonAgP1> explicitParams(
+                @QueryParam(ControlParams.EXP) String exp,
+                @QueryParam(ControlParams.SORT) String sort) {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
 

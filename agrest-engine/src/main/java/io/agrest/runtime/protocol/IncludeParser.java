@@ -23,23 +23,6 @@ public class IncludeParser implements IIncludeParser {
     // keys in "include" JSON overlap with the main protocol, but not entirely
     private static final String JSON_KEY_PATH = "path";
 
-    /**
-     * @since 4.1
-     */
-    private static final String INCLUDE_EXP = ControlParams.exp.name();
-
-    /**
-     * @deprecated since 4.1 in favor of {@link ControlParams#exp}, but will be supported indefinitely for backwards
-     * compatibility.
-     */
-    @Deprecated
-    private static final String INCLUDE_CAYENNE_EXP = ControlParams.cayenneExp.name();
-    private static final String INCLUDE_LIMIT = ControlParams.limit.name();
-    private static final String INCLUDE_MAP_BY = ControlParams.mapBy.name();
-    private static final String INCLUDE_SORT = ControlParams.sort.name();
-    private static final String INCLUDE_START = ControlParams.start.name();
-    private static final String INCLUDE_INCLUDE = ControlParams.include.name();
-
     private final IJacksonService jsonParser;
     private final IExpParser expParser;
     private final ISortParser sortParser;
@@ -113,12 +96,12 @@ public class IncludeParser implements IIncludeParser {
             includes.add(new Include(
                     absPath,
                     expParser.fromJson(getExp(node)),
-                    sortParser.parseJson(node.get(INCLUDE_SORT)),
-                    getText(node.get(INCLUDE_MAP_BY)),
-                    sizeParser.startFromJson(node.get(INCLUDE_START)),
-                    sizeParser.limitFromJson(node.get(INCLUDE_LIMIT))));
+                    sortParser.parseJson(node.get(ControlParams.SORT)),
+                    getText(node.get(ControlParams.MAP_BY)),
+                    sizeParser.startFromJson(node.get(ControlParams.START)),
+                    sizeParser.limitFromJson(node.get(ControlParams.LIMIT))));
 
-            JsonNode childIncludes = node.get(INCLUDE_INCLUDE);
+            JsonNode childIncludes = node.get(ControlParams.INCLUDE);
 
             if (childIncludes != null) {
                 appendFromArray(includes, childIncludes, absPath);
@@ -128,8 +111,8 @@ public class IncludeParser implements IIncludeParser {
 
     private JsonNode getExp(JsonNode include) {
 
-        JsonNode exp = include.get(INCLUDE_EXP);
-        JsonNode cayenneExp = include.get(INCLUDE_CAYENNE_EXP);
+        JsonNode exp = include.get(ControlParams.EXP);
+        JsonNode cayenneExp = include.get(ControlParams.CAYENNE_EXP);
 
         if (exp != null) {
             return exp;

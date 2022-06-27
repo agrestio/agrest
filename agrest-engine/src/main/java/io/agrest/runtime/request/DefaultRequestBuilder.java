@@ -269,8 +269,8 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
 
     private String directionFromParams(Map<String, List<String>> params) {
 
-        String direction = ParameterExtractor.string(clientParams, ControlParams.direction);
-        String dir = ParameterExtractor.string(clientParams, ControlParams.dir);
+        String direction = ParameterExtractor.string(params, ControlParams.direction);
+        String dir = ParameterExtractor.string(params, ControlParams.dir);
 
         // TODO: if we ever start supporting multiple "exp" keys, these two can be concatenated.
         //  For now "exp" overrides "cayenneExp"
