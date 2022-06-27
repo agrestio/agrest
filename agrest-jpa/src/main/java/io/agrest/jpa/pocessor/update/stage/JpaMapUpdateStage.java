@@ -9,14 +9,13 @@ import java.util.List;
 import java.util.Map;
 
 import io.agrest.AgException;
-import io.agrest.CompoundObjectId;
 import io.agrest.EntityUpdate;
-import io.agrest.NestedResourceEntity;
 import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
-import io.agrest.SimpleObjectId;
+import io.agrest.id.AgObjectId;
 import io.agrest.jpa.exp.IJpaExpParser;
 import io.agrest.jpa.exp.JpaExpression;
 import io.agrest.jpa.persister.IAgJpaPersister;
@@ -169,14 +168,14 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
         EntityManager entityManager = JpaUpdateStartStage.entityManager(context);
         @SuppressWarnings("unchecked")
         List<T> objects = rootQuery.build(entityManager).getResultList();
-        for (NestedResourceEntity<?> c : entity.getChildren().values()) {
+        for (RelatedResourceEntity<?> c : entity.getChildren().values()) {
             fetchNestedEntity(context, c);
         }
 
         return objects;
     }
 
-    protected <T> void fetchNestedEntity(UpdateContext<T> context, NestedResourceEntity<?> entity) {
+    protected <T> void fetchNestedEntity(UpdateContext<T> context, RelatedResourceEntity<?> entity) {
         JpaNestedResourceEntityExt ext = JpaProcessor.getNestedEntity(entity);
         if (ext != null && ext.getSelect() != null) {
             EntityManager entityManager = JpaUpdateStartStage.entityManager(context);
@@ -185,18 +184,18 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
 
             assignChildrenToParent(entity, objects);
 
-            for (NestedResourceEntity<?> c : entity.getChildren().values()) {
+            for (RelatedResourceEntity<?> c : entity.getChildren().values()) {
                 fetchNestedEntity(context, c);
             }
         }
     }
 
-    private <T> void assignChildrenToParent(NestedResourceEntity<T> entity, List<Object[]> objects) {
+    private <T> void assignChildrenToParent(RelatedResourceEntity<T> entity, List<Object[]> objects) {
         ResourceEntity<?> parentEntity = entity.getParent();
         for (Object[] row : objects) {
 
             if (row.length == 2) {
-                entity.addData(new SimpleObjectId(row[1]), (T)row[0]);
+                entity.addData(AgObjectId.of(row[1]), (T)row[0]);
             } else if (row.length > 2) {
                 Map<String, Object> compoundKeys = new LinkedHashMap<>();
                 AgAttribute[] idAttributes = parentEntity.getAgEntity().getIdParts().toArray(new AgAttribute[0]);
@@ -205,7 +204,7 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
                         compoundKeys.put(idAttributes[i - 1].getName(), row[i]);
                     }
                 }
-                entity.addData(new CompoundObjectId(compoundKeys), (T)row[0]);
+                entity.addData(AgObjectId.ofMap(compoundKeys), (T)row[0]);
             }
         }
     }
@@ -217,19 +216,19 @@ public class JpaMapUpdateStage extends JpaMapChangesStage {
 
         JpaProcessor.getRootEntity(context.getEntity()).setSelect(rootQuery);
 
-        for (Map.Entry<String, NestedResourceEntity<?>> e : context.getEntity().getChildren().entrySet()) {
+        for (Map.Entry<String, RelatedResourceEntity<?>> e : context.getEntity().getChildren().entrySet()) {
             buildNestedQuery(e.getValue());
         }
 
         return rootQuery;
     }
 
-    protected void buildNestedQuery(NestedResourceEntity<?> entity) {
+    protected void buildNestedQuery(RelatedResourceEntity<?> entity) {
         JpaQueryBuilder query = queryAssembler.createQueryWithParentQualifier(entity);
 
         JpaProcessor.getNestedEntity(entity).setSelect(query);
 
-        for (Map.Entry<String, NestedResourceEntity<?>> e : entity.getChildren().entrySet()) {
+        for (Map.Entry<String, RelatedResourceEntity<?>> e : entity.getChildren().entrySet()) {
             buildNestedQuery(e.getValue());
         }
     }

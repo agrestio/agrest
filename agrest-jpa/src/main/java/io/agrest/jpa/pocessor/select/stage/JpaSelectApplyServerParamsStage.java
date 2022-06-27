@@ -1,6 +1,6 @@
 package io.agrest.jpa.pocessor.select.stage;
 
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.pocessor.JpaProcessor;
@@ -34,28 +34,28 @@ public class JpaSelectApplyServerParamsStage extends SelectApplyServerParamsStag
         }
 
         if (entity.getMapBy() != null) {
-            for (NestedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
+            for (RelatedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
                 tagNestedEntity(child);
             }
         }
 
-        for (NestedResourceEntity<?> child : entity.getChildren().values()) {
+        for (RelatedResourceEntity<?> child : entity.getChildren().values()) {
             tagNestedEntity(child);
         }
     }
 
-    private void tagNestedEntity(NestedResourceEntity<?> entity) {
+    private void tagNestedEntity(RelatedResourceEntity<?> entity) {
         if(persister.metamodel().entity(entity.getType()) != null) {
             JpaProcessor.getOrCreateNestedEntity(entity);
         }
 
         if (entity.getMapBy() != null) {
-            for (NestedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
+            for (RelatedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
                 tagNestedEntity(child);
             }
         }
 
-        for (NestedResourceEntity<?> child : entity.getChildren().values()) {
+        for (RelatedResourceEntity<?> child : entity.getChildren().values()) {
             tagNestedEntity(child);
         }
     }

@@ -9,11 +9,12 @@ import io.agrest.jpa.pocessor.select.ContextualJpaNestedDataResolver;
 import io.agrest.jpa.pocessor.select.ViaQueryResolver;
 import io.agrest.jpa.pocessor.select.ViaQueryWithParentExpResolver;
 import io.agrest.jpa.pocessor.select.ViaQueryWithParentIdsResolver;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.LazyAgEntity;
-import io.agrest.resolver.NestedDataResolver;
+import io.agrest.meta.AgSchema;
+import io.agrest.meta.LazyEntity;
+import io.agrest.resolver.RelatedDataResolver;
 import io.agrest.resolver.RootDataResolver;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.Metamodel;
@@ -32,7 +33,7 @@ public class JpaAgEntityCompiler implements AgEntityCompiler {
     private final Metamodel metamodel;
     private final Map<String, AgEntityOverlay<?>> entityOverlays;
     private final RootDataResolver defaultRootResolver;
-    private final NestedDataResolver<?> defaultNestedResolver;
+    private final RelatedDataResolver<?> defaultNestedResolver;
 
     public JpaAgEntityCompiler(
             @Inject IAgJpaPersister jpaPersister,
@@ -45,10 +46,10 @@ public class JpaAgEntityCompiler implements AgEntityCompiler {
     }
 
     @Override
-    public <T> AgEntity<T> compile(Class<T> type, AgDataMap dataMap) {
+    public <T> AgEntity<T> compile(Class<T> type, AgSchema dataMap) {
         EntityType<T> entity = metamodel.entity(type);
         return entity != null
-                ? new LazyAgEntity<>(type, () -> doCompile(type, dataMap))
+                ? new LazyEntity<>(type, () -> doCompile(type, dataMap))
                 : null;
     }
 
@@ -57,9 +58,8 @@ public class JpaAgEntityCompiler implements AgEntityCompiler {
         return new ViaQueryResolver<>(queryAssembler, jpaPersister);
     }
 
-    protected NestedDataResolver<?> createDefaultNestedResolver(IJpaQueryAssembler queryAssembler,
+    protected RelatedDataResolver<?> createDefaultNestedResolver(IJpaQueryAssembler queryAssembler,
                                                                 IAgJpaPersister jpaPersister) {
-
         return new ContextualJpaNestedDataResolver<>(
                 new ViaQueryWithParentExpResolver<>(queryAssembler, jpaPersister),
                 new ViaQueryWithParentIdsResolver<>(queryAssembler, jpaPersister)
@@ -67,7 +67,7 @@ public class JpaAgEntityCompiler implements AgEntityCompiler {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> AgEntity<T> doCompile(Class<T> type, AgDataMap dataMap) {
+    protected <T> AgEntity<T> doCompile(Class<T> type, AgSchema dataMap) {
         LOGGER.debug("compiling Hibernate entity for type: {}", type);
         return new JpaAgEntityBuilder<>(type, dataMap, metamodel)
                 .overlay((AgEntityOverlay<T>) entityOverlays.get(type.getName()))

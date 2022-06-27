@@ -1,11 +1,10 @@
 package io.agrest.jpa.compiler;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Member;
 
 import io.agrest.AgException;
 import io.agrest.jpa.pocessor.JpaUtil;
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 import jakarta.persistence.metamodel.SingularAttribute;
 
 /**
@@ -13,7 +12,7 @@ import jakarta.persistence.metamodel.SingularAttribute;
  */
 public class JpaPropertyReader {
 
-    public static PropertyReader reader(SingularAttribute<?, ?> attribute) {
+    public static DataReader reader(SingularAttribute<?, ?> attribute) {
         Class<?> declaringClass = attribute.getJavaMember().getDeclaringClass();
         Class<?> entityClass = attribute.getDeclaringType().getJavaType();
 

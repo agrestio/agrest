@@ -1,6 +1,6 @@
 package io.agrest.jpa.pocessor;
 
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 
@@ -38,11 +38,11 @@ public class JpaProcessor {
         return newExt;
     }
 
-    public static <T> JpaNestedResourceEntityExt getNestedEntity(NestedResourceEntity<T> entity) {
+    public static <T> JpaNestedResourceEntityExt getNestedEntity(RelatedResourceEntity<T> entity) {
         return entity.getRequestProperty(JPA_NESTED_ENTITY_KEY);
     }
 
-    public static <T> JpaNestedResourceEntityExt getOrCreateNestedEntity(NestedResourceEntity<T> entity) {
+    public static <T> JpaNestedResourceEntityExt getOrCreateNestedEntity(RelatedResourceEntity<T> entity) {
 
         JpaNestedResourceEntityExt ext = getNestedEntity(entity);
         if (ext != null) {

@@ -2,16 +2,15 @@ package io.agrest.jpa.pocessor.delete.stage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import io.agrest.AgException;
-import io.agrest.AgObjectId;
-import io.agrest.EntityParent;
+import io.agrest.id.AgObjectId;
 import io.agrest.jpa.pocessor.IJpaQueryAssembler;
 import io.agrest.jpa.query.JpaQueryBuilder;
-import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgSchema;
 import io.agrest.processor.ProcessorOutcome;
+import io.agrest.runtime.EntityParent;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.stage.DeleteMapChangesStage;
 import io.agrest.runtime.processor.update.ChangeOperation;
@@ -27,11 +26,11 @@ import org.apache.cayenne.di.Inject;
  */
 public class JpaDeleteMapChangesStage extends DeleteMapChangesStage {
 
-    private final AgDataMap dataMap;
+    private final AgSchema dataMap;
     private final IJpaQueryAssembler queryAssembler;
 //    private final IPathResolver pathResolver;
 
-    public JpaDeleteMapChangesStage(@Inject AgDataMap dataMap,
+    public JpaDeleteMapChangesStage(@Inject AgSchema dataMap,
                                     @Inject IJpaQueryAssembler queryAssembler) {
 //            , @Inject IPathResolver pathResolver) {
         this.dataMap = dataMap;

@@ -4,19 +4,19 @@ import java.util.Iterator;
 import java.util.Map;
 
 import io.agrest.AgException;
-import io.agrest.AgObjectId;
-import io.agrest.EntityParent;
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
+import io.agrest.id.AgObjectId;
 import io.agrest.jpa.exp.IJpaExpParser;
 import io.agrest.jpa.exp.JpaExpression;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.query.JpaQueryBuilder;
-import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
+import io.agrest.meta.AgSchema;
 import io.agrest.protocol.Sort;
+import io.agrest.runtime.EntityParent;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.di.Provider;
@@ -29,11 +29,11 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
     private final IAgJpaPersister persister;
     private final IJpaExpParser expParser;
 
-    private final Provider<AgDataMap> dataMap;
+    private final Provider<AgSchema> dataMap;
 
     public JpaQueryAssembler(@Inject IAgJpaPersister persister,
                              @Inject IJpaExpParser expParser,
-                             @Inject Provider<AgDataMap> dataMap) {
+                             @Inject Provider<AgSchema> dataMap) {
         this.persister = persister;
         this.expParser = expParser;
         this.dataMap = dataMap;
@@ -50,7 +50,7 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
                     ? createRootIdQuery(entity, context.getId())
                     : createBaseQuery(entity);
         } else {
-            AgEntity<?> agEntity = dataMap.get().getEntity(parent.getType());
+            AgEntity<?> agEntity = dataMap.get().getEntity(parent.getEntity().getType());
             AgRelationship incomingRelationship = agEntity.getRelationship(parent.getRelationship());
             if (incomingRelationship == null) {
                 throw AgException.internalServerError("Invalid parent relationship: '%s'", parent.getRelationship());
@@ -67,7 +67,7 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
     }
 
     @Override
-    public <T> JpaQueryBuilder createQueryWithParentQualifier(NestedResourceEntity<T> entity) {
+    public <T> JpaQueryBuilder createQueryWithParentQualifier(RelatedResourceEntity<T> entity) {
         String relationship = entity.getIncoming().getName();
         JpaQueryBuilder parentSelect = JpaProcessor.getEntity(entity.getParent()).getSelect();
 
@@ -94,7 +94,7 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
     }
 
     @Override
-    public <T, P> JpaQueryBuilder createQueryWithParentIdsQualifier(NestedResourceEntity<T> entity, Iterator<P> parentIt) {
+    public <T, P> JpaQueryBuilder createQueryWithParentIdsQualifier(RelatedResourceEntity<T> entity, Iterator<P> parentIt) {
         throw new UnsupportedOperationException("Not implemented yet");
 //        String relationship = entity.getIncoming().getName();
 //        JpaQueryBuilder select = viaParentJoinQuery(entity.getParent().getName(), relationship, entity.getIncoming().isToMany())
@@ -117,7 +117,7 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
 
     @Override
     public JpaQueryBuilder createByParentIdQuery(EntityParent<?> parent) {
-        AgEntity<?> agEntity = dataMap.get().getEntity(parent.getType());
+        AgEntity<?> agEntity = dataMap.get().getEntity(parent.getEntity().getType());
         AgRelationship incomingRelationship = agEntity.getRelationship(parent.getRelationship());
         if (incomingRelationship == null) {
             throw AgException.internalServerError("Invalid parent relationship: '%s'", parent.getRelationship());
@@ -167,11 +167,11 @@ public class JpaQueryAssembler implements IJpaQueryAssembler {
     }
 
     private <T> String toOrdering(ResourceEntity<T> entity, Sort o) {
-        if(!entity.getAttributes().containsKey(o.getProperty())) {
-            if(entity.getAgEntity().getIdPart(o.getProperty()) == null) {
-                throw AgException.badRequest("Invalid path '%s' for '%s'", o.getProperty(), entity.getName());
+        if(!entity.getAttributes().containsKey(o.getPath())) {
+            if(entity.getAgEntity().getIdPart(o.getPath()) == null) {
+                throw AgException.badRequest("Invalid path '%s' for '%s'", o.getPath(), entity.getName());
             }
         }
-        return o.getProperty() + " " + o.getDirection();
+        return o.getPath() + " " + o.getDirection();
     }
 }

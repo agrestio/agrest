@@ -6,11 +6,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.agrest.CompoundObjectId;
-import io.agrest.NestedResourceEntity;
-import io.agrest.SimpleObjectId;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ToManyResourceEntity;
 import io.agrest.ToOneResourceEntity;
+import io.agrest.id.AgObjectId;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.pocessor.IJpaQueryAssembler;
 import io.agrest.jpa.pocessor.JpaNestedResourceEntityExt;
@@ -18,10 +17,10 @@ import io.agrest.jpa.pocessor.JpaProcessor;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import io.agrest.processor.ProcessingContext;
-import io.agrest.property.PropertyReader;
-import io.agrest.property.ToManyEntityResultReader;
-import io.agrest.property.ToOneEntityResultReader;
-import io.agrest.resolver.BaseNestedDataResolver;
+import io.agrest.reader.DataReader;
+import io.agrest.reader.ToManyEntityResultReader;
+import io.agrest.reader.ToOneEntityResultReader;
+import io.agrest.resolver.BaseRelatedDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
 
 /**
@@ -30,7 +29,7 @@ import io.agrest.runtime.processor.select.SelectContext;
  *
  * @since 5.0
  */
-public class ViaQueryWithParentExpResolver<T> extends BaseNestedDataResolver<T> {
+public class ViaQueryWithParentExpResolver<T> extends BaseRelatedDataResolver<T> {
 
     protected IJpaQueryAssembler queryAssembler;
     protected IAgJpaPersister persister;
@@ -41,14 +40,14 @@ public class ViaQueryWithParentExpResolver<T> extends BaseNestedDataResolver<T> 
     }
 
     @Override
-    protected void doOnParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context) {
+    protected void doOnParentQueryAssembled(RelatedResourceEntity<T> entity, SelectContext<?> context) {
         JpaProcessor.getNestedEntity(entity)
                 .setSelect(queryAssembler.createQueryWithParentQualifier(entity));
     }
 
     @Override
-    protected Iterable<T> doOnParentDataResolved(
-            NestedResourceEntity<T> entity,
+    public Iterable<T> doOnParentDataResolved(
+            RelatedResourceEntity<T> entity,
             Iterable<?> parentData,
             SelectContext<?> context) {
 
@@ -70,18 +69,18 @@ public class ViaQueryWithParentExpResolver<T> extends BaseNestedDataResolver<T> 
     }
 
     @Override
-    public PropertyReader reader(NestedResourceEntity<T> entity, ProcessingContext<?> context) {
+    public DataReader dataReader(RelatedResourceEntity<T> entity, ProcessingContext<?> context) {
 
         AgEntity<?> parentEntity = entity.getParent().getAgEntity();
 
-        PropertyReader parentIdReader = parentEntity.getIdReader();
+        DataReader parentIdReader = parentEntity.getIdReader();
 
         return entity instanceof ToManyResourceEntity
                 ? new ToManyEntityResultReader((ToManyResourceEntity<?>) entity, parentIdReader)
                 : new ToOneEntityResultReader((ToOneResourceEntity<?>) entity, parentIdReader);
     }
 
-    protected void indexResultByParentId(NestedResourceEntity<T> entity, List<Object[]> result) {
+    protected void indexResultByParentId(RelatedResourceEntity<T> entity, List<Object[]> result) {
 
         AgIdPart[] idAttributes = entity.getParent().getAgEntity().getIdParts().toArray(new AgIdPart[0]);
 
@@ -92,7 +91,7 @@ public class ViaQueryWithParentExpResolver<T> extends BaseNestedDataResolver<T> 
             T object = (T) row[0];
 
             if (row.length == 2) {
-                entity.addData(new SimpleObjectId(row[1]), object);
+                entity.addData(AgObjectId.of(row[1]), object);
             } else {
 
                 Map<String, Object> idParts = new LinkedHashMap<>();
@@ -100,7 +99,7 @@ public class ViaQueryWithParentExpResolver<T> extends BaseNestedDataResolver<T> 
                     idParts.put(idAttributes[i - 1].getName(), row[i]);
                 }
 
-                entity.addData(new CompoundObjectId(idParts), object);
+                entity.addData(AgObjectId.ofMap(idParts), object);
             }
         }
     }

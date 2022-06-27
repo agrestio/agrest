@@ -3,7 +3,7 @@ package io.agrest.jpa.pocessor.select;
 import java.util.Collections;
 import java.util.Iterator;
 
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.pocessor.IJpaQueryAssembler;
 import io.agrest.jpa.pocessor.JpaProcessor;
@@ -22,14 +22,10 @@ public class ViaQueryWithParentIdsResolver<T> extends ViaQueryWithParentExpResol
         super(queryAssembler, persister);
     }
 
-    @Override
-    public void onParentQueryAssembled(NestedResourceEntity<T> entity, SelectContext<?> context) {
-        // no query here... we need to have access to parent objects before we can build our query
-    }
 
     @Override
-    protected Iterable<T> doOnParentDataResolved(
-            NestedResourceEntity<T> entity,
+    public Iterable<T> doOnParentDataResolved(
+            RelatedResourceEntity<T> entity,
             Iterable<?> parentData,
             SelectContext<?> context) {
 

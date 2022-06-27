@@ -6,18 +6,17 @@ import java.util.List;
 import java.util.Map;
 
 import io.agrest.AgException;
-import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
-import io.agrest.NestedResourceEntity;
 import io.agrest.ObjectMapper;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.jpa.exp.IJpaExpParser;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.pocessor.IJpaQueryAssembler;
 import io.agrest.jpa.pocessor.JpaProcessor;
 import io.agrest.jpa.query.JpaQueryBuilder;
-import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
+import io.agrest.runtime.EntityParent;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -28,16 +27,12 @@ import org.apache.cayenne.di.Inject;
  */
 public class JpaMapIdempotentFullSyncStage extends JpaMapIdempotentCreateOrUpdateStage {
 
-    private final AgDataMap dataMap;
-
     public JpaMapIdempotentFullSyncStage(
-            @Inject AgDataMap dataMap,
             @Inject IJpaExpParser qualifierParser,
             @Inject IJpaQueryAssembler queryAssembler,
             @Inject IAgJpaPersister persister) {
 
         super(qualifierParser, queryAssembler, persister);
-        this.dataMap = dataMap;
     }
 
     @Override
@@ -94,7 +89,7 @@ public class JpaMapIdempotentFullSyncStage extends JpaMapIdempotentCreateOrUpdat
         JpaQueryBuilder rootQuery;
         EntityParent<?> parent = context.getParent();
         if(parent != null) {
-            AgEntity<?> agEntity = dataMap.getEntity(parent.getType());
+            AgEntity<?> agEntity = parent.getEntity();
             AgRelationship incomingRelationship = agEntity.getRelationship(parent.getRelationship());
             if(incomingRelationship == null) {
                 throw AgException.internalServerError("Invalid parent relationship: '%s'", parent.getRelationship());
@@ -113,7 +108,7 @@ public class JpaMapIdempotentFullSyncStage extends JpaMapIdempotentCreateOrUpdat
 
         JpaProcessor.getRootEntity(context.getEntity()).setSelect(rootQuery);
 
-        for (Map.Entry<String, NestedResourceEntity<?>> e : context.getEntity().getChildren().entrySet()) {
+        for (Map.Entry<String, RelatedResourceEntity<?>> e : context.getEntity().getChildren().entrySet()) {
             buildNestedQuery(e.getValue());
         }
     }

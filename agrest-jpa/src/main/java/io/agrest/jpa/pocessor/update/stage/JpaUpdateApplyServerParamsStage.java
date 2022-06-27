@@ -2,12 +2,11 @@ package io.agrest.jpa.pocessor.update.stage;
 
 import java.util.Collections;
 import io.agrest.EntityUpdate;
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.pocessor.JpaProcessor;
-import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.constraints.IConstraintsHandler;
@@ -23,18 +22,13 @@ public class JpaUpdateApplyServerParamsStage extends UpdateApplyServerParamsStag
 
     private final IConstraintsHandler constraintsHandler;
     private final Metamodel metamodel;
-//    private final IPathResolver pathResolver;
-    private final AgDataMap dataMap;
 
     public JpaUpdateApplyServerParamsStage(
-//            @Inject IPathResolver pathResolver,
             @Inject IConstraintsHandler constraintsHandler,
-            @Inject IAgJpaPersister persister,
-            @Inject AgDataMap dataMap) {
+            @Inject IAgJpaPersister persister) {
 
         this.metamodel = persister.metamodel();
         this.constraintsHandler = constraintsHandler;
-        this.dataMap = dataMap;
     }
 
     @Override
@@ -73,28 +67,28 @@ public class JpaUpdateApplyServerParamsStage extends UpdateApplyServerParamsStag
         }
 
         if (entity.getMapBy() != null) {
-            for (NestedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
+            for (RelatedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
                 tagNestedEntity(child);
             }
         }
 
-        for (NestedResourceEntity<?> child : entity.getChildren().values()) {
+        for (RelatedResourceEntity<?> child : entity.getChildren().values()) {
             tagNestedEntity(child);
         }
     }
 
-    private void tagNestedEntity(NestedResourceEntity<?> entity) {
+    private void tagNestedEntity(RelatedResourceEntity<?> entity) {
         if(metamodel.entity(entity.getType()) != null) {
             JpaProcessor.getOrCreateNestedEntity(entity);
         }
 
         if (entity.getMapBy() != null) {
-            for (NestedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
+            for (RelatedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
                 tagNestedEntity(child);
             }
         }
 
-        for (NestedResourceEntity<?> child : entity.getChildren().values()) {
+        for (RelatedResourceEntity<?> child : entity.getChildren().values()) {
             tagNestedEntity(child);
         }
     }

@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.agrest.protocol.Exp;
-import io.agrest.protocol.exp.CompositeExp;
-import io.agrest.protocol.exp.ExpVisitor;
-import io.agrest.protocol.exp.KeyValueExp;
-import io.agrest.protocol.exp.NamedParamsExp;
-import io.agrest.protocol.exp.PositionalParamsExp;
-import io.agrest.protocol.exp.SimpleExp;
+import io.agrest.exp.CompositeExp;
+import io.agrest.exp.ExpVisitor;
+import io.agrest.exp.KeyValueExp;
+import io.agrest.exp.NamedParamsExp;
+import io.agrest.exp.PositionalParamsExp;
+import io.agrest.exp.SimpleExp;
 
 /**
  * @since 5.0

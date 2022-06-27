@@ -7,16 +7,15 @@ import java.util.Map;
 import java.util.Set;
 
 import io.agrest.AgException;
-import io.agrest.CompoundObjectId;
-import io.agrest.EntityParent;
 import io.agrest.EntityUpdate;
+import io.agrest.id.MultiValueId;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.pocessor.IJpaQueryAssembler;
 import io.agrest.jpa.pocessor.JpaUtil;
-import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.ProcessorOutcome;
+import io.agrest.runtime.EntityParent;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -39,14 +38,11 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
 
     private final IJpaQueryAssembler queryAssembler;
 
-    private final AgDataMap dataMap;
 
     public JpaMergeChangesStage(@Inject IAgJpaPersister persister,
-                                @Inject IJpaQueryAssembler queryAssembler,
-                                @Inject AgDataMap dataMap) {
+                                @Inject IJpaQueryAssembler queryAssembler) {
         this.metamodel = persister.metamodel();
         this.queryAssembler = queryAssembler;
-        this.dataMap = dataMap;
     }
 
     @SuppressWarnings("unchecked")
@@ -155,7 +151,7 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
         if(!resultList.isEmpty()) {
             throw AgException.badRequest("Can't create '%s' with id %s - already exists",
                     agEntity.getName(),
-                    CompoundObjectId.mapToString(idByAgAttribute));
+                    MultiValueId.mapToString(idByAgAttribute));
         }
     }
 
@@ -170,7 +166,7 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
             if (attribute == null) {
                 throw AgException.badRequest("Can't create '%s' with id %s - not an ID DB attribute: %s",
                         entity.getName(),
-                        CompoundObjectId.mapToString(idByAgAttribute),
+                        MultiValueId.mapToString(idByAgAttribute),
                         idPart.getKey());
             }
 
@@ -270,8 +266,8 @@ public class JpaMergeChangesStage extends UpdateMergeChangesStage {
             return new ObjectRelator(entityType, manager);
         }
 
-        EntityType<?> parentEntityType = metamodel.entity(parent.getType());
-        AgEntity<?> parentAgEntity = dataMap.getEntity(context.getParent().getType());
+        AgEntity<?> parentAgEntity = parent.getEntity();
+        EntityType<?> parentEntityType = metamodel.entity(parentAgEntity.getType());
         List<?> resultList = queryAssembler.createByIdQuery(parentAgEntity, parent.getId())
                 .build(manager)
                 .getResultList();

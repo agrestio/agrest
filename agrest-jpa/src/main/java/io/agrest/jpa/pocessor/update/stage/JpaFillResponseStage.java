@@ -1,9 +1,5 @@
 package io.agrest.jpa.pocessor.update.stage;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -11,17 +7,15 @@ import java.util.Map;
 import java.util.Set;
 
 import io.agrest.AgException;
-import io.agrest.AgObjectId;
-import io.agrest.CompoundObjectId;
 import io.agrest.EntityUpdate;
-import io.agrest.NestedResourceEntity;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
-import io.agrest.SimpleObjectId;
 import io.agrest.ToManyResourceEntity;
+import io.agrest.id.AgObjectId;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.pocessor.JpaUtil;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.property.PropertyReader;
+import io.agrest.reader.DataReader;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.stage.UpdateFillResponseStage;
 import jakarta.persistence.metamodel.Attribute;
@@ -82,24 +76,24 @@ public abstract class JpaFillResponseStage extends UpdateFillResponseStage {
 
     protected void assignChildrenToParent(Object root, ResourceEntity<?> entity) {
 
-        PropertyReader idReader = entity.getAgEntity().getIdReader();
-        Map<String, NestedResourceEntity<?>> children = entity.getChildren();
+        DataReader idReader = entity.getAgEntity().getIdReader();
+        Map<String, RelatedResourceEntity<?>> children = entity.getChildren();
         EntityType<?> entityType = metamodel.entity(entity.getType());
 
         if (!children.isEmpty()) {
 
-            for (Map.Entry<String, NestedResourceEntity<?>> e : children.entrySet()) {
-                NestedResourceEntity childEntity = e.getValue();
+            for (Map.Entry<String, RelatedResourceEntity<?>> e : children.entrySet()) {
+                RelatedResourceEntity childEntity = e.getValue();
 
                 Object result = JpaUtil.readProperty(root, entityType.getAttribute(e.getKey()));
                 if (result == null) { // TODO: could it be some sort of a fault?
                     continue;
                 }
 
-                Map<String, Object> idMap = (Map<String, Object>) idReader.value(root);
+                Map<String, Object> idMap = (Map<String, Object>) idReader.read(root);
                 AgObjectId id = idMap.size() > 1
-                        ? new CompoundObjectId(idMap)
-                        : new SimpleObjectId(idMap.values().iterator().next());
+                        ? AgObjectId.ofMap(idMap)
+                        : AgObjectId.of(idMap.values().iterator().next());
 
                 if (childEntity instanceof ToManyResourceEntity) {
                     List r = (List) result;

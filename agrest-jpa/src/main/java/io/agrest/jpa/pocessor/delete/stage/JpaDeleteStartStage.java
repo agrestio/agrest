@@ -1,7 +1,7 @@
 package io.agrest.jpa.pocessor.delete.stage;
 
 import io.agrest.jpa.persister.IAgJpaPersister;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.delete.DeleteContext;
@@ -25,7 +25,7 @@ public class JpaDeleteStartStage extends DeleteStartStage {
 
     private final IAgJpaPersister persister;
 
-    public JpaDeleteStartStage(@Inject AgDataMap dataMap, @Inject IAgJpaPersister persister) {
+    public JpaDeleteStartStage(@Inject AgSchema dataMap, @Inject IAgJpaPersister persister) {
         super(dataMap);
         this.persister = persister;
     }

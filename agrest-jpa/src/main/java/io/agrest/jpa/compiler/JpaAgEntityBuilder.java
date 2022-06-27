@@ -9,16 +9,16 @@ import io.agrest.access.ReadFilter;
 import io.agrest.access.UpdateAuthorizer;
 import io.agrest.compiler.AnnotationsAgEntityBuilder;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgDataMap;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
-import io.agrest.meta.DefaultAgAttribute;
-import io.agrest.meta.DefaultAgEntity;
-import io.agrest.meta.DefaultAgIdPart;
-import io.agrest.meta.DefaultAgRelationship;
-import io.agrest.resolver.NestedDataResolver;
+import io.agrest.meta.DefaultAttribute;
+import io.agrest.meta.DefaultEntity;
+import io.agrest.meta.DefaultIdPart;
+import io.agrest.meta.DefaultRelationship;
+import io.agrest.resolver.RelatedDataResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
 import jakarta.persistence.metamodel.Attribute;
@@ -38,7 +38,7 @@ public class JpaAgEntityBuilder<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaAgEntityBuilder.class);
 
     private final Class<T> type;
-    private final AgDataMap agDataMap;
+    private final AgSchema agDataMap;
     private final EntityType<T> jpaEntity;
     private final Map<String, AgIdPart> ids;
     private final Map<String, AgAttribute> attributes;
@@ -46,9 +46,9 @@ public class JpaAgEntityBuilder<T> {
 
     private AgEntityOverlay<T> overlay;
     private RootDataResolver<T> rootDataResolver;
-    private NestedDataResolver<T> nestedDataResolver;
+    private RelatedDataResolver<T> nestedDataResolver;
 
-    public JpaAgEntityBuilder(Class<T> type, AgDataMap agDataMap, Metamodel metamodel) {
+    public JpaAgEntityBuilder(Class<T> type, AgSchema agDataMap, Metamodel metamodel) {
 
         this.type = type;
         this.agDataMap = agDataMap;
@@ -69,7 +69,7 @@ public class JpaAgEntityBuilder<T> {
         return this;
     }
 
-    public JpaAgEntityBuilder<T> nestedDataResolver(NestedDataResolver<T> resolver) {
+    public JpaAgEntityBuilder<T> nestedDataResolver(RelatedDataResolver<T> resolver) {
         this.nestedDataResolver = resolver;
         return this;
     }
@@ -94,7 +94,7 @@ public class JpaAgEntityBuilder<T> {
 
         for (SingularAttribute<?, ?> attribute : jpaEntity.getSingularAttributes()) {
             if(attribute.isId()) {
-                addId(new DefaultAgIdPart(
+                addId(new DefaultIdPart(
                         attribute.getName(),
                         attribute.getJavaType(),
                         true,
@@ -110,7 +110,7 @@ public class JpaAgEntityBuilder<T> {
 
             if(attribute.isAssociation()) {
                 // to-one
-                addRelationship(new DefaultAgRelationship(
+                addRelationship(new DefaultRelationship(
                         name,
                         // 'agDataMap.getEntity' will compile the entity on the fly if needed
                         agDataMap.getEntity(type),
@@ -120,7 +120,7 @@ public class JpaAgEntityBuilder<T> {
                         nestedDataResolver));
             } else {
                 // by default adding attributes as readable and writable... @AgAttribute annotation on a getter may override this
-                addAttribute(new DefaultAgAttribute(name, type, true, true, JpaPropertyReader.reader(attribute)));
+                addAttribute(new DefaultAttribute(name, type, true, true, JpaPropertyReader.reader(attribute)));
             }
         }
 
@@ -134,7 +134,7 @@ public class JpaAgEntityBuilder<T> {
             boolean toMany = attribute.getPersistentAttributeType() == Attribute.PersistentAttributeType.MANY_TO_MANY
                     || attribute.getPersistentAttributeType() == Attribute.PersistentAttributeType.ONE_TO_MANY;
 
-            addRelationship(new DefaultAgRelationship(
+            addRelationship(new DefaultRelationship(
                     attribute.getName(),
                     // 'agDataMap.getEntity' will compile the entity on the fly if needed
                     agDataMap.getEntity(targetEntityType),
@@ -189,7 +189,7 @@ public class JpaAgEntityBuilder<T> {
         buildFromJpaEntity();
         buildAnnotatedProperties();
 
-        return new DefaultAgEntity<>(
+        return new DefaultEntity<>(
                 jpaEntity.getName(),
                 type,
                 ids,

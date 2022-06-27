@@ -6,8 +6,8 @@ import java.util.Collection;
 import io.agrest.AgException;
 import io.agrest.jpa.persister.IAgJpaPersister;
 import io.agrest.jpa.pocessor.JpaUtil;
-import io.agrest.meta.AgDataMap;
 import io.agrest.meta.AgRelationship;
+import io.agrest.meta.AgSchema;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.unrelate.UnrelateContext;
 import io.agrest.runtime.processor.unrelate.stage.UnrelateUpdateDateStoreStage;
@@ -21,10 +21,10 @@ import org.apache.cayenne.di.Inject;
  */
 public class JpaUnrelateDataStoreStage extends UnrelateUpdateDateStoreStage {
 
-    private final AgDataMap dataMap;
+    private final AgSchema dataMap;
     private final Metamodel metamodel;
 
-    public JpaUnrelateDataStoreStage(@Inject AgDataMap dataMap, @Inject IAgJpaPersister persister) {
+    public JpaUnrelateDataStoreStage(@Inject AgSchema dataMap, @Inject IAgJpaPersister persister) {
         this.dataMap = dataMap;
         this.metamodel = persister.metamodel();
     }
