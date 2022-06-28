@@ -34,7 +34,7 @@ public class DELETE_CompoundIdIT extends DbTest {
         tester.target("/e17").queryParam("id1", 1).queryParam("id2", 1)
                 .delete()
                 .wasOk()
-                .bodyEquals("{\"success\":true}");
+                .bodyEquals("{}");
 
         tester.e17().matcher().assertOneMatch();
         tester.e17().matcher().eq("ID2", 2).eq("ID2", 2).eq("NAME", "bbb").assertOneMatch();
@@ -48,7 +48,7 @@ public class DELETE_CompoundIdIT extends DbTest {
         tester.target("/e31").queryParam("id1", 1).queryParam("id2", 1)
                 .delete()
                 .wasOk()
-                .bodyEquals("{\"success\":true}");
+                .bodyEquals("{}");
 
         tester.e31().matcher().assertOneMatch();
         tester.e31().matcher().eq("ID2", 2).eq("ID2", 2).eq("NAME", "bbb").assertOneMatch();
@@ -62,7 +62,7 @@ public class DELETE_CompoundIdIT extends DbTest {
         tester.target("/e32").queryParam("id1", 1).queryParam("id2", 1)
                 .delete()
                 .wasOk()
-                .bodyEquals("{\"success\":true}");
+                .bodyEquals("{}");
 
         tester.e32().matcher().assertOneMatch();
         tester.e32().matcher().eq("ID2", 2).eq("ID2", 2).eq("NAME", "bbb").assertOneMatch();

@@ -66,7 +66,7 @@ public class POST_IT extends DbTest {
         tester.target("/e4/sync")
                 .post("{\"cVarchar\":\"zzz\"}")
                 .wasCreated()
-                .bodyEquals("{\"success\":true}");
+                .bodyEquals("{}");
 
         tester.e4().matcher().assertOneMatch();
         tester.e4().matcher().eq("C_VARCHAR", "zzz").assertOneMatch();
@@ -108,7 +108,7 @@ public class POST_IT extends DbTest {
         tester.target("/e3")
                 .post("{\"e2\":15,\"name\":\"MM\"}")
                 .wasNotFound()
-                .bodyEquals("{\"success\":false,\"message\":\"Related object 'E2' with ID '[15]' is not found\"}");
+                .bodyEquals("{\"message\":\"Related object 'E2' with ID '[15]' is not found\"}");
 
         tester.e3().matcher().assertNoMatches();
     }

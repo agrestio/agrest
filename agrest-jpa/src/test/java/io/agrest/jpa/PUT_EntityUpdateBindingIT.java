@@ -33,7 +33,7 @@ public class PUT_EntityUpdateBindingIT extends DbTest {
 
         tester.target("/e3/updatebinding/3")
                 .put("{\"id\":3,\"name\":\"yyy\"}")
-                .wasOk().bodyEquals("{\"success\":true}");
+                .wasOk().bodyEquals("{}");
 
         tester.e3().matcher().eq("ID", 3).eq("NAME", "yyy").assertOneMatch();
     }
@@ -48,7 +48,7 @@ public class PUT_EntityUpdateBindingIT extends DbTest {
 
         tester.target("/e3/updatebinding")
                 .put("[{\"id\":3,\"name\":\"yyy\"},{\"id\":5,\"name\":\"nnn\"}]")
-                .wasOk().bodyEquals("{\"success\":true}");
+                .wasOk().bodyEquals("{}");
 
         tester.e3().matcher().assertMatches(2);
         tester.e3().matcher().eq("ID", 3).eq("NAME", "yyy").assertOneMatch();

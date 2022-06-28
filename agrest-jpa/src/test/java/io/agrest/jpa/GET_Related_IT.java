@@ -101,7 +101,7 @@ public class GET_Related_IT extends DbTest {
     public void testInvalidRel() {
         tester.target("/e2/1/dummyrel").get()
                 .wasServerError()
-                .bodyEquals("{\"success\":false,\"message\":\"Invalid parent relationship: 'dummyrel'\"}");
+                .bodyEquals("{\"message\":\"Invalid parent relationship: 'dummyrel'\"}");
     }
 
     @Test
