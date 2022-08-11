@@ -93,7 +93,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
     @Override
     public <V> SelectBuilder<T> entityAttribute(String name, Class<V> valueType, Function<T, V> reader) {
-        return entityOverlay(AgEntity.overlay(getContext().getType()).redefineAttribute(name, valueType, reader));
+        return entityOverlay(AgEntity.overlay(getContext().getType()).attribute(name, valueType, reader));
     }
 
     @Override

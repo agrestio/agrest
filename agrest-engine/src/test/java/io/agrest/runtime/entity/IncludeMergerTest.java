@@ -114,11 +114,11 @@ public class IncludeMergerTest {
         Map<Class<?>, AgEntityOverlay<?>> overlays = new HashMap<>();
         overlays.put(X.class, AgEntity
                 .overlay(X.class)
-                .redefineRelatedDataResolver("ys", (t, r) -> ThrowingRelatedDataResolver.getInstance()));
+                .relatedDataResolver("ys", (t, r) -> ThrowingRelatedDataResolver.getInstance()));
 
         overlays.put(Y.class, AgEntity
                 .overlay(Y.class)
-                .redefineRelatedDataResolver("z", (t, r) -> ThrowingRelatedDataResolver.getInstance()));
+                .relatedDataResolver("z", (t, r) -> ThrowingRelatedDataResolver.getInstance()));
 
         AgEntity<X> entity = schema.getEntity(X.class);
         AgEntity<X> entityOverlaid = ((AgEntityOverlay<X>) overlays.get(X.class)).resolve(schema, entity);

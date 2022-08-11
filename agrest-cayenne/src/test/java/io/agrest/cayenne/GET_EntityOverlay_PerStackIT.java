@@ -35,7 +35,7 @@ public class GET_EntityOverlay_PerStackIT extends DbTest {
         // creating an adhoc relationship between two persistent objects with a custom resolver
         AgEntityOverlay<E22> e22Overlay = AgEntity
                 .overlay(E22.class)
-                .redefineToOne("overlayToOne", E25.class, GET_EntityOverlay_PerStackIT::findForParent);
+                .toOne("overlayToOne", E25.class, GET_EntityOverlay_PerStackIT::findForParent);
 
         AgEntityOverlay<E2> e2Overlay = AgEntity
                 .overlay(E2.class)

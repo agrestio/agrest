@@ -21,7 +21,7 @@ public class AgRuntimeBuilder_OverlayTest {
     public void testOverlay_RedefineAttribute_New() {
         AgRuntime runtime = AgRuntime
                 .builder()
-                .entityOverlay(AgEntity.overlay(X.class).redefineAttribute("adHoc", Integer.class, true, true, e -> 2))
+                .entityOverlay(AgEntity.overlay(X.class).attribute("adHoc", Integer.class, true, true, e -> 2))
                 .build();
 
         X x = new X();
@@ -45,7 +45,7 @@ public class AgRuntimeBuilder_OverlayTest {
     public void testOverlay_RedefineAttribute_Replace() {
         AgRuntime runtime = AgRuntime
                 .builder()
-                .entityOverlay(AgEntity.overlay(X.class).redefineAttribute("phoneNumber", Long.class, x -> Long.valueOf(x.getPhoneNumber())))
+                .entityOverlay(AgEntity.overlay(X.class).attribute("phoneNumber", Long.class, x -> Long.valueOf(x.getPhoneNumber())))
                 .build();
 
         X x = new X();
@@ -73,7 +73,7 @@ public class AgRuntimeBuilder_OverlayTest {
 
         AgRuntime runtime = AgRuntime
                 .builder()
-                .entityOverlay(AgEntity.overlay(X.class).redefineRelatedDataResolver("y", (t, n) -> resolver))
+                .entityOverlay(AgEntity.overlay(X.class).relatedDataResolver("y", (t, n) -> resolver))
                 .build();
 
         AgSchema metadata = runtime.service(AgSchema.class);
@@ -103,7 +103,7 @@ public class AgRuntimeBuilder_OverlayTest {
         AgRuntime runtime = AgRuntime
                 .builder()
                 // this overlay is partial, as it is missing "targetType" property
-                .entityOverlay(AgEntity.overlay(X.class).redefineRelatedDataResolver("adHoc", (t, n) -> resolver))
+                .entityOverlay(AgEntity.overlay(X.class).relatedDataResolver("adHoc", (t, n) -> resolver))
                 .build();
 
         AgSchema metadata = runtime.service(AgSchema.class);
@@ -119,7 +119,7 @@ public class AgRuntimeBuilder_OverlayTest {
         AgRuntime runtime = AgRuntime
                 .builder()
                 // just for kicks redefine to-one as to-many, and change its target
-                .entityOverlay(AgEntity.overlay(X.class).redefineToMany("y", A.class, (t, n) -> resolver))
+                .entityOverlay(AgEntity.overlay(X.class).toMany("y", A.class, (t, n) -> resolver))
                 .build();
 
         AgSchema metadata = runtime.service(AgSchema.class);
@@ -148,7 +148,7 @@ public class AgRuntimeBuilder_OverlayTest {
 
         AgRuntime runtime = AgRuntime
                 .builder()
-                .entityOverlay(AgEntity.overlay(X.class).redefineToOne("adHoc", A.class, true, true, (t, n) -> resolver))
+                .entityOverlay(AgEntity.overlay(X.class).toOne("adHoc", A.class, true, true, (t, n) -> resolver))
                 .build();
 
         AgSchema metadata = runtime.service(AgSchema.class);

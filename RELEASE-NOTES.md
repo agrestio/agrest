@@ -1,3 +1,7 @@
+## Release 5.0.M4
+
+* #572 AgEntityOverlay - strip "redefine" prefix from builder methods
+
 ## Release 5.0.M3
 
 * #570 Define String constants for protocol parameters

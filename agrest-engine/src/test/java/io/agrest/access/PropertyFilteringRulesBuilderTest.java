@@ -30,7 +30,7 @@ public class PropertyFilteringRulesBuilderTest {
         PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder();
         assertInaccessible(pab.resolveInaccessible(
                 tester.entity(P11.class),
-                AgEntity.overlay(P11.class).redefineAttribute("x", String.class, p11 -> "a")));
+                AgEntity.overlay(P11.class).attribute("x", String.class, p11 -> "a")));
     }
 
     @Test
@@ -70,7 +70,7 @@ public class PropertyFilteringRulesBuilderTest {
 
         assertInaccessible(pab.resolveInaccessible(
                 tester.entity(P11.class),
-                AgEntity.overlay(P11.class).redefineAttribute("x", String.class, p11 -> "a")), "x");
+                AgEntity.overlay(P11.class).attribute("x", String.class, p11 -> "a")), "x");
     }
 
     private void assertInaccessible(Set<String> actual, String... expected) {

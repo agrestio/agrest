@@ -57,9 +57,9 @@ public class GET_Resolvers_PojoToPersistentIT extends DbTest {
 
             AgEntityOverlay<PX1> px1Overlay = AgEntity
                     .overlay(PX1.class)
-                    .redefineDataResolver(new PX1RootResolver())
+                    .dataResolver(new PX1RootResolver())
                     // Cayenne resolver will fail as the parent is not a Cayenne object
-                    .redefineToOne("e25", E25.class, resolverFactory(overlay));
+                    .toOne("e25", E25.class, resolverFactory(overlay));
 
             try {
                 return AgJaxrs.select(PX1.class, config)

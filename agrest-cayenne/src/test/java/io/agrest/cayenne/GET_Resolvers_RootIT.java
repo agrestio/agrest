@@ -96,9 +96,9 @@ public class GET_Resolvers_RootIT extends DbTest {
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
                     // this is what Ag uses by default, but let's see if it still works as an override
-                    .redefineDataResolverFactory(CayenneResolvers.rootViaQuery())
+                    .dataResolverFactory(CayenneResolvers.rootViaQuery())
                     // check how a combination of custom root and related resolvers works
-                    .redefineRelatedDataResolver("e3s", CayenneResolvers.relatedViaParentPrefetch());
+                    .relatedDataResolver("e3s", CayenneResolvers.relatedViaParentPrefetch());
 
             return AgJaxrs.select(E2.class, config)
                     .entityOverlay(e2Overlay)
@@ -113,9 +113,9 @@ public class GET_Resolvers_RootIT extends DbTest {
             // non-standard related resolver
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineDataResolver(new CustomE2Resolver())
+                    .dataResolver(new CustomE2Resolver())
                     // check how a combination of custom root and Cayenne related resolvers works
-                    .redefineRelatedDataResolver("e3s", CayenneResolvers.relatedViaQueryWithParentIds());
+                    .relatedDataResolver("e3s", CayenneResolvers.relatedViaQueryWithParentIds());
 
             return AgJaxrs.select(E2.class, config)
                     .entityOverlay(e2Overlay)

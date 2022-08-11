@@ -112,11 +112,11 @@ public class GET_Resolvers_MixedIT extends DbTest {
 
             AgEntityOverlay<E5> o1 = AgEntity
                     .overlay(E5.class)
-                    .redefineRelatedDataResolver(E5.E3S.getName(), CayenneResolvers.relatedViaQueryWithParentIds());
+                    .relatedDataResolver(E5.E3S.getName(), CayenneResolvers.relatedViaQueryWithParentIds());
 
             AgEntityOverlay<E3> o2 = AgEntity
                     .overlay(E3.class)
-                    .redefineRelatedDataResolver(E3.E2.getName(), CayenneResolvers.relatedViaParentPrefetch());
+                    .relatedDataResolver(E3.E2.getName(), CayenneResolvers.relatedViaParentPrefetch());
 
             return AgJaxrs.select(E5.class, config)
                     .entityOverlay(o1)
@@ -133,7 +133,7 @@ public class GET_Resolvers_MixedIT extends DbTest {
 
             AgEntityOverlay<E5> o1 = AgEntity
                     .overlay(E5.class)
-                    .redefineToMany(E5.E3S.getName(), E2.class, e5 ->
+                    .toMany(E5.E3S.getName(), E2.class, e5 ->
                             ObjectSelect.query(E2.class)
                                     .where(ExpressionFactory.greaterDbExp(E2.ID__PK_COLUMN, Cayenne.longPKForObject(e5)))
                                     .select(context)
@@ -141,7 +141,7 @@ public class GET_Resolvers_MixedIT extends DbTest {
 
             AgEntityOverlay<E2> o2 = AgEntity
                     .overlay(E2.class)
-                    .redefineToOne("ex", E3.class, e2 ->
+                    .toOne("ex", E3.class, e2 ->
                             SelectById.query(E3.class, Cayenne.intPKForObject(e2)).selectOne(context)
                     );
 
