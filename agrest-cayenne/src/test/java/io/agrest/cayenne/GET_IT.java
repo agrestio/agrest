@@ -495,8 +495,8 @@ public class GET_IT extends DbTest {
 
             // adding regular properties to see if JSON property can be encoded when other properties are present
             AgEntityOverlay<E28> overlay = AgEntity.overlay(E28.class)
-                    .redefineAttribute("a", String.class, o -> "A")
-                    .redefineAttribute("z", String.class, o -> "Z");
+                    .attribute("a", String.class, o -> "A")
+                    .attribute("z", String.class, o -> "Z");
 
             return AgJaxrs.select(E28.class, config)
                     .entityOverlay(overlay)

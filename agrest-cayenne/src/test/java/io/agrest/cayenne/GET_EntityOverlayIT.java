@@ -38,24 +38,24 @@ public class GET_EntityOverlayIT extends DbTest {
     private static AgRuntimeBuilder addOverlay(AgRuntimeBuilder builder) {
 
         AgEntityOverlay<E2> e2Overlay = AgEntity.overlay(E2.class)
-                .redefineAttribute("adhocString", String.class, e2 -> e2.getName() + "*")
+                .attribute("adhocString", String.class, e2 -> e2.getName() + "*")
                 .readablePropFilter(p -> p.property("address", false));
 
         AgEntityOverlay<E4> e4Overlay = AgEntity.overlay(E4.class)
-                .redefineAttribute("adhocString", String.class, e4 -> e4.getCVarchar() + "*")
-                .redefineToOne("adhocToOne", EX.class, EX::forE4)
-                .redefineToMany("adhocToMany", EY.class, EY::forE4)
-                .redefineAttribute("derived", String.class, E4::getDerived);
+                .attribute("adhocString", String.class, e4 -> e4.getCVarchar() + "*")
+                .toOne("adhocToOne", EX.class, EX::forE4)
+                .toMany("adhocToMany", EY.class, EY::forE4)
+                .attribute("derived", String.class, E4::getDerived);
 
         AgEntityOverlay<E7> e7Overlay = AgEntity.overlay(E7.class)
-                .redefineRelatedDataResolver("e8", e7 -> {
+                .relatedDataResolver("e8", e7 -> {
                     E8 e8 = new E8();
                     e8.setObjectId(ObjectId.of("e8", "id", Cayenne.intPKForObject(e7)));
                     e8.setName(e7.getName() + "_e8");
                     return e8;
                 })
                 // we are changing the type of the existing attribute
-                .redefineAttribute("name", Integer.class, e7 -> e7.getName().length());
+                .attribute("name", Integer.class, e7 -> e7.getName().length());
 
         return builder.entityOverlay(e4Overlay).entityOverlay(e2Overlay).entityOverlay(e7Overlay);
     }

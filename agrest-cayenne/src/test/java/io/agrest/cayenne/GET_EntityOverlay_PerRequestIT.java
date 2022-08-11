@@ -203,11 +203,11 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
 
             AgEntityOverlay<E10> overlay = AgEntity.overlay(E10.class)
                     // 1. Request-specific attribute
-                    .redefineAttribute("fromRequest", String.class, e4 -> suffix)
+                    .attribute("fromRequest", String.class, e4 -> suffix)
                     // 3. Changing output of the existing property
-                    .redefineAttribute("cInt", Integer.class, e10 -> e10.getCInt() + 1)
+                    .attribute("cInt", Integer.class, e10 -> e10.getCInt() + 1)
                     // 4. Dynamic relationship
-                    .redefineToOne("dynamicRelationship", E22.class, e10 -> findMatching(E22.class, e10));
+                    .toOne("dynamicRelationship", E22.class, e10 -> findMatching(E22.class, e10));
 
             return AgJaxrs
                     .select(E10.class, config)
@@ -222,13 +222,13 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
 
             AgEntityOverlay<E4> overlay = AgEntity.overlay(E4.class)
                     // 1. Request-specific attribute
-                    .redefineAttribute("fromRequest", String.class, e4 -> suffix)
+                    .attribute("fromRequest", String.class, e4 -> suffix)
                     // 2. Object property previously unknown to Ag
-                    .redefineAttribute("objectProperty", String.class, E4::getDerived)
+                    .attribute("objectProperty", String.class, E4::getDerived)
                     // 3. Changing output of the existing property
-                    .redefineAttribute("cVarchar", String.class, e4 -> e4.getCVarchar() + "_x")
+                    .attribute("cVarchar", String.class, e4 -> e4.getCVarchar() + "_x")
                     // 4. Dynamic relationship
-                    .redefineToOne("dynamicRelationship", E22.class, e4 -> findMatching(E22.class, e4));
+                    .toOne("dynamicRelationship", E22.class, e4 -> findMatching(E22.class, e4));
 
             return AgJaxrs
                     .select(E4.class, config)
@@ -243,7 +243,7 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
 
             AgEntityOverlay<E4> overlay = AgEntity.overlay(E4.class)
                     // dynamic relationship
-                    .redefineToOne("dynamicRelationship", E3.class, e4 -> findMatching(E3.class, e4));
+                    .toOne("dynamicRelationship", E3.class, e4 -> findMatching(E3.class, e4));
 
             return AgJaxrs.select(E4.class, config)
                     .entityOverlay(overlay)

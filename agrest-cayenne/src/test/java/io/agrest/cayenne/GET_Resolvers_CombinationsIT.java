@@ -167,11 +167,11 @@ public class GET_Resolvers_CombinationsIT extends DbTest {
 
             AgEntityOverlay<E5> o1 = AgEntity
                     .overlay(E5.class)
-                    .redefineRelatedDataResolver(E5.E3S.getName(), resolverFactory(e5o));
+                    .relatedDataResolver(E5.E3S.getName(), resolverFactory(e5o));
 
             AgEntityOverlay<E3> o2 = AgEntity
                     .overlay(E3.class)
-                    .redefineRelatedDataResolver(E3.E2.getName(), resolverFactory(e3o));
+                    .relatedDataResolver(E3.E2.getName(), resolverFactory(e3o));
 
             return AgJaxrs.select(E5.class, config)
                     .entityOverlay(o1)
@@ -189,11 +189,11 @@ public class GET_Resolvers_CombinationsIT extends DbTest {
 
             AgEntityOverlay<E3> o1 = AgEntity
                     .overlay(E3.class)
-                    .redefineRelatedDataResolver(E3.E5.getName(), resolverFactory(e3o));
+                    .relatedDataResolver(E3.E5.getName(), resolverFactory(e3o));
 
             AgEntityOverlay<E5> o2 = AgEntity
                     .overlay(E5.class)
-                    .redefineRelatedDataResolver(E5.E15S.getName(), resolverFactory(e5o));
+                    .relatedDataResolver(E5.E15S.getName(), resolverFactory(e5o));
 
             return AgJaxrs.select(E3.class, config)
                     .entityOverlay(o1)

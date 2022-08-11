@@ -91,7 +91,7 @@ public class GET_Resolvers_Related_ToManyIT extends DbTest {
 
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineRelatedDataResolver("e3s", CayenneResolvers.relatedViaParentPrefetch());
+                    .relatedDataResolver("e3s", CayenneResolvers.relatedViaParentPrefetch());
 
             return AgJaxrs.select(E2.class, config)
                     .entityOverlay(e2Overlay)
@@ -105,7 +105,7 @@ public class GET_Resolvers_Related_ToManyIT extends DbTest {
 
             AgEntityOverlay<E2> e2Overlay = AgEntity
                     .overlay(E2.class)
-                    .redefineRelatedDataResolver("e3s", CayenneResolvers.relatedViaQueryWithParentIds());
+                    .relatedDataResolver("e3s", CayenneResolvers.relatedViaQueryWithParentIds());
 
             return AgJaxrs.select(E2.class, config)
                     .entityOverlay(e2Overlay)

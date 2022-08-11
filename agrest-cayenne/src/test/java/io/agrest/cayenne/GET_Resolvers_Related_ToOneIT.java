@@ -156,7 +156,7 @@ public class GET_Resolvers_Related_ToOneIT extends DbTest {
             // non-standard related resolver
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
-                    .redefineRelatedDataResolver("e2", CayenneResolvers.relatedViaParentPrefetch());
+                    .relatedDataResolver("e2", CayenneResolvers.relatedViaParentPrefetch());
 
             return AgJaxrs.select(E3.class, config)
                     .entityOverlay(e3Overlay)
@@ -171,7 +171,7 @@ public class GET_Resolvers_Related_ToOneIT extends DbTest {
             // non-standard related resolver
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
-                    .redefineRelatedDataResolver("e2", CayenneResolvers.relatedViaQueryWithParentIds());
+                    .relatedDataResolver("e2", CayenneResolvers.relatedViaQueryWithParentIds());
 
             return AgJaxrs.select(E3.class, config)
                     .entityOverlay(e3Overlay)
@@ -187,7 +187,7 @@ public class GET_Resolvers_Related_ToOneIT extends DbTest {
             AgEntityOverlay<E3> e3Overlay = AgEntity
                     .overlay(E3.class)
                     // this is actually the standard strategy, but let's see how it works if installed via a request-scoped overlay
-                    .redefineRelatedDataResolver("e2", CayenneResolvers.relatedViaQueryWithParentExp());
+                    .relatedDataResolver("e2", CayenneResolvers.relatedViaQueryWithParentExp());
 
             return AgJaxrs.select(E3.class, config)
                     .entityOverlay(e3Overlay)
