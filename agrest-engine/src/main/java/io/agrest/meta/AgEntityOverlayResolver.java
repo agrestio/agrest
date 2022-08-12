@@ -143,7 +143,7 @@ class AgEntityOverlayResolver {
             } else if (!wasWritable && writable) {
                 relationships.put(name, new DefaultRelationship(name, r.getTargetEntity(), r.isToMany(), r.isReadable(), true, r.getDataResolver()));
             }
-            
+
             return;
         }
     }
