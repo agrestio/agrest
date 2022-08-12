@@ -6,7 +6,7 @@
      (e.g. "bootique-bom"). As a result have to duplicate certain distribution-related sections.
     -->
     <groupId>io.agrest</groupId>
-    <version>5.0.M4</version>
+    <version>5.0.M5-SNAPSHOT</version>
     <artifactId>agrest-bom</artifactId>
     <packaging>pom</packaging>
     <name>agrest-bom: Bill of Materials w/all public modules</name>
