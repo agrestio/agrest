@@ -1,5 +1,6 @@
 ## Release 5.0.M4
 
+* #571 Allow AgEntityOverlay to clear previous access filters / authorizers
 * #572 AgEntityOverlay - strip "redefine" prefix from builder methods
 
 ## Release 5.0.M3
