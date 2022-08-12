@@ -1,3 +1,7 @@
+## Release 5.0.M5
+
+* #573 Overlay "ignore" methods are not properly merged when combinig overlays
+
 ## Release 5.0.M4
 
 * #571 Allow AgEntityOverlay to clear previous access filters / authorizers

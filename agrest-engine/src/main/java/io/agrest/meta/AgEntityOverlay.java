@@ -167,6 +167,16 @@ public class AgEntityOverlay<T> {
             this.rootDataResolver = anotherOverlay.getRootDataResolver();
         }
 
+        // When merging "ignores", a "true" on either side of the merge results in "true" in the merged version
+        this.ignoreOverlaidReadFilter = anotherOverlay.ignoreOverlaidReadFilter || this.ignoreOverlaidReadFilter;
+        this.ignoreOverlaidCreateAuthorizer = anotherOverlay.ignoreOverlaidCreateAuthorizer || this.ignoreOverlaidCreateAuthorizer;
+        this.ignoreOverlaidUpdateAuthorizer = anotherOverlay.ignoreOverlaidUpdateAuthorizer || this.ignoreOverlaidUpdateAuthorizer;
+        this.ignoreOverlaidDeleteAuthorizer = anotherOverlay.ignoreOverlaidDeleteAuthorizer || this.ignoreOverlaidDeleteAuthorizer;
+
+        // When merging filters/authorizers, "ignores" are themselves ignored, and will only have effect on the underlying entity.
+        // This allows to combine multiple overlays in the same scope (e.g. request or AgRuntimeBuilder) without them
+        // messing up each other, and only override things between the scopes
+
         this.readFilter = this.readFilter.andThen(anotherOverlay.readFilter);
         this.createAuthorizer = this.createAuthorizer.andThen(anotherOverlay.createAuthorizer);
         this.updateAuthorizer = this.updateAuthorizer.andThen(anotherOverlay.updateAuthorizer);
