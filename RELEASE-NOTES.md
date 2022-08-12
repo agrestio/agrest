@@ -4,7 +4,7 @@
 
 ## Release 5.0.M5
 
-* #573 Overlay "ignore" methods are not properly merged when combinig overlays
+* #573 Overlay "ignore" methods are not properly merged when combining overlays
 
 ## Release 5.0.M4
 
