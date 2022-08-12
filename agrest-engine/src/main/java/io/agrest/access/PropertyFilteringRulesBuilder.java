@@ -6,9 +6,9 @@ import io.agrest.meta.AgEntityOverlay;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -90,26 +90,26 @@ public class PropertyFilteringRulesBuilder {
      * A build method that returns a set of inaccessible properties based on the builder rules configured previously
      * by the user.
      */
-    public <T> Set<String> resolveInaccessible(AgEntity<T> entity, AgEntityOverlay<T> overlay) {
+    public <T> Map<String, Boolean> resolveInaccessible(AgEntity<T> entity, AgEntityOverlay<T> overlay) {
         if (accessFilters.isEmpty()) {
-            return Collections.emptySet();
+            return Collections.emptyMap();
         }
 
         ExcludeBuilder<T> builder = new ExcludeBuilder<>(entity, overlay);
         accessFilters.forEach(c -> c.accept(builder));
-        return builder.excludes;
+        return builder.accessRules;
     }
 
     static class ExcludeBuilder<T> {
 
         final AgEntityOverlay<T> overlay;
         final AgEntity<T> entity;
-        final Set<String> excludes;
+        final Map<String, Boolean> accessRules;
 
         ExcludeBuilder(AgEntity<T> entity, AgEntityOverlay<T> overlay) {
             this.overlay = overlay;
             this.entity = entity;
-            this.excludes = new HashSet<>();
+            this.accessRules = new HashMap<>();
         }
 
         void excludeEverything() {
@@ -125,31 +125,31 @@ public class PropertyFilteringRulesBuilder {
         }
 
         void includeAllAttributes() {
-            entity.getAttributes().forEach(a -> excludes.remove(a.getName()));
-            overlay.getAttributeOverlays().forEach(ao -> excludes.remove(ao.getName()));
+            entity.getAttributes().forEach(a -> accessRules.put(a.getName(), true));
+            overlay.getAttributeOverlays().forEach(ao -> accessRules.put(ao.getName(), true));
         }
 
         void excludeAllAttributes() {
-            entity.getAttributes().forEach(a -> excludes.add(a.getName()));
-            overlay.getAttributeOverlays().forEach(ao -> excludes.add(ao.getName()));
+            entity.getAttributes().forEach(a -> accessRules.put(a.getName(), false));
+            overlay.getAttributeOverlays().forEach(ao -> accessRules.put(ao.getName(), false));
         }
 
         void includeAllRelationships() {
-            entity.getRelationships().forEach(r -> excludes.remove(r.getName()));
-            overlay.getRelationshipOverlays().forEach(ro -> excludes.remove(ro.getName()));
+            entity.getRelationships().forEach(r -> accessRules.put(r.getName(), true));
+            overlay.getRelationshipOverlays().forEach(ro -> accessRules.put(ro.getName(), true));
         }
 
         void excludeAllRelationships() {
-            entity.getRelationships().forEach(r -> excludes.add(r.getName()));
-            overlay.getRelationshipOverlays().forEach(ro -> excludes.add(ro.getName()));
+            entity.getRelationships().forEach(r -> accessRules.put(r.getName(), false));
+            overlay.getRelationshipOverlays().forEach(ro -> accessRules.put(ro.getName(), false));
         }
 
         void includeProperty(String name) {
-            excludes.remove(name);
+            accessRules.put(name, true);
         }
 
         void excludeProperty(String name) {
-            excludes.add(name);
+            accessRules.put(name, false);
         }
     }
 }

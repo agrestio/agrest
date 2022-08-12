@@ -1,3 +1,7 @@
+## Release 5.0.M6
+
+* #574 Can't turn unreadable/unwritable properties to readable/writable with an overlay
+
 ## Release 5.0.M5
 
 * #573 Overlay "ignore" methods are not properly merged when combinig overlays

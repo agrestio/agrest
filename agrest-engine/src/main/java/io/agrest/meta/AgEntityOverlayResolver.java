@@ -34,14 +34,18 @@ class AgEntityOverlayResolver {
         relationships.put(overlay.getName(), overlay.resolve(relationships.get(overlay.getName()), schema));
     }
 
-    void makeUnreadable(String name) {
+    void setReadAccess(String name, boolean readable) {
         if (PathConstants.ID_PK_ATTRIBUTE.equals(name)) {
 
             Iterator<Map.Entry<String, AgIdPart>> it = ids.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, AgIdPart> e = it.next();
-                if (e.getValue().isReadable()) {
+
+                boolean wasReadable = e.getValue().isReadable();
+                if (wasReadable && !readable) {
                     e.setValue(new DefaultIdPart(name, e.getValue().getType(), false, e.getValue().isWritable(), e.getValue().getDataReader()));
+                } else if (!wasReadable && readable) {
+                    e.setValue(new DefaultIdPart(name, e.getValue().getType(), true, e.getValue().isWritable(), e.getValue().getDataReader()));
                 }
             }
 
@@ -50,8 +54,11 @@ class AgEntityOverlayResolver {
 
         AgIdPart id = ids.get(name);
         if (id != null) {
-            if (id.isReadable()) {
+            boolean wasReadable = id.isReadable();
+            if (wasReadable && !readable) {
                 ids.put(name, new DefaultIdPart(name, id.getType(), false, id.isWritable(), id.getDataReader()));
+            } else if (!wasReadable && readable) {
+                ids.put(name, new DefaultIdPart(name, id.getType(), true, id.isWritable(), id.getDataReader()));
             }
 
             return;
@@ -59,8 +66,11 @@ class AgEntityOverlayResolver {
 
         AgAttribute a = attributes.get(name);
         if (a != null) {
-            if (a.isReadable()) {
+            boolean wasReadable = a.isReadable();
+            if (wasReadable && !readable) {
                 attributes.put(name, new DefaultAttribute(name, a.getType(), false, a.isWritable(), a.getDataReader()));
+            } else if (!wasReadable && readable) {
+                attributes.put(name, new DefaultAttribute(name, a.getType(), true, a.isWritable(), a.getDataReader()));
             }
 
             return;
@@ -68,23 +78,31 @@ class AgEntityOverlayResolver {
 
         AgRelationship r = relationships.get(name);
         if (r != null) {
-            if (r.isReadable()) {
+            boolean wasReadable = r.isReadable();
+
+            if (wasReadable && !readable) {
                 relationships.put(name, new DefaultRelationship(name, r.getTargetEntity(), r.isToMany(), false, r.isWritable(), r.getDataResolver()));
+            } else if (!wasReadable && readable) {
+                relationships.put(name, new DefaultRelationship(name, r.getTargetEntity(), r.isToMany(), true, r.isWritable(), r.getDataResolver()));
             }
 
             return;
         }
     }
 
-    void makeUnwritable(String name) {
+    void setWriteAccess(String name, boolean writable) {
 
         if (PathConstants.ID_PK_ATTRIBUTE.equals(name)) {
 
             Iterator<Map.Entry<String, AgIdPart>> it = ids.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, AgIdPart> e = it.next();
-                if (e.getValue().isWritable()) {
+
+                boolean wasWritable = e.getValue().isWritable();
+                if (wasWritable && !writable) {
                     e.setValue(new DefaultIdPart(name, e.getValue().getType(), e.getValue().isReadable(), false, e.getValue().getDataReader()));
+                } else if (!wasWritable && writable) {
+                    e.setValue(new DefaultIdPart(name, e.getValue().getType(), e.getValue().isReadable(), true, e.getValue().getDataReader()));
                 }
             }
 
@@ -93,8 +111,11 @@ class AgEntityOverlayResolver {
 
         AgIdPart id = ids.get(name);
         if (id != null) {
-            if (id.isWritable()) {
+            boolean wasWritable = id.isWritable();
+            if (wasWritable && !writable) {
                 ids.put(name, new DefaultIdPart(name, id.getType(), id.isReadable(), false, id.getDataReader()));
+            } else if (!wasWritable && writable) {
+                ids.put(name, new DefaultIdPart(name, id.getType(), id.isReadable(), true, id.getDataReader()));
             }
 
             return;
@@ -102,8 +123,12 @@ class AgEntityOverlayResolver {
 
         AgAttribute a = attributes.get(name);
         if (a != null) {
-            if (a.isWritable()) {
+            boolean wasWritable = a.isWritable();
+
+            if (wasWritable && !writable) {
                 attributes.put(name, new DefaultAttribute(name, a.getType(), a.isReadable(), false, a.getDataReader()));
+            } else if (!wasWritable && writable) {
+                attributes.put(name, new DefaultAttribute(name, a.getType(), a.isReadable(), true, a.getDataReader()));
             }
 
             return;
@@ -111,10 +136,14 @@ class AgEntityOverlayResolver {
 
         AgRelationship r = relationships.get(name);
         if (r != null) {
-            if (r.isWritable()) {
-                relationships.put(name, new DefaultRelationship(name, r.getTargetEntity(), r.isToMany(), r.isReadable(), false, r.getDataResolver()));
-            }
 
+            boolean wasWritable = r.isWritable();
+            if (wasWritable && !writable) {
+                relationships.put(name, new DefaultRelationship(name, r.getTargetEntity(), r.isToMany(), r.isReadable(), false, r.getDataResolver()));
+            } else if (!wasWritable && writable) {
+                relationships.put(name, new DefaultRelationship(name, r.getTargetEntity(), r.isToMany(), r.isReadable(), true, r.getDataResolver()));
+            }
+            
             return;
         }
     }
