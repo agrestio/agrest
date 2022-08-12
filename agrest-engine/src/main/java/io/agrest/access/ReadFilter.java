@@ -22,7 +22,7 @@ public interface ReadFilter<T> {
     }
 
     default ReadFilter<T> andThen(ReadFilter<T> another) {
-        if (another.allowsAll()) {
+        if (another == null || another.allowsAll()) {
             return this;
         }
 
