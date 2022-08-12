@@ -93,13 +93,13 @@ public class AgEntityOverlay<T> {
         if (readablePropFilter != null) {
             PropertyFilteringRulesBuilder pa = new PropertyFilteringRulesBuilder();
             readablePropFilter.apply(pa);
-            pa.resolveInaccessible(maybeOverlaid, this).forEach(resolver::makeUnreadable);
+            pa.resolveInaccessible(maybeOverlaid, this).forEach(resolver::setReadAccess);
         }
 
         if (writablePropFilter != null) {
             PropertyFilteringRulesBuilder pa = new PropertyFilteringRulesBuilder();
             writablePropFilter.apply(pa);
-            pa.resolveInaccessible(maybeOverlaid, this).forEach(resolver::makeUnwritable);
+            pa.resolveInaccessible(maybeOverlaid, this).forEach(resolver::setWriteAccess);
         }
 
         ReadFilter<T> readFilter = ignoreOverlaidReadFilter

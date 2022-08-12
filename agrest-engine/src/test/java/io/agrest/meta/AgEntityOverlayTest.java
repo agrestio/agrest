@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
@@ -553,6 +554,54 @@ public class AgEntityOverlayTest {
         assertFalse(f.isAllowed(p11));
         assertTrue(f.isAllowed(p12));
         assertTrue(f.isAllowed(p13));
+    }
+
+    @Test
+    public void testResolve_propFilter_MakeInaccessible() {
+
+        AgEntity<P1> e = new DefaultEntity<>(
+                "p1",
+                P1.class,
+                Collections.emptyMap(),
+                Map.of("name", new DefaultAttribute("name", String.class, true, true, o -> null)),
+                Collections.emptyMap(),
+                mock(RootDataResolver.class),
+                ReadFilter.allowsAllFilter(),
+                CreateAuthorizer.allowsAllFilter(),
+                UpdateAuthorizer.allowsAllFilter(),
+                DeleteAuthorizer.allowsAllFilter()
+        );
+
+        AgEntityOverlay<P1> o = AgEntity.overlay(P1.class)
+                .readablePropFilter(b -> b.property("name", false))
+                .writablePropFilter(b -> b.property("name", false));
+        AgAttribute a = o.resolve(mock(AgSchema.class), e).getAttribute("name");
+        assertFalse(a.isReadable());
+        assertFalse(a.isWritable());
+    }
+
+    @Test
+    public void testResolve_propFilter_MakeAccessible() {
+
+        AgEntity<P1> e = new DefaultEntity<>(
+                "p1",
+                P1.class,
+                Collections.emptyMap(),
+                Map.of("name", new DefaultAttribute("name", String.class, false, false, o -> null)),
+                Collections.emptyMap(),
+                mock(RootDataResolver.class),
+                ReadFilter.allowsAllFilter(),
+                CreateAuthorizer.allowsAllFilter(),
+                UpdateAuthorizer.allowsAllFilter(),
+                DeleteAuthorizer.allowsAllFilter()
+        );
+
+        AgEntityOverlay<P1> o = AgEntity.overlay(P1.class)
+                .readablePropFilter(b -> b.property("name", true))
+                .writablePropFilter(b -> b.property("name", true));
+        AgAttribute a = o.resolve(mock(AgSchema.class), e).getAttribute("name");
+        assertTrue(a.isReadable());
+        assertTrue(a.isWritable());
     }
 
 }
