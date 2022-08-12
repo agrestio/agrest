@@ -423,6 +423,43 @@ public class AgEntityOverlayTest {
     }
 
     @Test
+    public void testMergeResolve_updateAuthorizer_IgnoreOverlaid() {
+
+        AgEntity<P1> e = new DefaultEntity<>(
+                "p1",
+                P1.class,
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                mock(RootDataResolver.class),
+                ReadFilter.allowsAllFilter(),
+                CreateAuthorizer.allowsAllFilter(),
+                (p1, u) -> ((String) u.getValues().get("name")).startsWith("a"),
+                DeleteAuthorizer.allowsAllFilter()
+        );
+
+        AgEntityOverlay<P1> o = AgEntity.overlay(P1.class)
+                .ignoreOverlaidUpdateAuthorizer()
+                .updateAuthorizer((p1, u) -> ((String) u.getValues().get("name")).endsWith("a"));
+
+        AgEntityOverlay<P1> oMerged = AgEntity.overlay(P1.class).merge(o);
+        UpdateAuthorizer<P1> f = oMerged.resolve(mock(AgSchema.class), e).getUpdateAuthorizer();
+
+        EntityUpdate<P1> p11 = new EntityUpdate<>(mock(AgEntity.class));
+        p11.getValues().put("name", "ax");
+
+        EntityUpdate<P1> p12 = new EntityUpdate<>(mock(AgEntity.class));
+        p12.getValues().put("name", "xa");
+
+        EntityUpdate<P1> p13 = new EntityUpdate<>(mock(AgEntity.class));
+        p13.getValues().put("name", "axa");
+
+        assertFalse(f.isAllowed(mock(P1.class), p11));
+        assertTrue(f.isAllowed(mock(P1.class), p12));
+        assertTrue(f.isAllowed(mock(P1.class), p13));
+    }
+
+    @Test
     public void testResolve_deleteAuthorizer() {
 
         AgEntity<P1> e = new DefaultEntity<>(
