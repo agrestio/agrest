@@ -37,6 +37,11 @@ public class AgEntityOverlay<T> {
     private PropertyFilter readablePropFilter;
     private PropertyFilter writablePropFilter;
 
+    private boolean ignoreOverlaidReadFilter;
+    private boolean ignoreOverlaidCreateAuthorizer;
+    private boolean ignoreOverlaidUpdateAuthorizer;
+    private boolean ignoreOverlaidDeleteAuthorizer;
+
     private ReadFilter<T> readFilter;
     private CreateAuthorizer<T> createAuthorizer;
     private UpdateAuthorizer<T> updateAuthorizer;
@@ -97,6 +102,22 @@ public class AgEntityOverlay<T> {
             pa.resolveInaccessible(maybeOverlaid, this).forEach(resolver::makeUnwritable);
         }
 
+        ReadFilter<T> readFilter = ignoreOverlaidReadFilter
+                ? this.readFilter
+                : maybeOverlaid.getReadFilter().andThen(this.readFilter);
+
+        CreateAuthorizer<T> createAuthorizer = ignoreOverlaidCreateAuthorizer
+                ? this.createAuthorizer
+                : maybeOverlaid.getCreateAuthorizer().andThen(this.createAuthorizer);
+
+        UpdateAuthorizer<T> updateAuthorizer = ignoreOverlaidUpdateAuthorizer
+                ? this.updateAuthorizer
+                : maybeOverlaid.getUpdateAuthorizer().andThen(this.updateAuthorizer);
+
+        DeleteAuthorizer<T> deleteAuthorizer = ignoreOverlaidDeleteAuthorizer
+                ? this.deleteAuthorizer
+                : maybeOverlaid.getDeleteAuthorizer().andThen(this.deleteAuthorizer);
+
         return new DefaultEntity<>(
                 maybeOverlaid.getName(),
                 type,
@@ -104,10 +125,10 @@ public class AgEntityOverlay<T> {
                 resolver.attributes,
                 resolver.relationships,
                 rootDataResolver != null ? rootDataResolver : maybeOverlaid.getDataResolver(),
-                maybeOverlaid.getReadFilter().andThen(readFilter),
-                maybeOverlaid.getCreateAuthorizer().andThen(createAuthorizer),
-                maybeOverlaid.getUpdateAuthorizer().andThen(updateAuthorizer),
-                maybeOverlaid.getDeleteAuthorizer().andThen(deleteAuthorizer)
+                readFilter,
+                createAuthorizer,
+                updateAuthorizer,
+                deleteAuthorizer
         );
     }
 
@@ -117,10 +138,10 @@ public class AgEntityOverlay<T> {
                 && relationships.isEmpty()
                 && readablePropFilter == null
                 && writablePropFilter == null
-                && readFilter.allowsAll()
-                && createAuthorizer.allowsAll()
-                && updateAuthorizer.allowsAll()
-                && deleteAuthorizer.allowsAll();
+                && !ignoreOverlaidReadFilter && readFilter.allowsAll()
+                && !ignoreOverlaidCreateAuthorizer && createAuthorizer.allowsAll()
+                && !ignoreOverlaidUpdateAuthorizer && updateAuthorizer.allowsAll()
+                && !ignoreOverlaidDeleteAuthorizer && deleteAuthorizer.allowsAll();
     }
 
     /**
@@ -210,6 +231,51 @@ public class AgEntityOverlay<T> {
      */
     public AgEntityOverlay<T> writablePropFilter(PropertyFilter filter) {
         this.writablePropFilter = writablePropFilter != null ? writablePropFilter.andThen(filter) : filter;
+        return this;
+    }
+
+
+    /**
+     * If called, overlaid AgEntity read filter will be ignored. Otherwise, it will be combined with the overlay
+     * read filter.
+     *
+     * @since 5.0
+     */
+    public AgEntityOverlay<T> ignoreOverlaidReadFilter() {
+        this.ignoreOverlaidReadFilter = true;
+        return this;
+    }
+
+    /**
+     * If called, overlaid AgEntity create authorizer will be ignored. Otherwise, it will be combined with the overlay
+     * create authorizer.
+     *
+     * @since 5.0
+     */
+    public AgEntityOverlay<T> ignoreOverlaidCreateAuthorizer() {
+        this.ignoreOverlaidCreateAuthorizer = true;
+        return this;
+    }
+
+    /**
+     * If called, overlaid AgEntity update authorizer will be ignored. Otherwise, it will be combined with the overlay
+     * update authorizer.
+     *
+     * @since 5.0
+     */
+    public AgEntityOverlay<T> ignoreOverlaidUpdateAuthorizer() {
+        this.ignoreOverlaidUpdateAuthorizer = true;
+        return this;
+    }
+
+    /**
+     * If called, overlaid AgEntity delete authorizer will be ignored. Otherwise, it will be combined with the overlay
+     * delete authorizer.
+     *
+     * @since 5.0
+     */
+    public AgEntityOverlay<T> ignoreOverlaidDeleteAuthorizer() {
+        this.ignoreOverlaidDeleteAuthorizer = true;
         return this;
     }
 

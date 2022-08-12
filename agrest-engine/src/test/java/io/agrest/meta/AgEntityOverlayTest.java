@@ -161,6 +161,74 @@ public class AgEntityOverlayTest {
     }
 
     @Test
+    public void testResolve_readFilter_IgnoreOverlaid() {
+
+        AgEntity<P1> e = new DefaultEntity<>(
+                "p1",
+                P1.class,
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                mock(RootDataResolver.class),
+                p1 -> p1.getName().startsWith("a"),
+                CreateAuthorizer.allowsAllFilter(),
+                UpdateAuthorizer.allowsAllFilter(),
+                DeleteAuthorizer.allowsAllFilter()
+        );
+
+        AgEntityOverlay<P1> o = AgEntity.overlay(P1.class)
+                .ignoreOverlaidReadFilter()
+                .readFilter(p1 -> p1.getName().endsWith("a"));
+
+        ReadFilter<P1> f = o.resolve(mock(AgSchema.class), e).getReadFilter();
+        P1 p11 = new P1();
+        p11.setName("ax");
+
+        P1 p12 = new P1();
+        p12.setName("xa");
+
+        P1 p13 = new P1();
+        p13.setName("axa");
+
+        assertFalse(f.isAllowed(p11));
+        assertTrue(f.isAllowed(p12));
+        assertTrue(f.isAllowed(p13));
+    }
+
+    @Test
+    public void testResolve_readFilter_IgnoreOverlaid_NoOverlayFilter() {
+
+        AgEntity<P1> e = new DefaultEntity<>(
+                "p1",
+                P1.class,
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                mock(RootDataResolver.class),
+                p1 -> p1.getName().startsWith("a"),
+                CreateAuthorizer.allowsAllFilter(),
+                UpdateAuthorizer.allowsAllFilter(),
+                DeleteAuthorizer.allowsAllFilter()
+        );
+
+        AgEntityOverlay<P1> o = AgEntity.overlay(P1.class).ignoreOverlaidReadFilter();
+
+        ReadFilter<P1> f = o.resolve(mock(AgSchema.class), e).getReadFilter();
+        P1 p11 = new P1();
+        p11.setName("ax");
+
+        P1 p12 = new P1();
+        p12.setName("xa");
+
+        P1 p13 = new P1();
+        p13.setName("axa");
+
+        assertTrue(f.isAllowed(p11));
+        assertTrue(f.isAllowed(p12));
+        assertTrue(f.isAllowed(p13));
+    }
+
+    @Test
     public void testResolve_createAuthorizer() {
 
         AgEntity<P1> e = new DefaultEntity<>(
@@ -219,6 +287,41 @@ public class AgEntityOverlayTest {
 
         assertFalse(f.isAllowed(p11));
         assertFalse(f.isAllowed(p12));
+        assertTrue(f.isAllowed(p13));
+    }
+
+    @Test
+    public void testResolve_createAuthorizer_IgnoreOverlaid() {
+
+        AgEntity<P1> e = new DefaultEntity<>(
+                "p1",
+                P1.class,
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                mock(RootDataResolver.class),
+                ReadFilter.allowsAllFilter(),
+                u -> ((String) u.getValues().get("name")).startsWith("a"),
+                UpdateAuthorizer.allowsAllFilter(),
+                DeleteAuthorizer.allowsAllFilter()
+        );
+
+        AgEntityOverlay<P1> o = AgEntity.overlay(P1.class)
+                .createAuthorizer(u -> ((String) u.getValues().get("name")).endsWith("a"))
+                .ignoreOverlaidCreateAuthorizer();
+        CreateAuthorizer<P1> f = o.resolve(mock(AgSchema.class), e).getCreateAuthorizer();
+
+        EntityUpdate<P1> p11 = new EntityUpdate<>(mock(AgEntity.class));
+        p11.getValues().put("name", "ax");
+
+        EntityUpdate<P1> p12 = new EntityUpdate<>(mock(AgEntity.class));
+        p12.getValues().put("name", "xa");
+
+        EntityUpdate<P1> p13 = new EntityUpdate<>(mock(AgEntity.class));
+        p13.getValues().put("name", "axa");
+
+        assertFalse(f.isAllowed(p11));
+        assertTrue(f.isAllowed(p12));
         assertTrue(f.isAllowed(p13));
     }
 
@@ -285,6 +388,41 @@ public class AgEntityOverlayTest {
     }
 
     @Test
+    public void testResolve_updateAuthorizer_IgnoreOverlaid() {
+
+        AgEntity<P1> e = new DefaultEntity<>(
+                "p1",
+                P1.class,
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                mock(RootDataResolver.class),
+                ReadFilter.allowsAllFilter(),
+                CreateAuthorizer.allowsAllFilter(),
+                (p1, u) -> ((String) u.getValues().get("name")).startsWith("a"),
+                DeleteAuthorizer.allowsAllFilter()
+        );
+
+        AgEntityOverlay<P1> o = AgEntity.overlay(P1.class)
+                .ignoreOverlaidUpdateAuthorizer()
+                .updateAuthorizer((p1, u) -> ((String) u.getValues().get("name")).endsWith("a"));
+        UpdateAuthorizer<P1> f = o.resolve(mock(AgSchema.class), e).getUpdateAuthorizer();
+
+        EntityUpdate<P1> p11 = new EntityUpdate<>(mock(AgEntity.class));
+        p11.getValues().put("name", "ax");
+
+        EntityUpdate<P1> p12 = new EntityUpdate<>(mock(AgEntity.class));
+        p12.getValues().put("name", "xa");
+
+        EntityUpdate<P1> p13 = new EntityUpdate<>(mock(AgEntity.class));
+        p13.getValues().put("name", "axa");
+
+        assertFalse(f.isAllowed(mock(P1.class), p11));
+        assertTrue(f.isAllowed(mock(P1.class), p12));
+        assertTrue(f.isAllowed(mock(P1.class), p13));
+    }
+
+    @Test
     public void testResolve_deleteAuthorizer() {
 
         AgEntity<P1> e = new DefaultEntity<>(
@@ -342,6 +480,41 @@ public class AgEntityOverlayTest {
 
         assertFalse(f.isAllowed(p11));
         assertFalse(f.isAllowed(p12));
+        assertTrue(f.isAllowed(p13));
+    }
+
+    @Test
+    public void testResolve_deleteAuthorizer_IgnoreOverlaid() {
+
+        AgEntity<P1> e = new DefaultEntity<>(
+                "p1",
+                P1.class,
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                mock(RootDataResolver.class),
+                ReadFilter.allowsAllFilter(),
+                CreateAuthorizer.allowsAllFilter(),
+                UpdateAuthorizer.allowsAllFilter(),
+                p1 -> p1.getName().startsWith("a")
+        );
+
+        AgEntityOverlay<P1> o = AgEntity.overlay(P1.class)
+                .ignoreOverlaidDeleteAuthorizer()
+                .deleteAuthorizer(p1 -> p1.getName().endsWith("a"));
+        DeleteAuthorizer<P1> f = o.resolve(mock(AgSchema.class), e).getDeleteAuthorizer();
+
+        P1 p11 = new P1();
+        p11.setName("ax");
+
+        P1 p12 = new P1();
+        p12.setName("xa");
+
+        P1 p13 = new P1();
+        p13.setName("axa");
+
+        assertFalse(f.isAllowed(p11));
+        assertTrue(f.isAllowed(p12));
         assertTrue(f.isAllowed(p13));
     }
 
