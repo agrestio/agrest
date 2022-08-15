@@ -15,7 +15,8 @@ public class ValidationExceptionMapper implements AgExceptionMapper<ValidationEx
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidationExceptionMapper.class);
 
-    private static final String ERROR_MESSAGE_EN = "Object validation failed. There were %s failure(s).";
+    private static final String ERROR_MESSAGE_SINGULAR = "Object validation failed";
+    private static final String ERROR_MESSAGE_PLURAL = "Object validation failed with %s errors";
 
     @Override
     public AgException toAgException(ValidationException e) {
@@ -28,7 +29,11 @@ public class ValidationExceptionMapper implements AgExceptionMapper<ValidationEx
         //  server internals
         LOGGER.info("{} ({})", status, validation);
 
-        return AgException.of(status, e, ERROR_MESSAGE_EN, validation.getFailures().size());
+        String clientMessage = validation.getFailures().size() == 1
+                ? ERROR_MESSAGE_SINGULAR
+                : String.format(ERROR_MESSAGE_PLURAL, validation.getFailures().size());
+
+        return AgException.of(status, e, clientMessage);
     }
 
 }
