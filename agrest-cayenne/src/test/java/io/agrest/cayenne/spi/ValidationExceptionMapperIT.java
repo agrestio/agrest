@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
@@ -24,15 +25,17 @@ import javax.ws.rs.core.UriInfo;
 public class ValidationExceptionMapperIT extends DbTest {
 
     @BQTestTool
-    static final AgCayenneTester tester = tester(Resource.class)
-
-            .build();
+    static final AgCayenneTester tester = tester(Resource.class).build();
 
     @Test
     public void testException() {
-        tester.target("/g1").get()
+        tester.target("/g1/1").get()
                 .wasBadRequest()
-                .bodyEquals("{\"message\":\"Object validation failed. There were 1 failure(s).\"}");
+                .bodyEquals("{\"message\":\"Object validation failed\"}");
+
+        tester.target("/g1/2").get()
+                .wasBadRequest()
+                .bodyEquals("{\"message\":\"Object validation failed with 2 errors\"}");
     }
 
     @Path("")
@@ -43,14 +46,19 @@ public class ValidationExceptionMapperIT extends DbTest {
         private Configuration config;
 
         @GET
-        @Path("g1")
-        public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
+        @Path("g1/{failure_count}")
+        public DataResponse<E2> getE2(
+                @PathParam("failure_count") int failureCount,
+                @Context UriInfo uriInfo) {
 
             // must be thrown within Ag chain
             return AgJaxrs.select(E2.class, config)
                     .stage(SelectStage.APPLY_SERVER_PARAMS, c -> {
                         ValidationResult result = new ValidationResult();
-                        result.addFailure(new SimpleValidationFailure(new Object(), "_error_"));
+
+                        for (int i = 0; i < failureCount; i++) {
+                            result.addFailure(new SimpleValidationFailure(new Object(), "_error_"));
+                        }
                         throw new ValidationException("_cayenne_validation_", result);
                     })
                     .get();

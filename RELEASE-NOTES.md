@@ -1,3 +1,7 @@
+## Release 5.0.M7
+
+* #575 Better contextual message for Cayenne ValidationException
+
 ## Release 5.0.M6
 
 * #574 Can't turn unreadable/unwritable properties to readable/writable with an overlay
