@@ -8,6 +8,7 @@ import io.agrest.access.DeleteAuthorizer;
 import io.agrest.access.ReadFilter;
 import io.agrest.access.UpdateAuthorizer;
 import io.agrest.pojo.model.P1;
+import io.agrest.reader.DataReader;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Injector;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,6 +47,33 @@ public class AgEntityOverlayTest {
         assertEquals(P1.class, eo.getType());
         assertEquals(r1, eo.getDataResolver());
         assertEquals(1, eo.getAttributes().size());
+    }
+
+    @Test
+    public void testResolve_attribute_throwingFunction() {
+        RootDataResolver<P1> r1 = mock(RootDataResolver.class);
+
+        AgEntity<P1> e = new DefaultEntity<>(
+                "p1", P1.class,
+                Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(),
+                r1,
+                ReadFilter.allowsAllFilter(),
+                CreateAuthorizer.allowsAllFilter(),
+                UpdateAuthorizer.allowsAllFilter(),
+                DeleteAuthorizer.allowsAllFilter()
+        );
+
+        Function<P1, String> throwing = p1 -> {
+            throw new RuntimeException("testing this exception");
+        };
+
+        AgEntityOverlay<P1> attributeOverlay = AgEntity
+                .overlay(P1.class)
+                .attribute("a1", String.class, throwing);
+
+        AgEntity<P1> eo = attributeOverlay.resolve(mock(AgSchema.class), e);
+        DataReader reader = eo.getAttribute("a1").getDataReader();
+        assertThrows(RuntimeException.class, () -> reader.read(new P1()));
     }
 
     @Test
