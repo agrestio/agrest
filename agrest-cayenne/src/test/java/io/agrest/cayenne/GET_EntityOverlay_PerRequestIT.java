@@ -23,6 +23,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
+import java.util.function.Function;
 
 public class GET_EntityOverlay_PerRequestIT extends DbTest {
 
@@ -187,6 +188,16 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
                 .bodyEquals(1, "{\"id\":1,\"name\":\"N\"}");
     }
 
+    @Test
+    public void test_OverlaidDataReaderException() {
+
+        tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
+
+        tester.target("/e4_with_exception")
+                .get()
+                .wasServerError();
+    }
+
     @Path("")
     public static class Resource {
 
@@ -247,6 +258,22 @@ public class GET_EntityOverlay_PerRequestIT extends DbTest {
 
             return Ag.service(config)
                     .select(E4.class)
+                    .entityOverlay(overlay)
+                    .uri(uriInfo)
+                    .get();
+        }
+
+        @GET
+        @Path("e4_with_exception")
+        public DataResponse<E4> getE4_withException(@Context UriInfo uriInfo) {
+
+            Function<E4, String> throwing = e4 -> {
+                throw new RuntimeException("testing this exception");
+            };
+
+            AgEntityOverlay<E4> overlay = AgEntity.overlay(E4.class).redefineAttribute("ax", String.class, throwing);
+
+            return Ag.select(E4.class, config)
                     .entityOverlay(overlay)
                     .uri(uriInfo)
                     .get();
