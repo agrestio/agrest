@@ -1,6 +1,7 @@
 package io.agrest.cayenne;
 
 import io.agrest.DataResponse;
+import io.agrest.cayenne.cayenne.main.E15;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E5;
@@ -22,7 +23,7 @@ public class GET_IncludeIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entitiesAndDependencies(E2.class, E3.class, E5.class)
+            .entitiesAndDependencies(E2.class, E3.class, E5.class, E15.class)
             .build();
 
     @Test
@@ -82,6 +83,34 @@ public class GET_IncludeIT extends DbTest {
     }
 
     @Test
+    public void testPhantom_OverExplicitJoinTable() {
+        tester.e1().insertColumns("id", "name")
+                .values(1, "xxx")
+                .values(2, "yyy").exec();
+
+
+        tester.e15().insertColumns("long_id", "name")
+                .values(14L, "aaa")
+                .values(15L, "bbb")
+                .values(16L, "ccc").exec();
+
+        tester.e15_1().insertColumns("e15_id", "e1_id")
+                .values(14, 1).exec();
+
+
+        tester.target("/e15")
+                .queryParam("include", "id", "e15e1.e1")
+                .get()
+                .wasOk()
+                .bodyEquals(3,
+                        "{\"id\":14,\"e15e1\":[{\"e1\":{\"id\":1,\"age\":null,\"description\":null,\"name\":\"xxx\"}}]}",
+                        "{\"id\":15,\"e15e1\":[]}",
+                        "{\"id\":16,\"e15e1\":[]}");
+
+        tester.assertQueryCount(3);
+    }
+
+    @Test
     public void testStartLimit() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
@@ -99,8 +128,8 @@ public class GET_IncludeIT extends DbTest {
                 .queryParam("limit", "2")
 
                 .get().wasOk().bodyEquals(4,
-                "{\"id\":9,\"e2\":{\"id\":1}}",
-                "{\"id\":10,\"e2\":{\"id\":1}}");
+                        "{\"id\":9,\"e2\":{\"id\":1}}",
+                        "{\"id\":10,\"e2\":{\"id\":1}}");
 
         // There are 3 queries, while our counter catches only 2 (the last query in paginated result is not reported).
         tester.assertQueryCount(2);
@@ -126,6 +155,12 @@ public class GET_IncludeIT extends DbTest {
         @Path("e3")
         public DataResponse<E3> getE3(@Context UriInfo uriInfo) {
             return AgJaxrs.select(E3.class, config).clientParams(uriInfo.getQueryParameters()).get();
+        }
+
+        @GET
+        @Path("e15")
+        public DataResponse<E15> getE15(@Context UriInfo uriInfo) {
+            return AgJaxrs.select(E15.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
     }
 }
