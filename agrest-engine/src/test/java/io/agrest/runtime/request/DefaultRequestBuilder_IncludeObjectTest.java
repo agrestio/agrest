@@ -29,7 +29,7 @@ public class DefaultRequestBuilder_IncludeObjectTest {
     @BeforeEach
     public void beforeEach() {
 
-        IJacksonService jacksonService = new JacksonService();
+        IJacksonService jacksonService = JacksonService.create();
 
         // prepare parse request stage
         IExpParser expParser = new ExpParser(jacksonService);

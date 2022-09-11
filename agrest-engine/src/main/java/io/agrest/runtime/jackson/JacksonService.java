@@ -1,7 +1,11 @@
 package io.agrest.runtime.jackson;
 
-import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.SerializableString;
 import com.fasterxml.jackson.core.io.CharacterEscapes;
 import com.fasterxml.jackson.core.io.SerializedString;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,25 +16,25 @@ import io.agrest.AgException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Objects;
 
 public class JacksonService implements IJacksonService {
 
-    private ObjectMapper sharedMapper;
-    private JsonFactory sharedFactory;
+    private final JsonFactory factory;
 
-    public JacksonService() {
+    /**
+     * @since 5.0
+     */
+    public static JacksonService create() {
 
-        // fun Jackson API with circular dependencies ... so we create a mapper
-        // first, and grab implicitly created factory from it
-        this.sharedMapper = new ObjectMapper();
-        this.sharedFactory = sharedMapper.getFactory();
+        ObjectMapper mapper = new ObjectMapper();
 
         // TODO: revisit this code from 2015. Maybe this hack is not longer needed?
 
-        final SerializableString LINE_SEPARATOR = new SerializedString("\\u2028");
-        final SerializableString PARAGRAPH_SEPARATOR = new SerializedString("\\u2029");
+        SerializableString LINE_SEPARATOR = new SerializedString("\\u2028");
+        SerializableString PARAGRAPH_SEPARATOR = new SerializedString("\\u2029");
 
-        this.sharedFactory.setCharacterEscapes(new CharacterEscapes() {
+        mapper.getFactory().setCharacterEscapes(new CharacterEscapes() {
 
             private static final long serialVersionUID = 3995801066651016289L;
 
@@ -60,22 +64,38 @@ public class JacksonService implements IJacksonService {
 
         // make sure mapper does not attempt closing streams it does not
         // manage... why is this even a default in jackson?
-        sharedFactory.disable(Feature.AUTO_CLOSE_TARGET);
+        mapper.getFactory().disable(Feature.AUTO_CLOSE_TARGET);
 
         // do not flush every time. why would we want to do that?
-        // this is having a HUGE impact on extrest serializers (5x speedup)
-        sharedMapper.disable(SerializationFeature.FLUSH_AFTER_WRITE_VALUE);
+        // this is having a HUGE impact on serializers (5x speedup)
+        mapper.disable(SerializationFeature.FLUSH_AFTER_WRITE_VALUE);
+
+        return create(mapper);
+    }
+
+    /**
+     * Creates a JacksonService instance based on a preconfigured ObjectMapper. Allows for external configuration of
+     * the Jackson stack.
+     *
+     * @since 5.0
+     */
+    public static JacksonService create(ObjectMapper mapper) {
+        return new JacksonService(mapper.getFactory());
+    }
+
+    protected JacksonService(JsonFactory factory) {
+        this.factory = Objects.requireNonNull(factory);
     }
 
     @Override
     public JsonFactory getJsonFactory() {
-        return sharedFactory;
+        return factory;
     }
 
     @Override
     public void outputJson(JsonConvertable processor, OutputStream out) throws IOException {
         // TODO: UTF-8 is hardcoded, it is likely we may have alt. encodings
-        try (JsonGenerator generator = sharedFactory.createGenerator(out, JsonEncoding.UTF8)) {
+        try (JsonGenerator generator = factory.createGenerator(out, JsonEncoding.UTF8)) {
             processor.generateJSON(generator);
         }
     }
@@ -92,8 +112,8 @@ public class JacksonService implements IJacksonService {
         try {
             JsonParser parser = getJsonFactory().createParser(json);
             return new ObjectMapper().readTree(parser);
-        } catch (IOException ioex) {
-            throw AgException.badRequest(ioex, "Error parsing JSON");
+        } catch (IOException e) {
+            throw AgException.badRequest(e, "Error parsing JSON");
         }
     }
 
@@ -106,8 +126,8 @@ public class JacksonService implements IJacksonService {
         try {
             JsonParser parser = getJsonFactory().createParser(json);
             return new ObjectMapper().readTree(parser);
-        } catch (IOException ioex) {
-            throw AgException.badRequest(ioex, "Error parsing JSON");
+        } catch (IOException e) {
+            throw AgException.badRequest(e, "Error parsing JSON");
         }
     }
 }

@@ -13,7 +13,7 @@ public class ExpParserTest {
 
 	@BeforeAll
 	public static void beforeAll() {
-		parser = new ExpParser(new JacksonService());
+		parser = new ExpParser(JacksonService.create());
 	}
 
 	@Test

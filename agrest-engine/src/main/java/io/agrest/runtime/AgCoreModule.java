@@ -53,7 +53,7 @@ import io.agrest.runtime.entity.ResultFilter;
 import io.agrest.runtime.entity.SizeMerger;
 import io.agrest.runtime.entity.SortMerger;
 import io.agrest.runtime.jackson.IJacksonService;
-import io.agrest.runtime.jackson.JacksonService;
+import io.agrest.runtime.jackson.JacksonServiceProvider;
 import io.agrest.runtime.meta.LazySchemaProvider;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.delete.provider.DeleteProcessorFactoryProvider;
@@ -250,7 +250,7 @@ public class AgCoreModule implements Module {
         binder.bind(AgSchema.class).toProvider(LazySchemaProvider.class);
         binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
 
-        binder.bind(IJacksonService.class).to(JacksonService.class);
+        binder.bind(IJacksonService.class).toProvider(JacksonServiceProvider.class);
 
         // Query parameter parsers from the UriInfo
         binder.bind(IExpParser.class).to(ExpParser.class);
