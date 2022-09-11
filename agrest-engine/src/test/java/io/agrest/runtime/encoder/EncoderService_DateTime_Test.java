@@ -1,7 +1,6 @@
 package io.agrest.runtime.encoder;
 
 import io.agrest.DataResponse;
-import io.agrest.HttpStatus;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.annotation.AgAttribute;
@@ -151,7 +150,7 @@ public class EncoderService_DateTime_Test {
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
         Encoder encoder = encoderService.dataEncoder(resourceEntity, mock(ProcessingContext.class));
-        return Encoders.toJson(encoder, DataResponse.of(HttpStatus.OK, List.of(object)));
+        return Encoders.toJson(DataResponse.of(List.of(object)).encoder(encoder).build());
     }
 
     public class PDate {
