@@ -1,6 +1,7 @@
 ## Release 5.0.M7
 
 * #575 Better contextual message for Cayenne ValidationException
+* #577 Better default encoder for DataResponse
 
 ## Release 5.0.M6
 

@@ -1,7 +1,9 @@
 package io.agrest;
 
+import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.GenericEncoder;
+import io.agrest.encoder.ListEncoder;
 import io.agrest.protocol.CollectionResponse;
 
 import java.util.Collections;
@@ -20,46 +22,25 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
     /**
      * @since 5.0
      */
-    public static <T> DataResponse<T> of(int status) {
-        return of(status, Collections.emptyList(), 0, GenericEncoder.encoder());
+    public static <T> Builder<T> of(List<? extends T> data) {
+        return new Builder(data);
     }
 
     /**
-     * @since 5.0
-     */
-    public static <T> DataResponse<T> of(int status, List<? extends T> data) {
-        return of(status, data, data.size(), GenericEncoder.encoder());
-    }
-
-    /**
-     * @since 5.0
-     */
-    public static <T> DataResponse<T> of(int status, List<? extends T> data, int total) {
-        return of(status, data, total, GenericEncoder.encoder());
-    }
-
-    /**
-     * @since 5.0
-     */
-    public static <T> DataResponse<T> of(int status, List<? extends T> data, int total, Encoder encoder) {
-        return new DataResponse<>(status, data, total, encoder);
-    }
-
-    /**
-     * @deprecated since 5.0 in favor of {@link #of(int, List, int)} , and other "of" methods.
+     * @deprecated since 5.0 in favor of the new builder created via {@link #of(List)}
      */
     @Deprecated
     public static <T> DataResponse<T> forObject(T object) {
         Objects.requireNonNull(object);
-        return of(HttpStatus.OK, List.of(object), 1);
+        return of(List.of(object)).build();
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #of(int, List, int)}, and other "of" methods.
+     * @deprecated since 5.0 in favor oof the new builder created via {@link #of(List)}
      */
     @Deprecated
     public static <T> DataResponse<T> forObjects(List<T> data) {
-        return of(HttpStatus.OK, data, data.size());
+        return of(data).build();
     }
 
     protected DataResponse(int status, List<? extends T> data, int total, Encoder encoder) {
@@ -99,5 +80,55 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
     @Override
     public int getTotal() {
         return total;
+    }
+
+    public static class Builder<T> {
+
+        private List<? extends T> data;
+        private Integer status;
+        private Integer total;
+        private Encoder encoder;
+
+        public Builder(List<? extends T> data) {
+            this.data = data;
+        }
+
+        public Builder<T> data(List<? extends T> data) {
+            this.data = data;
+            return this;
+        }
+
+        public Builder<T> status(int status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder<T> total(int total) {
+            this.total = total;
+            return this;
+        }
+
+        public Builder<T> elementEncoder(Encoder elementEncoder) {
+            return encoder(defaultEncoder(elementEncoder));
+        }
+
+        public Builder<T> encoder(Encoder encoder) {
+            this.encoder = encoder;
+            return this;
+        }
+
+        public DataResponse<T> build() {
+            List<? extends T> data = this.data != null ? this.data : Collections.emptyList();
+            return new DataResponse<>(
+                    status != null ? status : HttpStatus.OK,
+                    data,
+                    total != null ? total : data.size(),
+                    encoder != null ? encoder : defaultEncoder(GenericEncoder.encoder())
+            );
+        }
+
+        private Encoder defaultEncoder(Encoder elementEncoder) {
+            return new DataResponseEncoder("data", new ListEncoder(elementEncoder), "total", GenericEncoder.encoder());
+        }
     }
 }

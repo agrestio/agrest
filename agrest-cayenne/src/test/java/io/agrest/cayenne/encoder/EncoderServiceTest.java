@@ -129,7 +129,7 @@ public class EncoderServiceTest extends CayenneNoDbTest {
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
         Encoder encoder = encoderService.dataEncoder(resourceEntity, mock(ProcessingContext.class));
-        return toJson(encoder, DataResponse.of(200, List.of(object)));
+        return toJson(encoder, DataResponse.of(List.of(object)).build());
     }
 
     private String toJson(Encoder encoder, Object value) {
