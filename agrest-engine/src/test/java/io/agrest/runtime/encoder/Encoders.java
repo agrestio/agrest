@@ -9,7 +9,7 @@ import java.io.IOException;
 
 class Encoders {
 
-    private static final IJacksonService JACKSON = new JacksonService();
+    private static final IJacksonService JACKSON = JacksonService.create();
 
     public static String toJson(DataResponse<?> response) {
 

@@ -39,7 +39,7 @@ import static org.mockito.Mockito.mock;
 
 public class EncoderServiceTest extends CayenneNoDbTest {
 
-    private static final IJacksonService jacksonService = new JacksonService();
+    private static final IJacksonService jacksonService = JacksonService.create();
     private EncoderService encoderService;
 
     @BeforeEach

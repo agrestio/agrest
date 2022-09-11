@@ -17,7 +17,7 @@ public class SortParserTest {
 
     @BeforeAll
     public static void beforeAll() {
-        parser = new SortParser(new JacksonService());
+        parser = new SortParser(JacksonService.create());
     }
 
     @Test

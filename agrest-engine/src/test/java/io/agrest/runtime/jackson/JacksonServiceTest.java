@@ -12,7 +12,7 @@ public class JacksonServiceTest {
 
     @Test
     public void testOutputJson() throws IOException {
-        JacksonService service = new JacksonService();
+        JacksonService service = JacksonService.create();
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         service.outputJson(o -> o.writeObject(new X(1, "two")), out);
@@ -21,7 +21,7 @@ public class JacksonServiceTest {
 
     @Test
     public void testParse_BadJson() {
-        JacksonService service = new JacksonService();
+        JacksonService service = JacksonService.create();
 
         try {
             service.parseJson("{bad}");
