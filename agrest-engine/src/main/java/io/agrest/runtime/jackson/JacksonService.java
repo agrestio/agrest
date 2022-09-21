@@ -20,6 +20,7 @@ import java.util.Objects;
 
 public class JacksonService implements IJacksonService {
 
+    private final ObjectMapper objectMapper;
     private final JsonFactory factory;
 
     /**
@@ -80,10 +81,11 @@ public class JacksonService implements IJacksonService {
      * @since 5.0
      */
     public static JacksonService create(ObjectMapper mapper) {
-        return new JacksonService(mapper.getFactory());
+        return new JacksonService(mapper, mapper.getFactory());
     }
 
-    protected JacksonService(JsonFactory factory) {
+    protected JacksonService(ObjectMapper objectMapper, JsonFactory factory) {
+        this.objectMapper = Objects.requireNonNull(objectMapper);
         this.factory = Objects.requireNonNull(factory);
     }
 
@@ -111,7 +113,7 @@ public class JacksonService implements IJacksonService {
 
         try {
             JsonParser parser = getJsonFactory().createParser(json);
-            return new ObjectMapper().readTree(parser);
+            return objectMapper.readTree(parser);
         } catch (IOException e) {
             throw AgException.badRequest(e, "Error parsing JSON");
         }
@@ -125,7 +127,7 @@ public class JacksonService implements IJacksonService {
 
         try {
             JsonParser parser = getJsonFactory().createParser(json);
-            return new ObjectMapper().readTree(parser);
+            return objectMapper.readTree(parser);
         } catch (IOException e) {
             throw AgException.badRequest(e, "Error parsing JSON");
         }
