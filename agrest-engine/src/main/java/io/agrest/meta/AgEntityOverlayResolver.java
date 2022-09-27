@@ -41,11 +41,12 @@ class AgEntityOverlayResolver {
             while (it.hasNext()) {
                 Map.Entry<String, AgIdPart> e = it.next();
 
-                boolean wasReadable = e.getValue().isReadable();
+                AgIdPart oldPart = e.getValue();
+                boolean wasReadable = oldPart.isReadable();
                 if (wasReadable && !readable) {
-                    e.setValue(new DefaultIdPart(name, e.getValue().getType(), false, e.getValue().isWritable(), e.getValue().getDataReader()));
+                    e.setValue(new DefaultIdPart(oldPart.getName(), e.getValue().getType(), false, e.getValue().isWritable(), e.getValue().getDataReader()));
                 } else if (!wasReadable && readable) {
-                    e.setValue(new DefaultIdPart(name, e.getValue().getType(), true, e.getValue().isWritable(), e.getValue().getDataReader()));
+                    e.setValue(new DefaultIdPart(oldPart.getName(), e.getValue().getType(), true, e.getValue().isWritable(), e.getValue().getDataReader()));
                 }
             }
 
@@ -98,11 +99,12 @@ class AgEntityOverlayResolver {
             while (it.hasNext()) {
                 Map.Entry<String, AgIdPart> e = it.next();
 
-                boolean wasWritable = e.getValue().isWritable();
+                AgIdPart oldPart = e.getValue();
+                boolean wasWritable = oldPart.isWritable();
                 if (wasWritable && !writable) {
-                    e.setValue(new DefaultIdPart(name, e.getValue().getType(), e.getValue().isReadable(), false, e.getValue().getDataReader()));
+                    e.setValue(new DefaultIdPart(oldPart.getName(), e.getValue().getType(), e.getValue().isReadable(), false, e.getValue().getDataReader()));
                 } else if (!wasWritable && writable) {
-                    e.setValue(new DefaultIdPart(name, e.getValue().getType(), e.getValue().isReadable(), true, e.getValue().getDataReader()));
+                    e.setValue(new DefaultIdPart(oldPart.getName(), e.getValue().getType(), e.getValue().isReadable(), true, e.getValue().getDataReader()));
                 }
             }
 

@@ -48,7 +48,7 @@ public class POST_ReadAccess_OverlayIT extends DbTest {
         tester.target("/e8/w/constrainedidblocked/578")
                 .post("{\"name\":\"zzz\"}")
                 .wasBadRequest()
-                .bodyEquals("{\"message\":\"Setting ID explicitly is not allowed: {id=578}\"}");
+                .bodyEquals("{\"message\":\"Setting ID explicitly is not allowed: {db:id=578}\"}");
 
         tester.e8().matcher().assertNoMatches();
     }

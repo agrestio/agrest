@@ -14,6 +14,7 @@ import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Injector;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -631,6 +632,33 @@ public class AgEntityOverlayTest {
         AgAttribute a = o.resolve(mock(AgSchema.class), e).getAttribute("name");
         assertTrue(a.isReadable());
         assertTrue(a.isWritable());
+    }
+
+    @Test
+    public void testResolve_propFilter_MakeIdInAccessible() {
+
+        AgEntity<P1> e = new DefaultEntity<>(
+                "p1",
+                P1.class,
+                Map.of("id1", new DefaultIdPart("id1", Integer.class, true, true, o -> "")),
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                mock(RootDataResolver.class),
+                ReadFilter.allowsAllFilter(),
+                CreateAuthorizer.allowsAllFilter(),
+                UpdateAuthorizer.allowsAllFilter(),
+                DeleteAuthorizer.allowsAllFilter()
+        );
+
+        AgEntityOverlay<P1> o = AgEntity.overlay(P1.class)
+                .readablePropFilter(b -> b.id(false))
+                .writablePropFilter(b -> b.id(false));
+        Collection<AgIdPart> parts = o.resolve(mock(AgSchema.class), e).getIdParts();
+        assertEquals(1, parts.size());
+        AgIdPart part = parts.iterator().next();
+        assertEquals("id1", part.getName());
+        assertFalse(part.isReadable());
+        assertFalse(part.isWritable());
     }
 
 }
