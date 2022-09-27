@@ -2,6 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.DataResponse;
 import io.agrest.access.PropertyFilteringRulesBuilder;
+import io.agrest.cayenne.cayenne.main.E14;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E4;
@@ -64,11 +65,35 @@ public class GET_ReadAccess_OverlayIT extends DbTest {
         tester.target("/e2/constraints/1/e3s").get().wasOk().bodyEquals(2, "{\"id\":8},{\"id\":9}");
     }
 
+    @Test
+    public void testId() {
+
+        tester.e14().insertColumns("long_id", "name")
+                .values(5L, "aaa")
+                .values(4L, "zzz").exec();
+
+        tester.target("/e14/overlay_id")
+                .get()
+                .wasOk().bodyEquals(2,
+                        "{\"name\":\"aaa\",\"prettyName\":\"aaa_pretty\"}",
+                        "{\"name\":\"zzz\",\"prettyName\":\"zzz_pretty\"}");
+    }
+
     @Path("")
     public static class Resource {
 
         @Context
         private Configuration config;
+
+        @GET
+        @Path("e14/overlay_id")
+        public DataResponse<E14> getObjects_OverlayId(@Context UriInfo uriInfo) {
+
+            return AgJaxrs.select(E14.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
+                    .propFilter(E14.class, r -> r.id(false))
+                    .get();
+        }
 
         @GET
         @Path("e4/limit_attributes")
