@@ -203,6 +203,8 @@ public class AnnotationsAgEntityBuilder<T> {
                     aRel.writable(),
                     new ReaderBasedResolver<>(getter::getValue))
             );
+
+            return true;
         }
 
         return false;
