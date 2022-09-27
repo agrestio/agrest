@@ -59,6 +59,6 @@ public class DefaultIdPart implements AgIdPart {
 
     @Override
     public String toString() {
-        return "DefaultAgIdPart[" + getName() + "]";
+        return "DefaultIdPart[" + getName() + "]";
     }
 }
