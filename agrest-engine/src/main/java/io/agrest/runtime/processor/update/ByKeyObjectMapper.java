@@ -5,12 +5,14 @@ import io.agrest.ObjectMapper;
 import io.agrest.protocol.Exp;
 import io.agrest.meta.AgAttribute;
 
+import java.util.Objects;
+
 class ByKeyObjectMapper<T> implements ObjectMapper<T> {
 
-    private AgAttribute attribute;
+    private final AgAttribute attribute;
 
     public ByKeyObjectMapper(AgAttribute attribute) {
-        this.attribute = attribute;
+        this.attribute = Objects.requireNonNull(attribute);
     }
 
     @Override
