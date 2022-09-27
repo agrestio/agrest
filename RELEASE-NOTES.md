@@ -4,6 +4,7 @@
 * #577 Better default encoder for DataResponse
 * #578 Overlaying AgIdPart access rules results in their renaming
 * #579 Correct WebApplicationException interception
+* #580 Cayenne properties annotated with @AgAttribute/@AgRelationship lose reader
 
 ## Release 5.0.M6
 

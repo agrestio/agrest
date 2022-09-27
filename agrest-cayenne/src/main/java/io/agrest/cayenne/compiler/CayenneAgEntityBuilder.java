@@ -116,7 +116,7 @@ public class CayenneAgEntityBuilder<T> {
                     // this attribute will be added below as the ID (or a part of the ID)
                     continue;
                 }
-                
+
                 LOGGER.warn(
                         "Non-PK attribute in {} is called '{}', which conflicts with the Agrest default ID property",
                         cayenneEntity.getName(),
@@ -183,14 +183,7 @@ public class CayenneAgEntityBuilder<T> {
 
     protected void buildAnnotatedProperties() {
 
-        // Load a separate entity built purely from annotations, then merge it with our entity. We are not cloning
-        // attributes or relationship during merge... they have no references to parent and can be used as is.
-
-        // Note that overriding Cayenne attributes with annotated attributes will have a slight side effect -
-        // DataObjectDataReader will be replaced with getter-based reader. Those two should behave exactly
-        // the same, possibly with some really minor performance difference
-
-        // TODO: use Overlays here.. Overlays are intended for merging on top of entities
+        // Load a separate entity built purely from annotations, then merge it with our entity.
 
         AgEntity<T> annotatedEntity = new AnnotationsAgEntityBuilder<>(type, schema).build();
 
@@ -202,25 +195,61 @@ public class CayenneAgEntityBuilder<T> {
                 ids.clear();
             }
 
+            // TODO: smarter handling of overridden Cayenne IDs the same way for we do for attributes and relationships
+
             // TODO: we should remove a possible matching regular persistent attributes from the model, since it was
             //  also declared as ID, and hence should not be exposed as an attribute anymore
             annotatedEntity.getIdParts().forEach(this::addId);
         }
 
         for (AgAttribute attribute : annotatedEntity.getAttributes()) {
-            AgAttribute existing = addAttribute(attribute);
+            AgAttribute existing = attributes.get(attribute.getName());
             if (existing != null) {
                 LOGGER.debug("Attribute '{}' is overridden from annotations.", existing.getName());
+                addAttribute(merge(attribute, existing));
+            } else {
+                addAttribute(attribute);
             }
         }
 
         for (AgRelationship relationship : annotatedEntity.getRelationships()) {
 
-            AgRelationship existing = addRelationship(relationship);
+            AgRelationship existing = relationships.get(relationship.getName());
             if (existing != null) {
                 LOGGER.debug("Relationship '{}' is overridden from annotations.", existing.getName());
+                addRelationship(merge(relationship, existing));
+            } else {
+                addRelationship(relationship);
             }
         }
+    }
+
+    protected AgAttribute merge(AgAttribute annotatedAttribute, AgAttribute cayenneAttribute) {
+        // TODO: use Overlays here.. Overlays are intended for merging on top of entities
+        return new DefaultAttribute(
+                cayenneAttribute.getName(),
+                cayenneAttribute.getType(),
+
+                // only read/write access can be overridden by annotations as of now
+                annotatedAttribute.isReadable(),
+                annotatedAttribute.isWritable(),
+
+                cayenneAttribute.getDataReader());
+    }
+
+    protected AgRelationship merge(AgRelationship annotatedRelationship, AgRelationship cayenneRelationship) {
+        // TODO: use Overlays here.. Overlays are intended for merging on top of entities
+        return new DefaultRelationship(
+                cayenneRelationship.getName(),
+                cayenneRelationship.getTargetEntity(),
+                cayenneRelationship.isToMany(),
+
+                // only read/write access can be overridden by annotations as of now
+                annotatedRelationship.isReadable(),
+                annotatedRelationship.isWritable(),
+
+                cayenneRelationship.getDataResolver()
+        );
     }
 
     /**
