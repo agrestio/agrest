@@ -2,6 +2,7 @@ package io.agrest.jaxrs3.provider;
 
 import io.agrest.AgException;
 import io.agrest.SimpleResponse;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
@@ -17,8 +18,12 @@ public class JaxrsAgExceptionMapper implements ExceptionMapper<AgException> {
     @Override
     public Response toResponse(AgException exception) {
 
-        String message = exception.getMessage();
         Throwable cause = exception.getCause() != null && exception.getCause() != exception ? exception.getCause() : null;
+        if (cause instanceof WebApplicationException) {
+            return ((WebApplicationException) cause).getResponse();
+        }
+
+        String message = exception.getMessage();
         String causeMessage = cause != null ? cause.getMessage() : null;
         int status = exception.getStatus();
 
