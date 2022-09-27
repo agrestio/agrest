@@ -3,6 +3,7 @@
 * #575 Better contextual message for Cayenne ValidationException
 * #577 Better default encoder for DataResponse
 * #578 Overlaying AgIdPart access rules results in their renaming
+* #579 Correct WebApplicationException interception
 
 ## Release 5.0.M6
 

@@ -10,8 +10,8 @@ import jakarta.ws.rs.core.Configuration;
 
 
 /**
- * A JAX-RS Feature that contains Agrest stack. Its static methods provide entry point to build a JAX-RS-compatible
- * Agrest runtime and use Agrest in the JAX-RS environment.
+ * Provides access to Agrest stack within the JAX-RS environment. Its static methods provide entry point to build a
+ * JAX-RS-compatible Agrest runtime and use Agrest in the JAX-RS environment.
  *
  * @since 5.0
  */

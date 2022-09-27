@@ -5,6 +5,7 @@ import io.agrest.SimpleResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -19,8 +20,12 @@ public class JaxrsAgExceptionMapper implements ExceptionMapper<AgException> {
     @Override
     public Response toResponse(AgException exception) {
 
-        String message = exception.getMessage();
         Throwable cause = exception.getCause() != null && exception.getCause() != exception ? exception.getCause() : null;
+        if (cause instanceof WebApplicationException) {
+            return ((WebApplicationException) cause).getResponse();
+        }
+
+        String message = exception.getMessage();
         String causeMessage = cause != null ? cause.getMessage() : null;
         int status = exception.getStatus();
 
