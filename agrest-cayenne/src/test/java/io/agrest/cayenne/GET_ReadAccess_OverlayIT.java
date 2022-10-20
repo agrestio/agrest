@@ -73,6 +73,7 @@ public class GET_ReadAccess_OverlayIT extends DbTest {
                 .values(4L, "zzz").exec();
 
         tester.target("/e14/overlay_id")
+                .queryParam("sort", "name")
                 .get()
                 .wasOk().bodyEquals(2,
                         "{\"name\":\"aaa\",\"prettyName\":\"aaa_pretty\"}",
