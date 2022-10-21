@@ -23,7 +23,7 @@ public class GET_ReadAccess_OverlayIT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class)
+            .entities(E2.class, E3.class, E4.class, E14.class)
             .build();
 
     @Test
