@@ -7,6 +7,7 @@ import io.agrest.access.UpdateAuthorizer;
 import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -16,6 +17,7 @@ public class DefaultEntity<T> implements AgEntity<T> {
 
     private final String name;
     private final Class<T> type;
+    private final Collection<AgEntity<? extends T>> subEntities;
     private final RootDataResolver<T> dataResolver;
     private final ReadFilter<T> readFilter;
     private final CreateAuthorizer<T> createAuthorizer;
@@ -27,9 +29,13 @@ public class DefaultEntity<T> implements AgEntity<T> {
     private final Map<String, AgAttribute> attributes;
     private final Map<String, AgRelationship> relationships;
 
+    // resolved lazily to avoid stack overflow when reading sub entities
+    private volatile Map<String, AgAttribute> attributesInHierarchy;
+
     public DefaultEntity(
             String name,
             Class<T> type,
+            Collection<AgEntity<? extends T>> subEntities,
             Map<String, AgIdPart> ids,
             Map<String, AgAttribute> attributes,
             Map<String, AgRelationship> relationships,
@@ -41,15 +47,17 @@ public class DefaultEntity<T> implements AgEntity<T> {
 
         this.name = name;
         this.type = type;
+        this.subEntities = subEntities;
+
         this.ids = ids;
         this.attributes = attributes;
         this.relationships = relationships;
+
         this.dataResolver = dataResolver;
         this.readFilter = readFilter;
         this.createAuthorizer = createAuthorizer;
         this.updateAuthorizer = updateAuthorizer;
         this.deleteAuthorizer = deleteAuthorizer;
-
     }
 
     @Override
@@ -60,6 +68,11 @@ public class DefaultEntity<T> implements AgEntity<T> {
     @Override
     public Class<T> getType() {
         return type;
+    }
+
+    @Override
+    public Collection<AgEntity<? extends T>> getSubEntities() {
+        return subEntities;
     }
 
     @Override
@@ -92,6 +105,30 @@ public class DefaultEntity<T> implements AgEntity<T> {
         return attributes.values();
     }
 
+    /**
+     * @since 5.0
+     */
+    @Override
+    public Collection<AgAttribute> getAttributesInHierarchy() {
+        return getOrCreateAttributesInHierarchy().values();
+    }
+
+    /**
+     * @since 5.0
+     */
+    @Override
+    public AgAttribute getAttributeInHierarchy(String name) {
+        return getOrCreateAttributesInHierarchy().get(name);
+    }
+
+    protected Map<String, AgAttribute> getOrCreateAttributesInHierarchy() {
+        // resolved lazily to avoid stack overflow when reading sub entities
+        if (this.attributesInHierarchy == null) {
+            this.attributesInHierarchy = collectAllAttributes();
+        }
+        return attributesInHierarchy;
+    }
+
     @Override
     public RootDataResolver<T> getDataResolver() {
         return dataResolver;
@@ -120,5 +157,22 @@ public class DefaultEntity<T> implements AgEntity<T> {
     @Override
     public String toString() {
         return "DefaultAgEntity[" + getName() + "]";
+    }
+
+    protected <T> Map<String, AgAttribute> collectAllAttributes() {
+
+        if (subEntities.isEmpty()) {
+            return attributes;
+        }
+
+        Map<String, AgAttribute> allAttributes = new HashMap<>();
+        for (AgEntity<?> subEntity : subEntities) {
+            subEntity.getAttributes().forEach(a -> allAttributes.put(a.getName(), a));
+        }
+
+        // add this entity attributes last, in case subclass attributes are redefined (is this even posible?)
+        allAttributes.putAll(attributes);
+
+        return allAttributes;
     }
 }

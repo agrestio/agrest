@@ -29,6 +29,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -218,6 +219,8 @@ public class AnnotationsAgEntityBuilder<T> {
         return new DefaultEntity<>(
                 name,
                 type,
+                // TODO: support for inheritance in Ag core
+                Collections.emptyList(),
                 ids,
                 attributes,
                 relationships,

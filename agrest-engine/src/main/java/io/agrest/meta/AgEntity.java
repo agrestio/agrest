@@ -32,6 +32,13 @@ public interface AgEntity<T> {
     Class<T> getType();
 
     /**
+     * Returns a collection that contains all of its subclass entities, direct and indirect. 
+     *
+     * @since 5.0
+     */
+    Collection<AgEntity<? extends T>> getSubEntities();
+
+    /**
      * @since 4.1
      */
     Collection<AgIdPart> getIdParts();
@@ -41,10 +48,32 @@ public interface AgEntity<T> {
      */
     AgIdPart getIdPart(String name);
 
+    /**
+     * Returns attributes that are either declared by this entity or are inherited from superclass.
+     */
     Collection<AgAttribute> getAttributes();
+
+    /**
+     * Returns attributes that are either declared by this entity, inherited from superclass, or declared in any
+     * subclasses.
+     *
+     * @since 5.0
+     */
+    Collection<AgAttribute> getAttributesInHierarchy();
 
     AgAttribute getAttribute(String name);
 
+    /**
+     * Returns a named attribute that is either declared by this entity, inherited from superclass, or declared in any
+     * subclasses.
+     *
+     * @since 5.0
+     */
+    AgAttribute getAttributeInHierarchy(String name);
+
+    /**
+     * Returns relationships that are either declared by this entity or are inherited from superclass.
+     */
     Collection<AgRelationship> getRelationships();
 
     AgRelationship getRelationship(String name);

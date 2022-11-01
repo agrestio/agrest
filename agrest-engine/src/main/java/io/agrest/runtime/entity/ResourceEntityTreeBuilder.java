@@ -65,7 +65,7 @@ public class ResourceEntityTreeBuilder {
 
         if (dot < 0) {
 
-            AgAttribute attribute = agEntity.getAttribute(property);
+            AgAttribute attribute = agEntity.getAttributeInHierarchy(property);
             if (attribute != null) {
                 entity.addAttribute(attribute, false);
                 return entity;

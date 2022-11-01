@@ -33,6 +33,11 @@ public class LazyEntity<T> extends BaseLazyEntity<T, AgEntity<T>> implements AgE
     }
 
     @Override
+    public Collection<AgEntity<? extends T>> getSubEntities() {
+        return getDelegate().getSubEntities();
+    }
+
+    @Override
     public Collection<AgIdPart> getIdParts() {
         return getDelegate().getIdParts();
     }
@@ -47,9 +52,22 @@ public class LazyEntity<T> extends BaseLazyEntity<T, AgEntity<T>> implements AgE
         return getDelegate().getAttributes();
     }
 
+    /**
+     * @since 5.0
+     */
+    @Override
+    public Collection<AgAttribute> getAttributesInHierarchy() {
+        return getDelegate().getAttributesInHierarchy();
+    }
+
     @Override
     public AgAttribute getAttribute(String name) {
         return getDelegate().getAttribute(name);
+    }
+
+    @Override
+    public AgAttribute getAttributeInHierarchy(String name) {
+        return getDelegate().getAttributeInHierarchy(name);
     }
 
     @Override

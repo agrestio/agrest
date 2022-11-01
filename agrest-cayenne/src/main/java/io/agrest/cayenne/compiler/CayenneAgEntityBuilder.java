@@ -22,14 +22,18 @@ import io.agrest.resolver.ThrowingRootDataResolver;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.map.DbAttribute;
+import org.apache.cayenne.map.EntityInheritanceTree;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
+import org.apache.cayenne.reflect.ClassDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import static io.agrest.reflect.Types.typeForName;
@@ -45,6 +49,7 @@ public class CayenneAgEntityBuilder<T> {
     private final Class<T> type;
     private final AgSchema schema;
     private final ObjEntity cayenneEntity;
+    private final Collection<AgEntity<? extends T>> subEntities;
     private final Map<String, AgIdPart> ids;
     private final Map<String, AgAttribute> attributes;
     private final Map<String, AgRelationship> relationships;
@@ -60,6 +65,8 @@ public class CayenneAgEntityBuilder<T> {
         this.type = type;
         this.schema = schema;
         this.cayenneEntity = cayenneResolver.getObjEntity(type);
+
+        this.subEntities = new HashSet<>();
 
         this.ids = new HashMap<>();
         this.attributes = new HashMap<>();
@@ -104,6 +111,17 @@ public class CayenneAgEntityBuilder<T> {
     }
 
     protected void buildCayenneEntity() {
+
+        EntityInheritanceTree inheritanceTree = cayenneResolver.getInheritanceTree(cayenneEntity.getName());
+        for(ObjEntity cayenneSubEntity : inheritanceTree.allSubEntities()) {
+
+            // unlike Cayenne, Agrest will not include "self" in subentities (for now at least)
+            if(cayenneSubEntity != cayenneEntity) {
+                ClassDescriptor subEntityDesc = cayenneResolver.getClassDescriptor(cayenneSubEntity.getName());
+                AgEntity<? extends T> subEntity = (AgEntity<? extends T>) schema.getEntity(subEntityDesc.getObjectClass());
+                subEntities.add(subEntity);
+            }
+        }
 
         for (ObjAttribute a : cayenneEntity.getAttributes()) {
 
@@ -262,6 +280,7 @@ public class CayenneAgEntityBuilder<T> {
         return new DefaultEntity<>(
                 cayenneEntity.getName(),
                 type,
+                subEntities,
                 ids,
                 attributes,
                 relationships,

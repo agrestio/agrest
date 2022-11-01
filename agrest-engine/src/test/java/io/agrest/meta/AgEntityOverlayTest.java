@@ -32,7 +32,7 @@ public class AgEntityOverlayTest {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1", P1.class,
-                Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 r1,
                 ReadFilter.allowsAllFilter(),
                 CreateAuthorizer.allowsAllFilter(),
@@ -56,7 +56,7 @@ public class AgEntityOverlayTest {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1", P1.class,
-                Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 r1,
                 ReadFilter.allowsAllFilter(),
                 CreateAuthorizer.allowsAllFilter(),
@@ -84,7 +84,7 @@ public class AgEntityOverlayTest {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1", P1.class,
-                Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 r1,
                 ReadFilter.allowsAllFilter(),
                 CreateAuthorizer.allowsAllFilter(),
@@ -107,7 +107,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 mock(RootDataResolver.class),
                 ReadFilter.allowsAllFilter(),
                 CreateAuthorizer.allowsAllFilter(),
@@ -136,9 +136,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(),
-                Collections.emptyMap(),
-                Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 mock(RootDataResolver.class),
                 ReadFilter.allowsAllFilter(),
                 CreateAuthorizer.allowsAllFilter(),
@@ -164,9 +162,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(),
-                Collections.emptyMap(),
-                Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 mock(RootDataResolver.class),
                 p1 -> p1.getName().startsWith("a"),
                 CreateAuthorizer.allowsAllFilter(),
@@ -197,9 +193,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(),
-                Collections.emptyMap(),
-                Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 mock(RootDataResolver.class),
                 p1 -> p1.getName().startsWith("a"),
                 CreateAuthorizer.allowsAllFilter(),
@@ -232,9 +226,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(),
-                Collections.emptyMap(),
-                Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 mock(RootDataResolver.class),
                 p1 -> p1.getName().startsWith("a"),
                 CreateAuthorizer.allowsAllFilter(),
@@ -265,9 +257,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(),
-                Collections.emptyMap(),
-                Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 mock(RootDataResolver.class),
                 ReadFilter.allowsAllFilter(),
                 CreateAuthorizer.allowsAllFilter(),
@@ -294,9 +284,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(),
-                Collections.emptyMap(),
-                Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 mock(RootDataResolver.class),
                 ReadFilter.allowsAllFilter(),
                 u -> ((String) u.getValues().get("name")).startsWith("a"),
@@ -327,9 +315,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(),
-                Collections.emptyMap(),
-                Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 mock(RootDataResolver.class),
                 ReadFilter.allowsAllFilter(),
                 u -> ((String) u.getValues().get("name")).startsWith("a"),
@@ -362,9 +348,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(),
-                Collections.emptyMap(),
-                Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 mock(RootDataResolver.class),
                 ReadFilter.allowsAllFilter(),
                 CreateAuthorizer.allowsAllFilter(),
@@ -391,9 +375,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(),
-                Collections.emptyMap(),
-                Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 mock(RootDataResolver.class),
                 ReadFilter.allowsAllFilter(),
                 CreateAuthorizer.allowsAllFilter(),
@@ -424,9 +406,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(),
-                Collections.emptyMap(),
-                Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 mock(RootDataResolver.class),
                 ReadFilter.allowsAllFilter(),
                 CreateAuthorizer.allowsAllFilter(),
@@ -459,9 +439,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(),
-                Collections.emptyMap(),
-                Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 mock(RootDataResolver.class),
                 ReadFilter.allowsAllFilter(),
                 CreateAuthorizer.allowsAllFilter(),
@@ -496,9 +474,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(),
-                Collections.emptyMap(),
-                Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 mock(RootDataResolver.class),
                 ReadFilter.allowsAllFilter(),
                 CreateAuthorizer.allowsAllFilter(),
@@ -524,9 +500,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(),
-                Collections.emptyMap(),
-                Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 mock(RootDataResolver.class),
                 ReadFilter.allowsAllFilter(),
                 CreateAuthorizer.allowsAllFilter(),
@@ -557,9 +531,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(),
-                Collections.emptyMap(),
-                Collections.emptyMap(),
+                List.of(), Map.of(), Map.of(), Map.of(),
                 mock(RootDataResolver.class),
                 ReadFilter.allowsAllFilter(),
                 CreateAuthorizer.allowsAllFilter(),
@@ -592,7 +564,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(),
+                List.of(), Map.of(),
                 Map.of("name", new DefaultAttribute("name", String.class, true, true, o -> null)),
                 Collections.emptyMap(),
                 mock(RootDataResolver.class),
@@ -616,7 +588,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
-                Collections.emptyMap(),
+                List.of(), Map.of(),
                 Map.of("name", new DefaultAttribute("name", String.class, false, false, o -> null)),
                 Collections.emptyMap(),
                 mock(RootDataResolver.class),
@@ -640,6 +612,7 @@ public class AgEntityOverlayTest {
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
                 P1.class,
+                List.of(),
                 Map.of("id1", new DefaultIdPart("id1", Integer.class, true, true, o -> "")),
                 Collections.emptyMap(),
                 Collections.emptyMap(),
