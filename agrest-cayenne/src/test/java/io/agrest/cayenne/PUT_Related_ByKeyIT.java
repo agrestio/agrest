@@ -6,8 +6,8 @@ import io.agrest.cayenne.cayenne.main.E15;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E7;
 import io.agrest.cayenne.cayenne.main.E8;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
+import io.agrest.cayenne.unit.main.MainDbTest;
+import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
 import io.bootique.junit5.BQTestTool;
@@ -19,10 +19,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 
-public class PUT_Related_ByKeyIT extends DbTest {
+public class PUT_Related_ByKeyIT extends MainDbTest {
 
     @BQTestTool
-    static final AgCayenneTester tester = tester(Resource.class)
+    static final MainModelTester tester = tester(Resource.class)
             .entities(E7.class, E8.class, E14.class, E15.class)
             .build();
 

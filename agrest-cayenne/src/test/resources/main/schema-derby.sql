@@ -1,4 +1,4 @@
--- main
+-- inheritance
 
 CREATE TABLE "e15" ("long_id" BIGINT  NOT NULL, "name" VARCHAR (100), PRIMARY KEY ("long_id"))
 ;

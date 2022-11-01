@@ -13,16 +13,14 @@ import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneQueryAssembler;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.LazySchema;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.map.ObjEntity;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.util.Collections;
@@ -36,44 +34,37 @@ import static org.mockito.Mockito.when;
  * A superclass of Cayenne-aware test cases that do not need to access the DB, but need to work with EntityResolver
  * and higher levels of the stack.
  */
-public abstract class CayenneNoDbTest {
-
-    protected static ServerRuntime runtime;
+public abstract class NoDbTest {
 
     protected ICayennePersister mockCayennePersister;
     protected IPathResolver pathDescriptorManager;
     protected AgSchema schema;
     protected CayenneQueryAssembler queryAssembler;
 
-    @BeforeAll
-    public static void setUpClass() {
+    protected static ServerRuntime createRuntime(String project) {
         Module module = binder -> {
             DataSourceFactory dsf = mock(DataSourceFactory.class);
             binder.bind(DataSourceFactory.class).toInstance(dsf);
         };
 
-        runtime = ServerRuntime
+        return ServerRuntime
                 .builder()
-                .addConfig("cayenne-project.xml")
+                .addConfig(project)
                 .addModule(module)
                 .build();
     }
 
-    @AfterAll
-    public static void tearDownClass() {
-        runtime.shutdown();
-        runtime = null;
-    }
+    protected abstract ServerRuntime getRuntime();
 
     @BeforeEach
     public void initAgSchema() {
 
-        ObjectContext sharedContext = runtime.newContext();
+        ObjectContext sharedContext = getRuntime().newContext();
 
         this.mockCayennePersister = mock(ICayennePersister.class);
-        when(mockCayennePersister.entityResolver()).thenReturn(runtime.getChannel().getEntityResolver());
+        when(mockCayennePersister.entityResolver()).thenReturn(getRuntime().getChannel().getEntityResolver());
         when(mockCayennePersister.sharedContext()).thenReturn(sharedContext);
-        when(mockCayennePersister.newContext()).thenReturn(runtime.newContext());
+        when(mockCayennePersister.newContext()).thenReturn(getRuntime().newContext());
 
         this.schema = new LazySchema(createEntityCompilers());
         this.pathDescriptorManager = new PathResolver();
@@ -101,7 +92,7 @@ public abstract class CayenneNoDbTest {
     }
 
     protected ObjEntity getEntity(Class<?> type) {
-        return runtime.getChannel().getEntityResolver().getObjEntity(type);
+        return getRuntime().getChannel().getEntityResolver().getObjEntity(type);
     }
 
     protected <T> RootResourceEntity<T> getResourceEntity(Class<T> type) {

@@ -10,7 +10,7 @@ import io.agrest.cayenne.cayenne.main.E19;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.processor.CayenneProcessor;
-import io.agrest.cayenne.unit.CayenneNoDbTest;
+import io.agrest.cayenne.unit.main.MainNoDbTest;
 import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.converter.valuestring.ValueStringConvertersProvider;
 import io.agrest.encoder.Encoder;
@@ -37,7 +37,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class EncoderServiceTest extends CayenneNoDbTest {
+public class EncoderServiceTest extends MainNoDbTest {
 
     private static final IJacksonService jacksonService = JacksonService.create();
     private EncoderService encoderService;

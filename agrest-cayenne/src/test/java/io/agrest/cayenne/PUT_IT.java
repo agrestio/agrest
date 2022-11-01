@@ -16,8 +16,8 @@ import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.cayenne.main.E7;
 import io.agrest.cayenne.cayenne.main.E8;
 import io.agrest.cayenne.cayenne.main.E9;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
+import io.agrest.cayenne.unit.main.MainDbTest;
+import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.encoder.Encoder;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
@@ -36,10 +36,10 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PUT_IT extends DbTest {
+public class PUT_IT extends MainDbTest {
 
     @BQTestTool
-    static final AgCayenneTester tester = tester(Resource.class)
+    static final MainModelTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E4.class, E7.class, E8.class, E9.class, E14.class, E17.class, E23.class, E26.class, E28.class, E31.class)
             .build();
 
