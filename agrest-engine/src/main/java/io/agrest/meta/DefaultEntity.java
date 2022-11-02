@@ -138,18 +138,29 @@ public class DefaultEntity<T> implements AgEntity<T> {
 
     @Override
     public AgEntity<T> resolveOverlayHierarchy(AgSchema schema, Map<Class<?>, AgEntityOverlay<?>> overlays) {
+        return overlays.isEmpty()
+                ? this
+                : resolveOverlayHierarchy(schema, this, null, overlays);
+    }
 
-        AgEntityOverlay<T> overlay = (AgEntityOverlay<T>) overlays.get(getType());
+    private static <T> AgEntity<T> resolveOverlayHierarchy(
+            AgSchema schema,
+            AgEntity<T> entity,
+            AgEntityOverlay<? super T> superOverlay,
+            Map<Class<?>, AgEntityOverlay<?>> overlays) {
 
-        if (getSubEntities().isEmpty()) {
-            return resolveOverlay(schema, overlay);
+        AgEntityOverlay<T> overlay = (AgEntityOverlay<T>) overlays.get(entity.getType());
+        AgEntityOverlay<T> mergedOverlay = combineOverlays(entity.getType(), overlay, superOverlay);
+
+        if (entity.getSubEntities().isEmpty()) {
+            return entity.resolveOverlay(schema, mergedOverlay);
         }
 
         boolean subEntitiesOverlaid = false;
 
         Set<AgEntity<? extends T>> subsOverlaid = new HashSet<>();
-        for (AgEntity<? extends T> sub : getSubEntities()) {
-            AgEntity<? extends T> subOverlaid = sub.resolveOverlayHierarchy(schema, overlays);
+        for (AgEntity<? extends T> sub : entity.getSubEntities()) {
+            AgEntity<? extends T> subOverlaid = resolveOverlayHierarchy(schema, sub, mergedOverlay, overlays);
 
             subsOverlaid.add(subOverlaid);
             subEntitiesOverlaid = subEntitiesOverlaid || subOverlaid != sub;
@@ -159,13 +170,28 @@ public class DefaultEntity<T> implements AgEntity<T> {
         // overlaid
 
         if (subEntitiesOverlaid) {
-            AgEntityOverlay<T> rootOverlay = overlay != null ? overlay : AgEntity.overlay(getType());
-            return rootOverlay.resolve(schema, this, subsOverlaid);
-        }
-        else {
-            return overlay != null && !overlay.isEmpty() ? overlay.resolve(schema, this, getSubEntities()) : this;
+            AgEntityOverlay<T> rootOverlay = mergedOverlay != null ? mergedOverlay : AgEntity.overlay(entity.getType());
+            return rootOverlay.resolve(schema, entity, subsOverlaid);
+        } else {
+            return mergedOverlay != null && !mergedOverlay.isEmpty()
+                    ? mergedOverlay.resolve(schema, entity, entity.getSubEntities())
+                    : entity;
         }
     }
+
+    private static <T> AgEntityOverlay<T> combineOverlays(Class<T> type, AgEntityOverlay<T> overlay, AgEntityOverlay<? super T> superOverlay) {
+
+        if (overlay == null && superOverlay == null) {
+            return null;
+        } else if (superOverlay == null) {
+            return overlay;
+        } else if (overlay == null) {
+            return superOverlay.clone(type);
+        } else {
+            return superOverlay.clone(type).merge(overlay);
+        }
+    }
+
 
     @Override
     public String toString() {

@@ -127,6 +127,7 @@ public interface AgEntity<T> {
     /**
      * @since 5.0
      */
+    // TODO: replace all uses with resolveOverlayHierarchy. Otherwise we'd be dealing with potential inheritance bugs
     default AgEntity<T> resolveOverlay(AgSchema schema, AgEntityOverlay<T> overlay) {
         return overlay != null && !overlay.isEmpty() ? overlay.resolve(schema, this, this.getSubEntities()) : this;
     }

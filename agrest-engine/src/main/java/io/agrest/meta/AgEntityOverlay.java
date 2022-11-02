@@ -75,7 +75,7 @@ public class AgEntityOverlay<T> {
     /**
      * Resolves entity overlay to an entity.
      *
-     * @since 4.8
+     * @since 5.0
      */
     public AgEntity<T> resolve(AgSchema schema, AgEntity<T> toOverlay, Collection<AgEntity<? extends T>> overlaidSubEntities) {
 
@@ -140,6 +140,33 @@ public class AgEntityOverlay<T> {
                 && !ignoreOverlaidCreateAuthorizer && createAuthorizer.allowsAll()
                 && !ignoreOverlaidUpdateAuthorizer && updateAuthorizer.allowsAll()
                 && !ignoreOverlaidDeleteAuthorizer && deleteAuthorizer.allowsAll();
+    }
+
+    /**
+     * @since 5.0
+     */
+    public <S extends T> AgEntityOverlay<S> clone(Class<S> toType) {
+        AgEntityOverlay<S> clone = new AgEntityOverlay<>(toType);
+
+        clone.rootDataResolver = (RootDataResolver<S>) this.rootDataResolver;
+        clone.attributes.putAll(this.attributes);
+        clone.relationships.putAll(this.relationships);
+        clone.readablePropFilter = this.readablePropFilter;
+        clone.writablePropFilter = this.writablePropFilter;
+
+        clone.ignoreOverlaidReadFilter = this.ignoreOverlaidReadFilter;
+        clone.readFilter = (ReadFilter<S>) this.readFilter;
+
+        clone.ignoreOverlaidCreateAuthorizer = this.ignoreOverlaidCreateAuthorizer;
+        clone.createAuthorizer = (CreateAuthorizer<S>) this.createAuthorizer;
+
+        clone.ignoreOverlaidUpdateAuthorizer = this.ignoreOverlaidUpdateAuthorizer;
+        clone.updateAuthorizer = (UpdateAuthorizer<S>) this.updateAuthorizer;
+
+        clone.ignoreOverlaidDeleteAuthorizer = this.ignoreOverlaidDeleteAuthorizer;
+        clone.deleteAuthorizer = (DeleteAuthorizer<S>) this.deleteAuthorizer;
+
+        return clone;
     }
 
     /**

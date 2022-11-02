@@ -2,9 +2,8 @@ package io.agrest.runtime.processor.select.stage;
 
 import io.agrest.AgRequest;
 import io.agrest.RootResourceEntity;
-import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgEntityOverlay;
+import io.agrest.meta.AgSchema;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.entity.IExcludeMerger;
@@ -54,10 +53,9 @@ public class SelectCreateResourceEntityStage implements Processor<SelectContext<
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
-        AgEntityOverlay<T> overlay = context.getEntityOverlay(context.getType());
         AgEntity<T> entity = schema.getEntity(context.getType());
-
-        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(entity.resolveOverlay(schema, overlay));
+        AgEntity<T> overlaid = entity.resolveOverlayHierarchy(schema, context.getEntityOverlays());
+        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(overlaid);
 
         AgRequest request = context.getRequest();
 

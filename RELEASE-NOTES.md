@@ -2,6 +2,7 @@
  
 * #583 Upgrade jackson-databind to 2.13.4.2
 * #584 GET - Inheritance support - Cayenne backend
+* #587 Inheritance-aware AgEntityOverlay
 
 ## Release 5.0.M7
 
