@@ -69,9 +69,9 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #getExp()}
+     * @deprecated in favor of {@link #getExp()}
      */
-    @Deprecated
+    @Deprecated(since = "5.0")
     public Exp getQualifier() {
         return getExp();
     }
@@ -84,9 +84,9 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #andExp(Exp)}
+     * @deprecated in favor of {@link #andExp(Exp)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0")
     public void andQualifier(Exp qualifier) {
         andExp(qualifier);
     }
@@ -212,9 +212,9 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #getStart()}
+     * @deprecated in favor of {@link #getStart()}
      */
-    @Deprecated
+    @Deprecated(since = "5.0")
     public int getFetchOffset() {
         return getStart();
     }
@@ -227,9 +227,9 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #setStart(int)}
+     * @deprecated in favor of {@link #setStart(int)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0")
     public void setFetchOffset(int fetchOffset) {
         setStart(fetchOffset);
     }
@@ -242,9 +242,9 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #getLimit()}
+     * @deprecated in favor of {@link #getLimit()}
      */
-    @Deprecated
+    @Deprecated(since = "5.0")
     public int getFetchLimit() {
         return getLimit();
     }
@@ -257,9 +257,9 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #setLimit(int)}
+     * @deprecated in favor of {@link #setLimit(int)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0")
     public void setFetchLimit(int fetchLimit) {
         setLimit(fetchLimit);
     }
