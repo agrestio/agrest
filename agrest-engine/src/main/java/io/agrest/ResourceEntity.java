@@ -22,7 +22,7 @@ public abstract class ResourceEntity<T> {
     private boolean idIncluded;
 
     private final ResourceEntityProjection<T> baseProjection;
-    private final List<ResourceEntityProjection<? extends T>> projections;
+    private final Map<Class<? extends T>, ResourceEntityProjection<? extends T>> projections;
     private final Map<String, RelatedResourceEntity<?>> children;
     private final Map<String, Object> properties;
 
@@ -34,9 +34,9 @@ public abstract class ResourceEntity<T> {
 
     public ResourceEntity(AgEntity<T> agEntity) {
 
-        this.projections = buildProjections(agEntity, new ArrayList<>());
+        List<ResourceEntityProjection<? extends T>> projections = buildProjections(agEntity, new ArrayList<>());
         this.baseProjection = (ResourceEntityProjection<T>) projections.get(0);
-
+        this.projections = projectionsByType(projections);
         this.idIncluded = false;
         this.children = new HashMap<>();
         this.orderings = new ArrayList<>(2);
@@ -54,6 +54,18 @@ public abstract class ResourceEntity<T> {
         projections.add(new ResourceEntityProjection<>(entity));
         entity.getSubEntities().forEach(se -> buildProjections(se, projections));
         return projections;
+    }
+
+    private static <T> Map<Class<? extends T>, ResourceEntityProjection<? extends T>> projectionsByType(
+            List<ResourceEntityProjection<? extends T>> projections) {
+
+        if (projections.size() == 1) {
+            return Map.of(projections.get(0).getAgEntity().getType(), projections.get(0));
+        }
+
+        Map<Class<? extends T>, ResourceEntityProjection<? extends T>> byType = new HashMap<>();
+        projections.forEach(p -> byType.put(p.getAgEntity().getType(), p));
+        return byType;
     }
 
     /**
@@ -80,8 +92,15 @@ public abstract class ResourceEntity<T> {
     /**
      * @since 5.0
      */
+    public <S extends T> ResourceEntityProjection<S> getProjection(Class<S> type) {
+        return (ResourceEntityProjection<S>) projections.get(type);
+    }
+
+    /**
+     * @since 5.0
+     */
     public Collection<ResourceEntityProjection<? extends T>> getProjections() {
-        return projections;
+        return projections.values();
     }
 
     /**
@@ -153,7 +172,7 @@ public abstract class ResourceEntity<T> {
     public boolean ensureAttribute(String attributeName, boolean isDefault) {
 
         boolean success = false;
-        for (ResourceEntityProjection<?> p : projections) {
+        for (ResourceEntityProjection<?> p : projections.values()) {
             success = p.ensureAttribute(attributeName, isDefault) || success;
         }
         return success;
@@ -165,7 +184,7 @@ public abstract class ResourceEntity<T> {
     public boolean removeAttribute(String attributeName) {
 
         boolean removed = false;
-        for (ResourceEntityProjection<?> p : projections) {
+        for (ResourceEntityProjection<?> p : projections.values()) {
             removed = p.removeAttribute(attributeName) || removed;
         }
         return removed;
@@ -177,7 +196,7 @@ public abstract class ResourceEntity<T> {
     public boolean removeChild(String name) {
 
         boolean removed = false;
-        for (ResourceEntityProjection<?> p : projections) {
+        for (ResourceEntityProjection<?> p : projections.values()) {
             removed = p.removeRelationship(name) || removed;
         }
 
@@ -193,7 +212,7 @@ public abstract class ResourceEntity<T> {
      */
     public boolean ensureRelationship(String relationshipName) {
         boolean success = false;
-        for (ResourceEntityProjection<?> p : projections) {
+        for (ResourceEntityProjection<?> p : projections.values()) {
             success = p.ensureRelationship(relationshipName) || success;
         }
         return success;
@@ -327,7 +346,7 @@ public abstract class ResourceEntity<T> {
      * @since 1.23
      */
     public boolean isFiltered() {
-        for (ResourceEntityProjection<?> p : projections) {
+        for (ResourceEntityProjection<?> p : projections.values()) {
             if (!p.getAgEntity().getReadFilter().allowsAll()) {
                 return true;
             }

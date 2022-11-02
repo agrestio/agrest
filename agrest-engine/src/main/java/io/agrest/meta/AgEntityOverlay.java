@@ -38,6 +38,8 @@ public class AgEntityOverlay<T> {
     private PropertyFilter readablePropFilter;
     private PropertyFilter writablePropFilter;
 
+    private boolean ignoreSuperReadFilter;
+
     private boolean ignoreOverlaidReadFilter;
     private boolean ignoreOverlaidCreateAuthorizer;
     private boolean ignoreOverlaidUpdateAuthorizer;
@@ -136,7 +138,7 @@ public class AgEntityOverlay<T> {
                 && relationships.isEmpty()
                 && readablePropFilter == null
                 && writablePropFilter == null
-                && !ignoreOverlaidReadFilter && readFilter.allowsAll()
+                && !ignoreSuperReadFilter && !ignoreOverlaidReadFilter && readFilter.allowsAll()
                 && !ignoreOverlaidCreateAuthorizer && createAuthorizer.allowsAll()
                 && !ignoreOverlaidUpdateAuthorizer && updateAuthorizer.allowsAll()
                 && !ignoreOverlaidDeleteAuthorizer && deleteAuthorizer.allowsAll();
@@ -154,6 +156,7 @@ public class AgEntityOverlay<T> {
         clone.readablePropFilter = this.readablePropFilter;
         clone.writablePropFilter = this.writablePropFilter;
 
+        clone.ignoreSuperReadFilter = this.ignoreSuperReadFilter;
         clone.ignoreOverlaidReadFilter = this.ignoreOverlaidReadFilter;
         clone.readFilter = (ReadFilter<S>) this.readFilter;
 
@@ -177,6 +180,49 @@ public class AgEntityOverlay<T> {
      * @since 2.10
      */
     public AgEntityOverlay<T> merge(AgEntityOverlay<T> anotherOverlay) {
+        mergeNoObjectFilters(anotherOverlay);
+
+        // When merging filters/authorizers, "ignores" are themselves ignored, and will only have effect on the underlying entity.
+        // This allows to combine multiple overlays in the same scope (e.g. request or AgRuntimeBuilder) without them
+        // messing up each other, and only override things between the scopes
+
+        this.readFilter = this.readFilter.andThen(anotherOverlay.readFilter);
+        this.createAuthorizer = this.createAuthorizer.andThen(anotherOverlay.createAuthorizer);
+        this.updateAuthorizer = this.updateAuthorizer.andThen(anotherOverlay.updateAuthorizer);
+        this.deleteAuthorizer = this.deleteAuthorizer.andThen(anotherOverlay.deleteAuthorizer);
+
+        return this;
+    }
+
+    /**
+     * Combines this overlay with the super-entity overlay.
+     *
+     * @since 5.0
+     */
+    public AgEntityOverlay<T> mergeSuper(AgEntityOverlay<? super T> superOverlay) {
+
+        if (superOverlay == null) {
+            return this;
+        }
+
+        AgEntityOverlay<T> mergedTarget = superOverlay.clone(getType());
+        mergedTarget.mergeNoObjectFilters(this);
+
+        // When merging filters/authorizers, "ignores" are themselves ignored, and will only have effect on the underlying entity.
+        // This allows to combine multiple overlays in the same scope (e.g. request or AgRuntimeBuilder) without them
+        // messing up each other, and only override things between the scopes
+
+        mergedTarget.readFilter = this.ignoreSuperReadFilter ? this.readFilter : mergedTarget.readFilter.andThen(this.readFilter);
+
+        // TODO: "ignoreSuper*" properties similar to "ignoreSuperReadFilter"
+        mergedTarget.createAuthorizer = mergedTarget.createAuthorizer.andThen(this.createAuthorizer);
+        mergedTarget.updateAuthorizer = mergedTarget.updateAuthorizer.andThen(this.updateAuthorizer);
+        mergedTarget.deleteAuthorizer = mergedTarget.deleteAuthorizer.andThen(this.deleteAuthorizer);
+
+        return mergedTarget;
+    }
+
+    private void mergeNoObjectFilters(AgEntityOverlay<T> anotherOverlay) {
         attributes.putAll(anotherOverlay.attributes);
         relationships.putAll(anotherOverlay.relationships);
 
@@ -193,21 +239,12 @@ public class AgEntityOverlay<T> {
         }
 
         // When merging "ignores", a "true" on either side of the merge results in "true" in the merged version
+        this.ignoreSuperReadFilter = anotherOverlay.ignoreSuperReadFilter || this.ignoreSuperReadFilter;
+
         this.ignoreOverlaidReadFilter = anotherOverlay.ignoreOverlaidReadFilter || this.ignoreOverlaidReadFilter;
         this.ignoreOverlaidCreateAuthorizer = anotherOverlay.ignoreOverlaidCreateAuthorizer || this.ignoreOverlaidCreateAuthorizer;
         this.ignoreOverlaidUpdateAuthorizer = anotherOverlay.ignoreOverlaidUpdateAuthorizer || this.ignoreOverlaidUpdateAuthorizer;
         this.ignoreOverlaidDeleteAuthorizer = anotherOverlay.ignoreOverlaidDeleteAuthorizer || this.ignoreOverlaidDeleteAuthorizer;
-
-        // When merging filters/authorizers, "ignores" are themselves ignored, and will only have effect on the underlying entity.
-        // This allows to combine multiple overlays in the same scope (e.g. request or AgRuntimeBuilder) without them
-        // messing up each other, and only override things between the scopes
-
-        this.readFilter = this.readFilter.andThen(anotherOverlay.readFilter);
-        this.createAuthorizer = this.createAuthorizer.andThen(anotherOverlay.createAuthorizer);
-        this.updateAuthorizer = this.updateAuthorizer.andThen(anotherOverlay.updateAuthorizer);
-        this.deleteAuthorizer = this.deleteAuthorizer.andThen(anotherOverlay.deleteAuthorizer);
-
-        return this;
     }
 
     public Class<T> getType() {
@@ -266,6 +303,14 @@ public class AgEntityOverlay<T> {
      */
     public AgEntityOverlay<T> writablePropFilter(PropertyFilter filter) {
         this.writablePropFilter = writablePropFilter != null ? writablePropFilter.andThen(filter) : filter;
+        return this;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public AgEntityOverlay<T> ignoreSuperReadFilter() {
+        this.ignoreSuperReadFilter = true;
         return this;
     }
 
@@ -622,5 +667,10 @@ public class AgEntityOverlay<T> {
             }
         };
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "AgEntityOverlay[" + type.getSimpleName() + "]";
     }
 }

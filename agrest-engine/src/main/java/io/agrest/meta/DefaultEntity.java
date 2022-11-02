@@ -179,19 +179,19 @@ public class DefaultEntity<T> implements AgEntity<T> {
         }
     }
 
-    private static <T> AgEntityOverlay<T> combineOverlays(Class<T> type, AgEntityOverlay<T> overlay, AgEntityOverlay<? super T> superOverlay) {
+    private static <T> AgEntityOverlay<T> combineOverlays(
+            Class<T> type,
+            AgEntityOverlay<T> overlay,
+            AgEntityOverlay<? super T> superOverlay) {
 
-        if (overlay == null && superOverlay == null) {
-            return null;
-        } else if (superOverlay == null) {
-            return overlay;
-        } else if (overlay == null) {
+        if (overlay != null) {
+            return overlay.mergeSuper(superOverlay);
+        } else if (superOverlay != null) {
             return superOverlay.clone(type);
         } else {
-            return superOverlay.clone(type).merge(overlay);
+            return null;
         }
     }
-
 
     @Override
     public String toString() {
