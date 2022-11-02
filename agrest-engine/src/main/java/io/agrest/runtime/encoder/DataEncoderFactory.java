@@ -85,16 +85,18 @@ public class DataEncoderFactory {
                 : inheritanceAwareEntityEncoder(entity, context);
     }
 
-    protected Encoder inheritanceAwareEntityEncoder(ResourceEntity<?> entity, ProcessingContext<?> context) {
+    protected <T> Encoder inheritanceAwareEntityEncoder(ResourceEntity<T> entity, ProcessingContext<?> context) {
 
         Map<Class<?>, Encoder> hierarchyEncoders = new HashMap<>();
-        AgEntity<?> rootAgEntity = entity.getAgEntity();
+        AgEntity<T> rootAgEntity = entity.getAgEntity();
 
-        // TODO: distinguish abstract entities from concrete. The former won't need encoders
-        hierarchyEncoders.put(rootAgEntity.getType(), singleEntityEncoder(entity, context));
+        // TODO: distinguish abstract entities from concrete. The former won't need encoders, and we can save time
+        //  building it
+        Encoder rootEncoder = singleEntityEncoder(entity.asSubEntity(rootAgEntity), context);
+        hierarchyEncoders.put(rootAgEntity.getType(), rootEncoder);
 
         rootAgEntity.getSubEntities().forEach(ae ->
-                hierarchyEncoders.put(ae.getType(), singleEntityEncoder(entity, context)));
+                hierarchyEncoders.put(ae.getType(), singleEntityEncoder(entity.asSubEntity(ae), context)));
 
         return new InheritanceAwareEntityEncoder(hierarchyEncoders);
     }
