@@ -131,22 +131,21 @@ public class DataEncoderFactory {
     }
 
     protected MapByEncoder mapByEncoder(ResourceEntity<?> entity, Encoder encoder, ProcessingContext<?> context) {
-        return mapByEncoder(entity.getMapBy(), new ArrayList<>(), encoder, entity.getMapByPath(), context);
+        return mapByEncoder(entity.getMapBy(), new ArrayList<>(), encoder, context);
     }
 
     protected MapByEncoder mapByEncoder(
             ResourceEntity<?> mapBy,
             List<DataReader> readerChain,
             Encoder encoder,
-            String mapByPath,
             ProcessingContext<?> context) {
 
         // map by id
         if (mapBy.isIdIncluded()) {
-            validateLeafMapBy(mapBy, mapByPath);
+            validateLeafMapBy(mapBy);
             readerChain.add(mapBy.getAgEntity().getIdReader());
 
-            return new MapByEncoder(mapByPath,
+            return new MapByEncoder(
                     readerChain,
                     encoder,
                     true,
@@ -155,11 +154,11 @@ public class DataEncoderFactory {
 
         // map by property
         if (!mapBy.getAttributes().isEmpty()) {
-            validateLeafMapBy(mapBy, mapByPath);
+            validateLeafMapBy(mapBy);
 
             Map.Entry<String, AgAttribute> attribute = mapBy.getAttributes().entrySet().iterator().next();
             readerChain.add(propertyFactory.getAttributeProperty(mapBy, attribute.getValue()).getReader());
-            return new MapByEncoder(mapByPath,
+            return new MapByEncoder(
                     readerChain,
                     encoder,
                     false,
@@ -176,20 +175,20 @@ public class DataEncoderFactory {
             AgRelationship relationship = mapBy.getChild(child.getKey()).getIncoming();
             readerChain.add(propertyFactory.getRelationshipProperty(mapBy, relationship, null, context).getReader());
 
-            return mapByEncoder(mapBy.getChildren().get(child.getKey()), readerChain, encoder, mapByPath, context);
+            return mapByEncoder(mapBy.getChildren().get(child.getKey()), readerChain, encoder, context);
         }
 
         // map by relationship (implicitly by id)
         readerChain.add(mapBy.getAgEntity().getIdReader());
 
-        return new MapByEncoder(mapByPath,
+        return new MapByEncoder(
                 readerChain,
                 encoder,
                 true,
                 converters.getConverter(Object.class));
     }
 
-    protected void validateLeafMapBy(ResourceEntity<?> mapBy, String mapByPath) {
+    protected void validateLeafMapBy(ResourceEntity<?> mapBy) {
 
         if (!mapBy.getChildren().isEmpty()) {
 
@@ -197,10 +196,7 @@ public class DataEncoderFactory {
                     ? ((RelatedResourceEntity<?>) mapBy).getIncoming().getName()
                     : "";
 
-            throw AgException.badRequest(
-                    "'mapBy' path segment '%s' should not have children. Full 'mapBy' path: %s",
-                    pathSegment,
-                    mapByPath);
+            throw AgException.badRequest("'mapBy' path segment '%s' should not have children", pathSegment);
         }
     }
 }

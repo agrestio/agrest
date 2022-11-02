@@ -29,7 +29,6 @@ public abstract class ResourceEntity<T> {
     private final Map<String, RelatedResourceEntity<?>> children;
     private final Map<String, Object> properties;
 
-    private String mapByPath;
     private ResourceEntity<?> mapBy;
     private final List<Sort> orderings;
     private Exp exp;
@@ -185,16 +184,20 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
+     * @deprecated in favor of {@link #mapBy(ResourceEntity)}. mapByPath parameter is ignored.
      * @since 1.1
      */
+    @Deprecated(since = "5.0")
     public ResourceEntity<T> mapBy(ResourceEntity<?> mapBy, String mapByPath) {
-        this.mapByPath = mapByPath;
-        this.mapBy = mapBy;
-        return this;
+        return mapBy(mapBy);
     }
 
-    public String getMapByPath() {
-        return mapByPath;
+    /**
+     * @since 5.0
+     */
+    public ResourceEntity<T> mapBy(ResourceEntity<?> mapBy) {
+        this.mapBy = mapBy;
+        return this;
     }
 
     public Class<T> getType() {
