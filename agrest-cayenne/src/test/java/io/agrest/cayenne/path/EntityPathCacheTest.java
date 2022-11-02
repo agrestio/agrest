@@ -2,6 +2,7 @@ package io.agrest.cayenne.path;
 
 import io.agrest.AgException;
 import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
@@ -37,6 +38,17 @@ public class EntityPathCacheTest {
     }
 
     @Test
+    public void testGetOrCreate_Id() {
+        EntityPathCache cache = new EntityPathCache(schema.getEntity(X.class));
+        PathDescriptor pd = cache.getOrCreate("id");
+        assertNotNull(pd);
+        assertTrue(pd.isAttributeOrId());
+        assertEquals(Integer.class, pd.getType());
+        assertEquals("id", pd.getPathExp().getPath());
+        assertSame(pd, cache.getOrCreate("id"));
+    }
+
+    @Test
     public void testGetOrCreate_Relationship() {
         EntityPathCache cache = new EntityPathCache(schema.getEntity(X.class));
         PathDescriptor pd = cache.getOrCreate("y");
@@ -59,6 +71,17 @@ public class EntityPathCacheTest {
     }
 
     @Test
+    public void testGetOrCreate_RelatedId() {
+        EntityPathCache cache = new EntityPathCache(schema.getEntity(X.class));
+        PathDescriptor pd = cache.getOrCreate("y.id");
+        assertNotNull(pd);
+        assertTrue(pd.isAttributeOrId());
+        assertEquals(Integer.class, pd.getType());
+        assertEquals("y.id", pd.getPathExp().getPath());
+        assertSame(pd, cache.getOrCreate("y.id"));
+    }
+
+    @Test
     public void tesGetOrCreate_BadPath() {
         EntityPathCache cache = new EntityPathCache(schema.getEntity(X.class));
         assertThrows(AgException.class, () -> cache.getOrCreate("y.xyz"));
@@ -78,6 +101,11 @@ public class EntityPathCacheTest {
 
     public static class X {
 
+        @AgId
+        public Integer getId() {
+            throw new UnsupportedOperationException();
+        }
+
         @AgAttribute
         public String getName() {
             throw new UnsupportedOperationException();
@@ -92,6 +120,11 @@ public class EntityPathCacheTest {
     public static class Y {
         @AgAttribute
         public String getName() {
+            throw new UnsupportedOperationException();
+        }
+
+        @AgId
+        public Integer getId() {
             throw new UnsupportedOperationException();
         }
     }

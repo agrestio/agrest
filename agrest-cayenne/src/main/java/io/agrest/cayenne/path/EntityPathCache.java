@@ -49,7 +49,11 @@ class EntityPathCache {
 
         if (last instanceof AgIdPart) {
             AgIdPart id = (AgIdPart) last;
-            return new PathDescriptor(id.getType(), PathOps.parsePath(id.getName()), true);
+            if (entity.getIdParts().contains(id)) {
+                return new PathDescriptor(id.getType(), PathOps.parsePath(id.getName()), true);
+            } else {
+                return new PathDescriptor(id.getType(), PathOps.parsePath(agPath), true);
+            }
         }
 
         AgRelationship relationship = (AgRelationship) last;
