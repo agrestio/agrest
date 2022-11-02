@@ -17,14 +17,14 @@ public class CayenneProcessor {
      */
     public static CayenneResourceEntityExt getEntity(ResourceEntity<?> entity) {
         String key = (entity instanceof RootResourceEntity) ? CAYENNE_ROOT_ENTITY_KEY : CAYENNE_RELATED_ENTITY_KEY;
-        return entity.getRequestProperty(key);
+        return entity.getProperty(key);
     }
 
     /**
      * @since 5.0
      */
     public static <T> CayenneRootResourceEntityExt<T> getRootEntity(RootResourceEntity<T> entity) {
-        return entity.getRequestProperty(CAYENNE_ROOT_ENTITY_KEY);
+        return entity.getProperty(CAYENNE_ROOT_ENTITY_KEY);
     }
 
     /**
@@ -38,11 +38,11 @@ public class CayenneProcessor {
         }
 
         CayenneRootResourceEntityExt<T> newExt = new CayenneRootResourceEntityExt<>();
-        entity.setRequestProperty(CAYENNE_ROOT_ENTITY_KEY, newExt);
+        entity.setProperty(CAYENNE_ROOT_ENTITY_KEY, newExt);
 
         // copy MapBy owner's query to MapBy to ensure its own resolvers work properly
         if (entity.getMapBy() != null) {
-            entity.getMapBy().setRequestProperty(CAYENNE_ROOT_ENTITY_KEY, newExt);
+            entity.getMapBy().setProperty(CAYENNE_ROOT_ENTITY_KEY, newExt);
         }
 
         return newExt;
@@ -52,7 +52,7 @@ public class CayenneProcessor {
      * @since 5.0
      */
     public static <T> CayenneRelatedResourceEntityExt getRelatedEntity(RelatedResourceEntity<T> entity) {
-        return entity.getRequestProperty(CAYENNE_RELATED_ENTITY_KEY);
+        return entity.getProperty(CAYENNE_RELATED_ENTITY_KEY);
     }
 
     /**
@@ -66,11 +66,11 @@ public class CayenneProcessor {
         }
 
         CayenneRelatedResourceEntityExt newExt = new CayenneRelatedResourceEntityExt();
-        entity.setRequestProperty(CAYENNE_RELATED_ENTITY_KEY, newExt);
+        entity.setProperty(CAYENNE_RELATED_ENTITY_KEY, newExt);
 
         // copy MapBy owner's query to MapBy to ensure its own resolvers work properly
         if (entity.getMapBy() != null) {
-            entity.getMapBy().setRequestProperty(CAYENNE_RELATED_ENTITY_KEY, newExt);
+            entity.getMapBy().setProperty(CAYENNE_RELATED_ENTITY_KEY, newExt);
         }
 
         return newExt;

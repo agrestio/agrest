@@ -20,7 +20,7 @@ public class CayenneUpdateStartStage extends UpdateStartStage {
      * by this stage.
      */
     public static ObjectContext cayenneContext(ProcessingContext<?> context) {
-        return (ObjectContext) context.getAttribute(CayenneUpdateStartStage.UPDATE_OBJECT_CONTEXT_ATTRIBUTE);
+        return (ObjectContext) context.getProperty(CayenneUpdateStartStage.UPDATE_OBJECT_CONTEXT_ATTRIBUTE);
     }
 
     private ICayennePersister persister;
@@ -31,7 +31,7 @@ public class CayenneUpdateStartStage extends UpdateStartStage {
 
     @Override
     public ProcessorOutcome execute(UpdateContext<?> context) {
-        context.setAttribute(UPDATE_OBJECT_CONTEXT_ATTRIBUTE, persister.newContext());
+        context.setProperty(UPDATE_OBJECT_CONTEXT_ATTRIBUTE, persister.newContext());
         return ProcessorOutcome.CONTINUE;
     }
 }

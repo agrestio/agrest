@@ -27,7 +27,7 @@ public abstract class ResourceEntity<T> {
     private final Map<String, AgAttribute> attributes;
     private final Set<String> defaultAttributes;
     private final Map<String, RelatedResourceEntity<?>> children;
-    private final Map<String, Object> requestProperties;
+    private final Map<String, Object> properties;
 
     private String mapByPath;
     private ResourceEntity<?> mapBy;
@@ -45,7 +45,7 @@ public abstract class ResourceEntity<T> {
         this.defaultAttributes = new HashSet<>();
         this.children = new HashMap<>();
         this.orderings = new ArrayList<>(2);
-        this.requestProperties = new HashMap<>(5);
+        this.properties = new HashMap<>(5);
     }
 
     /**
@@ -269,23 +269,39 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * Returns a previously stored object for a given name. Request properties mechanism allows pluggable processing
+     * Returns a previously stored custom object for a given name. The properties mechanism allows pluggable processing
      * pipelines to store and exchange data within a given request.
      *
-     * @since 3.7
+     * @since 5.0
      */
-    public <P> P getRequestProperty(String name) {
-        return (P) requestProperties.get(name);
+    public <P> P getProperty(String name) {
+        return (P) properties.get(name);
     }
 
     /**
-     * Sets a property value for a given name. Request properties mechanism allows pluggable processing pipelines to
+     * Sets a property value for a given name. The properties mechanism allows pluggable processing pipelines to
      * store and exchange data within a given request.
      *
-     * @since 3.7
+     * @since 5.0
      */
+    public void setProperty(String name, Object value) {
+        properties.put(name, value);
+    }
+
+    /**
+     * @deprecated in favor of {@link #getProperty(String)}
+     */
+    @Deprecated(since = "5.0")
+    public <P> P getRequestProperty(String name) {
+        return getProperty(name);
+    }
+
+    /**
+     * @deprecated in favor of {@link #setProperty(String, Object)}
+     */
+    @Deprecated(since = "5.0")
     public void setRequestProperty(String name, Object value) {
-        requestProperties.put(name, value);
+        setProperty(name, value);
     }
 
     /**

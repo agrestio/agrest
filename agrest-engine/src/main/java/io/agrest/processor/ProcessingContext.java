@@ -12,15 +12,34 @@ public interface ProcessingContext<T> {
     Class<T> getType();
 
     /**
-     * Returns a previously stored context attribute or null if none was set for
-     * a given key.
+     * Returns a previously stored context attribute or null if none was set for a given key.
+     *
+     * @since 5.0
      */
-    Object getAttribute(String name);
+    Object getProperty(String name);
 
     /**
      * Allows to store an arbitrary attribute in the context during processing.
+     *
+     * @since 5.0
      */
-    void setAttribute(String name, Object value);
+    void setProperty(String name, Object value);
+
+    /**
+     * @deprecated in favor of {@link #getProperty(String)}
+     */
+    @Deprecated(since = "5.0")
+    default Object getAttribute(String name) {
+        return getProperty(name);
+    }
+
+    /**
+     * @deprecated in favor of {@link #setProperty(String, Object)}
+     */
+    @Deprecated(since = "5.0")
+    default void setAttribute(String name, Object value) {
+        setProperty(name, value);
+    }
 
     /**
      * Provides access to a desired service from the Agrest stack that created the current context.

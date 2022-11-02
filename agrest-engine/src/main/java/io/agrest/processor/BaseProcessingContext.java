@@ -58,12 +58,12 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
     }
 
     @Override
-    public Object getAttribute(String name) {
+    public Object getProperty(String name) {
         return attributes != null ? attributes.get(name) : null;
     }
 
     @Override
-    public void setAttribute(String name, Object value) {
+    public void setProperty(String name, Object value) {
 
         // Presumably BaseProcessingContext is single-threaded (one per request), so lazy init and using HashMap is ok.
         if (attributes == null) {

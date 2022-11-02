@@ -21,7 +21,7 @@ public class CayenneDeleteStartStage extends DeleteStartStage {
      * by this stage.
      */
     public static ObjectContext cayenneContext(ProcessingContext<?> context) {
-        return (ObjectContext) context.getAttribute(CayenneDeleteStartStage.DELETE_OBJECT_CONTEXT_ATTRIBUTE);
+        return (ObjectContext) context.getProperty(CayenneDeleteStartStage.DELETE_OBJECT_CONTEXT_ATTRIBUTE);
     }
 
     private final ICayennePersister persister;
@@ -42,7 +42,7 @@ public class CayenneDeleteStartStage extends DeleteStartStage {
     }
 
     protected <T> void initCayenneContext(DeleteContext<T> context) {
-        context.setAttribute(DELETE_OBJECT_CONTEXT_ATTRIBUTE, persister.newContext());
+        context.setProperty(DELETE_OBJECT_CONTEXT_ATTRIBUTE, persister.newContext());
     }
 }
 
