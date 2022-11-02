@@ -10,9 +10,11 @@ import io.agrest.encoder.Encoder;
 import io.agrest.encoder.EntityEncoder;
 import io.agrest.encoder.EntityNoIdEncoder;
 import io.agrest.encoder.GenericEncoder;
+import io.agrest.encoder.InheritanceAwareEntityEncoder;
 import io.agrest.encoder.ListEncoder;
 import io.agrest.encoder.MapByEncoder;
 import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.reader.DataReader;
@@ -20,6 +22,7 @@ import io.agrest.runtime.semantics.IRelationshipMapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +80,28 @@ public class DataEncoderFactory {
      * @return a new Encoder for the provided ResourceEntity tree
      */
     protected Encoder entityEncoder(ResourceEntity<?> entity, ProcessingContext<?> context) {
+        return entity.getAgEntity().getSubEntities().isEmpty()
+                ? singleEntityEncoder(entity, context)
+                : inheritanceAwareEntityEncoder(entity, context);
+    }
+
+    protected Encoder inheritanceAwareEntityEncoder(ResourceEntity<?> entity, ProcessingContext<?> context) {
+
+        Map<Class<?>, Encoder> hierarchyEncoders = new HashMap<>();
+        AgEntity<?> rootAgEntity = entity.getAgEntity();
+
+        // TODO: distinguish abstract entities from concrete. The former won't need encoders
+        hierarchyEncoders.put(rootAgEntity.getType(), singleEntityEncoder(entity, context));
+
+        rootAgEntity.getSubEntities().forEach(ae ->
+                hierarchyEncoders.put(ae.getType(), singleEntityEncoder(entity, context)));
+
+        return new InheritanceAwareEntityEncoder(hierarchyEncoders);
+    }
+
+    protected Encoder singleEntityEncoder(
+            ResourceEntity<?> entity,
+            ProcessingContext<?> context) {
 
         Map<String, EncodableProperty> encoders = propertyEncoders(entity, context);
 
