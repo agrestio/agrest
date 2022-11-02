@@ -46,12 +46,12 @@ public interface ProcessingContext<T> {
      *
      * @since 5.0
      */
-    <T> T service(Class<T> type);
+    <S> S service(Class<S> type);
 
     /**
      * Provides access to a desired service from the Agrest stack that created the current context.
      *
      * @since 5.0
      */
-    <T> T service(Key<T> key);
+    <S> S service(Key<S> key);
 }

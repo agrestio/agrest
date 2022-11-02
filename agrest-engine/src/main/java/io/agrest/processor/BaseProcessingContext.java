@@ -28,7 +28,7 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
      * @since 5.0
      */
     @Override
-    public <T> T service(Class<T> type) {
+    public <S> S service(Class<S> type) {
         return injector.getInstance(type);
     }
 
@@ -38,7 +38,7 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
      * @since 5.0
      */
     @Override
-    public <T> T service(Key<T> key) {
+    public <S> S service(Key<S> key) {
         return injector.getInstance(key);
     }
 
