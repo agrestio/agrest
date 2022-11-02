@@ -81,6 +81,16 @@ public class LazyEntity<T> extends BaseLazyEntity<T, AgEntity<T>> implements AgE
     }
 
     @Override
+    public AgRelationship getRelationshipInHierarchy(String name) {
+        return getDelegate().getRelationshipInHierarchy(name);
+    }
+
+    @Override
+    public Collection<AgRelationship> getRelationshipsInHierarchy() {
+        return getDelegate().getRelationshipsInHierarchy();
+    }
+
+    @Override
     public RootDataResolver<T> getDataResolver() {
         return getDelegate().getDataResolver();
     }

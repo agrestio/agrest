@@ -72,7 +72,7 @@ public class ResourceEntityTreeBuilder {
             }
         }
 
-        AgRelationship relationship = agEntity.getRelationship(property);
+        AgRelationship relationship = agEntity.getRelationshipInHierarchy(property);
 
         if (relationship != null) {
             String childPath = dot > 0 ? path.substring(dot + 1) : null;

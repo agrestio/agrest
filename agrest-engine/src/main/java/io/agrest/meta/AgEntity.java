@@ -53,6 +53,8 @@ public interface AgEntity<T> {
      */
     Collection<AgAttribute> getAttributes();
 
+    AgAttribute getAttribute(String name);
+
     /**
      * Returns attributes that are either declared by this entity, inherited from superclass, or declared in any
      * subclasses.
@@ -60,8 +62,6 @@ public interface AgEntity<T> {
      * @since 5.0
      */
     Collection<AgAttribute> getAttributesInHierarchy();
-
-    AgAttribute getAttribute(String name);
 
     /**
      * Returns a named attribute that is either declared by this entity, inherited from superclass, or declared in any
@@ -77,6 +77,22 @@ public interface AgEntity<T> {
     Collection<AgRelationship> getRelationships();
 
     AgRelationship getRelationship(String name);
+
+    /**
+     * Returns a named relationship that is either declared by this entity, inherited from superclass, or declared in any
+     * subclasses.
+     *
+     * @since 5.0
+     */
+    AgRelationship getRelationshipInHierarchy(String name);
+
+    /**
+     * Returns relationships that are either declared by this entity, inherited from superclass, or declared in any
+     * subclasses.
+     *
+     * @since 5.0
+     */
+    Collection<AgRelationship> getRelationshipsInHierarchy();
 
     /**
      * @return a default data resolver for this entity for when it is resolved as a root of a request.

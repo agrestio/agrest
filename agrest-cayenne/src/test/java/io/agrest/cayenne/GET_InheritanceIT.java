@@ -61,6 +61,35 @@ public class GET_InheritanceIT extends InheritanceDbTest {
     }
 
     @Test
+    public void testSuperclass_Includes_Relationships() {
+
+        tester.ie2().insertColumns("id")
+                .values(1)
+                .values(2)
+                .exec();
+
+        tester.ie1().insertColumns("id", "type", "e2_id")
+                .values(10, 1, 2)
+                .values(20, 2, null)
+                .exec();
+
+        tester.ie3().insertColumns("id", "e1_id")
+                .values(1, 10)
+                .values(2, 20)
+                .exec();
+
+
+        tester.target("/ie1-super")
+                // super and sub attributes should be supported
+                .queryParam("include", "id", "ie2", "ie3s")
+                .get()
+                .wasOk()
+                .bodyEquals(2,
+                        "{\"id\":10,\"ie2\":{\"id\":2},\"ie3s\":[{\"id\":1}]}",
+                        "{\"id\":20,\"ie3s\":[{\"id\":2}]}");
+    }
+
+    @Test
     public void testSuperclass_Excludes() {
 
         tester.ie1().insertColumns("id", "type", "a0", "a1", "a2")

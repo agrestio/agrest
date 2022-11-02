@@ -31,6 +31,7 @@ public class DefaultEntity<T> implements AgEntity<T> {
 
     // resolved lazily to avoid stack overflow when reading sub entities
     private volatile Map<String, AgAttribute> attributesInHierarchy;
+    private volatile Map<String, AgRelationship> relationshipsInHierarchy;
 
     public DefaultEntity(
             String name,
@@ -129,6 +130,30 @@ public class DefaultEntity<T> implements AgEntity<T> {
         return attributesInHierarchy;
     }
 
+    /**
+     * @since 5.0
+     */
+    @Override
+    public Collection<AgRelationship> getRelationshipsInHierarchy() {
+        return getOrCreateRelationshipsInHierarchy().values();
+    }
+
+    /**
+     * @since 5.0
+     */
+    @Override
+    public AgRelationship getRelationshipInHierarchy(String name) {
+        return getOrCreateRelationshipsInHierarchy().get(name);
+    }
+
+    protected Map<String, AgRelationship> getOrCreateRelationshipsInHierarchy() {
+        // resolved lazily to avoid stack overflow when reading sub entities
+        if (this.relationshipsInHierarchy == null) {
+            this.relationshipsInHierarchy = collectAllRelationships();
+        }
+        return relationshipsInHierarchy;
+    }
+
     @Override
     public RootDataResolver<T> getDataResolver() {
         return dataResolver;
@@ -159,7 +184,7 @@ public class DefaultEntity<T> implements AgEntity<T> {
         return "DefaultAgEntity[" + getName() + "]";
     }
 
-    protected <T> Map<String, AgAttribute> collectAllAttributes() {
+    protected Map<String, AgAttribute> collectAllAttributes() {
 
         if (subEntities.isEmpty()) {
             return attributes;
@@ -170,9 +195,26 @@ public class DefaultEntity<T> implements AgEntity<T> {
             subEntity.getAttributes().forEach(a -> allAttributes.put(a.getName(), a));
         }
 
-        // add this entity attributes last, in case subclass attributes are redefined (is this even posible?)
+        // add this entity attributes last, in case subclass attributes are redefined (is this even possible?)
         allAttributes.putAll(attributes);
 
         return allAttributes;
+    }
+
+    protected Map<String, AgRelationship> collectAllRelationships() {
+
+        if (subEntities.isEmpty()) {
+            return relationships;
+        }
+
+        Map<String, AgRelationship> allRelationships = new HashMap<>();
+        for (AgEntity<?> subEntity : subEntities) {
+            subEntity.getRelationships().forEach(r -> allRelationships.put(r.getName(), r));
+        }
+
+        // add this entity relationships last, in case subclass attributes are redefined (is this even possible?)
+        allRelationships.putAll(relationships);
+
+        return allRelationships;
     }
 }
