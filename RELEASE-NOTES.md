@@ -1,6 +1,7 @@
 ## Release 5.0.M8
-* 
+ 
 * #583 Upgrade jackson-databind to 2.13.4.2
+* #584 GET - Inheritance support - Cayenne backend
 
 ## Release 5.0.M7
 
