@@ -2,7 +2,6 @@ package io.agrest.runtime;
 
 import io.agrest.AgModuleProvider;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.spi.AgExceptionMapper;
 import org.apache.cayenne.di.DIBootstrap;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Module;
@@ -60,6 +59,8 @@ public class AgRuntimeBuilder {
     }
 
     private <T> AgEntityOverlay<T> getOrCreateOverlay(Class<T> type) {
+        // TODO: inefficiency - Cayenne DI MapBuilder only supports String keys, so we convert a Class to String
+        //  here, and then convert a String to Class when using the overlays in the compiler
         return entityOverlays.computeIfAbsent(type.getName(), n -> new AgEntityOverlay<>(type));
     }
 

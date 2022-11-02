@@ -19,7 +19,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_PropFilter_Overlay_InheritanceIT extends InheritanceDbTest {
+public class GET_PropFilter_Overlay_Request_InheritanceIT extends InheritanceDbTest {
 
     @BQTestTool
     static final InheritanceModelTester tester = tester(Resource.class)

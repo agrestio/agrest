@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -54,7 +55,7 @@ public class CayenneAgEntityBuilder<T> {
     private final Map<String, AgAttribute> attributes;
     private final Map<String, AgRelationship> relationships;
 
-    private AgEntityOverlay<T> overlay;
+    private Map<String, AgEntityOverlay<?>> overlays;
     private RootDataResolver<T> dataResolver;
     private RelatedDataResolver<T> relatedDataResolver;
 
@@ -73,8 +74,8 @@ public class CayenneAgEntityBuilder<T> {
         this.relationships = new HashMap<>();
     }
 
-    public CayenneAgEntityBuilder<T> overlay(AgEntityOverlay<T> overlay) {
-        this.overlay = overlay;
+    public CayenneAgEntityBuilder<T> overlays(Map<String, AgEntityOverlay<?>> overlays) {
+        this.overlays = overlays;
         return this;
     }
 
@@ -296,6 +297,31 @@ public class CayenneAgEntityBuilder<T> {
      * @since 4.8
      */
     protected AgEntity<T> applyOverlay(AgEntity<T> entity) {
-        return entity.resolveOverlay(schema, overlay);
+        return entity.resolveOverlayHierarchy(schema, entityOverlayMap());
+    }
+
+    private Map<Class<?>, AgEntityOverlay<?>> entityOverlayMap() {
+        // TODO: inefficiency - Cayenne DI MapBuilder only supports String keys, so we convert a Class to a String
+        //  in the runtime builder, and then convert the String back to the Class here
+
+        if (overlays == null || overlays.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Map<Class<?>, AgEntityOverlay<?>> byClass = new HashMap<>();
+
+        AgEntityOverlay<?> rootOverlay = overlays.get(type.getName());
+        if (rootOverlay != null) {
+            byClass.put(type, rootOverlay);
+        }
+
+        for (AgEntity<?> se : subEntities) {
+            AgEntityOverlay<?> seOverlay = overlays.get(se.getType().getName());
+            if (seOverlay != null) {
+                byClass.put(seOverlay.getType(), seOverlay);
+            }
+        }
+
+        return byClass;
     }
 }
