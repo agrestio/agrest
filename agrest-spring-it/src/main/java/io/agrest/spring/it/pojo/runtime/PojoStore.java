@@ -1,4 +1,4 @@
-package io.agrest.spring.starter.it.pojo.runtime;
+package io.agrest.spring.it.pojo.runtime;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class PojoStore {
 
-    private ConcurrentMap<Class<?>, Map<Object, Object>> map;
+    private final ConcurrentMap<Class<?>, Map<Object, Object>> map;
 
     public PojoStore() {
         this.map = new ConcurrentHashMap<>();

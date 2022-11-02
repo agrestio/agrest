@@ -1,4 +1,4 @@
-package io.agrest.spring.starter.it.pojo.model;
+package io.agrest.spring.it.pojo.model;
 
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;

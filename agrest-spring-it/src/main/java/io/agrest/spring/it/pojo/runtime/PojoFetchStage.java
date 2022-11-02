@@ -1,4 +1,4 @@
-package io.agrest.spring.starter.it.pojo.runtime;
+package io.agrest.spring.it.pojo.runtime;
 
 import io.agrest.PathConstants;
 import io.agrest.meta.AgAttribute;
@@ -16,8 +16,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.cayenne.di.Inject;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PojoFetchStage implements Processor<SelectContext<?>> {
 
@@ -77,7 +75,6 @@ public class PojoFetchStage implements Processor<SelectContext<?>> {
         }
 
         Map<String, Object> id = (Map<String, Object>) idReader.read(object);
-        assertEquals(1, id.size(), () -> "Unexpected id size " + id.size() + " for object " + object.getClass());
         return (Comparable) id.values().iterator().next();
     }
 }

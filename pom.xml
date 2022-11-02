@@ -22,6 +22,7 @@
         <module>agrest-cayenne</module>
         <module>agrest-bom</module>
         <module>agrest-spring-boot-starter</module>
+        <module>agrest-spring-it</module>
     </modules>
 
     <properties>
@@ -156,11 +157,6 @@
             Importing individual Bootique modules instead of a BOM, as BOM would be treated as a dependency
             by the downstream projects.
             -->
-            <dependency>
-                <groupId>io.bootique.jdbc</groupId>
-                <artifactId>bootique-jdbc-junit5-derby</artifactId>
-                <version>${bootique.version}</version>
-            </dependency>
             <dependency>
                 <groupId>io.bootique.cayenne</groupId>
                 <artifactId>bootique-cayenne42-junit5</artifactId>

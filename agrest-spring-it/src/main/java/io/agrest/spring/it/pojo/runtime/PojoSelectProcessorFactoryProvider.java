@@ -1,4 +1,4 @@
-package io.agrest.spring.starter.it.pojo.runtime;
+package io.agrest.spring.it.pojo.runtime;
 
 import io.agrest.SelectStage;
 import io.agrest.processor.Processor;
