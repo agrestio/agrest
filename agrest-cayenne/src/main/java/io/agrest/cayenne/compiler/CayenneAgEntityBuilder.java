@@ -280,6 +280,7 @@ public class CayenneAgEntityBuilder<T> {
         return new DefaultEntity<>(
                 cayenneEntity.getName(),
                 type,
+                cayenneEntity.isAbstract(),
                 subEntities,
                 ids,
                 attributes,

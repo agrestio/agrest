@@ -17,6 +17,7 @@ public class DefaultEntity<T> implements AgEntity<T> {
 
     private final String name;
     private final Class<T> type;
+    private final boolean _abstract;
     private final Collection<AgEntity<? extends T>> subEntities;
     private final RootDataResolver<T> dataResolver;
     private final ReadFilter<T> readFilter;
@@ -36,6 +37,7 @@ public class DefaultEntity<T> implements AgEntity<T> {
     public DefaultEntity(
             String name,
             Class<T> type,
+            boolean _abstract,
             Collection<AgEntity<? extends T>> subEntities,
             Map<String, AgIdPart> ids,
             Map<String, AgAttribute> attributes,
@@ -48,6 +50,7 @@ public class DefaultEntity<T> implements AgEntity<T> {
 
         this.name = name;
         this.type = type;
+        this._abstract = _abstract;
         this.subEntities = subEntities;
 
         this.ids = ids;
@@ -69,6 +72,11 @@ public class DefaultEntity<T> implements AgEntity<T> {
     @Override
     public Class<T> getType() {
         return type;
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return _abstract;
     }
 
     @Override

@@ -33,6 +33,11 @@ public class LazyEntity<T> extends BaseLazyEntity<T, AgEntity<T>> implements AgE
     }
 
     @Override
+    public boolean isAbstract() {
+        return getDelegate().isAbstract();
+    }
+
+    @Override
     public Collection<AgEntity<? extends T>> getSubEntities() {
         return getDelegate().getSubEntities();
     }

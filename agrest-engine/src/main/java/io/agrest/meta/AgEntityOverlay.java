@@ -121,6 +121,7 @@ public class AgEntityOverlay<T> {
         return new DefaultEntity<>(
                 maybeOverlaid.getName(),
                 type,
+                maybeOverlaid.isAbstract(),
                 maybeOverlaid.getSubEntities(),
                 resolver.ids,
                 resolver.attributes,

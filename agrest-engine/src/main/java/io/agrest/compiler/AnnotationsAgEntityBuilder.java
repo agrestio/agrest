@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -219,6 +220,7 @@ public class AnnotationsAgEntityBuilder<T> {
         return new DefaultEntity<>(
                 name,
                 type,
+                Modifier.isAbstract(type.getModifiers()),
                 // TODO: support for inheritance in Ag core
                 Collections.emptyList(),
                 ids,

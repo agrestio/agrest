@@ -32,6 +32,11 @@ public interface AgEntity<T> {
     Class<T> getType();
 
     /**
+     * @since 5.0
+     */
+    boolean isAbstract();
+
+    /**
      * Returns a collection that contains all of its subclass entities, direct and indirect. 
      *
      * @since 5.0
