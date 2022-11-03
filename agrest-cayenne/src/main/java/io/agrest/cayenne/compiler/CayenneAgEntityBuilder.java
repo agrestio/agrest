@@ -113,10 +113,10 @@ public class CayenneAgEntityBuilder<T> {
     protected void buildCayenneEntity() {
 
         EntityInheritanceTree inheritanceTree = cayenneResolver.getInheritanceTree(cayenneEntity.getName());
-        for(ObjEntity cayenneSubEntity : inheritanceTree.allSubEntities()) {
+        for (ObjEntity cayenneSubEntity : inheritanceTree.allSubEntities()) {
 
-            // unlike Cayenne, Agrest will not include "self" in subentities (for now at least)
-            if(cayenneSubEntity != cayenneEntity) {
+            // include only direct subentities
+            if (cayenneSubEntity.getSuperEntity() == cayenneEntity) {
                 ClassDescriptor subEntityDesc = cayenneResolver.getClassDescriptor(cayenneSubEntity.getName());
                 AgEntity<? extends T> subEntity = (AgEntity<? extends T>) schema.getEntity(subEntityDesc.getObjectClass());
                 subEntities.add(subEntity);

@@ -58,11 +58,17 @@ public class CayenneCompiler_InheritanceIT extends InheritanceNoDbTest {
 
     @Test
     public void testGetSubEntities_Super() {
-        String es = getAgEntity(Ie1Super.class).getSubEntities().stream()
+        String es1 = getAgEntity(Ie1Super.class).getSubEntities().stream()
                 .map(AgEntity::getName)
                 .sorted()
                 .collect(Collectors.joining(","));
-        assertEquals("Ie1Sub1,Ie1Sub1Sub1,Ie1Sub2", es);
+        assertEquals("Ie1Sub1,Ie1Sub2", es1, "Must include direct sub-entities");
+
+        String es2 = getAgEntity(Ie1Sub1.class).getSubEntities().stream()
+                .map(AgEntity::getName)
+                .sorted()
+                .collect(Collectors.joining(","));
+        assertEquals("Ie1Sub1Sub1", es2, "Must include direct sub-entities");
     }
 
     @Test

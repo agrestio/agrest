@@ -193,36 +193,28 @@ public class DefaultEntity<T> implements AgEntity<T> {
     }
 
     protected Map<String, AgAttribute> collectAllAttributes() {
+        return subEntities.isEmpty() ? attributes : collectAllAttributes(new HashMap<>(), this);
+    }
 
-        if (subEntities.isEmpty()) {
-            return attributes;
-        }
+    protected Map<String, AgAttribute> collectAllAttributes(Map<String, AgAttribute> collectTo, AgEntity<?> entity) {
+        // on the off-chance that sub-entities redefine our attributes, add subclasses first, and then add ours
+        // to override everything for this entity
+        entity.getSubEntities().forEach(se -> collectAllAttributes(collectTo, se));
+        entity.getAttributes().forEach(a -> collectTo.put(a.getName(), a));
 
-        Map<String, AgAttribute> allAttributes = new HashMap<>();
-        for (AgEntity<?> subEntity : subEntities) {
-            subEntity.getAttributes().forEach(a -> allAttributes.put(a.getName(), a));
-        }
-
-        // add this entity attributes last, in case subclass attributes are redefined (is this even possible?)
-        allAttributes.putAll(attributes);
-
-        return allAttributes;
+        return collectTo;
     }
 
     protected Map<String, AgRelationship> collectAllRelationships() {
+        return subEntities.isEmpty() ? relationships : collectAllRelationships(new HashMap<>(), this);
+    }
 
-        if (subEntities.isEmpty()) {
-            return relationships;
-        }
+    protected Map<String, AgRelationship> collectAllRelationships(Map<String, AgRelationship> collectTo, AgEntity<?> entity) {
+        // on the off-chance that sub-entities redefine our relationships, add subclasses first, and then add ours
+        // to override everything for this entity
+        entity.getSubEntities().forEach(se -> collectAllRelationships(collectTo, se));
+        entity.getRelationships().forEach(r -> collectTo.put(r.getName(), r));
 
-        Map<String, AgRelationship> allRelationships = new HashMap<>();
-        for (AgEntity<?> subEntity : subEntities) {
-            subEntity.getRelationships().forEach(r -> allRelationships.put(r.getName(), r));
-        }
-
-        // add this entity relationships last, in case subclass attributes are redefined (is this even possible?)
-        allRelationships.putAll(relationships);
-
-        return allRelationships;
+        return collectTo;
     }
 }
