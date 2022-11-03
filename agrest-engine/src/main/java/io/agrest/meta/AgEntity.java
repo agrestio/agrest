@@ -160,6 +160,11 @@ public interface AgEntity<T> {
      * @since 5.0
      */
     default AgEntity<T> resolveOverlay(AgSchema schema, AgEntityOverlay<T> overlay) {
-        return overlay != null ? overlay.resolve(schema, this) : this;
+        return overlay != null && !overlay.isEmpty() ? overlay.resolve(schema, this, this.getSubEntities()) : this;
     }
+
+    /**
+     * @since 5.0
+     */
+    AgEntity<T> resolveOverlayHierarchy(AgSchema schema, Map<Class<?>, AgEntityOverlay<?>> overlays);
 }

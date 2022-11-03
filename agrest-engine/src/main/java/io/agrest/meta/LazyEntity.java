@@ -8,6 +8,7 @@ import io.agrest.access.UpdateAuthorizer;
 import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -118,6 +119,11 @@ public class LazyEntity<T> extends BaseLazyEntity<T, AgEntity<T>> implements AgE
     @Override
     public DeleteAuthorizer<T> getDeleteAuthorizer() {
         return getDelegate().getDeleteAuthorizer();
+    }
+
+    @Override
+    public AgEntity<T> resolveOverlayHierarchy(AgSchema schema, Map<Class<?>, AgEntityOverlay<?>> overlays) {
+        return getDelegate().resolveOverlayHierarchy(schema, overlays);
     }
 
     @Override
