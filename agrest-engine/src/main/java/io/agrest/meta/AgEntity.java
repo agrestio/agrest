@@ -155,4 +155,11 @@ public interface AgEntity<T> {
      * @since 4.8
      */
     DeleteAuthorizer<T> getDeleteAuthorizer();
+
+    /**
+     * @since 5.0
+     */
+    default AgEntity<T> resolveOverlay(AgSchema schema, AgEntityOverlay<T> overlay) {
+        return overlay != null ? overlay.resolve(schema, this) : this;
+    }
 }

@@ -237,6 +237,6 @@ public class AnnotationsAgEntityBuilder<T> {
      * @since 4.8
      */
     protected AgEntity<T> applyOverlay(AgEntity<T> entity) {
-        return overlay != null ? overlay.resolve(schema, entity) : entity;
+        return entity.resolveOverlay(schema, overlay);
     }
 }

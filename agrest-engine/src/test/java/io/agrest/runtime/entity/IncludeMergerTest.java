@@ -121,7 +121,7 @@ public class IncludeMergerTest {
                 .relatedDataResolver("z", (t, r) -> ThrowingRelatedDataResolver.getInstance()));
 
         AgEntity<X> entity = schema.getEntity(X.class);
-        AgEntity<X> entityOverlaid = ((AgEntityOverlay<X>) overlays.get(X.class)).resolve(schema, entity);
+        AgEntity<X> entityOverlaid = entity.resolveOverlay(schema, (AgEntityOverlay<X>) overlays.get(X.class));
         ResourceEntity<X> root = new RootResourceEntity<>(entityOverlaid);
 
         includeMerger.merge(root, asList(
