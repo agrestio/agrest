@@ -9,6 +9,7 @@
 		<db-attribute name="a0" type="VARCHAR" length="100"/>
 		<db-attribute name="a1" type="VARCHAR" length="100"/>
 		<db-attribute name="a2" type="VARCHAR" length="100"/>
+		<db-attribute name="a3" type="VARCHAR" length="100"/>
 		<db-attribute name="e2_id" type="INTEGER"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 		<db-attribute name="type" type="INTEGER" isMandatory="true"/>
@@ -23,6 +24,12 @@
 	<obj-entity name="Ie1Sub1" superEntityName="Ie1Super" className="io.agrest.cayenne.cayenne.inheritance.Ie1Sub1">
 		<qualifier><![CDATA[type = 1]]></qualifier>
 		<obj-attribute name="a1" type="java.lang.String" db-attribute-path="a1"/>
+		<attribute-override name="a0" db-attribute-path="a0"/>
+		<attribute-override name="type" db-attribute-path="type"/>
+	</obj-entity>
+	<obj-entity name="Ie1Sub1Sub1" superEntityName="Ie1Sub1" className="io.agrest.cayenne.cayenne.inheritance.Ie1Sub1Sub1">
+		<qualifier><![CDATA[type = 3]]></qualifier>
+		<obj-attribute name="a3" type="java.lang.String" db-attribute-path="a3"/>
 	</obj-entity>
 	<obj-entity name="Ie1Sub2" superEntityName="Ie1Super" className="io.agrest.cayenne.cayenne.inheritance.Ie1Sub2">
 		<qualifier><![CDATA[type = 2]]></qualifier>
