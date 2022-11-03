@@ -37,7 +37,7 @@ public interface AgEntity<T> {
     boolean isAbstract();
 
     /**
-     * Returns a collection that contains all of its subclass entities, direct and indirect. 
+     * Returns a collection of direct sub-entities. I.e. the entities mapping subclasses of this entity's type.
      *
      * @since 5.0
      */
