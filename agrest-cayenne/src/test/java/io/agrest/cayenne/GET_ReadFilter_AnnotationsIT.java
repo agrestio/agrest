@@ -15,7 +15,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_ReadAccess_AnnotationsIT extends MainDbTest {
+public class GET_ReadFilter_AnnotationsIT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)

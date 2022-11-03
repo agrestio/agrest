@@ -19,7 +19,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_ReadAccess_OverlayIT extends MainDbTest {
+public class GET_PropFilter_OverlayIT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
