@@ -47,19 +47,21 @@ public class GET_InheritanceIT extends InheritanceDbTest {
     @Test
     public void testSuperclass_Includes() {
 
-        tester.ie1().insertColumns("id", "type", "a0", "a1", "a2")
-                .values(10, 1, "v01", "v11", null)
-                .values(20, 2, "v02", null, "v21")
+        tester.ie1().insertColumns("id", "type", "a0", "a1", "a2", "a3")
+                .values(10, 1, "v01", "v11", null, null)
+                .values(20, 2, "v02", null, "v21", null)
+                .values(30, 3, "v03", "v13", null, "v31")
                 .exec();
 
         tester.target("/ie1-super")
                 // super and sub attributes should be supported
-                .queryParam("include", "id", "a0", "a1")
+                .queryParam("include", "id", "a0", "a1", "a3")
                 .get()
                 .wasOk()
-                .bodyEquals(2,
+                .bodyEquals(3,
                         "{\"id\":10,\"a0\":\"v01\",\"a1\":\"v11\"}",
-                        "{\"id\":20,\"a0\":\"v02\"}");
+                        "{\"id\":20,\"a0\":\"v02\"}",
+                        "{\"id\":30,\"a0\":\"v03\",\"a1\":\"v13\",\"a3\":\"v31\"}");
     }
 
     @Test
@@ -94,19 +96,21 @@ public class GET_InheritanceIT extends InheritanceDbTest {
     @Test
     public void testSuperclass_Excludes() {
 
-        tester.ie1().insertColumns("id", "type", "a0", "a1", "a2")
-                .values(10, 1, "v01", "v11", null)
-                .values(20, 2, "v02", null, "v21")
+        tester.ie1().insertColumns("id", "type", "a0", "a1", "a2", "a3")
+                .values(10, 1, "v01", "v11", null, null)
+                .values(20, 2, "v02", null, "v21", null)
+                .values(30, 3, "v03", "v13", null, "v31")
                 .exec();
 
         tester.target("/ie1-super")
                 // super and sub attributes should be supported
-                .queryParam("exclude", "a0", "a1")
+                .queryParam("exclude", "a0", "a1", "a3")
                 .get()
                 .wasOk()
-                .bodyEquals(2,
+                .bodyEquals(3,
                         "{\"id\":10,\"type\":1}",
-                        "{\"id\":20,\"a2\":\"v21\",\"type\":2}");
+                        "{\"id\":20,\"a2\":\"v21\",\"type\":2}",
+                        "{\"id\":30,\"type\":3}");
     }
 
     @Test
