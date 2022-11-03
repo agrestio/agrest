@@ -45,21 +45,14 @@ public abstract class BaseResourceEntity<T> implements ResourceEntity<T> {
         this.properties = new HashMap<>(5);
     }
 
+    /**
+     * @since 5.0
+     */
     @Override
     public <ST extends T> ResourceEntity<ST> asSubEntity(AgEntity<ST> subEntity) {
-        if (subEntity == this.agEntity) {
-            return subEntity.getSubEntities().isEmpty()
-                    ? (ResourceEntity<ST>) this
-                    : new FilteredResourceEntity<>(subEntity, this);
-        }
-
-        if (!this.agEntity.getSubEntities().contains(subEntity)) {
-            throw AgException.internalServerError("%s is not a known sub-entity of %s",
-                    subEntity.getName(),
-                    this.agEntity.getName());
-        }
-
-        return new FilteredResourceEntity(subEntity, this);
+        return this.agEntity == subEntity && this.agEntity.getSubEntities().isEmpty()
+                ? (ResourceEntity<ST>) this
+                : new FilteredResourceEntity(subEntity, this);
     }
 
     /**

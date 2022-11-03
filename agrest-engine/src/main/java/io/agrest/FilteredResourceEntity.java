@@ -20,6 +20,11 @@ public class FilteredResourceEntity<T> implements ResourceEntity<T> {
     private final ResourceEntity<? super T> delegate;
 
     public FilteredResourceEntity(AgEntity<T> agEntity, ResourceEntity<? super T> delegate) {
+
+        if (!delegate.getType().isAssignableFrom(agEntity.getType())) {
+            throw AgException.internalServerError("%s is not a sub-entity of %s", agEntity.getName(), delegate.getName());
+        }
+
         this.agEntity = agEntity;
         this.delegate = delegate;
     }

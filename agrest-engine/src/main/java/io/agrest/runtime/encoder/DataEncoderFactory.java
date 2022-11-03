@@ -87,19 +87,27 @@ public class DataEncoderFactory {
 
     protected <T> Encoder inheritanceAwareEntityEncoder(ResourceEntity<T> entity, ProcessingContext<?> context) {
 
-        Map<Class<?>, Encoder> hierarchyEncoders = new HashMap<>();
-        AgEntity<T> rootAgEntity = entity.getAgEntity();
-
-        if (!rootAgEntity.isAbstract()) {
-            Encoder rootEncoder = singleEntityEncoder(entity.asSubEntity(rootAgEntity), context);
-            hierarchyEncoders.put(rootAgEntity.getType(), rootEncoder);
-        }
-
-        rootAgEntity.getSubEntities().stream()
-                .filter(e -> !e.isAbstract())
-                .forEach(ae -> hierarchyEncoders.put(ae.getType(), singleEntityEncoder(entity.asSubEntity(ae), context)));
+        Map<Class<?>, Encoder> hierarchyEncoders = collectEncodersInInheritanceHierarchy(
+                new HashMap<>(), entity, entity.getAgEntity(), context
+        );
 
         return new InheritanceAwareEntityEncoder(hierarchyEncoders);
+    }
+
+    protected <T> Map<Class<?>, Encoder> collectEncodersInInheritanceHierarchy(
+            Map<Class<?>, Encoder> toCollect,
+            ResourceEntity<? super T> entity,
+            AgEntity<T> agEntity,
+            ProcessingContext<?> context) {
+
+        agEntity.getSubEntities().forEach(ae -> collectEncodersInInheritanceHierarchy(toCollect, entity, ae, context));
+
+        if (!agEntity.isAbstract()) {
+            Encoder encoder = singleEntityEncoder(entity.asSubEntity(agEntity), context);
+            toCollect.put(agEntity.getType(), encoder);
+        }
+
+        return toCollect;
     }
 
     protected Encoder singleEntityEncoder(

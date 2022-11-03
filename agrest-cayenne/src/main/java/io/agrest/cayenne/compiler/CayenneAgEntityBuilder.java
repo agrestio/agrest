@@ -115,7 +115,7 @@ public class CayenneAgEntityBuilder<T> {
         EntityInheritanceTree inheritanceTree = cayenneResolver.getInheritanceTree(cayenneEntity.getName());
         for (ObjEntity cayenneSubEntity : inheritanceTree.allSubEntities()) {
 
-            // include only direct subentities
+            // include only the direct sub-entities
             if (cayenneSubEntity.getSuperEntity() == cayenneEntity) {
                 ClassDescriptor subEntityDesc = cayenneResolver.getClassDescriptor(cayenneSubEntity.getName());
                 AgEntity<? extends T> subEntity = (AgEntity<? extends T>) schema.getEntity(subEntityDesc.getObjectClass());
