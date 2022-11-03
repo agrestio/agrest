@@ -37,7 +37,7 @@ public class ConstraintsHandlerWithDefaultsTest {
         ResourceEntityUtils.appendAttribute(te1, "a", Integer.class, true, true, Tr::getA);
         ResourceEntityUtils.appendAttribute(te1, "b", String.class, false, true, Tr::getB);
 
-        constraintsHandler.constrainResponse(te1, null);
+        constraintsHandler.constrainResponse(te1);
         assertEquals(1, te1.getAttributes().size());
         assertTrue(te1.getAttributes().containsKey("a"));
         assertTrue(te1.getChildren().isEmpty());
@@ -52,7 +52,7 @@ public class ConstraintsHandlerWithDefaultsTest {
         ResourceEntityUtils.appendAttribute(te1, "m", String.class, true, true, Ts::getM);
         ResourceEntityUtils.appendAttribute(te1, "n", String.class, true, true, Ts::getN);
 
-        constraintsHandler.constrainResponse(te1, null);
+        constraintsHandler.constrainResponse(te1);
         assertEquals(2, te1.getAttributes().size());
         assertTrue(te1.getAttributes().containsKey("m"));
         assertTrue(te1.getAttributes().containsKey("n"));

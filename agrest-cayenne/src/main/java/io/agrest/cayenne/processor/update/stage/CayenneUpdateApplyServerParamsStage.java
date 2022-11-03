@@ -77,7 +77,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
 
         // apply read constraints
         // TODO: should we only care about response constraints after the commit?
-        constraintsHandler.constrainResponse(entity, null);
+        constraintsHandler.constrainResponse(entity);
 
         tagRootEntity(context.getEntity());
     }
