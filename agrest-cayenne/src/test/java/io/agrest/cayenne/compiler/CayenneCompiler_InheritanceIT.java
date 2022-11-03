@@ -43,7 +43,7 @@ public class CayenneCompiler_InheritanceIT extends InheritanceNoDbTest {
                 .map(AgAttribute::getName)
                 .sorted()
                 .collect(Collectors.joining(","));
-        assertEquals("a0,a1,a2,type", as, "Must include own, inherited and subclass attributes");
+        assertEquals("a0,a1,a2,a3,type", as, "Must include own, inherited and subclass attributes");
     }
 
     @Test
@@ -62,7 +62,7 @@ public class CayenneCompiler_InheritanceIT extends InheritanceNoDbTest {
                 .map(AgEntity::getName)
                 .sorted()
                 .collect(Collectors.joining(","));
-        assertEquals("Ie1Sub1,Ie1Sub2", es);
+        assertEquals("Ie1Sub1,Ie1Sub1Sub1,Ie1Sub2", es);
     }
 
     @Test
