@@ -135,8 +135,7 @@ public class DataEncoderFactory {
 
         for (Map.Entry<String, RelatedResourceEntity<?>> e : entity.getChildren().entrySet()) {
 
-            // read relationship vis child entity to account for overlays
-            AgRelationship relationship = entity.getChild(e.getKey()).getIncoming();
+            AgRelationship relationship = e.getValue().getIncoming();
 
             Encoder encoder = relationship.isToMany()
                     ? relatedToManyEncoder(e.getValue(), context)
