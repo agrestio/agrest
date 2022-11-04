@@ -41,17 +41,25 @@ public class FilteredResourceEntity<T> implements ResourceEntity<T> {
 
     @Override
     public AgAttribute getAttribute(String name) {
-        // filter delegate attributes to only include those in our root entity
-        return agEntity.getAttribute(name) != null ? delegate.getAttribute(name) : null;
+
+        // Filter delegate attributes to only include those from "our" entity.
+        // Important - return AgAttribute definition from "our" entity, as it may have redefined access rules
+
+        AgAttribute delegateAttribute = delegate.getAttribute(name);
+        return delegateAttribute != null ? agEntity.getAttribute(name) : null;
     }
 
     @Override
     public Map<String, AgAttribute> getAttributes() {
-        // filter delegate attributes to only include those in our root entity
+
+        // Filter delegate attributes to only include those from "our" entity.
+        // Important - return AgAttribute definition from "our" entity, as it may have redefined access rules
+
         Map<String, AgAttribute> filtered = new HashMap<>();
         for (Map.Entry<String, AgAttribute> e : delegate.getAttributes().entrySet()) {
-            if (agEntity.getAttribute(e.getKey()) != null) {
-                filtered.put(e.getKey(), e.getValue());
+            AgAttribute entityAttribute = agEntity.getAttribute(e.getKey());
+            if (entityAttribute != null) {
+                filtered.put(entityAttribute.getName(), entityAttribute);
             }
         }
 
