@@ -2,9 +2,11 @@ package io.agrest;
 
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
 import io.agrest.protocol.Exp;
 import io.agrest.protocol.Sort;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -48,14 +50,6 @@ public interface ResourceEntity<T> {
     void setProperty(String name, Object value);
 
     /**
-     * Returns a read-only "view" of this ResourceEntity with attributes and relationships filtered for a particular
-     * subclass from the entity type inheritance hierarchy.
-     *
-     * @since 5.0
-     */
-    <ST extends T> ResourceEntity<ST> asSubEntity(AgEntity<ST> subEntity);
-
-    /**
      * @since 5.0
      */
     Exp getExp();
@@ -94,6 +88,14 @@ public interface ResourceEntity<T> {
     Map<String, AgAttribute> getAttributes();
 
     /**
+     * Returns a subset of attributes from this entity specific to the provided Ag subentity. Attribute definitions
+     * will be taken from that subentity, with their own access rules, etc.
+     *
+     * @since 5.0
+     */
+    Collection<AgAttribute> getAttributes(AgEntity<? extends T> subEntity);
+
+    /**
      * Returns whether the named attribute was added to the entity implicitly, via the default rules, instead of being
      * explicitly requested by the client.
      *
@@ -122,6 +124,14 @@ public interface ResourceEntity<T> {
      * @since 1.1
      */
     RelatedResourceEntity<?> getChild(String name);
+
+    /**
+     * Returns a subset of relationships from this entity specific to the provided Ag subentity. Relationship definitions
+     * will be taken from that subentity, with their own access rules, etc.
+     *
+     * @since 5.0
+     */
+    Collection<AgRelationship> getRelationships(AgEntity<? extends T> subEntity);
 
     boolean isIdIncluded();
 

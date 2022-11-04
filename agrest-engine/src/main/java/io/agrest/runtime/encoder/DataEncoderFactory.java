@@ -79,9 +79,9 @@ public class DataEncoderFactory {
      * @param entity root entity to be encoded
      * @return a new Encoder for the provided ResourceEntity tree
      */
-    protected Encoder entityEncoder(ResourceEntity<?> entity, ProcessingContext<?> context) {
+    protected <T> Encoder entityEncoder(ResourceEntity<T> entity, ProcessingContext<?> context) {
         return entity.getAgEntity().getSubEntities().isEmpty()
-                ? singleEntityEncoder(entity, context)
+                ? singleEntityEncoder(entity, entity.getAgEntity(), context)
                 : inheritanceAwareEntityEncoder(entity, context);
     }
 
@@ -103,18 +103,19 @@ public class DataEncoderFactory {
         agEntity.getSubEntities().forEach(ae -> collectEncodersInInheritanceHierarchy(toCollect, entity, ae, context));
 
         if (!agEntity.isAbstract()) {
-            Encoder encoder = singleEntityEncoder(entity.asSubEntity(agEntity), context);
+            Encoder encoder = singleEntityEncoder(entity, agEntity, context);
             toCollect.put(agEntity.getType(), encoder);
         }
 
         return toCollect;
     }
 
-    protected Encoder singleEntityEncoder(
-            ResourceEntity<?> entity,
+    protected <T> Encoder singleEntityEncoder(
+            ResourceEntity<T> entity,
+            AgEntity<? extends T> subEntity,
             ProcessingContext<?> context) {
 
-        Map<String, EncodableProperty> encoders = propertyEncoders(entity, context);
+        Map<String, EncodableProperty> encoders = propertyEncoders(entity, subEntity, context);
 
         EncodableProperty ide = entity.isIdIncluded()
                 ? propertyFactory.getIdProperty(entity).orElse(null)
@@ -125,21 +126,27 @@ public class DataEncoderFactory {
                 : new EntityNoIdEncoder(encoders);
     }
 
-    protected Map<String, EncodableProperty> propertyEncoders(ResourceEntity<?> entity, ProcessingContext<?> context) {
+    protected <T> Map<String, EncodableProperty> propertyEncoders(
+            ResourceEntity<T> entity,
+            AgEntity<? extends T> subEntity,
+            ProcessingContext<?> context) {
+
         List<Map.Entry<String, EncodableProperty>> entries = new ArrayList<>();
 
-        for (AgAttribute attribute : entity.getAttributes().values()) {
+        for (AgAttribute attribute : entity.getAttributes(subEntity)) {
             EncodableProperty property = propertyFactory.getAttributeProperty(entity, attribute);
             entries.add(entry(attribute.getName(), property));
         }
 
-        for (Map.Entry<String, RelatedResourceEntity<?>> e : entity.getChildren().entrySet()) {
+        for(AgRelationship relationship : entity.getRelationships(subEntity)) {
 
-            AgRelationship relationship = e.getValue().getIncoming();
+            // TODO: "related.getIncoming()" will not be the same as "relationship" in case of inheritance,
+            //   The hope is that "getIncoming()" is not used downstream, but this is not ideal and can cause subtle bugs
 
+            RelatedResourceEntity<?> related = entity.getChild(relationship.getName());
             Encoder encoder = relationship.isToMany()
-                    ? relatedToManyEncoder(e.getValue(), context)
-                    : toOneEncoder(e.getValue(), context);
+                    ? relatedToManyEncoder(related, context)
+                    : toOneEncoder(related, context);
 
             EncodableProperty property = propertyFactory.getRelationshipProperty(
                     entity,
@@ -147,7 +154,7 @@ public class DataEncoderFactory {
                     encoder,
                     context);
 
-            entries.add(entry(e.getKey(), property));
+            entries.add(entry(relationship.getName(), property));
         }
 
         switch (entries.size()) {

@@ -2,10 +2,12 @@ package io.agrest;
 
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
 import io.agrest.protocol.Exp;
 import io.agrest.protocol.Sort;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,16 +45,6 @@ public abstract class BaseResourceEntity<T> implements ResourceEntity<T> {
         this.children = new HashMap<>();
         this.orderings = new ArrayList<>(2);
         this.properties = new HashMap<>(5);
-    }
-
-    /**
-     * @since 5.0
-     */
-    @Override
-    public <ST extends T> ResourceEntity<ST> asSubEntity(AgEntity<ST> subEntity) {
-        return this.agEntity == subEntity && this.agEntity.getSubEntities().isEmpty()
-                ? (ResourceEntity<ST>) this
-                : new FilteredResourceEntity(subEntity, this);
     }
 
     /**
@@ -98,6 +90,55 @@ public abstract class BaseResourceEntity<T> implements ResourceEntity<T> {
     @Override
     public Map<String, AgAttribute> getAttributes() {
         return attributes;
+    }
+
+    @Override
+    public Collection<AgAttribute> getAttributes(AgEntity<? extends T> subEntity) {
+
+        if (subEntity == agEntity && agEntity.getSubEntities().isEmpty()) {
+            return this.attributes.values();
+        }
+
+        if (attributes.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // Important: include AgAttributes from subEntity, as they may have redefined access rules
+        // compared to the ones stored in ResourceEntity
+
+        List<AgAttribute> filtered = new ArrayList<>(attributes.size());
+        for (Map.Entry<String, AgAttribute> e : attributes.entrySet()) {
+            AgAttribute entityAttribute = subEntity.getAttribute(e.getKey());
+            if (entityAttribute != null) {
+                filtered.add(entityAttribute);
+            }
+        }
+
+        return filtered;
+    }
+
+    @Override
+    public Collection<AgRelationship> getRelationships(AgEntity<? extends T> subEntity) {
+
+        if (children.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // TODO: we don't have cached relationships (like we do for attributes), so event when
+        //  "subEntity == agEntity && agEntity.getSubEntities().isEmpty()", we have to build a map from scratch
+
+        // Important: include AgRelationship from subEntity, as they may have redefined access rules
+        // compared to the ones stored in ResourceEntity
+
+        List<AgRelationship> filtered = new ArrayList<>(children.size());
+        for (RelatedResourceEntity<?> r : children.values()) {
+            AgRelationship entityRelationship = subEntity.getRelationship(r.getIncoming().getName());
+            if (entityRelationship != null) {
+                filtered.add(entityRelationship);
+            }
+        }
+
+        return filtered;
     }
 
     /**
