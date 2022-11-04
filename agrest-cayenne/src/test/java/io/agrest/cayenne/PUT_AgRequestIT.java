@@ -2,12 +2,12 @@ package io.agrest.cayenne;
 
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
+import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.unit.main.MainDbTest;
+import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.protocol.Exclude;
 import io.agrest.protocol.Include;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
-import io.agrest.cayenne.cayenne.main.E3;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -18,10 +18,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
 
-public class PUT_AgRequestIT extends DbTest {
+public class PUT_AgRequestIT extends MainDbTest {
 
     @BQTestTool
-    static final AgCayenneTester tester = tester(Resource.class)
+    static final MainModelTester tester = tester(Resource.class)
             .entities(E3.class)
             .build();
 

@@ -20,7 +20,7 @@ public class CayenneUnrelateStartStage extends UnrelateStartStage {
      * by this stage.
      */
     public static ObjectContext cayenneContext(ProcessingContext<?> context) {
-        return (ObjectContext) context.getAttribute(CayenneUnrelateStartStage.UNRELATE_OBJECT_CONTEXT_ATTRIBUTE);
+        return (ObjectContext) context.getProperty(CayenneUnrelateStartStage.UNRELATE_OBJECT_CONTEXT_ATTRIBUTE);
     }
 
     private final ICayennePersister persister;
@@ -31,7 +31,7 @@ public class CayenneUnrelateStartStage extends UnrelateStartStage {
 
     @Override
     public ProcessorOutcome execute(UnrelateContext<?> context) {
-        context.setAttribute(UNRELATE_OBJECT_CONTEXT_ATTRIBUTE, persister.newContext());
+        context.setProperty(UNRELATE_OBJECT_CONTEXT_ATTRIBUTE, persister.newContext());
         return ProcessorOutcome.CONTINUE;
     }
 }

@@ -2,9 +2,9 @@ package io.agrest.cayenne;
 
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E2;
+import io.agrest.cayenne.unit.main.MainDbTest;
+import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.runtime.DefaultSelectBuilder;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -21,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The test class for operations that execute and verify the callbacks and custom stack functions, but do not check
  * the data. So no need to run DB cleanup.
  */
-public class DefaultSelectBuilder_CustomPipelineIT extends DbTest {
+public class DefaultSelectBuilder_CustomPipelineIT extends MainDbTest {
 
     @BQTestTool
-    static final AgCayenneTester tester = tester().build();
+    static final MainModelTester tester = tester().build();
 
     private <T> DefaultSelectBuilder<T> createBuilder(Class<T> type) {
         SelectBuilder<T> builder = tester.runtime().select(type);

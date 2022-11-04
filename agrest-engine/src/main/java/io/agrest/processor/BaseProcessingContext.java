@@ -28,7 +28,7 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
      * @since 5.0
      */
     @Override
-    public <T> T service(Class<T> type) {
+    public <S> S service(Class<S> type) {
         return injector.getInstance(type);
     }
 
@@ -38,7 +38,7 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
      * @since 5.0
      */
     @Override
-    public <T> T service(Key<T> key) {
+    public <S> S service(Key<S> key) {
         return injector.getInstance(key);
     }
 
@@ -58,12 +58,12 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
     }
 
     @Override
-    public Object getAttribute(String name) {
+    public Object getProperty(String name) {
         return attributes != null ? attributes.get(name) : null;
     }
 
     @Override
-    public void setAttribute(String name, Object value) {
+    public void setProperty(String name, Object value) {
 
         // Presumably BaseProcessingContext is single-threaded (one per request), so lazy init and using HashMap is ok.
         if (attributes == null) {

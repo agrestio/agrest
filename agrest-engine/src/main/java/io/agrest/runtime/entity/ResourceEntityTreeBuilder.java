@@ -65,14 +65,14 @@ public class ResourceEntityTreeBuilder {
 
         if (dot < 0) {
 
-            AgAttribute attribute = agEntity.getAttribute(property);
+            AgAttribute attribute = agEntity.getAttributeInHierarchy(property);
             if (attribute != null) {
                 entity.addAttribute(attribute, false);
                 return entity;
             }
         }
 
-        AgRelationship relationship = agEntity.getRelationship(property);
+        AgRelationship relationship = agEntity.getRelationshipInHierarchy(property);
 
         if (relationship != null) {
             String childPath = dot > 0 ? path.substring(dot + 1) : null;
@@ -104,7 +104,7 @@ public class ResourceEntityTreeBuilder {
         //  Currently we optimistically assume that no request processing code would rely on "incoming.target"
         AgEntity<?> target = incoming.getTargetEntity();
         AgEntityOverlay targetOverlay = entityOverlays.get(target.getType());
-        AgEntity<?> overlaidTarget = targetOverlay != null ? targetOverlay.resolve(schema, target) : target;
+        AgEntity<?> overlaidTarget = target.resolveOverlay(schema, targetOverlay);
 
         return incoming.isToMany()
                 ? new ToManyResourceEntity<>(overlaidTarget, parent, incoming)

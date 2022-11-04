@@ -4,13 +4,13 @@ import io.agrest.AgException;
 import io.agrest.AgResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.cayenne.main.E25;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
+import io.agrest.cayenne.pojo.model.PX1;
+import io.agrest.cayenne.pojo.runtime.PX1RootResolver;
+import io.agrest.cayenne.unit.main.MainDbTest;
+import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.cayenne.pojo.model.PX1;
-import io.agrest.cayenne.pojo.runtime.PX1RootResolver;
 import io.agrest.resolver.RelatedDataResolverFactory;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,10 +25,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_Resolvers_PojoToPersistentIT extends DbTest {
+public class GET_Resolvers_PojoToPersistentIT extends MainDbTest {
 
     @BQTestTool
-    static final AgCayenneTester tester = tester(Resource.class).entities(E25.class).build();
+    static final MainModelTester tester = tester(Resource.class).entities(E25.class).build();
 
     @ParameterizedTest
     @EnumSource(GET_Resolvers_CombinationsIT.Overlay.class)

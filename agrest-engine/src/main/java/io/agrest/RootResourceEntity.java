@@ -10,7 +10,7 @@ import java.util.List;
  * @param <T>
  * @since 3.4
  */
-public class RootResourceEntity<T> extends ResourceEntity<T> {
+public class RootResourceEntity<T> extends BaseResourceEntity<T> {
 
     @Deprecated
     private String applicationBase;

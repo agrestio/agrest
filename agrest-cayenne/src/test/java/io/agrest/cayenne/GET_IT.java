@@ -10,8 +10,8 @@ import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E31;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.cayenne.main.E6;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
+import io.agrest.cayenne.unit.main.MainDbTest;
+import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.converter.jsonvalue.UtcDateConverter;
 import io.agrest.encoder.DateTimeFormatters;
 import io.agrest.jaxrs2.AgJaxrs;
@@ -37,10 +37,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GET_IT extends DbTest {
+public class GET_IT extends MainDbTest {
 
     @BQTestTool
-    static final AgCayenneTester tester = tester(Resource.class)
+    static final MainModelTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E4.class, E6.class, E17.class, E19.class, E28.class, E31.class)
             .entitiesAndDependencies(E29.class)
             .build();

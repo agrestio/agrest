@@ -4,7 +4,7 @@ import io.agrest.id.AgObjectId;
 import io.agrest.AgRequestBuilder;
 import io.agrest.RootResourceEntity;
 import io.agrest.cayenne.cayenne.main.E1;
-import io.agrest.cayenne.unit.CayenneNoDbTest;
+import io.agrest.cayenne.unit.main.MainNoDbTest;
 import io.agrest.protocol.Direction;
 import io.agrest.protocol.Exp;
 import io.agrest.protocol.Sort;
@@ -17,7 +17,7 @@ import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-public class CayenneQueryAssemblerTest extends CayenneNoDbTest {
+public class CayenneQueryAssemblerTest extends MainNoDbTest {
 
     @Test
     public void testCreateRootQuery_Ordering() {

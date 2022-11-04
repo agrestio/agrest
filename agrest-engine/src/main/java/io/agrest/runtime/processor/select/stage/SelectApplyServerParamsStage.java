@@ -24,6 +24,7 @@ public class SelectApplyServerParamsStage implements Processor<SelectContext<?>>
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
-        constraintsHandler.constrainResponse(context.getEntity(), context.getSizeConstraints());
+        constraintsHandler.constrainResponse(context.getEntity());
+        constraintsHandler.constrainResponseSize(context.getEntity(), context.getSizeConstraints());
     }
 }

@@ -8,6 +8,7 @@ import io.agrest.access.UpdateAuthorizer;
 import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -33,6 +34,16 @@ public class LazyEntity<T> extends BaseLazyEntity<T, AgEntity<T>> implements AgE
     }
 
     @Override
+    public boolean isAbstract() {
+        return getDelegate().isAbstract();
+    }
+
+    @Override
+    public Collection<AgEntity<? extends T>> getSubEntities() {
+        return getDelegate().getSubEntities();
+    }
+
+    @Override
     public Collection<AgIdPart> getIdParts() {
         return getDelegate().getIdParts();
     }
@@ -47,9 +58,22 @@ public class LazyEntity<T> extends BaseLazyEntity<T, AgEntity<T>> implements AgE
         return getDelegate().getAttributes();
     }
 
+    /**
+     * @since 5.0
+     */
+    @Override
+    public Collection<AgAttribute> getAttributesInHierarchy() {
+        return getDelegate().getAttributesInHierarchy();
+    }
+
     @Override
     public AgAttribute getAttribute(String name) {
         return getDelegate().getAttribute(name);
+    }
+
+    @Override
+    public AgAttribute getAttributeInHierarchy(String name) {
+        return getDelegate().getAttributeInHierarchy(name);
     }
 
     @Override
@@ -60,6 +84,16 @@ public class LazyEntity<T> extends BaseLazyEntity<T, AgEntity<T>> implements AgE
     @Override
     public AgRelationship getRelationship(String name) {
         return getDelegate().getRelationship(name);
+    }
+
+    @Override
+    public AgRelationship getRelationshipInHierarchy(String name) {
+        return getDelegate().getRelationshipInHierarchy(name);
+    }
+
+    @Override
+    public Collection<AgRelationship> getRelationshipsInHierarchy() {
+        return getDelegate().getRelationshipsInHierarchy();
     }
 
     @Override
@@ -85,6 +119,11 @@ public class LazyEntity<T> extends BaseLazyEntity<T, AgEntity<T>> implements AgE
     @Override
     public DeleteAuthorizer<T> getDeleteAuthorizer() {
         return getDelegate().getDeleteAuthorizer();
+    }
+
+    @Override
+    public AgEntity<T> resolveOverlayHierarchy(AgSchema schema, Map<Class<?>, AgEntityOverlay<?>> overlays) {
+        return getDelegate().resolveOverlayHierarchy(schema, overlays);
     }
 
     @Override

@@ -84,7 +84,7 @@ public class IncludeMerger implements IIncludeMerger {
     private void processDefaultIncludes(ResourceEntity<?> resourceEntity) {
         if (!resourceEntity.isIdIncluded() && resourceEntity.getAttributes().isEmpty()) {
 
-            for (AgAttribute a : resourceEntity.getAgEntity().getAttributes()) {
+            for (AgAttribute a : resourceEntity.getAgEntity().getAttributesInHierarchy()) {
                 resourceEntity.addAttribute(a, true);
             }
 

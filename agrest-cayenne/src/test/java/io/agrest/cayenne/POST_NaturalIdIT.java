@@ -6,8 +6,8 @@ import io.agrest.EntityUpdate;
 import io.agrest.cayenne.cayenne.main.E20;
 import io.agrest.cayenne.cayenne.main.E21;
 import io.agrest.cayenne.cayenne.main.E29;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
+import io.agrest.cayenne.unit.main.MainDbTest;
+import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -18,10 +18,10 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-public class POST_NaturalIdIT extends DbTest {
+public class POST_NaturalIdIT extends MainDbTest {
 
     @BQTestTool
-    static final AgCayenneTester tester = tester(Resource.class)
+    static final MainModelTester tester = tester(Resource.class)
             .entities(E20.class, E21.class, E29.class)
             .build();
 

@@ -3,9 +3,9 @@ package io.agrest.cayenne;
 
 import io.agrest.DataResponse;
 import io.agrest.UpdateStage;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
 import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.unit.main.MainDbTest;
+import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.bootique.junit5.BQTestTool;
@@ -21,10 +21,10 @@ import javax.ws.rs.core.UriInfo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PUT_StagesIT extends DbTest {
+public class PUT_StagesIT extends MainDbTest {
 
     @BQTestTool
-    static final AgCayenneTester tester = tester(Resource.class)
+    static final MainModelTester tester = tester(Resource.class)
             .entities(E3.class)
             .build();
 

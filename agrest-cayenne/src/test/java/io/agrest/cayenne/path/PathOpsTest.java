@@ -1,7 +1,7 @@
 package io.agrest.cayenne.path;
 
 import io.agrest.cayenne.cayenne.main.E2;
-import io.agrest.cayenne.unit.CayenneNoDbTest;
+import io.agrest.cayenne.unit.main.MainNoDbTest;
 import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PathOpsTest extends CayenneNoDbTest {
+public class PathOpsTest extends MainNoDbTest {
 
     @Test
     public void testConcat_ObjObj() {

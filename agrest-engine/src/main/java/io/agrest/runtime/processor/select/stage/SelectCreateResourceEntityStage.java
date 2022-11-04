@@ -57,9 +57,7 @@ public class SelectCreateResourceEntityStage implements Processor<SelectContext<
         AgEntityOverlay<T> overlay = context.getEntityOverlay(context.getType());
         AgEntity<T> entity = schema.getEntity(context.getType());
 
-        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(
-                overlay != null ? overlay.resolve(schema, entity) : entity
-        );
+        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(entity.resolveOverlay(schema, overlay));
 
         AgRequest request = context.getRequest();
 

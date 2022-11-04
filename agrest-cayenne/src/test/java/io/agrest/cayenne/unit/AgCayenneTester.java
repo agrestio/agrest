@@ -16,7 +16,6 @@ import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.jdbc.junit5.DbTester;
-import io.bootique.jdbc.junit5.Table;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jersey.JerseyModuleExtender;
 import io.bootique.jetty.junit5.JettyTester;
@@ -45,23 +44,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Agrest endpoints. Under the hood combines multiple Bootique JUnit 5 tools. Users must annotate AgCayenneTester field
  * with {@link io.bootique.junit5.BQTestTool} to tie it to the JUnit 5 lifecycle.
  */
-public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback, BQAfterMethodCallback {
+public abstract class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback, BQAfterMethodCallback {
 
-    private DbTester<?> db;
-    private String cayenneProject;
-    private final List<Class<?>> resources;
-    private Class<? extends Persistent>[] entities;
-    private Class<? extends Persistent>[] entitiesAndDependencies;
-    private BiFunction<AgRuntimeBuilder, ICayennePersister, AgRuntimeBuilder> agCustomizer;
-    private boolean doNotCleanData;
+    protected DbTester<?> db;
+    protected String cayenneProject;
+    protected final List<Class<?>> resources;
+    protected Class<? extends Persistent>[] entities;
+    protected Class<? extends Persistent>[] entitiesAndDependencies;
+    protected BiFunction<AgRuntimeBuilder, ICayennePersister, AgRuntimeBuilder> agCustomizer;
+    protected boolean doNotCleanData;
 
     private JettyTester jettyInScope;
     private CayenneTester cayenneInScope;
     private BQRuntime appInScope;
-
-    public static AgCayenneTester.Builder forDb(DbTester<?> db) {
-        return new Builder().db(db);
-    }
 
     protected AgCayenneTester() {
         this.resources = new ArrayList<>();
@@ -93,138 +88,6 @@ public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallb
 
     public AgRuntime runtime() {
         return getAppInScope().getInstance(AgRuntime.class);
-    }
-
-    public Table e1() {
-        return db.getTable("e1");
-    }
-
-    public Table e2() {
-        return db.getTable("e2");
-    }
-
-    public Table e3() {
-        return db.getTable("e3");
-    }
-
-    public Table e4() {
-        return db.getTable("e4");
-    }
-
-    public Table e5() {
-        return db.getTable("e5");
-    }
-
-    public Table e6() {
-        return db.getTable("e6");
-    }
-
-    public Table e7() {
-        return db.getTable("e7");
-    }
-
-    public Table e8() {
-        return db.getTable("e8");
-    }
-
-    public Table e9() {
-        return db.getTable("e9");
-    }
-
-    public Table e10() {
-        return db.getTable("e10");
-    }
-
-    public Table e11() {
-        return db.getTable("e11");
-    }
-
-    public Table e12() {
-        return db.getTable("e12");
-    }
-
-    public Table e13() {
-        return db.getTable("e13");
-    }
-
-    public Table e12_13() {
-        return db.getTable("e12_e13");
-    }
-
-    public Table e14() {
-        return db.getTable("e14");
-    }
-
-    public Table e15() {
-        return db.getTable("e15");
-    }
-
-    public Table e15_1() {
-        return db.getTable("e15_e1");
-    }
-
-    public Table e15_5() {
-        return db.getTable("e15_e5");
-    }
-
-    public Table e17() {
-        return db.getTable("e17");
-    }
-
-    public Table e18() {
-        return db.getTable("e18");
-    }
-
-    public Table e19() {
-        return db.getTable("e19");
-    }
-
-    public Table e20() {
-        return db.getTable("e20");
-    }
-
-    public Table e21() {
-        return db.getTable("e21");
-    }
-
-    public Table e22() {
-        return db.getTable("e22");
-    }
-
-    public Table e23() {
-        return db.getTable("e23");
-    }
-
-    public Table e24() {
-        return db.getTable("e24");
-    }
-
-    public Table e25() {
-        return db.getTable("e25");
-    }
-
-    public Table e26() {
-        return db.getTable("e26");
-    }
-
-    public Table e27NoPk() {
-        return db.getTable("e27_nopk");
-    }
-
-    public Table e28() {
-        return db.getTable("e28");
-    }
-
-    public Table e29() {
-        return db.getTable("e29");
-    }
-
-    public Table e30() {
-        return db.getTable("e30");
-    }
-
-    public Table e31() {
-        return db.getTable("e31");
     }
 
     protected CayenneTester getCayenneInScope() {
@@ -296,52 +159,56 @@ public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallb
         return builder.createRuntime();
     }
 
-    public static class Builder {
+    public static abstract class Builder<T extends AgCayenneTester> {
 
-        private final AgCayenneTester tester = new AgCayenneTester();
+        protected final T tester;
 
-        public Builder db(DbTester<?> db) {
+        protected Builder(T tester) {
+            this.tester = tester;
+        }
+
+        public Builder<T> db(DbTester<?> db) {
             tester.db = db;
             return this;
         }
 
-        public Builder doNotCleanData() {
+        public Builder<T> doNotCleanData() {
             tester.doNotCleanData = true;
             return this;
         }
 
         @SafeVarargs
-        public final Builder entities(Class<? extends Persistent>... entities) {
+        public final Builder<T> entities(Class<? extends Persistent>... entities) {
             tester.entities = Objects.requireNonNull(entities);
             return this;
         }
 
         @SafeVarargs
-        public final Builder entitiesAndDependencies(Class<? extends Persistent>... entitiesWithDependencies) {
+        public final Builder<T> entitiesAndDependencies(Class<? extends Persistent>... entitiesWithDependencies) {
             tester.entitiesAndDependencies = Objects.requireNonNull(entitiesWithDependencies);
             return this;
         }
 
-        public Builder resources(Class<?>... resources) {
+        public Builder<T> resources(Class<?>... resources) {
             Stream.of(resources).forEach(tester.resources::add);
             return this;
         }
 
-        public Builder agCustomizer(UnaryOperator<AgRuntimeBuilder> agCustomizer) {
+        public Builder<T> agCustomizer(UnaryOperator<AgRuntimeBuilder> agCustomizer) {
             return agCustomizer((b, p) -> agCustomizer.apply(b));
         }
 
-        public Builder agCustomizer(BiFunction<AgRuntimeBuilder, ICayennePersister, AgRuntimeBuilder> agCustomizer) {
+        public Builder<T> agCustomizer(BiFunction<AgRuntimeBuilder, ICayennePersister, AgRuntimeBuilder> agCustomizer) {
             tester.agCustomizer = Objects.requireNonNull(agCustomizer);
             return this;
         }
 
-        public Builder cayenneProject(String cayenneProject) {
+        public Builder<T> cayenneProject(String cayenneProject) {
             tester.cayenneProject = Objects.requireNonNull(cayenneProject);
             return this;
         }
 
-        public AgCayenneTester build() {
+        public T build() {
             Objects.requireNonNull(tester.db);
             Objects.requireNonNull(tester.cayenneProject);
 

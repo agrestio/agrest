@@ -2,19 +2,20 @@ package io.agrest.meta;
 
 import io.agrest.access.CreateAuthorizer;
 import io.agrest.access.DeleteAuthorizer;
+import io.agrest.access.PropertyFilter;
+import io.agrest.access.PropertyFilteringRulesBuilder;
 import io.agrest.access.ReadFilter;
 import io.agrest.access.UpdateAuthorizer;
-import io.agrest.access.PropertyFilteringRulesBuilder;
-import io.agrest.access.PropertyFilter;
 import io.agrest.reader.DataReader;
 import io.agrest.resolver.BaseRootDataResolver;
+import io.agrest.resolver.ReaderBasedResolver;
 import io.agrest.resolver.RelatedDataResolver;
 import io.agrest.resolver.RelatedDataResolverFactory;
-import io.agrest.resolver.ReaderBasedResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.RootDataResolverFactory;
 import io.agrest.runtime.processor.select.SelectContext;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,16 +77,11 @@ public class AgEntityOverlay<T> {
      *
      * @since 4.8
      */
-    public AgEntity<T> resolve(AgSchema schema, AgEntity<T> maybeOverlaid) {
+    public AgEntity<T> resolve(AgSchema schema, AgEntity<T> toOverlay, Collection<AgEntity<? extends T>> overlaidSubEntities) {
 
-        // TODO: support null entity like we do for overlaid Attributes and Relationships?
-        Objects.requireNonNull(maybeOverlaid);
+        Objects.requireNonNull(toOverlay);
 
-        if (isEmpty()) {
-            return maybeOverlaid;
-        }
-
-        AgEntityOverlayResolver resolver = new AgEntityOverlayResolver(schema, maybeOverlaid);
+        AgEntityOverlayResolver resolver = new AgEntityOverlayResolver(schema, toOverlay);
 
         getAttributeOverlays().forEach(resolver::loadAttributeOverlay);
         getRelationshipOverlays().forEach(resolver::loadRelationshipOverlay);
@@ -93,38 +89,40 @@ public class AgEntityOverlay<T> {
         if (readablePropFilter != null) {
             PropertyFilteringRulesBuilder pa = new PropertyFilteringRulesBuilder();
             readablePropFilter.apply(pa);
-            pa.resolveInaccessible(maybeOverlaid, this).forEach(resolver::setReadAccess);
+            pa.resolveInaccessible(toOverlay, this).forEach(resolver::setReadAccess);
         }
 
         if (writablePropFilter != null) {
             PropertyFilteringRulesBuilder pa = new PropertyFilteringRulesBuilder();
             writablePropFilter.apply(pa);
-            pa.resolveInaccessible(maybeOverlaid, this).forEach(resolver::setWriteAccess);
+            pa.resolveInaccessible(toOverlay, this).forEach(resolver::setWriteAccess);
         }
 
         ReadFilter<T> readFilter = ignoreOverlaidReadFilter
                 ? this.readFilter
-                : maybeOverlaid.getReadFilter().andThen(this.readFilter);
+                : toOverlay.getReadFilter().andThen(this.readFilter);
 
         CreateAuthorizer<T> createAuthorizer = ignoreOverlaidCreateAuthorizer
                 ? this.createAuthorizer
-                : maybeOverlaid.getCreateAuthorizer().andThen(this.createAuthorizer);
+                : toOverlay.getCreateAuthorizer().andThen(this.createAuthorizer);
 
         UpdateAuthorizer<T> updateAuthorizer = ignoreOverlaidUpdateAuthorizer
                 ? this.updateAuthorizer
-                : maybeOverlaid.getUpdateAuthorizer().andThen(this.updateAuthorizer);
+                : toOverlay.getUpdateAuthorizer().andThen(this.updateAuthorizer);
 
         DeleteAuthorizer<T> deleteAuthorizer = ignoreOverlaidDeleteAuthorizer
                 ? this.deleteAuthorizer
-                : maybeOverlaid.getDeleteAuthorizer().andThen(this.deleteAuthorizer);
+                : toOverlay.getDeleteAuthorizer().andThen(this.deleteAuthorizer);
 
         return new DefaultEntity<>(
-                maybeOverlaid.getName(),
+                toOverlay.getName(),
                 type,
+                toOverlay.isAbstract(),
+                overlaidSubEntities,
                 resolver.ids,
                 resolver.attributes,
                 resolver.relationships,
-                rootDataResolver != null ? rootDataResolver : maybeOverlaid.getDataResolver(),
+                rootDataResolver != null ? rootDataResolver : toOverlay.getDataResolver(),
                 readFilter,
                 createAuthorizer,
                 updateAuthorizer,
@@ -132,7 +130,7 @@ public class AgEntityOverlay<T> {
         );
     }
 
-    private boolean isEmpty() {
+    public boolean isEmpty() {
         return rootDataResolver == null
                 && attributes.isEmpty()
                 && relationships.isEmpty()

@@ -28,6 +28,6 @@ public class DeleteStartStage implements Processor<DeleteContext<?>> {
     protected <T> void initAgEntity(DeleteContext<T> context) {
         AgEntityOverlay<T> overlay = context.getEntityOverlay();
         AgEntity<T> entity = schema.getEntity(context.getType());
-        context.setAgEntity(overlay != null ? overlay.resolve(schema, entity) : entity);
+        context.setAgEntity(entity.resolveOverlay(schema, overlay));
     }
 }

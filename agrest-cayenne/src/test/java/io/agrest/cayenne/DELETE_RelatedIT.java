@@ -6,8 +6,8 @@ import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E7;
 import io.agrest.cayenne.cayenne.main.E8;
-import io.agrest.cayenne.unit.AgCayenneTester;
-import io.agrest.cayenne.unit.DbTest;
+import io.agrest.cayenne.unit.main.MainDbTest;
+import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -20,10 +20,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 
-public class DELETE_RelatedIT extends DbTest {
+public class DELETE_RelatedIT extends MainDbTest {
 
     @BQTestTool
-    static final AgCayenneTester tester = tester(E2Resource.class, E3Resource.class, E8Resource.class)
+    static final MainModelTester tester = tester(E2Resource.class, E3Resource.class, E8Resource.class)
             .entities(E2.class, E3.class, E7.class, E8.class)
             .build();
 

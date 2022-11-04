@@ -24,11 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -218,6 +220,9 @@ public class AnnotationsAgEntityBuilder<T> {
         return new DefaultEntity<>(
                 name,
                 type,
+                Modifier.isAbstract(type.getModifiers()),
+                // TODO: support for inheritance in Ag core
+                Collections.emptyList(),
                 ids,
                 attributes,
                 relationships,
@@ -232,6 +237,6 @@ public class AnnotationsAgEntityBuilder<T> {
      * @since 4.8
      */
     protected AgEntity<T> applyOverlay(AgEntity<T> entity) {
-        return overlay != null ? overlay.resolve(schema, entity) : entity;
+        return entity.resolveOverlay(schema, overlay);
     }
 }

@@ -9,7 +9,7 @@ import io.agrest.resolver.RelatedDataResolver;
  * @param <T>
  * @since 5.0
  */
-public abstract class RelatedResourceEntity<T> extends ResourceEntity<T> {
+public abstract class RelatedResourceEntity<T> extends BaseResourceEntity<T> {
 
     private final ResourceEntity<?> parent;
     private final AgRelationship incoming;
