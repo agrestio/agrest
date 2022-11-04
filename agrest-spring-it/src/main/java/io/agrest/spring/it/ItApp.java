@@ -2,7 +2,6 @@ package io.agrest.spring.it;
 
 import io.agrest.AgException;
 import io.agrest.runtime.AgRuntime;
-import io.agrest.runtime.AgRuntimeBuilder;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;

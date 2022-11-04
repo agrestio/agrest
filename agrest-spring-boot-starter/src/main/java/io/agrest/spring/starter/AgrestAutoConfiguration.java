@@ -4,6 +4,7 @@ import io.agrest.meta.AgSchema;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.protocol.IEntityUpdateParser;
+import io.agrest.spring.starter.exceptions.RestResponseEntityExceptionHandler;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -11,6 +12,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 
 @Configuration
 @ConditionalOnWebApplication
@@ -59,5 +61,10 @@ public class AgrestAutoConfiguration {
   @ConditionalOnMissingBean
   public SimpleResponseWriter simpleResponseWriter(IJacksonService jacksonService) {
     return new SimpleResponseWriter(jacksonService);
+  }
+
+  @Bean
+  public RestResponseEntityExceptionHandler exceptionHandler() {
+      return new RestResponseEntityExceptionHandler();
   }
 }

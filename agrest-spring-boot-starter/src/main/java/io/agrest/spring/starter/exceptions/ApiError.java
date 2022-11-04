@@ -1,4 +1,4 @@
-package io.agrest.spring.it;
+package io.agrest.spring.starter.exceptions;
 
 import org.springframework.http.HttpStatus;
 
