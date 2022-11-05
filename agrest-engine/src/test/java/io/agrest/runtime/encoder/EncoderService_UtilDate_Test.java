@@ -12,7 +12,6 @@ import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.ValueEncodersProvider;
-import io.agrest.junit.ResourceEntityUtils;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgSchema;
 import io.agrest.meta.LazySchema;
@@ -77,7 +76,7 @@ public class EncoderService_UtilDate_Test {
     private void testUtilDate(java.util.Date date, String expectedPattern) {
 
         ResourceEntity<PUtilDate> re = new RootResourceEntity<>(utilDateEntity);
-        ResourceEntityUtils.appendAttribute(re, "date", java.util.Date.class, PUtilDate::getDate);
+        re.ensureAttribute("date", false);
 
         PUtilDate o = new PUtilDate();
         o.setDate(date);

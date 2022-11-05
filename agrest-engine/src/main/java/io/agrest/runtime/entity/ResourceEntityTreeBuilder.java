@@ -4,6 +4,7 @@ import io.agrest.AgException;
 import io.agrest.RelatedResourceEntity;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
+import io.agrest.ResourceEntityProjection;
 import io.agrest.ToManyResourceEntity;
 import io.agrest.ToOneResourceEntity;
 import io.agrest.meta.*;
@@ -65,18 +66,14 @@ public class ResourceEntityTreeBuilder {
 
         if (dot < 0) {
 
-            AgAttribute attribute = agEntity.getAttributeInHierarchy(property);
-            if (attribute != null) {
-                entity.addAttribute(attribute, false);
+            if (entity.ensureAttribute(property, false)) {
                 return entity;
             }
         }
 
-        AgRelationship relationship = agEntity.getRelationshipInHierarchy(property);
-
-        if (relationship != null) {
+        if (entity.ensureRelationship(property)) {
             String childPath = dot > 0 ? path.substring(dot + 1) : null;
-            return inflateChild(entity, relationship, childPath);
+            return inflateChild(entity, property, childPath);
         }
 
         // this is root entity id and it's included explicitly
@@ -88,20 +85,24 @@ public class ResourceEntityTreeBuilder {
         throw AgException.badRequest("Invalid include path: %s", path);
     }
 
-    protected ResourceEntity<?> inflateChild(ResourceEntity<?> parentEntity, AgRelationship relationship, String childPath) {
-        ResourceEntity<?> childEntity = parentEntity
-                .getChildren()
-                .computeIfAbsent(relationship.getName(), p -> createChildEntity(parentEntity, relationship));
+    protected ResourceEntity<?> inflateChild(ResourceEntity<?> parentEntity, String relationshipName, String childPath) {
+
+        ResourceEntity<?> childEntity = parentEntity.ensureChild(relationshipName, this::createChildEntity);
 
         return childPath != null
                 ? doInflatePath(childEntity, childPath)
                 : childEntity;
     }
 
-    protected RelatedResourceEntity<?> createChildEntity(ResourceEntity<?> parent, AgRelationship incoming) {
+    protected RelatedResourceEntity<?> createChildEntity(ResourceEntity<?> parent, String incomingName) {
+
+        // TODO: there may be more than one incoming relationship. RelatedResourceEntity should know about all of them,
+        //   not just the topmost in the inheritance hierarchy
 
         // TODO: If the target is overlaid, we need to overlay the "incoming" relationship as well for model consistency...
         //  Currently we optimistically assume that no request processing code would rely on "incoming.target"
+
+        AgRelationship incoming = findFirstRelationship(parent, incomingName);
         AgEntity<?> target = incoming.getTargetEntity();
         AgEntityOverlay targetOverlay = entityOverlays.get(target.getType());
         AgEntity<?> overlaidTarget = target.resolveOverlay(schema, targetOverlay);
@@ -109,5 +110,19 @@ public class ResourceEntityTreeBuilder {
         return incoming.isToMany()
                 ? new ToManyResourceEntity<>(overlaidTarget, parent, incoming)
                 : new ToOneResourceEntity<>(overlaidTarget, parent, incoming);
+    }
+
+    // This could have been an AgEntity method, but per notes above, we should not really be doing it this way.
+    // So adding public API to search for relationship in hierarchy is not desirable
+    private AgRelationship findFirstRelationship(ResourceEntity<?> entity, String relationshipName) {
+        for (ResourceEntityProjection<?> p : entity.getProjections()) {
+
+            AgRelationship r = p.getRelationship(relationshipName);
+            if (r != null) {
+                return r;
+            }
+        }
+
+        throw AgException.badRequest("No relationship named '%s' in '%s'", relationshipName, entity.getName());
     }
 }

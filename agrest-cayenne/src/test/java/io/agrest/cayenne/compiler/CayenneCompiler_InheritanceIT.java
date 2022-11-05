@@ -1,6 +1,7 @@
 package io.agrest.cayenne.compiler;
 
 import io.agrest.cayenne.cayenne.inheritance.Ie1Sub1;
+import io.agrest.cayenne.cayenne.inheritance.Ie1Sub1Sub1;
 import io.agrest.cayenne.cayenne.inheritance.Ie1Sub2;
 import io.agrest.cayenne.cayenne.inheritance.Ie1Super;
 import io.agrest.cayenne.cayenne.inheritance.Ie2;
@@ -28,22 +29,22 @@ public class CayenneCompiler_InheritanceIT extends InheritanceNoDbTest {
     }
 
     @Test
-    public void testGetAllAttributes_Sub() {
-        AgEntity<Ie1Sub2> ieSub2 = getAgEntity(Ie1Sub2.class);
-        String as = ieSub2.getAttributesInHierarchy().stream()
+    public void testGetAttributes_SubSub() {
+        AgEntity<Ie1Sub1Sub1> ieSub1Sub1 = getAgEntity(Ie1Sub1Sub1.class);
+        String as = ieSub1Sub1.getAttributes().stream()
                 .map(AgAttribute::getName)
                 .sorted()
                 .collect(Collectors.joining(","));
-        assertEquals("a0,a2,type", as, "Must include own and inherited attributes");
+        assertEquals("a0,a1,a3,type", as, "Must include own and inherited attributes");
     }
 
     @Test
-    public void testGetAllAttributes_Super() {
-        String as = getAgEntity(Ie1Super.class).getAttributesInHierarchy().stream()
+    public void testGetAttributes_Super() {
+        String as = getAgEntity(Ie1Super.class).getAttributes().stream()
                 .map(AgAttribute::getName)
                 .sorted()
                 .collect(Collectors.joining(","));
-        assertEquals("a0,a1,a2,a3,type", as, "Must include own, inherited and subclass attributes");
+        assertEquals("a0,type", as, "Must include own, inherited and subclass attributes");
     }
 
     @Test

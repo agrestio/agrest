@@ -7,7 +7,6 @@ import io.agrest.access.UpdateAuthorizer;
 import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -31,10 +30,6 @@ public class DefaultEntity<T> implements AgEntity<T> {
     private final Map<String, AgIdPart> ids;
     private final Map<String, AgAttribute> attributes;
     private final Map<String, AgRelationship> relationships;
-
-    // resolved lazily to avoid stack overflow when reading sub entities
-    private volatile Map<String, AgAttribute> attributesInHierarchy;
-    private volatile Map<String, AgRelationship> relationshipsInHierarchy;
 
     public DefaultEntity(
             String name,
@@ -117,42 +112,6 @@ public class DefaultEntity<T> implements AgEntity<T> {
     }
 
     @Override
-    public Collection<AgAttribute> getAttributesInHierarchy() {
-        return getOrCreateAttributesInHierarchy().values();
-    }
-
-    @Override
-    public AgAttribute getAttributeInHierarchy(String name) {
-        return getOrCreateAttributesInHierarchy().get(name);
-    }
-
-    protected Map<String, AgAttribute> getOrCreateAttributesInHierarchy() {
-        // resolved lazily to avoid stack overflow when reading sub entities
-        if (this.attributesInHierarchy == null) {
-            this.attributesInHierarchy = collectAllAttributes();
-        }
-        return attributesInHierarchy;
-    }
-
-    @Override
-    public Collection<AgRelationship> getRelationshipsInHierarchy() {
-        return getOrCreateRelationshipsInHierarchy().values();
-    }
-
-    @Override
-    public AgRelationship getRelationshipInHierarchy(String name) {
-        return getOrCreateRelationshipsInHierarchy().get(name);
-    }
-
-    protected Map<String, AgRelationship> getOrCreateRelationshipsInHierarchy() {
-        // resolved lazily to avoid stack overflow when reading sub entities
-        if (this.relationshipsInHierarchy == null) {
-            this.relationshipsInHierarchy = collectAllRelationships();
-        }
-        return relationshipsInHierarchy;
-    }
-
-    @Override
     public RootDataResolver<T> getDataResolver() {
         return dataResolver;
     }
@@ -211,31 +170,5 @@ public class DefaultEntity<T> implements AgEntity<T> {
     @Override
     public String toString() {
         return "DefaultAgEntity[" + getName() + "]";
-    }
-
-    protected Map<String, AgAttribute> collectAllAttributes() {
-        return subEntities.isEmpty() ? attributes : collectAllAttributes(new HashMap<>(), this);
-    }
-
-    protected Map<String, AgAttribute> collectAllAttributes(Map<String, AgAttribute> collectTo, AgEntity<?> entity) {
-        // on the off-chance that sub-entities redefine our attributes, add subclasses first, and then add ours
-        // to override everything for this entity
-        entity.getSubEntities().forEach(se -> collectAllAttributes(collectTo, se));
-        entity.getAttributes().forEach(a -> collectTo.put(a.getName(), a));
-
-        return collectTo;
-    }
-
-    protected Map<String, AgRelationship> collectAllRelationships() {
-        return subEntities.isEmpty() ? relationships : collectAllRelationships(new HashMap<>(), this);
-    }
-
-    protected Map<String, AgRelationship> collectAllRelationships(Map<String, AgRelationship> collectTo, AgEntity<?> entity) {
-        // on the off-chance that sub-entities redefine our relationships, add subclasses first, and then add ours
-        // to override everything for this entity
-        entity.getSubEntities().forEach(se -> collectAllRelationships(collectTo, se));
-        entity.getRelationships().forEach(r -> collectTo.put(r.getName(), r));
-
-        return collectTo;
     }
 }

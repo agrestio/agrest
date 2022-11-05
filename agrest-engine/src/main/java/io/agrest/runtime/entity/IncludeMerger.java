@@ -3,6 +3,7 @@ package io.agrest.runtime.entity;
 import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
+import io.agrest.ResourceEntityProjection;
 import io.agrest.protocol.Include;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgSchema;
@@ -82,10 +83,14 @@ public class IncludeMerger implements IIncludeMerger {
     }
 
     private void processDefaultIncludes(ResourceEntity<?> resourceEntity) {
-        if (!resourceEntity.isIdIncluded() && resourceEntity.getAttributes().isEmpty()) {
 
-            for (AgAttribute a : resourceEntity.getAgEntity().getAttributesInHierarchy()) {
-                resourceEntity.addAttribute(a, true);
+        // TODO: will need to take different projections into account
+        if (!resourceEntity.isIdIncluded() && resourceEntity.getBaseProjection().getAttributes().isEmpty()) {
+
+            for(ResourceEntityProjection<?> p : resourceEntity.getProjections()) {
+                for (AgAttribute a : p.getAgEntity().getAttributes()) {
+                    p.ensureAttribute(a.getName(), true);
+                }
             }
 
             resourceEntity.includeId();

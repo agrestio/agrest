@@ -1,6 +1,5 @@
 package io.agrest.cayenne.encoder;
 
-import io.agrest.id.AgObjectId;
 import io.agrest.DataResponse;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
@@ -15,7 +14,7 @@ import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.converter.valuestring.ValueStringConvertersProvider;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.ValueEncodersProvider;
-import io.agrest.meta.DefaultAttribute;
+import io.agrest.id.AgObjectId;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
 import io.agrest.runtime.encoder.EncoderService;
@@ -73,15 +72,16 @@ public class EncoderServiceTest extends MainNoDbTest {
     @Test
     public void testGetRootEncoder_ExcludedRelationshipAttributes() {
 
-        RootResourceEntity<E2> descriptor = getResourceEntity(E2.class);
-        descriptor.includeId();
-        CayenneProcessor.getOrCreateRootEntity(descriptor);
+        RootResourceEntity<E2> re = getResourceEntity(E2.class);
+        re.includeId();
+        CayenneProcessor.getOrCreateRootEntity(re);
 
-        ToManyResourceEntity<E3> e3Descriptor = getToManyChildEntity(E3.class, descriptor, E2.E3S.getName());
-        e3Descriptor.includeId();
-        CayenneProcessor.getOrCreateRelatedEntity(e3Descriptor);
-        e3Descriptor.addAttribute(new DefaultAttribute("name", String.class, true, true, o -> ((E3)o).getName()), false);
-        descriptor.getChildren().put(E2.E3S.getName(), e3Descriptor);
+        ToManyResourceEntity<E3> reE3 = getToManyChildEntity(E3.class, re, E2.E3S.getName());
+        reE3.includeId();
+        CayenneProcessor.getOrCreateRelatedEntity(reE3);
+        reE3.ensureAttribute("name", false);
+        re.getChildren().put("e3s", reE3);
+        re.getBaseProjection().ensureRelationship("e3s");
 
         ObjectContext context = mockCayennePersister.newContext();
         E2 e2 = new E2();
@@ -105,12 +105,12 @@ public class EncoderServiceTest extends MainNoDbTest {
         e2.addToE3s(e32);
 
         // saves result set in ResourceEntity
-        descriptor.setData(List.of(e2));
-        e3Descriptor.addData(AgObjectId.of(7), e31);
-        e3Descriptor.addData(AgObjectId.of(7), e32);
+        re.setData(List.of(e2));
+        reE3.addData(AgObjectId.of(7), e31);
+        reE3.addData(AgObjectId.of(7), e32);
 
         assertEquals("{\"data\":[{\"id\":7,\"e3s\":[{\"id\":5,\"name\":\"31\"},{\"id\":6,\"name\":\"32\"}]}],\"total\":1}",
-                toJson(e2, descriptor));
+                toJson(e2, re));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class EncoderServiceTest extends MainNoDbTest {
 
         ResourceEntity<E19> descriptor = getResourceEntity(E19.class);
         descriptor.includeId();
-        descriptor.addAttribute(getAgEntity(E19.class).getAttribute(E19.GUID.getName()), false);
+        descriptor.ensureAttribute("guid", false);
 
         E19 e19 = new E19();
         e19.setObjectId(ObjectId.of("E19", E19.ID_PK_COLUMN, 1));

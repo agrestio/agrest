@@ -51,7 +51,7 @@ public class IncludeMergerTest {
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
         includeMerger.merge(root, asList(), Collections.emptyMap());
 
-        assertEquals(entity.getAttributes().size(), root.getAttributes().size());
+        assertEquals(entity.getAttributes().size(), root.getBaseProjection().getAttributes().size());
         assertTrue(root.isIdIncluded());
         assertEquals(0, root.getChildren().size());
     }
@@ -63,7 +63,7 @@ public class IncludeMergerTest {
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
         includeMerger.merge(root, asList(new Include("name")), Collections.emptyMap());
 
-        assertEquals(1, root.getAttributes().size());
+        assertEquals(1, root.getBaseProjection().getAttributes().size());
         assertFalse(root.isIdIncluded());
         assertEquals(0, root.getChildren().size());
     }
@@ -75,7 +75,7 @@ public class IncludeMergerTest {
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
         includeMerger.merge(root, asList(new Include("name"), new Include("ys")), Collections.emptyMap());
 
-        assertEquals(1, root.getAttributes().size());
+        assertEquals(1, root.getBaseProjection().getAttributes().size());
         assertFalse(root.isIdIncluded());
         assertEquals(1, root.getChildren().size());
     }
@@ -91,19 +91,19 @@ public class IncludeMergerTest {
                 new Include("ys.z")
         ), Collections.emptyMap());
 
-        assertEquals(1, root.getAttributes().size());
+        assertEquals(1, root.getBaseProjection().getAttributes().size());
         assertFalse(root.isIdIncluded());
         assertEquals(1, root.getChildren().size());
 
         RelatedResourceEntity<?> yChild = root.getChild("ys");
         assertNotNull(yChild);
-        assertEquals(1, yChild.getAttributes().size());
+        assertEquals(1, yChild.getBaseProjection().getAttributes().size());
         assertFalse(yChild.isIdIncluded());
         assertEquals(1, yChild.getChildren().size());
 
         RelatedResourceEntity<?> zChild = yChild.getChild("z");
         assertNotNull(zChild);
-        assertEquals(schema.getEntity(Z.class).getAttributes().size(), zChild.getAttributes().size());
+        assertEquals(schema.getEntity(Z.class).getAttributes().size(), zChild.getBaseProjection().getAttributes().size());
         assertTrue(zChild.isIdIncluded());
         assertEquals(0, zChild.getChildren().size());
     }
@@ -130,19 +130,19 @@ public class IncludeMergerTest {
                 new Include("ys.z")
         ), overlays);
 
-        assertEquals(1, root.getAttributes().size());
+        assertEquals(1, root.getBaseProjection().getAttributes().size());
         assertFalse(root.isIdIncluded());
         assertEquals(1, root.getChildren().size());
 
         RelatedResourceEntity<?> yChild = root.getChild("ys");
         assertNotNull(yChild);
-        assertEquals(1, yChild.getAttributes().size());
+        assertEquals(1, yChild.getBaseProjection().getAttributes().size());
         assertFalse(yChild.isIdIncluded());
         assertEquals(1, yChild.getChildren().size());
 
         RelatedResourceEntity<?> zChild = yChild.getChild("z");
         assertNotNull(zChild);
-        assertEquals(schema.getEntity(Z.class).getAttributes().size(), zChild.getAttributes().size());
+        assertEquals(schema.getEntity(Z.class).getAttributes().size(), zChild.getBaseProjection().getAttributes().size());
         assertTrue(zChild.isIdIncluded());
         assertEquals(0, zChild.getChildren().size());
     }

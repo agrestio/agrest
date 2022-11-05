@@ -1,8 +1,8 @@
 package io.agrest.runtime.constraints;
 
 import io.agrest.EntityUpdate;
-import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
+import io.agrest.ResourceEntityProjection;
 import io.agrest.SizeConstraints;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
@@ -12,8 +12,9 @@ import io.agrest.runtime.processor.update.UpdateContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 
 /**
  * An {@link IConstraintsHandler} that ensures that no target attributes exceed
@@ -27,7 +28,6 @@ public class ConstraintsHandler implements IConstraintsHandler {
 
     @Override
     public <T> void constrainUpdate(UpdateContext<T> context) {
-
 
         AgEntity<?> entity = context.getEntity().getAgEntity();
 
@@ -54,7 +54,7 @@ public class ConstraintsHandler implements IConstraintsHandler {
 
                     // do not report default properties, as this wasn't a client's fault it got on the list, but
                     // still remove it
-                    if (!context.getEntity().isDefaultAttribute(name)) {
+                    if (!context.getEntity().getBaseProjection().isDefaultAttribute(name)) {
                         LOGGER.debug("Attribute not allowed, removing: '{}' for id {}", name, u.getId());
                     }
 
@@ -129,30 +129,47 @@ public class ConstraintsHandler implements IConstraintsHandler {
         }
 
         // check attributes from ResourceEntity, that are already overlaid with request-specific rules
-        Iterator<Map.Entry<String, AgAttribute>> ait = entity.getAttributes().entrySet().iterator();
-        while (ait.hasNext()) {
+        for (ResourceEntityProjection<?> projection : entity.getProjections()) {
 
-            Map.Entry<String, AgAttribute> a = ait.next();
-            if (!a.getValue().isReadable()) {
+            List<String> aToRemove = null;
 
-                // hack: do not report default properties, as this wasn't a client's fault it go there..
-                if (!entity.isDefaultAttribute(a.getKey())) {
-                    LOGGER.info("Attribute not allowed, removing: {}", a);
+            for (AgAttribute a : projection.getAttributes()) {
+                if (!a.isReadable()) {
+
+                    // do not report default properties, as this wasn't a client's fault it go there..
+                    if (!projection.isDefaultAttribute(a.getName())) {
+                        LOGGER.info("Attribute not allowed, removing: {}", a);
+                    }
+
+                    // can't remove in the iterator, so collect removed properties
+                    if (aToRemove == null) {
+                        aToRemove = new ArrayList<>();
+                    }
+                    aToRemove.add(a.getName());
                 }
-
-                ait.remove();
             }
-        }
 
-        Iterator<Map.Entry<String, RelatedResourceEntity<?>>> rit = entity.getChildren().entrySet().iterator();
-        while (rit.hasNext()) {
+            if (aToRemove != null) {
+                aToRemove.forEach(projection::removeAttribute);
+            }
 
-            Map.Entry<String, RelatedResourceEntity<?>> r = rit.next();
-            if (r.getValue().getIncoming().isReadable()) {
-                constrainForRead(r.getValue());
-            } else {
-                LOGGER.info("Relationship not allowed, removing: {}", r.getKey());
-                rit.remove();
+            List<String> rToRemove = null;
+
+            for (AgRelationship r : projection.getRelationships()) {
+                if (r.isReadable()) {
+                    constrainForRead(entity.getChild(r.getName()));
+                } else {
+                    LOGGER.info("Relationship not allowed, removing: {}", r.getName());
+                    // can't remove in the iterator, so collect removed properties
+                    if (rToRemove == null) {
+                        rToRemove = new ArrayList<>();
+                    }
+                    rToRemove.add(r.getName());
+                }
+            }
+
+            if (rToRemove != null) {
+                rToRemove.forEach(projection::removeRelationship);
             }
         }
     }

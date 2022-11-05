@@ -1,13 +1,13 @@
 package io.agrest.runtime.constraints;
 
 import io.agrest.RootResourceEntity;
-import io.agrest.compiler.AgEntityCompiler;
+import io.agrest.annotation.AgAttribute;
+import io.agrest.annotation.AgId;
+import io.agrest.annotation.AgRelationship;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.junit.ResourceEntityUtils;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgSchema;
 import io.agrest.meta.LazySchema;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -18,15 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConstraintsHandlerWithDefaultsTest {
 
-    private static ConstraintsHandler constraintsHandler;
-    private static AgSchema schema;
-
-    @BeforeAll
-    public static void before() {
-        AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Map.of());
-        schema = new LazySchema(List.of(compiler));
-        constraintsHandler = new ConstraintsHandler();
-    }
+    static final ConstraintsHandler constraintsHandler = new ConstraintsHandler();
+    static final AgSchema schema = new LazySchema(List.of(new AnnotationsAgEntityCompiler(Map.of())));
 
     @Test
     public void testConstrainResponse_Default() {
@@ -34,12 +27,12 @@ public class ConstraintsHandlerWithDefaultsTest {
         AgEntity<Tr> entity = schema.getEntity(Tr.class);
 
         RootResourceEntity<Tr> te1 = new RootResourceEntity<>(entity);
-        ResourceEntityUtils.appendAttribute(te1, "a", Integer.class, true, true, Tr::getA);
-        ResourceEntityUtils.appendAttribute(te1, "b", String.class, false, true, Tr::getB);
+        te1.ensureAttribute("a", false);
+        te1.ensureAttribute("b", false);
 
         constraintsHandler.constrainResponse(te1);
-        assertEquals(1, te1.getAttributes().size());
-        assertTrue(te1.getAttributes().containsKey("a"));
+        assertEquals(1, te1.getBaseProjection().getAttributes().size());
+        assertTrue(te1.getBaseProjection().getAttribute("a") != null);
         assertTrue(te1.getChildren().isEmpty());
     }
 
@@ -49,31 +42,35 @@ public class ConstraintsHandlerWithDefaultsTest {
         AgEntity<Ts> entity = schema.getEntity(Ts.class);
 
         RootResourceEntity<Ts> te1 = new RootResourceEntity<>(entity);
-        ResourceEntityUtils.appendAttribute(te1, "m", String.class, true, true, Ts::getM);
-        ResourceEntityUtils.appendAttribute(te1, "n", String.class, true, true, Ts::getN);
+        te1.ensureAttribute("m", false);
+        te1.ensureAttribute("n", false);
 
         constraintsHandler.constrainResponse(te1);
-        assertEquals(2, te1.getAttributes().size());
-        assertTrue(te1.getAttributes().containsKey("m"));
-        assertTrue(te1.getAttributes().containsKey("n"));
+        assertEquals(2, te1.getBaseProjection().getAttributes().size());
+        assertTrue(te1.getBaseProjection().getAttribute("m") != null);
+        assertTrue(te1.getBaseProjection().getAttribute("n") != null);
 
         assertTrue(te1.getChildren().isEmpty());
     }
 
     public static class Tr {
 
+        @AgId
         public int getId() {
             throw new UnsupportedOperationException();
         }
 
+        @AgAttribute
         public int getA() {
             throw new UnsupportedOperationException();
         }
 
+        @AgAttribute(readable = false)
         public String getB() {
             throw new UnsupportedOperationException();
         }
 
+        @AgRelationship
         public Ts getRts() {
             throw new UnsupportedOperationException();
         }
@@ -81,18 +78,22 @@ public class ConstraintsHandlerWithDefaultsTest {
 
     public static class Ts {
 
+        @AgId
         public int getId() {
             throw new UnsupportedOperationException();
         }
 
+        @AgAttribute
         public String getN() {
             throw new UnsupportedOperationException();
         }
 
+        @AgAttribute
         public String getM() {
             throw new UnsupportedOperationException();
         }
 
+        @AgRelationship
         public List<Tr> getRtrs() {
             throw new UnsupportedOperationException();
         }

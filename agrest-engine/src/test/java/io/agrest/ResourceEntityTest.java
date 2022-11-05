@@ -11,13 +11,19 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-public class BaseResourceEntityTest {
+public class ResourceEntityTest {
+
+    private <T> AgEntity<T> mockEntity() {
+        AgEntity<T> entity = mock(AgEntity.class);
+        when(entity.getName()).thenReturn("mock");
+        return entity;
+    }
 
     @Test
     public void testQualifier() {
-        @SuppressWarnings("unchecked")
-        BaseResourceEntity<P1> e = new RootResourceEntity<>(mock(AgEntity.class));
+        ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity());
         assertNull(e.getExp());
 
         e.andExp(Exp.simple("a = 1"));
@@ -32,7 +38,7 @@ public class BaseResourceEntityTest {
     public void testGetDataWindow_NoOffsetLimit() {
         List<P1> data = asList(new P1(), new P1(), new P1());
 
-        BaseResourceEntity<P1> e = new RootResourceEntity<>(mock(AgEntity.class));
+        ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity());
         assertSame(data, e.getDataWindow(data));
     }
 
@@ -40,7 +46,7 @@ public class BaseResourceEntityTest {
     public void testGetDataWindow_Offset() {
         List<P1> data = asList(new P1(), new P1(), new P1());
 
-        BaseResourceEntity<P1> e = new RootResourceEntity<>(mock(AgEntity.class));
+        ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity());
         e.setStart(1);
         assertEquals(asList(data.get(1), data.get(2)), e.getDataWindow(data));
     }
@@ -49,7 +55,7 @@ public class BaseResourceEntityTest {
     public void testGetDataWindow_OffsetPastEnd() {
         List<P1> data = asList(new P1(), new P1(), new P1());
 
-        BaseResourceEntity<P1> e = new RootResourceEntity<>(mock(AgEntity.class));
+        ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity());
         e.setStart(4);
         assertEquals(Collections.emptyList(), e.getDataWindow(data));
     }
@@ -58,7 +64,7 @@ public class BaseResourceEntityTest {
     public void testGetDataWindow_Limit() {
         List<P1> data = asList(new P1(), new P1(), new P1());
 
-        BaseResourceEntity<P1> e = new RootResourceEntity<>(mock(AgEntity.class));
+        ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity());
         e.setLimit(2);
         assertEquals(asList(data.get(0), data.get(1)), e.getDataWindow(data));
     }
@@ -67,7 +73,7 @@ public class BaseResourceEntityTest {
     public void testGetDataWindow_LimitPastEnd() {
         List<P1> data = asList(new P1(), new P1(), new P1());
 
-        BaseResourceEntity<P1> e = new RootResourceEntity<>(mock(AgEntity.class));
+        ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity());
         e.setLimit(4);
         assertEquals(asList(data.get(0), data.get(1), data.get(2)), e.getDataWindow(data));
     }
@@ -76,7 +82,7 @@ public class BaseResourceEntityTest {
     public void testGetDataWindow_OffsetLimit() {
         List<P1> data = asList(new P1(), new P1(), new P1());
 
-        BaseResourceEntity<P1> e = new RootResourceEntity<>(mock(AgEntity.class));
+        ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity());
         e.setStart(1);
         e.setLimit(1);
         assertEquals(asList(data.get(1)), e.getDataWindow(data));
@@ -86,7 +92,7 @@ public class BaseResourceEntityTest {
     public void testGetDataWindow_OffsetNegativeLimit() {
         List<P1> data = asList(new P1(), new P1(), new P1());
 
-        BaseResourceEntity<P1> e = new RootResourceEntity<>(mock(AgEntity.class));
+        ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity());
         e.setStart(1);
         e.setLimit(-5);
         assertEquals(asList(data.get(1), data.get(2)), e.getDataWindow(data));
@@ -96,7 +102,7 @@ public class BaseResourceEntityTest {
     public void testGetDataWindow_LimitNegativeOffset() {
         List<P1> data = asList(new P1(), new P1(), new P1());
 
-        BaseResourceEntity<P1> e = new RootResourceEntity<>(mock(AgEntity.class));
+        ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity());
         e.setLimit(2);
         e.setStart(-2);
         assertEquals(asList(data.get(0), data.get(1)), e.getDataWindow(data));

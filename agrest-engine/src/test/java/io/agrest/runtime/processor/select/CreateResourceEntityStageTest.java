@@ -94,7 +94,7 @@ public class CreateResourceEntityStageTest {
 
         assertNotNull(resourceEntity);
         assertTrue(resourceEntity.isIdIncluded());
-        assertEquals(3, resourceEntity.getAttributes().size());
+        assertEquals(3, resourceEntity.getBaseProjection().getAttributes().size());
         assertTrue(resourceEntity.getChildren().isEmpty());
     }
 
@@ -116,9 +116,9 @@ public class CreateResourceEntityStageTest {
         assertNotNull(resourceEntity);
         assertFalse(resourceEntity.isIdIncluded());
 
-        assertEquals(2, resourceEntity.getAttributes().size());
-        assertTrue(resourceEntity.getAttributes().containsKey("a"));
-        assertTrue(resourceEntity.getAttributes().containsKey("b"));
+        assertEquals(2, resourceEntity.getBaseProjection().getAttributes().size());
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("a"));
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("b"));
 
         assertTrue(resourceEntity.getChildren().isEmpty());
     }
@@ -141,8 +141,8 @@ public class CreateResourceEntityStageTest {
         assertNotNull(resourceEntity);
         assertTrue(resourceEntity.isIdIncluded());
 
-        assertEquals(1, resourceEntity.getAttributes().size());
-        assertTrue(resourceEntity.getAttributes().containsKey("c"));
+        assertEquals(1, resourceEntity.getBaseProjection().getAttributes().size());
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("c"));
         assertTrue(resourceEntity.getChildren().isEmpty());
     }
 
@@ -173,8 +173,8 @@ public class CreateResourceEntityStageTest {
 
         assertNotNull(resourceEntity);
         assertTrue(resourceEntity.isIdIncluded());
-        assertEquals(1, resourceEntity.getAttributes().size());
-        assertTrue(resourceEntity.getAttributes().containsKey("b"));
+        assertEquals(1, resourceEntity.getBaseProjection().getAttributes().size());
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("b"));
 
         assertTrue(resourceEntity.getChildren().isEmpty());
     }
@@ -193,9 +193,9 @@ public class CreateResourceEntityStageTest {
 
         assertNotNull(resourceEntity);
         assertTrue(resourceEntity.isIdIncluded());
-        assertEquals(2, resourceEntity.getAttributes().size());
-        assertTrue(resourceEntity.getAttributes().containsKey("m"));
-        assertTrue(resourceEntity.getAttributes().containsKey("n"));
+        assertEquals(2, resourceEntity.getBaseProjection().getAttributes().size());
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("m"));
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("n"));
 
         assertEquals(1, resourceEntity.getChildren().size());
         assertEquals(1, resourceEntity.getChildren().entrySet().size());
@@ -203,10 +203,10 @@ public class CreateResourceEntityStageTest {
 
         ResourceEntity<Tt> ttEntity = (ResourceEntity<Tt>) resourceEntity.getChildren().get("rtt");
         assertTrue(ttEntity.isIdIncluded());
-        assertEquals(2, ttEntity.getAttributes().size());
+        assertEquals(2, ttEntity.getBaseProjection().getAttributes().size());
 
-        assertTrue(ttEntity.getAttributes().containsKey("o"));
-        assertTrue(ttEntity.getAttributes().containsKey("p"));
+        assertNotNull(ttEntity.getBaseProjection().getAttribute("o"));
+        assertNotNull(ttEntity.getBaseProjection().getAttribute("p"));
         assertTrue(ttEntity.getChildren().isEmpty());
     }
 
@@ -226,8 +226,8 @@ public class CreateResourceEntityStageTest {
 
         assertNotNull(resourceEntity);
         assertFalse(resourceEntity.isIdIncluded());
-        assertEquals(1, resourceEntity.getAttributes().size());
-        assertTrue(resourceEntity.getAttributes().containsKey("m"));
+        assertEquals(1, resourceEntity.getBaseProjection().getAttributes().size());
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("m"));
 
         assertEquals(1, resourceEntity.getChildren().size());
         assertEquals(1, resourceEntity.getChildren().entrySet().size());
@@ -235,9 +235,9 @@ public class CreateResourceEntityStageTest {
 
         ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get("rtt");
         assertFalse(e3ResourceEntity.isIdIncluded());
-        assertEquals(1, e3ResourceEntity.getAttributes().size());
+        assertEquals(1, e3ResourceEntity.getBaseProjection().getAttributes().size());
 
-        assertTrue(e3ResourceEntity.getAttributes().containsKey("o"));
+        assertNotNull(e3ResourceEntity.getBaseProjection().getAttribute("o"));
         assertTrue(e3ResourceEntity.getChildren().isEmpty());
     }
 
@@ -260,8 +260,8 @@ public class CreateResourceEntityStageTest {
 
         assertNotNull(resourceEntity);
         assertTrue(resourceEntity.isIdIncluded());
-        assertEquals(1, resourceEntity.getAttributes().size());
-        assertTrue(resourceEntity.getAttributes().containsKey("n"));
+        assertEquals(1, resourceEntity.getBaseProjection().getAttributes().size());
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("n"));
 
         assertEquals(1, resourceEntity.getChildren().size());
         assertEquals(1, resourceEntity.getChildren().entrySet().size());
@@ -269,9 +269,9 @@ public class CreateResourceEntityStageTest {
 
         ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get("rtt");
         assertFalse(e3ResourceEntity.isIdIncluded());
-        assertEquals(1, e3ResourceEntity.getAttributes().size());
+        assertEquals(1, e3ResourceEntity.getBaseProjection().getAttributes().size());
 
-        assertTrue(e3ResourceEntity.getAttributes().containsKey("o"));
+        assertNotNull(e3ResourceEntity.getBaseProjection().getAttribute("o"));
         assertTrue(e3ResourceEntity.getChildren().isEmpty());
     }
 
@@ -294,8 +294,8 @@ public class CreateResourceEntityStageTest {
 
         assertNotNull(resourceEntity);
         assertTrue(resourceEntity.isIdIncluded());
-        assertEquals(1, resourceEntity.getAttributes().size());
-        assertTrue(resourceEntity.getAttributes().containsKey("m"));
+        assertEquals(1, resourceEntity.getBaseProjection().getAttributes().size());
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("m"));
 
         assertEquals(1, resourceEntity.getChildren().size());
         assertEquals(1, resourceEntity.getChildren().entrySet().size());
@@ -303,9 +303,9 @@ public class CreateResourceEntityStageTest {
 
         ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get("rtt");
         assertTrue(e3ResourceEntity.isIdIncluded());
-        assertEquals(1, e3ResourceEntity.getAttributes().size());
+        assertEquals(1, e3ResourceEntity.getBaseProjection().getAttributes().size());
 
-        assertTrue(e3ResourceEntity.getAttributes().containsKey("p"));
+        assertNotNull(e3ResourceEntity.getBaseProjection().getAttribute("p"));
         assertTrue(e3ResourceEntity.getChildren().isEmpty());
     }
 
@@ -326,7 +326,7 @@ public class CreateResourceEntityStageTest {
 
         assertNotNull(resourceEntity);
         assertTrue(resourceEntity.isIdIncluded());
-        assertTrue(resourceEntity.getAttributes().isEmpty());
+        assertTrue(resourceEntity.getBaseProjection().getAttributes().isEmpty());
 
         assertEquals(1, resourceEntity.getChildren().size());
         assertEquals(1, resourceEntity.getChildren().entrySet().size());
@@ -334,7 +334,7 @@ public class CreateResourceEntityStageTest {
 
         ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get("rtt");
         assertTrue(e3ResourceEntity.isIdIncluded());
-        assertTrue(e3ResourceEntity.getAttributes().isEmpty());
+        assertTrue(e3ResourceEntity.getBaseProjection().getAttributes().isEmpty());
         assertTrue(e3ResourceEntity.getChildren().isEmpty());
     }
 

@@ -15,7 +15,6 @@ import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.ValueEncodersProvider;
-import io.agrest.junit.ResourceEntityUtils;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgSchema;
 import io.agrest.meta.LazySchema;
@@ -73,7 +72,7 @@ public class EncoderService_DateTime_Test {
     @Test
     public void testLocalDate() {
         ResourceEntity<PDate> re = new RootResourceEntity<>(dateEntity);
-        ResourceEntityUtils.appendAttribute(re, "date", LocalDate.class, PDate::getDate);
+        re.ensureAttribute("date", false);
 
         LocalDate localDate = LocalDate.now();
 
@@ -96,7 +95,7 @@ public class EncoderService_DateTime_Test {
     private void testLocalTime(LocalTime time, String expectedPattern) {
 
         ResourceEntity<PTime> re = new RootResourceEntity<>(timeEntity);
-        ResourceEntityUtils.appendAttribute(re, "time", LocalTime.class, PTime::getTime);
+        re.ensureAttribute("time", false);
 
         PTime o = new PTime();
         o.setTime(time);
@@ -117,7 +116,7 @@ public class EncoderService_DateTime_Test {
     private void testLocalDateTime(LocalDateTime dateTime, String expectedPattern) {
 
         ResourceEntity<PDateTime> re = new RootResourceEntity<>(dateTimeEntity);
-        ResourceEntityUtils.appendAttribute(re, "timestamp", LocalDateTime.class, PDateTime::getTimestamp);
+        re.ensureAttribute("timestamp", false);
 
         PDateTime o = new PDateTime();
         o.setTimestamp(dateTime);
@@ -139,7 +138,7 @@ public class EncoderService_DateTime_Test {
     private void testOffsetDateTime(OffsetDateTime dateTime) {
 
         ResourceEntity<POffsetDateTime> re = new RootResourceEntity<>(offsetDateTimeEntity);
-        ResourceEntityUtils.appendAttribute(re, "timestamp", OffsetDateTime.class, POffsetDateTime::getTimestamp);
+        re.ensureAttribute("timestamp", false);
 
         POffsetDateTime o = new POffsetDateTime();
         o.setTimestamp(dateTime);

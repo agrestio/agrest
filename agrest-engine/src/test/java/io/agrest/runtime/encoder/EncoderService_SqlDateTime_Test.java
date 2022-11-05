@@ -14,7 +14,6 @@ import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.ValueEncodersProvider;
-import io.agrest.junit.ResourceEntityUtils;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgSchema;
 import io.agrest.meta.LazySchema;
@@ -73,7 +72,7 @@ public class EncoderService_SqlDateTime_Test {
     @Test
     public void testJavaSqlDate() {
         ResourceEntity<PSqlDateTime> re = new RootResourceEntity<>(sqlDateTimeEntity);
-        ResourceEntityUtils.appendAttribute(re, "date", Date.class, PSqlDateTime::getDate);
+        re.ensureAttribute("date", false);
         Date date = new Date(EPOCH_MILLIS);
 
         PSqlDateTime o = new PSqlDateTime();
@@ -94,7 +93,7 @@ public class EncoderService_SqlDateTime_Test {
 
     private void _testISOTimeEncoder_javaSqlTime(java.sql.Time time, String expectedPattern) {
         ResourceEntity<PSqlDateTime> re = new RootResourceEntity<>(sqlDateTimeEntity);
-        ResourceEntityUtils.appendAttribute(re, "time", Time.class, PSqlDateTime::getTime);
+        re.ensureAttribute("time", false);
 
         PSqlDateTime o = new PSqlDateTime();
         o.setTime(time);
@@ -115,7 +114,7 @@ public class EncoderService_SqlDateTime_Test {
     private void _testISODateTimeEncoder_javaSqlTimestamp(java.sql.Timestamp timestamp, String expectedPattern) {
 
         ResourceEntity<PSqlDateTime> re = new RootResourceEntity<>(sqlDateTimeEntity);
-        ResourceEntityUtils.appendAttribute(re, "timestamp", Timestamp.class, PSqlDateTime::getTimestamp);
+        re.ensureAttribute("timestamp", false);
 
         PSqlDateTime o = new PSqlDateTime();
         o.setTimestamp(timestamp);

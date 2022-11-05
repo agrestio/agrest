@@ -3,6 +3,7 @@ package io.agrest.runtime.encoder;
 import io.agrest.AgException;
 import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
+import io.agrest.ResourceEntityProjection;
 import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.EncodableProperty;
@@ -14,7 +15,6 @@ import io.agrest.encoder.InheritanceAwareEntityEncoder;
 import io.agrest.encoder.ListEncoder;
 import io.agrest.encoder.MapByEncoder;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.reader.DataReader;
@@ -81,41 +81,30 @@ public class DataEncoderFactory {
      */
     protected <T> Encoder entityEncoder(ResourceEntity<T> entity, ProcessingContext<?> context) {
         return entity.getAgEntity().getSubEntities().isEmpty()
-                ? singleEntityEncoder(entity, entity.getAgEntity(), context)
+                ? singleEntityEncoder(entity, entity.getBaseProjection(), context)
                 : inheritanceAwareEntityEncoder(entity, context);
     }
 
     protected <T> Encoder inheritanceAwareEntityEncoder(ResourceEntity<T> entity, ProcessingContext<?> context) {
 
-        Map<Class<?>, Encoder> hierarchyEncoders = collectEncodersInInheritanceHierarchy(
-                new HashMap<>(), entity, entity.getAgEntity(), context
-        );
+        Map<Class<?>, Encoder> hierarchyEncoders = new HashMap<>();
+
+        for(ResourceEntityProjection<? extends T> p : entity.getProjections()) {
+            if(!p.getAgEntity().isAbstract()) {
+                Encoder encoder = singleEntityEncoder(entity, p, context);
+                hierarchyEncoders.put(p.getAgEntity().getType(), encoder);
+            }
+        }
 
         return new InheritanceAwareEntityEncoder(hierarchyEncoders);
     }
 
-    protected <T> Map<Class<?>, Encoder> collectEncodersInInheritanceHierarchy(
-            Map<Class<?>, Encoder> toCollect,
-            ResourceEntity<? super T> entity,
-            AgEntity<T> agEntity,
-            ProcessingContext<?> context) {
-
-        agEntity.getSubEntities().forEach(ae -> collectEncodersInInheritanceHierarchy(toCollect, entity, ae, context));
-
-        if (!agEntity.isAbstract()) {
-            Encoder encoder = singleEntityEncoder(entity, agEntity, context);
-            toCollect.put(agEntity.getType(), encoder);
-        }
-
-        return toCollect;
-    }
-
     protected <T> Encoder singleEntityEncoder(
             ResourceEntity<T> entity,
-            AgEntity<? extends T> subEntity,
+            ResourceEntityProjection<? extends T> projection,
             ProcessingContext<?> context) {
 
-        Map<String, EncodableProperty> encoders = propertyEncoders(entity, subEntity, context);
+        Map<String, EncodableProperty> encoders = propertyEncoders(entity, projection, context);
 
         EncodableProperty ide = entity.isIdIncluded()
                 ? propertyFactory.getIdProperty(entity).orElse(null)
@@ -128,20 +117,21 @@ public class DataEncoderFactory {
 
     protected <T> Map<String, EncodableProperty> propertyEncoders(
             ResourceEntity<T> entity,
-            AgEntity<? extends T> subEntity,
+            ResourceEntityProjection<? extends T> projection,
             ProcessingContext<?> context) {
 
         List<Map.Entry<String, EncodableProperty>> entries = new ArrayList<>();
 
-        for (AgAttribute attribute : entity.getAttributes(subEntity)) {
+        for (AgAttribute attribute : projection.getAttributes()) {
             EncodableProperty property = propertyFactory.getAttributeProperty(entity, attribute);
             entries.add(entry(attribute.getName(), property));
         }
 
-        for(AgRelationship relationship : entity.getRelationships(subEntity)) {
+        for (AgRelationship relationship : projection.getRelationships()) {
 
-            // TODO: "related.getIncoming()" will not be the same as "relationship" in case of inheritance,
-            //   The hope is that "getIncoming()" is not used downstream, but this is not ideal and can cause subtle bugs
+            // TODO: in case of inheritance "related.getIncoming()" will not be the same as "relationship" coming from
+            //   the projection. The hope is that "getIncoming()" is not used downstream, but this is not ideal and
+            //   can cause subtle bugs
 
             RelatedResourceEntity<?> related = entity.getChild(relationship.getName());
             Encoder encoder = relationship.isToMany()
@@ -195,16 +185,16 @@ public class DataEncoderFactory {
         }
 
         // map by property
-        if (!mapBy.getAttributes().isEmpty()) {
+        if (!mapBy.getBaseProjection().getAttributes().isEmpty()) {
             validateLeafMapBy(mapBy);
 
-            Map.Entry<String, AgAttribute> attribute = mapBy.getAttributes().entrySet().iterator().next();
-            readerChain.add(propertyFactory.getAttributeProperty(mapBy, attribute.getValue()).getReader());
+            AgAttribute attribute = mapBy.getBaseProjection().getAttributes().iterator().next();
+            readerChain.add(propertyFactory.getAttributeProperty(mapBy, attribute).getReader());
             return new MapByEncoder(
                     readerChain,
                     encoder,
                     false,
-                    converters.getConverter(attribute.getValue().getType()));
+                    converters.getConverter(attribute.getType()));
         }
 
         // descend into relationship

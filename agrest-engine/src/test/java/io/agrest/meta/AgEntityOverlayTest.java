@@ -124,7 +124,8 @@ public class AgEntityOverlayTest {
                 P1.class,
                 mock(AgRequestBuilder.class),
                 mock(Injector.class));
-        context.setEntity(new RootResourceEntity<>(mock(AgEntity.class)));
+
+        context.setEntity(new RootResourceEntity<>(eo));
         eo.getDataResolver().fetchData(context);
 
         assertSame(p1s, context.getEntity().getData());
