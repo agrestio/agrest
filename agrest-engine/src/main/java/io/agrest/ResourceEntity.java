@@ -47,9 +47,12 @@ public abstract class ResourceEntity<T> {
             AgEntity<? extends T> entity,
             List<ResourceEntityProjection<? extends T>> projections) {
 
+        // generally we should not need a projection for abstract entities, but since there's still too much
+        // code relying on "baseProjection", we don't check for "abstract" flag here, and create projections
+        // for every entity
+
         projections.add(new ResourceEntityProjection<>(entity));
         entity.getSubEntities().forEach(se -> buildProjections(se, projections));
-
         return projections;
     }
 
