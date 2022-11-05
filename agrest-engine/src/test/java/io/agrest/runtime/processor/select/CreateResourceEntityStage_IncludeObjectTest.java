@@ -91,7 +91,7 @@ public class CreateResourceEntityStage_IncludeObjectTest {
         assertTrue(resourceEntity.isIdIncluded());
 
         assertEquals(1, resourceEntity.getChildren().size());
-        assertTrue(resourceEntity.getChildren().containsKey("rtss"));
+        assertNotNull(resourceEntity.getChild("rtss"));
     }
 
     @Test
@@ -109,9 +109,9 @@ public class CreateResourceEntityStage_IncludeObjectTest {
         ResourceEntity<Tr> resourceEntity = context.getEntity();
         assertNotNull(resourceEntity);
 
-        ResourceEntity<?> reMapBy = resourceEntity.getChildren().get("rtss").getMapBy();
+        ResourceEntity<?> reMapBy = resourceEntity.getChild("rtss").getMapBy();
         assertNotNull(reMapBy);
-        assertNotNull(reMapBy.getChildren().get("rtt"));
+        assertNotNull(reMapBy.getChild("rtt"));
     }
 
     public static class Tr {

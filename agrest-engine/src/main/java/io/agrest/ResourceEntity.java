@@ -203,13 +203,14 @@ public abstract class ResourceEntity<T> {
             String relationshipName,
             BiFunction<ResourceEntity<?>, String, RelatedResourceEntity<?>> childCreator) {
 
-        return children.computeIfAbsent(relationshipName, r -> {
-            return childCreator.apply(this, r);
-        });
+        return children.computeIfAbsent(relationshipName, r -> childCreator.apply(this, r));
     }
 
-    public Map<String, RelatedResourceEntity<?>> getChildren() {
-        return children;
+    /**
+     * @since 5.0
+     */
+    public Collection<RelatedResourceEntity<?>> getChildren() {
+        return children.values();
     }
 
     /**

@@ -197,8 +197,8 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
 
         ObjectSelect<T> query = ObjectSelect.query(entity.getType()).where(qualifier);
 
-        for (Map.Entry<String, RelatedResourceEntity<?>> e : entity.getChildren().entrySet()) {
-            buildRelatedQuery(e.getValue(), query.getWhere());
+        for (RelatedResourceEntity<?> e : entity.getChildren()) {
+            buildRelatedQuery(e, query.getWhere());
         }
 
         CayenneProcessor.getRootEntity(entity).setSelect(query);
@@ -221,8 +221,8 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
                 .where(translateExpressionToSource(incomingObjRelationship, parentQualifier))
                 .columns(queryAssembler.queryColumns(entity));
 
-        for (Map.Entry<String, RelatedResourceEntity<?>> e : entity.getChildren().entrySet()) {
-            buildRelatedQuery(e.getValue(), query.getWhere());
+        for (RelatedResourceEntity<?> e : entity.getChildren()) {
+            buildRelatedQuery(e, query.getWhere());
         }
 
         CayenneProcessor.getRelatedEntity(entity).setSelect(query);
@@ -232,7 +232,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
     protected <T> List<T> fetchRootEntity(ObjectContext context, RootResourceEntity<T> entity) {
 
         List<T> objects = CayenneProcessor.getRootEntity(entity).getSelect().select(context);
-        for (RelatedResourceEntity<?> c : entity.getChildren().values()) {
+        for (RelatedResourceEntity<?> c : entity.getChildren()) {
             fetchRelatedEntity(context, c);
         }
 
@@ -246,7 +246,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
             List<Object[]> objects = ext.getSelect().select(context);
             assignChildrenToParent(entity, objects);
 
-            for (RelatedResourceEntity<?> c : entity.getChildren().values()) {
+            for (RelatedResourceEntity<?> c : entity.getChildren()) {
                 fetchRelatedEntity(context, c);
             }
         }

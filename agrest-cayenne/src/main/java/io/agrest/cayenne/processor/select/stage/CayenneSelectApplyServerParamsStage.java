@@ -36,12 +36,12 @@ public class CayenneSelectApplyServerParamsStage extends SelectApplyServerParams
         }
 
         if (entity.getMapBy() != null) {
-            for (RelatedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
+            for (RelatedResourceEntity<?> child : entity.getMapBy().getChildren()) {
                 tagRelatedEntity(child);
             }
         }
 
-        for (RelatedResourceEntity<?> child : entity.getChildren().values()) {
+        for (RelatedResourceEntity<?> child : entity.getChildren()) {
             tagRelatedEntity(child);
         }
     }
@@ -52,12 +52,12 @@ public class CayenneSelectApplyServerParamsStage extends SelectApplyServerParams
         }
 
         if (entity.getMapBy() != null) {
-            for (RelatedResourceEntity<?> child : entity.getMapBy().getChildren().values()) {
+            for (RelatedResourceEntity<?> child : entity.getMapBy().getChildren()) {
                 tagRelatedEntity(child);
             }
         }
 
-        for (RelatedResourceEntity<?> child : entity.getChildren().values()) {
+        for (RelatedResourceEntity<?> child : entity.getChildren()) {
             tagRelatedEntity(child);
         }
     }

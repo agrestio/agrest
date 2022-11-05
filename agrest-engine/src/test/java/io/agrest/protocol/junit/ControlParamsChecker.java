@@ -53,7 +53,7 @@ public class ControlParamsChecker {
 
     public ControlParamsChecker assertRelationships(String... expectedRelationships) {
         String expectedAsString = Arrays.stream(expectedRelationships).sorted().collect(Collectors.joining(","));
-        String actualAsString = context.getEntity().getChildren().keySet().stream().sorted().collect(Collectors.joining(","));
+        String actualAsString = context.getEntity().getChildren().stream().map(re -> re.getIncoming().getName()).sorted().collect(Collectors.joining(","));
         assertEquals(expectedAsString, actualAsString);
         return this;
     }

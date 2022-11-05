@@ -1,10 +1,10 @@
 package io.agrest.cayenne.processor.update.stage;
 
-import io.agrest.id.AgObjectId;
 import io.agrest.EntityUpdate;
 import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.ToManyResourceEntity;
+import io.agrest.id.AgObjectId;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.reader.DataReader;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -14,6 +14,7 @@ import org.apache.cayenne.Fault;
 import org.apache.cayenne.ObjectId;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -67,14 +68,13 @@ public abstract class CayenneFillResponseStage extends UpdateFillResponseStage {
     protected void assignChildrenToParent(DataObject root, ResourceEntity<?> entity) {
 
         DataReader idReader = entity.getAgEntity().getIdReader();
-        Map<String, RelatedResourceEntity<?>> children = entity.getChildren();
+        Collection<RelatedResourceEntity<?>> children = entity.getChildren();
 
         if (!children.isEmpty()) {
 
-            for (Map.Entry<String, RelatedResourceEntity<?>> e : children.entrySet()) {
-                RelatedResourceEntity childEntity = e.getValue();
+            for (RelatedResourceEntity childEntity : children) {
 
-                Object result = root.readPropertyDirectly(e.getKey());
+                Object result = root.readPropertyDirectly(childEntity.getIncoming().getName());
                 if (result == null || result instanceof Fault) {
                     continue;
                 }

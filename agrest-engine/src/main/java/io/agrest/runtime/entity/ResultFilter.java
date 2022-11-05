@@ -35,7 +35,7 @@ public class ResultFilter implements IResultFilter {
     }
 
     protected void filterChildren(ResourceEntity<?> entity) {
-        for (RelatedResourceEntity<?> child : entity.getChildren().values()) {
+        for (RelatedResourceEntity<?> child : entity.getChildren()) {
             if (child instanceof ToOneResourceEntity) {
                 filterToOne((ToOneResourceEntity<?>) child);
             } else {

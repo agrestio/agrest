@@ -200,14 +200,14 @@ public class DataEncoderFactory {
         // descend into relationship
         if (!mapBy.getChildren().isEmpty()) {
 
-            Map.Entry<String, RelatedResourceEntity<?>> child = mapBy.getChildren().entrySet().iterator().next();
+            RelatedResourceEntity<?> child = mapBy.getChildren().iterator().next();
 
             // TODO: to account for overlaid relationships (and avoid NPEs), we should not access agEntity...
             //  instead should look for incoming rel of a child ResourceEntity.. Is is present in MapBy case?
-            AgRelationship relationship = mapBy.getChild(child.getKey()).getIncoming();
+            AgRelationship relationship = child.getIncoming();
             readerChain.add(propertyFactory.getRelationshipProperty(mapBy, relationship, null, context).getReader());
 
-            return mapByEncoder(mapBy.getChildren().get(child.getKey()), readerChain, encoder, context);
+            return mapByEncoder(child, readerChain, encoder, context);
         }
 
         // map by relationship (implicitly by id)

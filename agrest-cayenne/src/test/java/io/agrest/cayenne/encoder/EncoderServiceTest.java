@@ -80,7 +80,7 @@ public class EncoderServiceTest extends MainNoDbTest {
         reE3.includeId();
         CayenneProcessor.getOrCreateRelatedEntity(reE3);
         reE3.ensureAttribute("name", false);
-        re.getChildren().put("e3s", reE3);
+        re.ensureChild("e3s", (e, r) -> reE3);
         re.getBaseProjection().ensureRelationship("e3s");
 
         ObjectContext context = mockCayennePersister.newContext();
