@@ -23,7 +23,6 @@ public class GET_NaturalIdIT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
-
             .entities(E20.class, E21.class)
             .build();
 
