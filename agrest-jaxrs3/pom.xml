@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.agrest</groupId>
         <artifactId>agrest-parent</artifactId>
-        <version>5.0.M9</version>
+        <version>5.0.M10-SNAPSHOT</version>
     </parent>
 
     <artifactId>agrest-jaxrs3</artifactId>
