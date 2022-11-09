@@ -84,7 +84,7 @@ public class GET_InheritanceIT extends InheritanceDbTest {
 
 
         tester.target("/ie1-super")
-                // super and sub attributes should be supported
+                // super and sub relationships should be supported
                 .queryParam("include", "id", "ie2", "ie3s")
                 .get()
                 .wasOk()
@@ -150,6 +150,38 @@ public class GET_InheritanceIT extends InheritanceDbTest {
                         "{\"id\":1,\"ie1\":{\"id\":10,\"a0\":\"v01\",\"a1\":\"v11\",\"type\":1}}",
                         "{\"id\":2,\"ie1\":{\"id\":20,\"a0\":\"v02\",\"a2\":\"v21\",\"type\":2}}",
                         "{\"id\":3,\"ie1\":{\"id\":30,\"a0\":\"v03\",\"a1\":\"v13\",\"a3\":\"v31\",\"type\":3}}");
+    }
+
+    @Test
+    public void testRelatedSuperclass_IncludeRelationships() {
+
+        tester.ie2().insertColumns("id")
+                .values(1)
+                .values(2)
+                .exec();
+
+        tester.ie1().insertColumns("id", "type", "a0", "a1", "a2", "a3", "e2_id")
+                .values(10, 1, "v01", "v11", null, null, 2)
+                .values(20, 2, "v02", null, "v21", null, null)
+                .values(30, 3, "v03", "v13", null, "v31", 1)
+                .exec();
+
+        tester.ie3().insertColumns("id", "e1_id")
+                .values(1, 10)
+                .values(2, 20)
+                .values(3, 30)
+                .exec();
+
+        tester.target("/ie3")
+                .queryParam("include", "id", "ie1.type", "ie1.ie2.id", "ie1.ie3s.id")
+                // adding an "exp" caused issue #590
+                .queryParam("exp", "id > 0")
+                .get()
+                .wasOk()
+                .bodyEquals(3,
+                        "{\"id\":1,\"ie1\":{\"ie2\":{\"id\":2},\"ie3s\":[{\"id\":1}],\"type\":1}}",
+                        "{\"id\":2,\"ie1\":{\"ie3s\":[{\"id\":2}],\"type\":2}}",
+                        "{\"id\":3,\"ie1\":{\"ie2\":{\"id\":1},\"ie3s\":[{\"id\":3}],\"type\":3}}");
     }
 
     @Test

@@ -165,21 +165,16 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
                 return null;
             }
 
+            String incomingPath = dbPath(parent.getType(), entity.getIncoming().getName());
+            String fullDbPath = concatWithParentDbPath(incomingPath, outgoingDbPath);
+
             ObjEntity parentObjEntity = entityResolver.getObjEntity(parent.getType());
-            ObjRelationship incoming = parentObjEntity.getRelationship(entity.getIncoming().getName());
-
-            if (incoming == null) {
-                throw new IllegalStateException("No such relationship: " + parentObjEntity.getName() + "." + entity.getIncoming().getName());
-            }
-
-            String fullDbPath = concatWithParentDbPath(incoming, outgoingDbPath);
             Expression dbParentQualifier = parentObjEntity.translateToDbPath(parentQualifier);
             return parentObjEntity.getDbEntity().translateToRelatedEntity(dbParentQualifier, fullDbPath);
         }
 
-        ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getType());
-        ObjRelationship incoming = parentObjEntity.getRelationship(entity.getIncoming().getName());
-        String fullDbPath = concatWithParentDbPath(incoming, outgoingDbPath);
+        String incomingPath = dbPath(parent.getType(), entity.getIncoming().getName());
+        String fullDbPath = concatWithParentDbPath(incomingPath, outgoingDbPath);
 
         // shouldn't really happen with any of the current built-in root strategies, but who knows what customizations
         // can be applied
@@ -194,9 +189,36 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         return resolveParentQualifier((RelatedResourceEntity) parent, fullDbPath);
     }
 
-    private String concatWithParentDbPath(ObjRelationship incoming, String outgoingDbPath) {
-        String dbPath = incoming.getDbRelationshipPath();
-        return outgoingDbPath != null ? dbPath + "." + outgoingDbPath : dbPath;
+    private String dbPath(Class<?> entityType, String relationshipName) {
+
+        // we can pick "relationshipName" from anywhere in the inheritance hierarchy, as it will be converted to a db path,
+        // which is inheritance agnostic (at least until Cayenne starts supporting horizontal inheritance)
+
+        return objRelationshipInInheritanceHierarchy(entityType, relationshipName).getDbRelationshipPath();
+    }
+
+    private ObjRelationship objRelationshipInInheritanceHierarchy(Class<?> superclassType, String relationshipName) {
+        ObjEntity e = entityResolver.getObjEntity(superclassType);
+        ObjRelationship r = e.getRelationship(relationshipName);
+
+        if (r != null) {
+            return r;
+        }
+
+        for (ObjEntity se : entityResolver.getInheritanceTree(e.getName()).allSubEntities()) {
+            if (se != e) {
+                ObjRelationship sr = se.getRelationship(relationshipName);
+                if (sr != null) {
+                    return sr;
+                }
+            }
+        }
+
+        throw new IllegalStateException("No such relationship in entity or sub-entities: " + e.getName() + "." + relationshipName);
+    }
+
+    private String concatWithParentDbPath(String incomingDbPath, String outgoingDbPath) {
+        return outgoingDbPath != null ? incomingDbPath + "." + outgoingDbPath : incomingDbPath;
     }
 
     @Override

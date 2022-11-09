@@ -1,3 +1,7 @@
+## Release 5.0.M9
+
+* #590 Can't use inherited relationships in includes
+
 ## Release 5.0.M8
  
 * #583 Upgrade jackson-databind to 2.13.4.2
