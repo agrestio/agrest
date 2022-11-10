@@ -1,7 +1,5 @@
 package io.agrest.spring.starter.exceptions;
 
-import org.springframework.http.HttpStatus;
-
 public class ApiError {
 
   private final String message;

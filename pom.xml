@@ -38,6 +38,7 @@
         <jaxrs2.version>2.1.6</jaxrs2.version>
         <jaxrs3.version>3.0.0</jaxrs3.version>
         <jackson.databind.version>2.13.4.2</jackson.databind.version>
+        <spring.boot.version>2.7.5</spring.boot.version>
 
         <!-- TODO: replace with release version as soon as possible -->
         <bootique.version>3.0.M1-SNAPSHOT</bootique.version>
