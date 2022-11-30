@@ -1,5 +1,14 @@
 /**
- * This grammar is havily based on the Apache Cayenne Expression grammar
+ * NOTES: This grammar is havily based on the Apache Cayenne Expression grammar,
+ *        see https://github.com/apache/cayenne/blob/master/cayenne-server/src/main/jjtree/org/apache/cayenne/exp/parser/ExpressionParser.jjt
+ *
+ * Code generation instructions:
+ *      - install JavaCC (see instructions at https://javacc.github.io/javacc/), if needed
+ *      - open directory that contains this file in any console
+ *      - run `jjtree AgExpressionParser.jjt` to produce `.jj` the JavaCC parser source and parser tree nodes
+ *      - run `javacc AgExpressionParser.jj` to produce the remaining Java code
+ *      - update generics definition in `io.agrest.exp.parser.AgExpressionParserVisitor`
+ *        and `io.agrest.exp.parser.AgExpressionParserDefaultVisitor` classes
  */
 
 options {

@@ -175,7 +175,7 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
 
     @Override
     public Expression visit(ExpScalarList node, Expression data) {
-        // NOTE: we are skipping all the List children as there are processed by the getValue() call
+        // NOTE: we are skipping all the List children as they are processed by the getValue() call
         Collection<?> value = node.getValue();
         Object[] cayenneValues = new Object[value.size()];
         int i = 0;
@@ -368,15 +368,6 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
     public Expression visit(ExpObjPath node, Expression parent) {
         ASTPath path = PathOps.parsePath((String)node.jjtGetValue());
         return process(node, parent, path);
-    }
-
-    private Expression processList(SimpleNode node, Expression parent, Expression exp) {
-        if (node.jjtGetNumChildren() > 0) {
-            for (int i = 0; i < node.jjtGetNumChildren(); ++i) {
-                node.jjtGetChild(i).jjtAccept(this, exp);
-            }
-        }
-        return parent;
     }
 
     private Expression process(SimpleNode node, Expression parent, Expression exp) {
