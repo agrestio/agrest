@@ -23,7 +23,7 @@ class ExpNamedParameterTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("$", AgException.class),
                 Arguments.of("$$a", AgException.class)

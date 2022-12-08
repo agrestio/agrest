@@ -21,9 +21,10 @@ class ExpCurrentDateTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("currentDate", AgException.class),
+                Arguments.of("currentDate(0)", AgException.class),
                 Arguments.of("CURRENTDATE()", AgException.class)
         );
     }

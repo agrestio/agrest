@@ -16,18 +16,21 @@ class ExpLikeIgnoreCaseTest extends AbstractExpTest {
     Stream<String> parseExp() {
         return Stream.of(
                 "a likeIgnoreCase b",
-                "a likeIgnoreCase TRUE",
+                "a likeIgnoreCase 'b'",
                 "a likeIgnoreCase 1",
+                "a likeIgnoreCase 1.2",
+                "a likeIgnoreCase $b",
+                "a likeIgnoreCase TRUE",
                 "a likeIgnoreCase(b)"
         );
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("likeIgnoreCase", AgException.class),
                 Arguments.of("a likeIgnoreCase", AgException.class),
-                Arguments.of("a likeIgnoreCase() b", AgException.class),
+                Arguments.of("a likeIgnoreCase()", AgException.class),
                 Arguments.of("a LIKEIGNORECASE b", AgException.class)
         );
     }

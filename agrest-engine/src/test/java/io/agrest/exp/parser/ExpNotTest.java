@@ -23,7 +23,7 @@ class ExpNotTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("!", AgException.class),
                 Arguments.of("NOT a", AgException.class)

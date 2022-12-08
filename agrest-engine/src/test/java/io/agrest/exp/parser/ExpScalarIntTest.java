@@ -39,10 +39,9 @@ class ExpScalarIntTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("-3", AssertionFailedError.class),
-
                 Arguments.of("0x", AgException.class),
                 Arguments.of("08", AgException.class),
                 Arguments.of("0xG", AgException.class),

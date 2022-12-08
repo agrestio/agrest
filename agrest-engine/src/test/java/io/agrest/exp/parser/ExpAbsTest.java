@@ -15,14 +15,17 @@ class ExpAbsTest extends AbstractExpTest {
     @Override
     Stream<String> parseExp() {
         return Stream.of(
+                "abs(1)",
+                "abs(  1 )",
+                "abs(1.2)",
+                "abs($a)",
                 "abs(a)",
-                "abs(a + b)",
-                "abs(  a )"
+                "abs(abs(1))"
         );
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("abs", AgException.class),
                 Arguments.of("abs()", AgException.class),

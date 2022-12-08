@@ -18,18 +18,20 @@ class ExpSubstringTest extends AbstractExpTest {
                 "substring(a, 0)",
                 "substring ( a, 0 )",
                 "substring('a', 0)",
+                "substring(a, $b)",
                 "substring(a, 0, 1)"
         );
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("substring", AgException.class),
                 Arguments.of("substring()", AgException.class),
                 Arguments.of("substring(a)", AgException.class),
-                Arguments.of("substring(1)", AgException.class),
-                Arguments.of("SUBSTRING(a)", AgException.class)
+                Arguments.of("substring(a, '1')", AgException.class),
+                Arguments.of("substring($a, 1)", AgException.class),
+                Arguments.of("SUBSTRING(a, 0)", AgException.class)
         );
     }
 }

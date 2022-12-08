@@ -17,6 +17,7 @@ class ExpExtractTest extends AbstractExpTest {
         return Stream.of(
                 "year(a)",
                 "year ( a )",
+                "year(t.a)",
                 "month(a)",
                 "week(a)",
                 "day(a)",
@@ -30,10 +31,14 @@ class ExpExtractTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("year", AgException.class),
                 Arguments.of("year()", AgException.class),
+                Arguments.of("year(0)", AgException.class),
+                Arguments.of("year('now')", AgException.class),
+                Arguments.of("year($a)", AgException.class),
+                Arguments.of("year(null)", AgException.class),
                 Arguments.of("YEAR(a)", AgException.class),
                 Arguments.of("weekOfMonth(a)", AgException.class)
         );

@@ -17,17 +17,19 @@ class ExpLocateTest extends AbstractExpTest {
         return Stream.of(
                 "locate(a,b)",
                 "locate ( a, b )",
+                "locate('a', 'b')",
                 "locate(a, b, 1)"
         );
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("locate", AgException.class),
                 Arguments.of("locate()", AgException.class),
                 Arguments.of("locate(a)", AgException.class),
                 Arguments.of("locate(a, 1)", AgException.class),
+                Arguments.of("locate(a, $b)", AgException.class),
                 Arguments.of("locate(a, b, '1')", AgException.class),
                 Arguments.of("LOCATE(a, b)", AgException.class)
         );

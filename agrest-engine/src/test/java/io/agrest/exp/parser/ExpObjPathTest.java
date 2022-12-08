@@ -29,13 +29,11 @@ class ExpObjPathTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("$a", AssertionFailedError.class),
-
                 Arguments.of("0a", AgException.class),
                 Arguments.of("a++", AgException.class),
-
                 Arguments.of(".", TokenMgrException.class),
                 Arguments.of(".b", TokenMgrException.class),
                 Arguments.of("a..b", TokenMgrException.class),

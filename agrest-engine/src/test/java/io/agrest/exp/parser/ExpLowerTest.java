@@ -22,11 +22,12 @@ class ExpLowerTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("lower", AgException.class),
                 Arguments.of("lower()", AgException.class),
                 Arguments.of("lower(1)", AgException.class),
+                Arguments.of("lower($a)", AgException.class),
                 Arguments.of("LOWER(a)", AgException.class)
         );
     }

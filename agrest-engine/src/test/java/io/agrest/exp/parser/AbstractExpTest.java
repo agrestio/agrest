@@ -28,7 +28,7 @@ public abstract class AbstractExpTest {
 
     abstract Stream<String> parseExp();
 
-    abstract Stream<Arguments> parseExpThrows_AgException();
+    abstract Stream<Arguments> parseExpThrows();
 
     @ParameterizedTest
     @MethodSource
@@ -46,7 +46,7 @@ public abstract class AbstractExpTest {
     @ParameterizedTest
     @MethodSource
     @Order(2)
-    void parseExpThrows_AgException(String expString, Class<? extends Throwable> throwableType) {
+    void parseExpThrows(String expString, Class<? extends Throwable> throwableType) {
         assertThrows(throwableType, () -> parseExpString(expString));
     }
 }
