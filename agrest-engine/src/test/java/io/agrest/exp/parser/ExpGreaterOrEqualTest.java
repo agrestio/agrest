@@ -17,20 +17,23 @@ class ExpGreaterOrEqualTest extends AbstractExpTest {
         return Stream.of(
                 "a>=b",
                 "a >= b",
-                "a >= b + c",
-                "a + b >= c",
-                // TODO: Should probably throw AgException
-                "a >= (b and c)"
+                "a >=  b",
+                "$a >= $b",
+                "1 >= 2",
+                "1 >= 2.2",
+                "1 >= TRUE",
+                "'1' >= '2'",
+                "null >= c",
+                "a >= currentDate()"
         );
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
-                Arguments.of("a >=", AgException.class),
-                Arguments.of(">= b", AgException.class),
                 Arguments.of(">=", AgException.class),
-                Arguments.of("a >= b >= c", AgException.class)
+                Arguments.of("a >=", AgException.class),
+                Arguments.of(">= b", AgException.class)
         );
     }
 }

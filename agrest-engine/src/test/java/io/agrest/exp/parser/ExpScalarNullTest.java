@@ -21,7 +21,7 @@ class ExpScalarNullTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("nil", AssertionFailedError.class),
                 Arguments.of("Null", AssertionFailedError.class),

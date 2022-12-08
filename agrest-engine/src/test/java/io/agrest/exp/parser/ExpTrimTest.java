@@ -22,11 +22,12 @@ class ExpTrimTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("trim", AgException.class),
                 Arguments.of("trim()", AgException.class),
                 Arguments.of("trim(1)", AgException.class),
+                Arguments.of("trim($a)", AgException.class),
                 Arguments.of("TRIM(a)", AgException.class)
         );
     }

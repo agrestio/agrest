@@ -17,17 +17,21 @@ class ExpNegateTest extends AbstractExpTest {
         return Stream.of(
                 "-a",
                 "- a",
+                "-1",
+                "-1.1",
 
-                // TODO: why?
+                // TODO: Should throw AgException.
                 "--a",
                 "---a"
         );
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
-                Arguments.of("-", AgException.class)
+                Arguments.of("-", AgException.class),
+                Arguments.of("-'1'", AgException.class),
+                Arguments.of("-currentDate()", AgException.class)
         );
     }
 }

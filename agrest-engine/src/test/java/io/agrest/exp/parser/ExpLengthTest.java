@@ -17,16 +17,18 @@ class ExpLengthTest extends AbstractExpTest {
         return Stream.of(
                 "length(a)",
                 "length ( a )",
-                "length('a')"
+                "length('a')",
+                "length(\"a\")"
         );
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("length", AgException.class),
                 Arguments.of("length()", AgException.class),
                 Arguments.of("length(1)", AgException.class),
+                Arguments.of("length($a)", AgException.class),
                 Arguments.of("LENGTH(a)", AgException.class)
         );
     }

@@ -16,18 +16,22 @@ class ExpModTest extends AbstractExpTest {
     Stream<String> parseExp() {
         return Stream.of(
                 "mod(a, b)",
-                "mod( a, b )"
+                "mod( a, b )",
+                "mod(1, 2)",
+                "mod(1.2, 2.3)",
+                "mod($a, $b)"
         );
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("mod", AgException.class),
                 Arguments.of("mod()", AgException.class),
                 Arguments.of("mod(a)", AgException.class),
                 Arguments.of("mod(, b)", AgException.class),
-                Arguments.of("mod(a and b)", AgException.class)
+                Arguments.of("mod(1, currentDate())", AgException.class),
+                Arguments.of("mod('1', '2')", AgException.class)
         );
     }
 }

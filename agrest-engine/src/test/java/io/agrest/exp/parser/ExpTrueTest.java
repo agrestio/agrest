@@ -22,10 +22,9 @@ class ExpTrueTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("True", AssertionFailedError.class),
-
                 Arguments.of("true()", AgException.class)
         );
     }

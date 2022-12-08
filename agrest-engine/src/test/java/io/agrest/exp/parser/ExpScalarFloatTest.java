@@ -1,13 +1,11 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.provider.Arguments;
 import org.opentest4j.AssertionFailedError;
 
 import java.util.stream.Stream;
 
-@Disabled("To be discussed")
 class ExpScalarFloatTest extends AbstractExpTest {
 
     @Override
@@ -24,10 +22,6 @@ class ExpScalarFloatTest extends AbstractExpTest {
                 "1e1",
                 "1E1",
                 "1.1e1",
-
-                // TODO: why fail?
-                "1+e1",
-                "1-e1",
 
                 // Float.MAX_VALUE
                 "3.4028235e+38f",
@@ -51,12 +45,11 @@ class ExpScalarFloatTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("e1", AssertionFailedError.class),
-
+                Arguments.of("1+e1", AssertionFailedError.class),
                 Arguments.of("1e1.1", AgException.class),
-
                 Arguments.of(".", TokenMgrException.class),
                 Arguments.of("0x1.F", TokenMgrException.class)
 

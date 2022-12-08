@@ -15,16 +15,21 @@ class ExpBitwiseNotTest extends AbstractExpTest {
     @Override
     Stream<String> parseExp() {
         return Stream.of(
-                "~1",
-                "~ 1",
-                "~-1"
+                "~2",
+                "~ 2",
+                "~1.3",
+                "~$a",
+                "~a",
+                "~abs(-3)"
         );
     }
 
     @Override
-    Stream<Arguments> parseExpThrows_AgException() {
+    Stream<Arguments> parseExpThrows() {
         return Stream.of(
-                Arguments.of("~", AgException.class)
+                Arguments.of("~", AgException.class),
+                Arguments.of("~'a'", AgException.class),
+                Arguments.of("~getDate()", AgException.class)
         );
     }
 }
