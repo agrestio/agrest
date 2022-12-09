@@ -81,6 +81,12 @@ class CayenneExpressionVisitorTest {
                 Arguments.of("trim(a.v)", ASTTrim.class),
                 Arguments.of("true", ASTTrue.class),
                 Arguments.of("upper(t.v)", ASTUpper.class)
+
+                // TODO: Cayenne doesn't allow objPath as operand for logical operators (see AggregateConditionNode).
+                //       It will be reasonable to change this.
+                //Arguments.of("!t.m", ASTNot.class),
+                //Arguments.of("t.isA and t.isB ", ASTAnd.class),
+                //Arguments.of("t.isA or t.isB ", ASTOr.class)
         );
         for (Arguments args : argsList) {
             try {
