@@ -1,10 +1,19 @@
 package io.agrest.exp.parser;
 
-import java.util.function.BooleanSupplier;
+class ExpTestVisitor extends AgExpressionParserDefaultVisitor<Class<?>> {
 
-class ExpTestVisitor extends AgExpressionParserDefaultVisitor<BooleanSupplier> {
+    private final Class<? extends SimpleNode> nodeType;
+
+    public ExpTestVisitor(Class<? extends SimpleNode> nodeType) {
+        this.nodeType = nodeType;
+    }
+
+    public Class<? extends SimpleNode> getNodeType() {
+        return nodeType;
+    }
+
     @Override
-    public BooleanSupplier visit(ExpRoot node, BooleanSupplier data) {
-        return node.children[0].accept(this, data);
+    public Class<?> visit(ExpRoot node, Class<?> data) {
+        return node.children[0].getClass();
     }
 }
