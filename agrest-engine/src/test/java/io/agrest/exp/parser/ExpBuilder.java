@@ -80,7 +80,7 @@ public class ExpBuilder {
         }
     }
 
-    public static ExpBuilder fromType(Class<? extends SimpleNode> expType) {
+    public static ExpBuilder expFromType(Class<? extends SimpleNode> expType) {
         return new ExpBuilder(expType);
     }
 
