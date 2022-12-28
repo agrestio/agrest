@@ -1,3 +1,7 @@
+## Release 5.0.M10
+
+* #582 AgRest own full-featured expression parser 
+
 ## Release 5.0.M9
 
 * #590 Can't use inherited relationships in includes
