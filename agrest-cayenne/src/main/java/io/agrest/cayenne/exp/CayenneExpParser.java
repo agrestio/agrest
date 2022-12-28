@@ -9,12 +9,12 @@ import org.apache.cayenne.exp.Expression;
 public class CayenneExpParser implements ICayenneExpParser {
 
     @Override
-    public Expression parse(Exp qualifier) {
-        if (qualifier == null) {
+    public Expression parse(Exp exp) {
+        if (exp == null) {
             return null;
         }
 
         CayenneExpressionVisitor visitor = new CayenneExpressionVisitor();
-        return qualifier.accept(visitor, null);
+        return exp.accept(visitor, null);
     }
 }
