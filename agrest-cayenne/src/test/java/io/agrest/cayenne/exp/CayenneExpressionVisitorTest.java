@@ -10,8 +10,11 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CayenneExpressionVisitorTest {
 
@@ -27,6 +30,15 @@ class CayenneExpressionVisitorTest {
     void visit_checkReturnedType(Exp agrestExp, Class<? extends Expression> cayenneExpExpectedType) {
         Expression cayenneExp = agrestExp.accept(visitor, null);
         assertEquals(cayenneExpExpectedType, cayenneExp.getClass());
+    }
+
+    @ParameterizedTest(name = "case {index}")
+    @MethodSource
+    void setEscapeChar(Exp agrestExp) {
+        Expression cayenneExp = agrestExp.accept(visitor, null);
+        assertTrue(cayenneExp instanceof PatternMatchNode);
+        PatternMatchNode matchNode = (PatternMatchNode) cayenneExp;
+        assertEquals('$', matchNode.getEscapeChar());
     }
 
     static Iterable<Arguments> visit_checkReturnedType() {
@@ -97,5 +109,16 @@ class CayenneExpressionVisitorTest {
             }
         }
         return argsList;
+    }
+
+    static Iterable<Arguments> setEscapeChar() {
+        return Stream.of(
+                "a like 'bcd' escape '$'",
+                        "a likeIgnoreCase 'bcd' escape '$'",
+                        "a not like 'bcd' escape '$'",
+                        "a not likeIgnoreCase 'bcd' escape '$'")
+                .map(AgExpressionParser::parse)
+                .map(Arguments::of)
+                .collect(Collectors.toList());
     }
 }

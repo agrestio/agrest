@@ -1,6 +1,7 @@
 ## Release 5.0.M10
 
-* #582 AgRest own full-featured expression parser 
+* #582 AgRest own full-featured expression parser
+* #594 Support for escape char in "like" expressions
 
 ## Release 5.0.M9
 
