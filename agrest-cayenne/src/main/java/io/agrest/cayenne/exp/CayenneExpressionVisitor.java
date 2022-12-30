@@ -2,6 +2,7 @@ package io.agrest.cayenne.exp;
 
 import java.lang.reflect.Constructor;
 import java.util.Collection;
+import java.util.function.BiFunction;
 
 import io.agrest.cayenne.path.PathOps;
 import io.agrest.exp.parser.*;
@@ -55,6 +56,7 @@ import org.apache.cayenne.exp.parser.ASTSubtract;
 import org.apache.cayenne.exp.parser.ASTTrim;
 import org.apache.cayenne.exp.parser.ASTTrue;
 import org.apache.cayenne.exp.parser.ASTUpper;
+import org.apache.cayenne.exp.parser.PatternMatchNode;
 
 class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> {
 
@@ -377,10 +379,43 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
             }
         }
         if (parent != null) {
-            parent.setOperand(parent.getOperandCount(), exp);
-            return parent;
+            BiFunction<Expression, Expression, Expression> childMerger = getMergerForNode(parent);
+            return childMerger.apply(parent, exp);
         } else {
             return exp;
+        }
+    }
+
+    BiFunction<Expression, Expression, Expression> getMergerForNode(Expression node) {
+        if(node instanceof PatternMatchNode) {
+            return this::addToLikeNode;
+        } else {
+            return this::addToParent;
+        }
+    }
+
+    private Expression addToParent(Expression parent, Expression child) {
+        parent.setOperand(parent.getOperandCount(), child);
+        return parent;
+    }
+
+    private Expression addToLikeNode(Expression parent, Expression child) {
+        if(!(parent instanceof PatternMatchNode)) {
+            throw new IllegalArgumentException("ParentMatchNode expected, got " + parent.getClass().getSimpleName());
+        }
+        PatternMatchNode patternMatchNode = (PatternMatchNode) parent;
+        if(parent.getOperandCount() == 2) {
+            if(!(child instanceof ASTScalar)) {
+                throw new IllegalArgumentException("ASTScalar expected, got " + child.getClass().getSimpleName());
+            }
+            String escape = ((ASTScalar)child).getValue().toString();
+            if(escape.length() != 1) {
+                throw new IllegalArgumentException("Single escape char expected, got '" + escape + "'");
+            }
+            patternMatchNode.setEscapeChar(escape.charAt(0));
+            return parent;
+        } else {
+            return addToParent(parent, child);
         }
     }
 

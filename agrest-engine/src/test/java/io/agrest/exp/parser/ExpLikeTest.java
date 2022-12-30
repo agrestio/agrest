@@ -15,6 +15,7 @@ class ExpLikeTest extends AbstractExpTest {
     @Override
     Stream<String> parseExp() {
         return Stream.of(
+                "a like 'xb' escape 'x'",
                 "a like b",
                 "a like 'b'",
                 "a like 1",

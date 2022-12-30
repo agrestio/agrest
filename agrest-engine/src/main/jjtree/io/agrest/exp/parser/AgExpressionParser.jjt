@@ -6,6 +6,7 @@
  *      - install JavaCC (see instructions at https://javacc.github.io/javacc/), if needed
  *      - open directory that contains this file in any console
  *      - run `jjtree AgExpressionParser.jjt` to produce `.jj` the JavaCC parser source and parser tree nodes
+ *      - open source directory with a parser
  *      - run `javacc AgExpressionParser.jj` to produce the remaining Java code
  *      - update generics definition in `io.agrest.exp.parser.AgExpressionParserVisitor`
  *        and `io.agrest.exp.parser.AgExpressionParserDefaultVisitor` classes
@@ -90,7 +91,10 @@ void notCondition() : {}
 		simpleCondition()
 }
 
-void simpleCondition() : {} 
+void simpleCondition() : {
+    // variable arity for the Like nodes
+    int arity = 2;
+}
 {
 	  <TRUE> #True
 	|
@@ -110,9 +114,9 @@ void simpleCondition() : {}
         |
           ">=" scalarExpression() #GreaterOrEqual(2)
         |
-          "like" scalarExpression() #Like(2)
+          "like" scalarExpression() ("escape" stringLiteral() {arity = 3;})? #Like(arity)
         |
-          "likeIgnoreCase"  scalarExpression() #LikeIgnoreCase(2)
+          "likeIgnoreCase"  scalarExpression() ("escape" stringLiteral() {arity = 3;})? #LikeIgnoreCase(arity)
         |
           "in" ( namedParameter() | "(" scalarCommaList() ")" ) #In(2)
         |
@@ -122,13 +126,16 @@ void simpleCondition() : {}
 	)?
 }
 
-void simpleNotCondition() : {} 
+void simpleNotCondition() : {
+    // variable arity for the Like nodes
+    int arity = 2;
+}
 {
 	("not" | "!" )
 	(
-		"like" scalarExpression() #NotLike(2)
+		"like" scalarExpression() ("escape" stringLiteral() {arity=3;})? #NotLike(arity)
 	|
-	    "likeIgnoreCase"  scalarExpression() #NotLikeIgnoreCase(2)
+	    "likeIgnoreCase"  scalarExpression() ("escape" stringLiteral() {arity=3;})? #NotLikeIgnoreCase(arity)
 	|
 		"in" (  namedParameter() |  "(" scalarCommaList() ")" ) #NotIn(2)
 	|
