@@ -5,8 +5,9 @@ import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.ToManyResourceEntity;
 import io.agrest.ToOneResourceEntity;
-import io.agrest.meta.AgSchema;
+import io.agrest.access.MaxPathDepth;
 import io.agrest.meta.AgEntityOverlay;
+import io.agrest.meta.AgSchema;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,10 @@ public class MapByMerger implements IMapByMerger {
                 ? mapByCompanionEntity((RelatedResourceEntity) entity)
                 : mapByCompanionEntity((RootResourceEntity) entity);
 
-        new ResourceEntityTreeBuilder(mapByCompanionEntity, schema, overlays).inflatePath(mapByPath);
+        new ResourceEntityTreeBuilder(mapByCompanionEntity, schema, overlays,
+                // TODO: take the depth from the context
+                MaxPathDepth.ofDefault().getDepth())
+                .inflatePath(mapByPath);
         entity.mapBy(mapByCompanionEntity);
     }
 

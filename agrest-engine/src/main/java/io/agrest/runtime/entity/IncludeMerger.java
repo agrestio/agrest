@@ -56,7 +56,7 @@ public class IncludeMerger implements IIncludeMerger {
         // that are NOT expanded are those that are "phantom" entities included as a part of the longer path.
 
         PhantomTrackingResourceEntityTreeBuilder treeBuilder
-                = new PhantomTrackingResourceEntityTreeBuilder(entity, schema, overlays);
+                = new PhantomTrackingResourceEntityTreeBuilder(entity, schema, overlays, maxPathDepth);
 
         for (Include include : includes) {
             mergeInclude(entity, include, treeBuilder, overlays);

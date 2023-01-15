@@ -2,10 +2,9 @@ package io.agrest.runtime.processor.update.stage;
 
 import io.agrest.AgRequest;
 import io.agrest.RootResourceEntity;
-import io.agrest.access.MaxPathDepth;
-import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
+import io.agrest.meta.AgSchema;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.entity.IExcludeMerger;
@@ -45,9 +44,11 @@ public class UpdateCreateResourceEntityStage implements Processor<UpdateContext<
         RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(entity.resolveOverlay(schema, overlay));
 
         AgRequest request = context.getRequest();
-        includeMerger.merge(resourceEntity, request.getIncludes(), context.getEntityOverlays(),
-                // TODO: take the depth from the context
-                MaxPathDepth.ofDefault().getDepth());
+        includeMerger.merge(resourceEntity,
+                request.getIncludes(),
+                context.getEntityOverlays(),
+                context.getMaxPathDepth().getDepth());
+
         excludeMerger.merge(resourceEntity, request.getExcludes());
 
         context.setEntity(resourceEntity);

@@ -170,6 +170,17 @@ public interface UpdateBuilder<T> {
     }
 
     /**
+     * Sets the policy for the maximum depth of relationship paths, such as includes. This overrides runtime-defined
+     * policy for this one request. Depth is counted from the root of the request. Only non-negative depths are allowed.
+     * Zero depth blocks all relationships, "1" - blocks anything beyond direct relationships, and so on. Attribute
+     * paths are not counted towards depth (either root or nested).
+     *
+     * @return this builder instance
+     * @since 5.0
+     */
+    UpdateBuilder<T> maxPathDepth(int maxPathDepth);
+
+    /**
      * Registers a consumer to be executed after a specified standard execution stage. The consumer can inspect and
      * modify provided {@link UpdateContext}.
      * <p>This operation is composable. For each stage all custom processors will be invoked in the order they were

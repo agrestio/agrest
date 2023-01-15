@@ -210,6 +210,18 @@ public abstract class ResourceEntity<T> {
     /**
      * @since 5.0
      */
+    public boolean hasRelationship(String relationshipName) {
+        for (ResourceEntityProjection<?> p : projections.values()) {
+            if (p.getAgEntity().getRelationship(relationshipName) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @since 5.0
+     */
     public boolean ensureRelationship(String relationshipName) {
         boolean success = false;
         for (ResourceEntityProjection<?> p : projections.values()) {

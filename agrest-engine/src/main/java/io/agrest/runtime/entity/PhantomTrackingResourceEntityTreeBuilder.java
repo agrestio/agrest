@@ -21,9 +21,10 @@ public class PhantomTrackingResourceEntityTreeBuilder extends ResourceEntityTree
     public PhantomTrackingResourceEntityTreeBuilder(
             ResourceEntity<?> rootEntity,
             AgSchema schema,
-            Map<Class<?>, AgEntityOverlay<?>> entityOverlays) {
+            Map<Class<?>, AgEntityOverlay<?>> entityOverlays,
+            int maxTreeDepth) {
 
-        super(rootEntity, schema, entityOverlays);
+        super(rootEntity, schema, entityOverlays, maxTreeDepth);
         this.nonPhantomEntities = new HashSet<>();
 
         // "root" always a candidate for defaults, as it is included implicitly
@@ -39,8 +40,8 @@ public class PhantomTrackingResourceEntityTreeBuilder extends ResourceEntityTree
     }
 
     @Override
-    protected ResourceEntity<?> inflateChild(ResourceEntity<?> parentEntity, String relationshipName, String childPath) {
-        ResourceEntity childEntity = super.inflateChild(parentEntity, relationshipName, childPath);
+    protected ResourceEntity<?> inflateChild(ResourceEntity<?> parentEntity, String relationshipName, String childPath, int remainingDepth) {
+        ResourceEntity childEntity = super.inflateChild(parentEntity, relationshipName, childPath, remainingDepth);
 
         if (childPath == null) {
             // explicit relationship "include" may need defaults

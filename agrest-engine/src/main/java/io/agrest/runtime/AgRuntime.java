@@ -127,7 +127,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> UpdateBuilder<T> create(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, request(), injector);
+        UpdateContext<T> context = new UpdateContext<>(type, request(), maxPathDepth, injector);
         return new DefaultUpdateBuilder<>(context, createProcessorFactory);
     }
 
@@ -135,7 +135,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> UpdateBuilder<T> createOrUpdate(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, request(), injector);
+        UpdateContext<T> context = new UpdateContext<>(type, request(), maxPathDepth, injector);
         return new DefaultUpdateBuilder<>(context, createOrUpdateProcessorFactory);
     }
 
@@ -143,7 +143,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), injector);
+        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), maxPathDepth, injector);
         return new DefaultUpdateBuilder<>(context, idempotentCreateOrUpdateProcessorFactory);
     }
 
@@ -151,7 +151,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> UpdateBuilder<T> idempotentFullSync(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), injector);
+        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), maxPathDepth, injector);
         return new DefaultUpdateBuilder<>(context, idempotentFullSyncProcessorFactory);
     }
 
@@ -159,7 +159,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> UpdateBuilder<T> update(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), injector);
+        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), maxPathDepth, injector);
         return new DefaultUpdateBuilder<>(context, updateProcessorFactory);
     }
 

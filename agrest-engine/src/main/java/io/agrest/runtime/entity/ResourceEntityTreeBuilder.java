@@ -1,13 +1,18 @@
 package io.agrest.runtime.entity;
 
 import io.agrest.AgException;
-import io.agrest.RelatedResourceEntity;
 import io.agrest.PathConstants;
+import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.ResourceEntityProjection;
 import io.agrest.ToManyResourceEntity;
 import io.agrest.ToOneResourceEntity;
-import io.agrest.meta.*;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgEntityOverlay;
+import io.agrest.meta.AgRelationship;
+import io.agrest.meta.AgSchema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Map;
@@ -20,18 +25,23 @@ import java.util.Objects;
  */
 public class ResourceEntityTreeBuilder {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceEntityTreeBuilder.class);
+
     private final ResourceEntity<?> rootEntity;
     private final AgSchema schema;
     private final Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
+    private final int maxTreeDepth;
 
     public ResourceEntityTreeBuilder(
             ResourceEntity<?> rootEntity,
             AgSchema schema,
-            Map<Class<?>, AgEntityOverlay<?>> entityOverlays) {
+            Map<Class<?>, AgEntityOverlay<?>> entityOverlays,
+            int maxTreeDepth) {
 
         this.schema = Objects.requireNonNull(schema);
         this.rootEntity = Objects.requireNonNull(rootEntity);
         this.entityOverlays = entityOverlays != null ? entityOverlays : Collections.emptyMap();
+        this.maxTreeDepth = maxTreeDepth;
     }
 
     /**
@@ -42,14 +52,14 @@ public class ResourceEntityTreeBuilder {
      */
     public ResourceEntity<?> inflatePath(String path) {
         IncludeMerger.checkTooLong(path);
-        return doInflatePath(rootEntity, path);
+        return doInflatePath(rootEntity, path, maxTreeDepth);
     }
 
     /**
      * Records include path, returning null for the path corresponding to an attribute, and a child
      * {@link ResourceEntity} for the path corresponding to relationship.
      */
-    protected ResourceEntity<?> doInflatePath(ResourceEntity<?> entity, String path) {
+    protected ResourceEntity<?> doInflatePath(ResourceEntity<?> entity, String path, int remainingDepth) {
 
         int dot = path.indexOf(PathConstants.DOT);
 
@@ -73,20 +83,29 @@ public class ResourceEntityTreeBuilder {
             }
         }
 
+        if (remainingDepth == 0 && entity.hasRelationship(property)) {
+            LOGGER.info(
+                    "Truncated '{}' from the path as it exceeds the max allowed depth of {}",
+                    path,
+                    maxTreeDepth);
+
+            return entity;
+        }
+
         if (entity.ensureRelationship(property)) {
             String childPath = dot > 0 ? path.substring(dot + 1) : null;
-            return inflateChild(entity, property, childPath);
+            return inflateChild(entity, property, childPath, remainingDepth);
         }
 
         throw AgException.badRequest("Invalid include path: %s", path);
     }
 
-    protected ResourceEntity<?> inflateChild(ResourceEntity<?> parentEntity, String relationshipName, String childPath) {
+    protected ResourceEntity<?> inflateChild(ResourceEntity<?> parentEntity, String relationshipName, String childPath, int remainingDepth) {
 
         ResourceEntity<?> childEntity = parentEntity.ensureChild(relationshipName, this::createChildEntity);
 
         return childPath != null
-                ? doInflatePath(childEntity, childPath)
+                ? doInflatePath(childEntity, childPath, remainingDepth - 1)
                 : childEntity;
     }
 
