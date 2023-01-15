@@ -62,11 +62,13 @@ public class ResourceEntityTreeBuilder {
         }
 
         String property = dot > 0 ? path.substring(0, dot) : path;
-        AgEntity<?> agEntity = entity.getAgEntity();
 
         if (dot < 0) {
 
             if (entity.ensureAttribute(property, false)) {
+                return entity;
+            } else if (property.equals(PathConstants.ID_PK_ATTRIBUTE)) {
+                entity.includeId();
                 return entity;
             }
         }
@@ -74,12 +76,6 @@ public class ResourceEntityTreeBuilder {
         if (entity.ensureRelationship(property)) {
             String childPath = dot > 0 ? path.substring(dot + 1) : null;
             return inflateChild(entity, property, childPath);
-        }
-
-        // this is root entity id and it's included explicitly
-        if (property.equals(PathConstants.ID_PK_ATTRIBUTE)) {
-            entity.includeId();
-            return entity;
         }
 
         throw AgException.badRequest("Invalid include path: %s", path);
