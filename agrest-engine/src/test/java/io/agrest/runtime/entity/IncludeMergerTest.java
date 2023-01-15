@@ -6,13 +6,13 @@ import io.agrest.RootResourceEntity;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
-import io.agrest.protocol.Include;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.LazySchema;
+import io.agrest.protocol.Include;
 import io.agrest.resolver.ThrowingRelatedDataResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ public class IncludeMergerTest {
 
         AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
-        includeMerger.merge(root, asList(), Collections.emptyMap());
+        includeMerger.merge(root, asList(), Collections.emptyMap(), 100);
 
         assertEquals(entity.getAttributes().size(), root.getBaseProjection().getAttributes().size());
         assertTrue(root.isIdIncluded());
@@ -61,7 +61,7 @@ public class IncludeMergerTest {
 
         AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
-        includeMerger.merge(root, asList(new Include("name")), Collections.emptyMap());
+        includeMerger.merge(root, asList(new Include("name")), Collections.emptyMap(), 100);
 
         assertEquals(1, root.getBaseProjection().getAttributes().size());
         assertFalse(root.isIdIncluded());
@@ -73,7 +73,7 @@ public class IncludeMergerTest {
 
         AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
-        includeMerger.merge(root, asList(new Include("name"), new Include("ys")), Collections.emptyMap());
+        includeMerger.merge(root, asList(new Include("name"), new Include("ys")), Collections.emptyMap(), 100);
 
         assertEquals(1, root.getBaseProjection().getAttributes().size());
         assertFalse(root.isIdIncluded());
@@ -89,7 +89,7 @@ public class IncludeMergerTest {
                 new Include("name"),
                 new Include("ys.name"),
                 new Include("ys.z")
-        ), Collections.emptyMap());
+        ), Collections.emptyMap(), 100);
 
         assertEquals(1, root.getBaseProjection().getAttributes().size());
         assertFalse(root.isIdIncluded());
@@ -128,7 +128,7 @@ public class IncludeMergerTest {
                 new Include("name"),
                 new Include("ys.name"),
                 new Include("ys.z")
-        ), overlays);
+        ), overlays, 100);
 
         assertEquals(1, root.getBaseProjection().getAttributes().size());
         assertFalse(root.isIdIncluded());

@@ -1,7 +1,7 @@
 package io.agrest.runtime.processor.select;
 
 import io.agrest.ResourceEntity;
-import io.agrest.access.MaxIncludeDepth;
+import io.agrest.access.MaxPathDepth;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
@@ -82,7 +82,7 @@ public class CreateResourceEntityStage_IncludeObjectTest {
         SelectContext<Tr> context = new SelectContext<>(
                 Tr.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory.builder().addInclude(new Include("rtss")).build());
 
@@ -101,7 +101,7 @@ public class CreateResourceEntityStage_IncludeObjectTest {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
 
         Include include = new Include("rtss", null, Collections.emptyList(), "rtt", null, null);

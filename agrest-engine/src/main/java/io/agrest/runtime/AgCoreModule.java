@@ -2,7 +2,7 @@ package io.agrest.runtime;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
-import io.agrest.access.MaxIncludeDepth;
+import io.agrest.access.MaxPathDepth;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.converter.jsonvalue.Base64Converter;
@@ -138,11 +138,11 @@ import java.util.Objects;
 public class AgCoreModule implements Module {
 
     private final Map<String, AgEntityOverlay> entityOverlays;
-    private final MaxIncludeDepth maxIncludeDepth;
+    private final MaxPathDepth maxPathDepth;
 
-    protected AgCoreModule(Map<String, AgEntityOverlay> entityOverlays, MaxIncludeDepth maxIncludeDepth) {
+    protected AgCoreModule(Map<String, AgEntityOverlay> entityOverlays, MaxPathDepth maxPathDepth) {
         this.entityOverlays = Objects.requireNonNull(entityOverlays);
-        this.maxIncludeDepth = Objects.requireNonNull(maxIncludeDepth);
+        this.maxPathDepth = Objects.requireNonNull(maxPathDepth);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class AgCoreModule implements Module {
         binder.bindList(AgEntityCompiler.class).add(AnnotationsAgEntityCompiler.class);
 
         binder.bindMap(AgEntityOverlay.class).putAll(entityOverlays);
-        binder.bind(MaxIncludeDepth.class).toInstance(maxIncludeDepth);
+        binder.bind(MaxPathDepth.class).toInstance(maxPathDepth);
 
         binder.bindMap(AgExceptionMapper.class)
                 .put(AgException.class.getName(), AgExceptionDefaultMapper.class);

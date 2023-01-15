@@ -1,12 +1,12 @@
 package io.agrest.runtime;
 
-import io.agrest.access.MaxIncludeDepth;
+import io.agrest.access.MaxPathDepth;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class AgRuntimeBuilder_MaxIncludeDepthTest {
+public class AgRuntimeBuilder_MaxPathDepthTest {
 
     @Test
     public void testDefault() {
@@ -14,33 +14,33 @@ public class AgRuntimeBuilder_MaxIncludeDepthTest {
                 .builder()
                 .build();
 
-        assertEquals(100, runtime.service(MaxIncludeDepth.class).getDepth());
+        assertEquals(100, runtime.service(MaxPathDepth.class).getDepth());
     }
 
     @Test
     public void testOverride() {
         AgRuntime runtime = AgRuntime
                 .builder()
-                .maxIncludeDepth(3)
+                .maxPathDepth(3)
                 .build();
 
-        assertEquals(3, runtime.service(MaxIncludeDepth.class).getDepth());
+        assertEquals(3, runtime.service(MaxPathDepth.class).getDepth());
     }
 
     @Test
     public void testOverrideZero() {
         AgRuntime runtime = AgRuntime
                 .builder()
-                .maxIncludeDepth(0)
+                .maxPathDepth(0)
                 .build();
 
-        assertEquals(0, runtime.service(MaxIncludeDepth.class).getDepth());
+        assertEquals(0, runtime.service(MaxPathDepth.class).getDepth());
     }
 
     @Test
     public void testNegative() {
         assertThrows(IllegalArgumentException.class, () -> AgRuntime
                 .builder()
-                .maxIncludeDepth(-1));
+                .maxPathDepth(-1));
     }
 }

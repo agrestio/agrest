@@ -7,7 +7,7 @@ import io.agrest.SelectBuilder;
 import io.agrest.SimpleResponse;
 import io.agrest.UnrelateBuilder;
 import io.agrest.UpdateBuilder;
-import io.agrest.access.MaxIncludeDepth;
+import io.agrest.access.MaxPathDepth;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -46,7 +46,7 @@ public class AgRuntime {
     private final IdempotentCreateOrUpdateProcessorFactory idempotentCreateOrUpdateProcessorFactory;
     private final IdempotentFullSyncProcessorFactory idempotentFullSyncProcessorFactory;
     private final UnrelateProcessorFactory unrelateProcessorFactory;
-    private final MaxIncludeDepth maxIncludeDepth;
+    private final MaxPathDepth maxPathDepth;
 
     /**
      * Creates and returns a default Agrest runtime
@@ -81,7 +81,7 @@ public class AgRuntime {
         this.idempotentFullSyncProcessorFactory = injector.getInstance(IdempotentFullSyncProcessorFactory.class);
         this.unrelateProcessorFactory = injector.getInstance(UnrelateProcessorFactory.class);
 
-        this.maxIncludeDepth = injector.getInstance(MaxIncludeDepth.class);
+        this.maxPathDepth = injector.getInstance(MaxPathDepth.class);
     }
 
     /**
@@ -119,7 +119,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> SelectBuilder<T> select(Class<T> type) {
-        SelectContext<T> context = new SelectContext<>(type, request(), maxIncludeDepth, injector);
+        SelectContext<T> context = new SelectContext<>(type, request(), maxPathDepth, injector);
         return new DefaultSelectBuilder<>(context, selectProcessorFactory);
     }
 

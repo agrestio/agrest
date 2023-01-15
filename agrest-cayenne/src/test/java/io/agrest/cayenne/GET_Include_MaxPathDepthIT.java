@@ -21,7 +21,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-public class GET_Include_MaxIncludeDepthIT extends MainDbTest {
+public class GET_Include_MaxPathDepthIT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
@@ -99,7 +99,7 @@ public class GET_Include_MaxIncludeDepthIT extends MainDbTest {
                     .clientParams(uriInfo.getQueryParameters());
 
             if (depth != null) {
-                builder.maxIncludeDepth(depth);
+                builder.maxPathDepth(depth);
             }
 
             return builder.get();

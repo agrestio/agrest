@@ -1,7 +1,7 @@
 package io.agrest.runtime.processor.select;
 
 import io.agrest.ResourceEntity;
-import io.agrest.access.MaxIncludeDepth;
+import io.agrest.access.MaxPathDepth;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
@@ -85,7 +85,7 @@ public class CreateResourceEntityStageTest {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory.builder().build());
         context.mergeClientParameters(new HashMap<>());
@@ -105,7 +105,7 @@ public class CreateResourceEntityStageTest {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -131,7 +131,7 @@ public class CreateResourceEntityStageTest {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -155,7 +155,7 @@ public class CreateResourceEntityStageTest {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
 
         Include include1 = new Include("a");
@@ -189,7 +189,7 @@ public class CreateResourceEntityStageTest {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory.builder().addInclude(new Include("rtt")).build());
 
@@ -221,7 +221,7 @@ public class CreateResourceEntityStageTest {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory.builder()
                 .addInclude(new Include("m"))
@@ -253,7 +253,7 @@ public class CreateResourceEntityStageTest {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
 
         context.setRequest(requestBuilderFactory
@@ -288,7 +288,7 @@ public class CreateResourceEntityStageTest {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -323,7 +323,7 @@ public class CreateResourceEntityStageTest {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -353,7 +353,7 @@ public class CreateResourceEntityStageTest {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -373,7 +373,7 @@ public class CreateResourceEntityStageTest {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -394,7 +394,7 @@ public class CreateResourceEntityStageTest {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -415,7 +415,7 @@ public class CreateResourceEntityStageTest {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -436,7 +436,7 @@ public class CreateResourceEntityStageTest {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -450,7 +450,7 @@ public class CreateResourceEntityStageTest {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
-                MaxIncludeDepth.ofDefault(),
+                MaxPathDepth.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()

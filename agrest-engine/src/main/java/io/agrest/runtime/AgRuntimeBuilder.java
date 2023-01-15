@@ -1,7 +1,7 @@
 package io.agrest.runtime;
 
 import io.agrest.AgModuleProvider;
-import io.agrest.access.MaxIncludeDepth;
+import io.agrest.access.MaxPathDepth;
 import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.di.DIBootstrap;
 import org.apache.cayenne.di.Injector;
@@ -25,7 +25,7 @@ public class AgRuntimeBuilder {
     private final List<AgModuleProvider> moduleProviders;
     private final List<Module> modules;
     private final Map<String, AgEntityOverlay> entityOverlays;
-    private MaxIncludeDepth maxIncludeDepth;
+    private MaxPathDepth maxPathDepth;
 
     private boolean autoLoadModules;
 
@@ -88,16 +88,15 @@ public class AgRuntimeBuilder {
     }
 
     /**
-     * Sets the policy for the maximum depth of relationship includes. The policy is applied to select and update
-     * requests. Includes are counted from the root of the request. Only non-negative depth are allowed. Zero depth
-     * blocks all relationships, "1" - blocks anything beyond direct relationships, and so on. This policy does not
-     * affect attribute includes (either root or nested).
+     * Sets the policy for the maximum depth of relationship paths, such as includes. Depth is counted from the root of
+     * the request. Only non-negative depths are allowed. Zero depth blocks all relationships, "1" - blocks anything
+     * beyond direct relationships, and so on. Attribute paths are not counted towards depth (either root or nested).
      *
      * @return this builder instance
      * @since 5.0
      */
-    public AgRuntimeBuilder maxIncludeDepth(int maxIncludeDepth) {
-        this.maxIncludeDepth = MaxIncludeDepth.of(maxIncludeDepth);
+    public AgRuntimeBuilder maxPathDepth(int maxPathDepth) {
+        this.maxPathDepth = MaxPathDepth.of(maxPathDepth);
         return this;
     }
 
@@ -128,7 +127,7 @@ public class AgRuntimeBuilder {
     private Module createCoreModule() {
         return new AgCoreModule(
                 entityOverlays,
-                maxIncludeDepth != null ? maxIncludeDepth : MaxIncludeDepth.ofDefault());
+                maxPathDepth != null ? maxPathDepth : MaxPathDepth.ofDefault());
     }
 
     private void loadAutoLoadableModules(Collection<Module> collector) {

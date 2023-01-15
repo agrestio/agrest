@@ -15,5 +15,5 @@ public interface IIncludeMerger {
     /**
      * @since 3.4 additionally takes request overlays
      */
-    void merge(ResourceEntity<?> resourceEntity, List<Include> includes, Map<Class<?>, AgEntityOverlay<?>> overlays, int maxIncludeDepth);
+    void merge(ResourceEntity<?> resourceEntity, List<Include> includes, Map<Class<?>, AgEntityOverlay<?>> overlays, int maxPathDepth);
 }
