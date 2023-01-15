@@ -1,7 +1,7 @@
 package io.agrest.runtime;
 
 import io.agrest.AgModuleProvider;
-import io.agrest.access.MaxPathDepth;
+import io.agrest.access.PathChecker;
 import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.di.DIBootstrap;
 import org.apache.cayenne.di.Injector;
@@ -25,7 +25,7 @@ public class AgRuntimeBuilder {
     private final List<AgModuleProvider> moduleProviders;
     private final List<Module> modules;
     private final Map<String, AgEntityOverlay> entityOverlays;
-    private MaxPathDepth maxPathDepth;
+    private PathChecker pathChecker;
 
     private boolean autoLoadModules;
 
@@ -96,7 +96,7 @@ public class AgRuntimeBuilder {
      * @since 5.0
      */
     public AgRuntimeBuilder maxPathDepth(int maxPathDepth) {
-        this.maxPathDepth = MaxPathDepth.of(maxPathDepth);
+        this.pathChecker = PathChecker.of(maxPathDepth);
         return this;
     }
 
@@ -127,7 +127,7 @@ public class AgRuntimeBuilder {
     private Module createCoreModule() {
         return new AgCoreModule(
                 entityOverlays,
-                maxPathDepth != null ? maxPathDepth : MaxPathDepth.ofDefault());
+                pathChecker != null ? pathChecker : PathChecker.ofDefault());
     }
 
     private void loadAutoLoadableModules(Collection<Module> collector) {

@@ -7,7 +7,7 @@ import io.agrest.SelectBuilder;
 import io.agrest.SimpleResponse;
 import io.agrest.UnrelateBuilder;
 import io.agrest.UpdateBuilder;
-import io.agrest.access.MaxPathDepth;
+import io.agrest.access.PathChecker;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -46,7 +46,7 @@ public class AgRuntime {
     private final IdempotentCreateOrUpdateProcessorFactory idempotentCreateOrUpdateProcessorFactory;
     private final IdempotentFullSyncProcessorFactory idempotentFullSyncProcessorFactory;
     private final UnrelateProcessorFactory unrelateProcessorFactory;
-    private final MaxPathDepth maxPathDepth;
+    private final PathChecker pathChecker;
 
     /**
      * Creates and returns a default Agrest runtime
@@ -81,7 +81,7 @@ public class AgRuntime {
         this.idempotentFullSyncProcessorFactory = injector.getInstance(IdempotentFullSyncProcessorFactory.class);
         this.unrelateProcessorFactory = injector.getInstance(UnrelateProcessorFactory.class);
 
-        this.maxPathDepth = injector.getInstance(MaxPathDepth.class);
+        this.pathChecker = injector.getInstance(PathChecker.class);
     }
 
     /**
@@ -119,7 +119,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> SelectBuilder<T> select(Class<T> type) {
-        SelectContext<T> context = new SelectContext<>(type, request(), maxPathDepth, injector);
+        SelectContext<T> context = new SelectContext<>(type, request(), pathChecker, injector);
         return new DefaultSelectBuilder<>(context, selectProcessorFactory);
     }
 
@@ -127,7 +127,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> UpdateBuilder<T> create(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, request(), maxPathDepth, injector);
+        UpdateContext<T> context = new UpdateContext<>(type, request(), pathChecker, injector);
         return new DefaultUpdateBuilder<>(context, createProcessorFactory);
     }
 
@@ -135,7 +135,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> UpdateBuilder<T> createOrUpdate(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, request(), maxPathDepth, injector);
+        UpdateContext<T> context = new UpdateContext<>(type, request(), pathChecker, injector);
         return new DefaultUpdateBuilder<>(context, createOrUpdateProcessorFactory);
     }
 
@@ -143,7 +143,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), maxPathDepth, injector);
+        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), pathChecker, injector);
         return new DefaultUpdateBuilder<>(context, idempotentCreateOrUpdateProcessorFactory);
     }
 
@@ -151,7 +151,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> UpdateBuilder<T> idempotentFullSync(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), maxPathDepth, injector);
+        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), pathChecker, injector);
         return new DefaultUpdateBuilder<>(context, idempotentFullSyncProcessorFactory);
     }
 
@@ -159,7 +159,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> UpdateBuilder<T> update(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), maxPathDepth, injector);
+        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), pathChecker, injector);
         return new DefaultUpdateBuilder<>(context, updateProcessorFactory);
     }
 

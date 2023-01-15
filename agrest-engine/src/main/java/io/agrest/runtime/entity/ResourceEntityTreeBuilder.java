@@ -7,6 +7,7 @@ import io.agrest.ResourceEntity;
 import io.agrest.ResourceEntityProjection;
 import io.agrest.ToManyResourceEntity;
 import io.agrest.ToOneResourceEntity;
+import io.agrest.access.PathChecker;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgRelationship;
@@ -54,7 +55,7 @@ public class ResourceEntityTreeBuilder {
      * @return the last entity found in the path
      */
     public ResourceEntity<?> inflatePath(String path) {
-        IncludeMerger.checkTooLong(path);
+        PathChecker.exceedsLength(path);
         return doInflatePath(rootEntity, path, maxTreeDepth);
     }
 

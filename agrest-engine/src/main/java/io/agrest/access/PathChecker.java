@@ -4,17 +4,21 @@ import io.agrest.AgException;
 import io.agrest.PathConstants;
 
 /**
- * A policy for the maximum depth of relationships in paths.
+ * A policy defining maximum String length and number of relationships (depths) of property paths.
  *
  * @since 5.0
  */
-public class MaxPathDepth {
+public class PathChecker {
 
     private static final int DEFAULT_DEPTH = 100;
+
+    // TODO: make this a configurable object property
+    private static final int MAX_PATH_LENGTH = 1000;
+
     private final int depth;
 
-    public static MaxPathDepth ofDefault() {
-        return new MaxPathDepth(DEFAULT_DEPTH);
+    public static PathChecker ofDefault() {
+        return new PathChecker(DEFAULT_DEPTH);
     }
 
     /**
@@ -22,15 +26,25 @@ public class MaxPathDepth {
      * the request. Only non-negative depths are allowed. Zero depth blocks all relationships, "1" - blocks anything
      * beyond direct relationships, and so on. Attribute paths are not counted towards depth (either root or nested).
      */
-    public static MaxPathDepth of(int depth) {
+    public static PathChecker of(int depth) {
         if (depth < 0) {
             throw new IllegalArgumentException("Negative max include depth is invalid: " + depth);
         }
 
-        return new MaxPathDepth(depth);
+        return new PathChecker(depth);
     }
 
-    protected MaxPathDepth(int depth) {
+    /**
+     * Checks whether a given path exceeds hardcoded max length in characters. Unlike {@link #exceedsDepth(String)},
+     * this method is intended for fast sanity checks that don't require String content analysis.
+     */
+    public static void exceedsLength(String path) {
+        if (path != null && path.length() > MAX_PATH_LENGTH) {
+            throw AgException.badRequest("Include/exclude path too long: %s", path);
+        }
+    }
+
+    protected PathChecker(int depth) {
         this.depth = depth;
     }
 
@@ -45,11 +59,13 @@ public class MaxPathDepth {
      * of telling without resolving the full path against the model. So the method will also succeed when there is one
      * extra path component above the threshold.
      */
-    public void checkExceedsDepth(String path) {
+    public void exceedsDepth(String path) {
 
         if (path == null) {
             return;
         }
+
+        exceedsLength(path);
 
         int len = path.length();
         if (len <= depth) {

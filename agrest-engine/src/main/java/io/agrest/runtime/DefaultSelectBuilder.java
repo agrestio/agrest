@@ -5,7 +5,7 @@ import io.agrest.DataResponse;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
 import io.agrest.SizeConstraints;
-import io.agrest.access.MaxPathDepth;
+import io.agrest.access.PathChecker;
 import io.agrest.encoder.Encoder;
 import io.agrest.id.AgObjectId;
 import io.agrest.meta.AgEntity;
@@ -68,7 +68,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
     @Override
     public SelectBuilder<T> maxPathDepth(int maxPathDepth) {
-        context.setMaxPathDepth(MaxPathDepth.of(maxPathDepth));
+        context.setMaxPathDepth(PathChecker.of(maxPathDepth));
         return this;
     }
 

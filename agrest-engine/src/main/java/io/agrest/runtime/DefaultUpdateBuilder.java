@@ -7,7 +7,7 @@ import io.agrest.ObjectMapperFactory;
 import io.agrest.SimpleResponse;
 import io.agrest.UpdateBuilder;
 import io.agrest.UpdateStage;
-import io.agrest.access.MaxPathDepth;
+import io.agrest.access.PathChecker;
 import io.agrest.id.AgObjectId;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
@@ -89,7 +89,7 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
     @Override
     public UpdateBuilder<T> maxPathDepth(int maxPathDepth) {
-        context.setMaxPathDepth(MaxPathDepth.of(maxPathDepth));
+        context.setMaxPathDepth(PathChecker.of(maxPathDepth));
         return this;
     }
 

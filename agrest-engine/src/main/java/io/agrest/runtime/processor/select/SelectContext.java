@@ -1,6 +1,6 @@
 package io.agrest.runtime.processor.select;
 
-import io.agrest.access.MaxPathDepth;
+import io.agrest.access.PathChecker;
 import io.agrest.id.AgObjectId;
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
@@ -33,12 +33,12 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     private Encoder encoder;
     private AgRequestBuilder requestBuilder;
     private Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
-    private MaxPathDepth maxPathDepth;
+    private PathChecker pathChecker;
 
-    public SelectContext(Class<T> type, AgRequestBuilder requestBuilder, MaxPathDepth maxPathDepth, Injector injector) {
+    public SelectContext(Class<T> type, AgRequestBuilder requestBuilder, PathChecker pathChecker, Injector injector) {
         super(type, injector);
         this.requestBuilder = requestBuilder;
-        this.maxPathDepth = maxPathDepth;
+        this.pathChecker = pathChecker;
     }
 
     /**
@@ -156,15 +156,15 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     /**
      * @since 5.0
      */
-    public MaxPathDepth getMaxPathDepth() {
-        return maxPathDepth;
+    public PathChecker getMaxPathDepth() {
+        return pathChecker;
     }
 
     /**
      * @since 5.0
      */
-    public void setMaxPathDepth(MaxPathDepth maxPathDepth) {
-        this.maxPathDepth = maxPathDepth;
+    public void setMaxPathDepth(PathChecker pathChecker) {
+        this.pathChecker = pathChecker;
     }
 
     /**

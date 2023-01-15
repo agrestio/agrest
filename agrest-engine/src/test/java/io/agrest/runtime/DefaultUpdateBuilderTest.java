@@ -2,7 +2,7 @@ package io.agrest.runtime;
 
 import io.agrest.AgRequestBuilder;
 import io.agrest.UpdateStage;
-import io.agrest.access.MaxPathDepth;
+import io.agrest.access.PathChecker;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 public class DefaultUpdateBuilderTest {
 
     private <T> DefaultUpdateBuilder<T> createBuilder(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, mock(AgRequestBuilder.class), MaxPathDepth.ofDefault(), mock(Injector.class));
+        UpdateContext<T> context = new UpdateContext<>(type, mock(AgRequestBuilder.class), PathChecker.ofDefault(), mock(Injector.class));
         UpdateProcessorFactory processorFactory = mock(UpdateProcessorFactory.class);
         when(processorFactory.createProcessor(any())).thenReturn(mock(Processor.class));
 

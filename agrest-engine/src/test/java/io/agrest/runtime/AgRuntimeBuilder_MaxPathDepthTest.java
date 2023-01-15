@@ -1,6 +1,6 @@
 package io.agrest.runtime;
 
-import io.agrest.access.MaxPathDepth;
+import io.agrest.access.PathChecker;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,7 +14,7 @@ public class AgRuntimeBuilder_MaxPathDepthTest {
                 .builder()
                 .build();
 
-        assertEquals(100, runtime.service(MaxPathDepth.class).getDepth());
+        assertEquals(100, runtime.service(PathChecker.class).getDepth());
     }
 
     @Test
@@ -24,7 +24,7 @@ public class AgRuntimeBuilder_MaxPathDepthTest {
                 .maxPathDepth(3)
                 .build();
 
-        assertEquals(3, runtime.service(MaxPathDepth.class).getDepth());
+        assertEquals(3, runtime.service(PathChecker.class).getDepth());
     }
 
     @Test
@@ -34,7 +34,7 @@ public class AgRuntimeBuilder_MaxPathDepthTest {
                 .maxPathDepth(0)
                 .build();
 
-        assertEquals(0, runtime.service(MaxPathDepth.class).getDepth());
+        assertEquals(0, runtime.service(PathChecker.class).getDepth());
     }
 
     @Test

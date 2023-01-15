@@ -4,11 +4,11 @@ import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
 import io.agrest.ResourceEntityProjection;
-import io.agrest.access.MaxPathDepth;
-import io.agrest.protocol.Include;
+import io.agrest.access.PathChecker;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntityOverlay;
+import io.agrest.meta.AgSchema;
+import io.agrest.protocol.Include;
 import org.apache.cayenne.di.Inject;
 
 import java.util.List;
@@ -38,8 +38,10 @@ public class IncludeMerger implements IIncludeMerger {
     }
 
     /**
-     * Sanity check. We don't want to get a stack overflow.
+     * @deprecated in favor of {@link PathChecker#exceedsLength(String)}. The new size
+     * limit is 1000 chars instead of 300.
      */
+    @Deprecated(since = "5.0")
     public static void checkTooLong(String path) {
         if (path != null && path.length() > PathConstants.MAX_PATH_LENGTH) {
             throw AgException.badRequest("Include/exclude path too long: %s", path);
@@ -50,17 +52,17 @@ public class IncludeMerger implements IIncludeMerger {
      * @since 3.4
      */
     @Override
-    public void merge(ResourceEntity<?> entity, List<Include> includes, Map<Class<?>, AgEntityOverlay<?>> overlays, MaxPathDepth maxPathDepth) {
+    public void merge(ResourceEntity<?> entity, List<Include> includes, Map<Class<?>, AgEntityOverlay<?>> overlays, PathChecker pathChecker) {
 
         // included attribute sets of the root entity and entities that are included explicitly via relationship includes
         // may need to get expanded if they don't have any explicit includes otherwise. Will track them here... Entities
         // that are NOT expanded are those that are "phantom" entities included as a part of the longer path.
 
         PhantomTrackingResourceEntityTreeBuilder treeBuilder
-                = new PhantomTrackingResourceEntityTreeBuilder(entity, schema, overlays, maxPathDepth.getDepth(), true);
+                = new PhantomTrackingResourceEntityTreeBuilder(entity, schema, overlays, pathChecker.getDepth(), true);
 
         for (Include include : includes) {
-            mergeInclude(entity, include, treeBuilder, overlays, maxPathDepth);
+            mergeInclude(entity, include, treeBuilder, overlays, pathChecker);
         }
 
         for (ResourceEntity<?> e : treeBuilder.nonPhantomEntities()) {
@@ -73,13 +75,13 @@ public class IncludeMerger implements IIncludeMerger {
             Include include,
             ResourceEntityTreeBuilder treeBuilder,
             Map<Class<?>, AgEntityOverlay<?>> overlays,
-            MaxPathDepth maxPathDepth) {
+            PathChecker pathChecker) {
 
         String path = include.getPath();
         ResourceEntity<?> includeEntity = (path == null || path.isEmpty()) ? entity : treeBuilder.inflatePath(path);
 
-        mapByMerger.merge(includeEntity, include.getMapBy(), overlays, maxPathDepth);
-        sortMerger.merge(includeEntity, include.getSorts(), maxPathDepth);
+        mapByMerger.merge(includeEntity, include.getMapBy(), overlays, pathChecker);
+        sortMerger.merge(includeEntity, include.getSorts(), pathChecker);
         expMerger.merge(includeEntity, include.getExp());
         sizeMerger.merge(includeEntity, include.getStart(), include.getLimit());
     }
@@ -89,7 +91,7 @@ public class IncludeMerger implements IIncludeMerger {
         // TODO: will need to take different projections into account
         if (!resourceEntity.isIdIncluded() && resourceEntity.getBaseProjection().getAttributes().isEmpty()) {
 
-            for(ResourceEntityProjection<?> p : resourceEntity.getProjections()) {
+            for (ResourceEntityProjection<?> p : resourceEntity.getProjections()) {
                 for (AgAttribute a : p.getAgEntity().getAttributes()) {
                     p.ensureAttribute(a.getName(), true);
                 }

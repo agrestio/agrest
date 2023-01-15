@@ -3,7 +3,7 @@ package io.agrest.runtime.entity;
 import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
-import io.agrest.access.MaxPathDepth;
+import io.agrest.access.PathChecker;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
@@ -50,7 +50,7 @@ public class IncludeMergerTest {
 
         AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
-        includeMerger.merge(root, asList(), Collections.emptyMap(), MaxPathDepth.ofDefault());
+        includeMerger.merge(root, asList(), Collections.emptyMap(), PathChecker.ofDefault());
 
         assertEquals(entity.getAttributes().size(), root.getBaseProjection().getAttributes().size());
         assertTrue(root.isIdIncluded());
@@ -62,7 +62,7 @@ public class IncludeMergerTest {
 
         AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
-        includeMerger.merge(root, asList(new Include("name")), Collections.emptyMap(), MaxPathDepth.ofDefault());
+        includeMerger.merge(root, asList(new Include("name")), Collections.emptyMap(), PathChecker.ofDefault());
 
         assertEquals(1, root.getBaseProjection().getAttributes().size());
         assertFalse(root.isIdIncluded());
@@ -74,7 +74,7 @@ public class IncludeMergerTest {
 
         AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
-        includeMerger.merge(root, asList(new Include("name"), new Include("ys")), Collections.emptyMap(), MaxPathDepth.ofDefault());
+        includeMerger.merge(root, asList(new Include("name"), new Include("ys")), Collections.emptyMap(), PathChecker.ofDefault());
 
         assertEquals(1, root.getBaseProjection().getAttributes().size());
         assertFalse(root.isIdIncluded());
@@ -90,7 +90,7 @@ public class IncludeMergerTest {
                 new Include("name"),
                 new Include("ys.name"),
                 new Include("ys.z")
-        ), Collections.emptyMap(), MaxPathDepth.ofDefault());
+        ), Collections.emptyMap(), PathChecker.ofDefault());
 
         assertEquals(1, root.getBaseProjection().getAttributes().size());
         assertFalse(root.isIdIncluded());
@@ -129,7 +129,7 @@ public class IncludeMergerTest {
                 new Include("name"),
                 new Include("ys.name"),
                 new Include("ys.z")
-        ), overlays, MaxPathDepth.ofDefault());
+        ), overlays, PathChecker.ofDefault());
 
         assertEquals(1, root.getBaseProjection().getAttributes().size());
         assertFalse(root.isIdIncluded());

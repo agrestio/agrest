@@ -1,6 +1,6 @@
 package io.agrest.cayenne.processor;
 
-import io.agrest.access.MaxPathDepth;
+import io.agrest.access.PathChecker;
 import io.agrest.id.AgObjectId;
 import io.agrest.AgRequestBuilder;
 import io.agrest.RootResourceEntity;
@@ -27,7 +27,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
         entity.getOrderings().add(new Sort("name", Direction.asc));
         SelectContext<E1> c = new SelectContext<>(E1.class,
                 mock(AgRequestBuilder.class),
-                MaxPathDepth.ofDefault(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         c.setEntity(entity);
 
@@ -49,7 +49,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
         SelectContext<E1> c = new SelectContext<>(
                 E1.class,
                 mock(AgRequestBuilder.class),
-                MaxPathDepth.ofDefault(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         c.setEntity(entity);
 
@@ -84,7 +84,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
         SelectContext<E1> c = new SelectContext<>(
                 E1.class,
                 mock(AgRequestBuilder.class),
-                MaxPathDepth.ofDefault(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
 
         c.setEntity(entity);
@@ -104,7 +104,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
         SelectContext<E1> c = new SelectContext<>(
                 E1.class,
                 mock(AgRequestBuilder.class),
-                MaxPathDepth.ofDefault(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         c.setId(AgObjectId.of(1));
         c.setEntity(getResourceEntity(E1.class));
@@ -121,7 +121,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
         SelectContext<E1> c = new SelectContext<>(
                 E1.class,
                 mock(AgRequestBuilder.class),
-                MaxPathDepth.ofDefault(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         c.setId(AgObjectId.of(1));
         c.setEntity(getResourceEntity(E1.class));

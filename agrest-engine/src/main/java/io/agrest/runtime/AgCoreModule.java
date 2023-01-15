@@ -2,7 +2,7 @@ package io.agrest.runtime;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
-import io.agrest.access.MaxPathDepth;
+import io.agrest.access.PathChecker;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.converter.jsonvalue.Base64Converter;
@@ -138,11 +138,11 @@ import java.util.Objects;
 public class AgCoreModule implements Module {
 
     private final Map<String, AgEntityOverlay> entityOverlays;
-    private final MaxPathDepth maxPathDepth;
+    private final PathChecker pathChecker;
 
-    protected AgCoreModule(Map<String, AgEntityOverlay> entityOverlays, MaxPathDepth maxPathDepth) {
+    protected AgCoreModule(Map<String, AgEntityOverlay> entityOverlays, PathChecker pathChecker) {
         this.entityOverlays = Objects.requireNonNull(entityOverlays);
-        this.maxPathDepth = Objects.requireNonNull(maxPathDepth);
+        this.pathChecker = Objects.requireNonNull(pathChecker);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class AgCoreModule implements Module {
         binder.bindList(AgEntityCompiler.class).add(AnnotationsAgEntityCompiler.class);
 
         binder.bindMap(AgEntityOverlay.class).putAll(entityOverlays);
-        binder.bind(MaxPathDepth.class).toInstance(maxPathDepth);
+        binder.bind(PathChecker.class).toInstance(pathChecker);
 
         binder.bindMap(AgExceptionMapper.class)
                 .put(AgException.class.getName(), AgExceptionDefaultMapper.class);
