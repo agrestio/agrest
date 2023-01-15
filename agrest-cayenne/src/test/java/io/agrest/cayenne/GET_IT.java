@@ -315,64 +315,6 @@ public class GET_IT extends MainDbTest {
     }
 
     @Test
-    public void testMapByRootEntity() {
-
-        tester.e4().insertColumns("c_varchar", "c_int").values("xxx", 1)
-                .values("yyy", 2)
-                .values("zzz", 2).exec();
-
-        tester.target("/e4")
-                .queryParam("mapBy", "cInt")
-                .queryParam("include", "cVarchar")
-
-                .get().wasOk().bodyEqualsMapBy(3,
-                "\"1\":[{\"cVarchar\":\"xxx\"}]",
-                "\"2\":[{\"cVarchar\":\"yyy\"},{\"cVarchar\":\"zzz\"}]");
-    }
-
-    @Test
-    public void testMapBy_RelatedId() {
-
-        tester.e2().insertColumns("id_", "name")
-                .values(1, "zzz")
-                .values(2, "yyy").exec();
-
-        tester.e3().insertColumns("id_", "name", "e2_id")
-                .values(8, "aaa", 1)
-                .values(9, "bbb", 1)
-                .values(10, "ccc", 2).exec();
-
-        tester.target("/e3")
-                .queryParam("mapBy", "e2.id")
-                .queryParam("exclude", "phoneNumber")
-
-                .get().wasOk().bodyEqualsMapBy(3,
-                "\"1\":[{\"id\":8,\"name\":\"aaa\"},{\"id\":9,\"name\":\"bbb\"}]",
-                "\"2\":[{\"id\":10,\"name\":\"ccc\"}]");
-    }
-
-    @Test
-    public void testMapBy_OverRelationship() {
-
-        tester.e2().insertColumns("id_", "name")
-                .values(1, "zzz")
-                .values(2, "yyy").exec();
-
-        tester.e3().insertColumns("id_", "name", "e2_id")
-                .values(8, "aaa", 1)
-                .values(9, "bbb", 1)
-                .values(10, "ccc", 2).exec();
-
-        tester.target("/e3")
-                .queryParam("mapBy", "e2")
-                .queryParam("exclude", "phoneNumber")
-
-                .get().wasOk().bodyEqualsMapBy(3,
-                "\"1\":[{\"id\":8,\"name\":\"aaa\"},{\"id\":9,\"name\":\"bbb\"}]",
-                "\"2\":[{\"id\":10,\"name\":\"ccc\"}]");
-    }
-
-    @Test
     public void testById_EscapeLineSeparators() {
 
         tester.e4().insertColumns("id", "c_varchar").values(1, "First line\u2028Second line...\u2029").exec();
