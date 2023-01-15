@@ -2,6 +2,7 @@ package io.agrest.runtime.protocol;
 
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
+import io.agrest.access.MaxPathDepth;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.compiler.AgEntityCompiler;
@@ -43,7 +44,7 @@ public class SortMergerTest {
     @Test
     public void testMerge_Array() {
 
-        merger.merge(entity, asList(new Sort("a"), new Sort("b")));
+        merger.merge(entity, asList(new Sort("a"), new Sort("b")), MaxPathDepth.ofDefault());
 
         assertEquals(2, entity.getOrderings().size());
         assertEquals(new Sort("a", Direction.asc), entity.getOrderings().get(0));
@@ -53,7 +54,7 @@ public class SortMergerTest {
     @Test
     public void testMerge_Simple() {
 
-        merger.merge(entity, List.of(new Sort("a")));
+        merger.merge(entity, List.of(new Sort("a")), MaxPathDepth.ofDefault());
 
         assertEquals(1, entity.getOrderings().size());
         assertEquals(new Sort("a", Direction.asc), entity.getOrderings().get(0));

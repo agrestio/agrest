@@ -4,6 +4,7 @@ import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
 import io.agrest.ResourceEntityProjection;
+import io.agrest.access.MaxPathDepth;
 import io.agrest.protocol.Include;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgSchema;
@@ -49,14 +50,14 @@ public class IncludeMerger implements IIncludeMerger {
      * @since 3.4
      */
     @Override
-    public void merge(ResourceEntity<?> entity, List<Include> includes, Map<Class<?>, AgEntityOverlay<?>> overlays, int maxPathDepth) {
+    public void merge(ResourceEntity<?> entity, List<Include> includes, Map<Class<?>, AgEntityOverlay<?>> overlays, MaxPathDepth maxPathDepth) {
 
         // included attribute sets of the root entity and entities that are included explicitly via relationship includes
         // may need to get expanded if they don't have any explicit includes otherwise. Will track them here... Entities
         // that are NOT expanded are those that are "phantom" entities included as a part of the longer path.
 
         PhantomTrackingResourceEntityTreeBuilder treeBuilder
-                = new PhantomTrackingResourceEntityTreeBuilder(entity, schema, overlays, maxPathDepth, true);
+                = new PhantomTrackingResourceEntityTreeBuilder(entity, schema, overlays, maxPathDepth.getDepth(), true);
 
         for (Include include : includes) {
             mergeInclude(entity, include, treeBuilder, overlays, maxPathDepth);
@@ -72,13 +73,13 @@ public class IncludeMerger implements IIncludeMerger {
             Include include,
             ResourceEntityTreeBuilder treeBuilder,
             Map<Class<?>, AgEntityOverlay<?>> overlays,
-            int maxPathDepth) {
+            MaxPathDepth maxPathDepth) {
 
         String path = include.getPath();
         ResourceEntity<?> includeEntity = (path == null || path.isEmpty()) ? entity : treeBuilder.inflatePath(path);
 
         mapByMerger.merge(includeEntity, include.getMapBy(), overlays, maxPathDepth);
-        sortMerger.merge(includeEntity, include.getSorts());
+        sortMerger.merge(includeEntity, include.getSorts(), maxPathDepth);
         expMerger.merge(includeEntity, include.getExp());
         sizeMerger.merge(includeEntity, include.getStart(), include.getLimit());
     }

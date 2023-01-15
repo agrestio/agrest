@@ -1,6 +1,7 @@
 package io.agrest.runtime.entity;
 
 import io.agrest.ResourceEntity;
+import io.agrest.access.MaxPathDepth;
 import io.agrest.protocol.Sort;
 
 import java.util.List;
@@ -10,5 +11,5 @@ import java.util.List;
  */
 public interface ISortMerger {
 
-    void merge(ResourceEntity<?> entity, List<Sort> ordering);
+    void merge(ResourceEntity<?> entity, List<Sort> ordering, MaxPathDepth maxPathDepth);
 }

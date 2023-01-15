@@ -47,7 +47,7 @@ public class UpdateCreateResourceEntityStage implements Processor<UpdateContext<
         includeMerger.merge(resourceEntity,
                 request.getIncludes(),
                 context.getEntityOverlays(),
-                context.getMaxPathDepth().getDepth());
+                context.getMaxPathDepth());
 
         excludeMerger.merge(resourceEntity, request.getExcludes());
 

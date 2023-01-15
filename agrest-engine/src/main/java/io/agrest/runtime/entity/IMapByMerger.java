@@ -1,6 +1,7 @@
 package io.agrest.runtime.entity;
 
 import io.agrest.ResourceEntity;
+import io.agrest.access.MaxPathDepth;
 import io.agrest.meta.AgEntityOverlay;
 
 import java.util.Map;
@@ -13,5 +14,5 @@ public interface IMapByMerger {
     /**
      * @since 3.4 additionally takes request overlays
      */
-    <T> void merge(ResourceEntity<T> entity, String mapByPath, Map<Class<?>, AgEntityOverlay<?>> overlays, int maxPathDepth);
+    <T> void merge(ResourceEntity<T> entity, String mapByPath, Map<Class<?>, AgEntityOverlay<?>> overlays, MaxPathDepth maxPathDepth);
 }

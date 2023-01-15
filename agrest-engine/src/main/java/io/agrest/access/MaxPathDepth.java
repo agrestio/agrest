@@ -1,5 +1,8 @@
 package io.agrest.access;
 
+import io.agrest.AgException;
+import io.agrest.PathConstants;
+
 /**
  * A policy for the maximum depth of relationships in paths.
  *
@@ -8,7 +11,6 @@ package io.agrest.access;
 public class MaxPathDepth {
 
     private static final int DEFAULT_DEPTH = 100;
-
     private final int depth;
 
     public static MaxPathDepth ofDefault() {
@@ -34,5 +36,45 @@ public class MaxPathDepth {
 
     public int getDepth() {
         return depth;
+    }
+
+
+    /**
+     * Checks whether a given path exceeds this max depth. If the depth is exceeded, an exception is thrown. Successful
+     * return is somewhat fuzzy, because the last component may be an attribute or a relationship, and we have no way
+     * of telling without resolving the full path against the model. So the method will also succeed when there is one
+     * extra path component above the threshold.
+     */
+    public void checkExceedsDepth(String path) {
+
+        if (path == null) {
+            return;
+        }
+
+        int len = path.length();
+        if (len <= depth) {
+            return;
+        }
+
+        if (depth == 0) {
+            throw AgException.badRequest(
+                    "Path exceeds the max allowed depth of %s, the remaining path '%s' can't be processed",
+                    depth,
+                    path);
+        }
+
+        int dots = 0;
+        for (int i = 0; i < len; i++) {
+            if (path.charAt(i) == PathConstants.DOT) {
+
+                // fuzzy logic: treating the last path component as an attribute, and do not count it in depth total
+                if (++dots > depth) {
+                    throw AgException.badRequest(
+                            "Path exceeds the max allowed depth of %s, the remaining path '%s' can't be processed",
+                            depth,
+                            path);
+                }
+            }
+        }
     }
 }
