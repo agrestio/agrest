@@ -2,6 +2,7 @@ package io.agrest.runtime;
 
 import io.agrest.AgRequestBuilder;
 import io.agrest.SelectStage;
+import io.agrest.access.MaxIncludeDepth;
 import io.agrest.pojo.model.P1;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
@@ -23,6 +24,7 @@ public class DefaultSelectBuilderTest {
         SelectContext<T> context = new SelectContext<>(
                 type,
                 mock(AgRequestBuilder.class),
+                MaxIncludeDepth.ofDefault(),
                 mock(Injector.class));
         SelectProcessorFactory processorFactory = mock(SelectProcessorFactory.class);
         when(processorFactory.createProcessor(any())).thenReturn(mock(Processor.class));

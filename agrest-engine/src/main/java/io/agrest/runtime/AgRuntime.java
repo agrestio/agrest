@@ -119,7 +119,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> SelectBuilder<T> select(Class<T> type) {
-        SelectContext<T> context = new SelectContext<>(type, request(), injector);
+        SelectContext<T> context = new SelectContext<>(type, request(), maxIncludeDepth, injector);
         return new DefaultSelectBuilder<>(context, selectProcessorFactory);
     }
 

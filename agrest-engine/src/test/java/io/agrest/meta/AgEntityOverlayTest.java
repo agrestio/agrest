@@ -5,6 +5,7 @@ import io.agrest.EntityUpdate;
 import io.agrest.RootResourceEntity;
 import io.agrest.access.CreateAuthorizer;
 import io.agrest.access.DeleteAuthorizer;
+import io.agrest.access.MaxIncludeDepth;
 import io.agrest.access.ReadFilter;
 import io.agrest.access.UpdateAuthorizer;
 import io.agrest.pojo.model.P1;
@@ -123,6 +124,7 @@ public class AgEntityOverlayTest {
         SelectContext<P1> context = new SelectContext<>(
                 P1.class,
                 mock(AgRequestBuilder.class),
+                MaxIncludeDepth.ofDefault(),
                 mock(Injector.class));
 
         context.setEntity(new RootResourceEntity<>(eo));
