@@ -49,7 +49,7 @@ public class IncludeMerger implements IIncludeMerger {
      * @since 3.4
      */
     @Override
-    public void merge(ResourceEntity<?> entity, List<Include> includes, Map<Class<?>, AgEntityOverlay<?>> overlays) {
+    public void merge(ResourceEntity<?> entity, List<Include> includes, Map<Class<?>, AgEntityOverlay<?>> overlays, int maxIncludeDepth) {
 
         // included attribute sets of the root entity and entities that are included explicitly via relationship includes
         // may need to get expanded if they don't have any explicit includes otherwise. Will track them here... Entities
