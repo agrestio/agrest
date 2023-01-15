@@ -3,8 +3,8 @@
 * #582 AgRest own full-featured expression parser
 * #594 Support for escape char in "like" expressions
 * #597 Upgrade Cayenne to 4.2.RC2
-* #598 Max include depth
-* #600 Max include depth for "mapBy", "sort"
+* #598 Max path depth for "Include"
+* #600 Max path depth for "mapBy", "sort"
 
 ## Release 5.0.M9
 
