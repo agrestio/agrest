@@ -1,6 +1,7 @@
 package io.agrest.runtime;
 
 import io.agrest.AgModuleProvider;
+import io.agrest.access.MaxIncludeDepth;
 import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.di.DIBootstrap;
 import org.apache.cayenne.di.Injector;
@@ -20,9 +21,11 @@ import java.util.Map;
  */
 public class AgRuntimeBuilder {
 
+
     private final List<AgModuleProvider> moduleProviders;
     private final List<Module> modules;
     private final Map<String, AgEntityOverlay> entityOverlays;
+    private MaxIncludeDepth maxIncludeDepth;
 
     private boolean autoLoadModules;
 
@@ -34,12 +37,11 @@ public class AgRuntimeBuilder {
     }
 
     /**
-     * Suppresses module auto-loading. By default modules are auto-loaded based on the service descriptors under
+     * Suppresses module auto-loading. By default, modules are auto-loaded based on the service descriptors under
      * "META-INF/services/io.agrest.AgModuleProvider". Calling this method would suppress auto-loading behavior,
      * letting the programmer explicitly pick which extensions need to be loaded.
      *
      * @return this builder instance.
-     * @since 2.10
      */
     public AgRuntimeBuilder doNotAutoLoadModules() {
         this.autoLoadModules = false;
@@ -51,7 +53,6 @@ public class AgRuntimeBuilder {
      * same entity, they are merged together. If they have overlapping properties, the last overlay wins.
      *
      * @see io.agrest.SelectBuilder#entityOverlay(AgEntityOverlay)
-     * @since 2.10
      */
     public <T> AgRuntimeBuilder entityOverlay(AgEntityOverlay<T> overlay) {
         getOrCreateOverlay(overlay.getType()).merge(overlay);
@@ -69,7 +70,6 @@ public class AgRuntimeBuilder {
      *
      * @param module an extension DI module for {@link AgRuntime}.
      * @return this builder instance.
-     * @since 2.10
      */
     public AgRuntimeBuilder module(Module module) {
         modules.add(module);
@@ -81,10 +81,23 @@ public class AgRuntimeBuilder {
      *
      * @param provider a provider of an extension module for {@link AgRuntime}.
      * @return this builder instance.
-     * @since 2.10
      */
     public AgRuntimeBuilder module(AgModuleProvider provider) {
         moduleProviders.add(provider);
+        return this;
+    }
+
+    /**
+     * Sets the policy for the maximum depth of relationship includes. The policy is applied to select and update
+     * requests. Includes are counted from the root of the request. Only non-negative depth are allowed. Zero depth
+     * blocks all relationships, "1" - blocks anything beyond direct relationships, and so on. This policy does not
+     * affect attribute includes (either root or nested).
+     *
+     * @return this builder instance
+     * @since 5.0
+     */
+    public AgRuntimeBuilder maxIncludeDepth(int maxIncludeDepth) {
+        this.maxIncludeDepth = MaxIncludeDepth.of(maxIncludeDepth);
         return this;
     }
 
@@ -94,38 +107,39 @@ public class AgRuntimeBuilder {
 
     private Injector createInjector() {
 
-        Collection<Module> moduleCollector = new ArrayList<>();
+        Collection<Module> modules = new ArrayList<>();
 
         // core module goes first, the rest of modules override the core and each other
-        moduleCollector.add(createCoreModule());
+        modules.add(createCoreModule());
 
         // TODO: consistent sorting policy past core module...
         // Cayenne ModuleProvider provides a sorting facility, but how do we apply it across loading strategies ?
 
         if (autoLoadModules) {
-            loadAutoLoadableModules(moduleCollector);
+            loadAutoLoadableModules(modules);
         }
 
-        loadBuilderModules(moduleCollector);
+        loadBuilderModules(modules);
 
-        return DIBootstrap.createInjector(moduleCollector);
+        return DIBootstrap.createInjector(modules);
     }
 
 
     private Module createCoreModule() {
-        return new AgCoreModule(entityOverlays);
+        return new AgCoreModule(
+                entityOverlays,
+                maxIncludeDepth != null ? maxIncludeDepth : MaxIncludeDepth.ofDefault());
     }
 
     private void loadAutoLoadableModules(Collection<Module> collector) {
         collector.addAll(new ModuleLoader().load(AgModuleProvider.class));
     }
 
-    private void loadBuilderModules(Collection<Module> collector) {
+    private void loadBuilderModules(Collection<Module> modules) {
 
-        // TODO: Pending a global sorting policy at the caller level, should we enforce builder addition order between
-        // modules and providers?
+        // TODO: Should we enforce addition order between modules and providers?
 
-        collector.addAll(modules);
-        moduleProviders.forEach(p -> collector.add(p.module()));
+        modules.addAll(this.modules);
+        moduleProviders.forEach(p -> modules.add(p.module()));
     }
 }

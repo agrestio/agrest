@@ -7,6 +7,7 @@ import io.agrest.SelectBuilder;
 import io.agrest.SimpleResponse;
 import io.agrest.UnrelateBuilder;
 import io.agrest.UpdateBuilder;
+import io.agrest.access.MaxIncludeDepth;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -45,6 +46,7 @@ public class AgRuntime {
     private final IdempotentCreateOrUpdateProcessorFactory idempotentCreateOrUpdateProcessorFactory;
     private final IdempotentFullSyncProcessorFactory idempotentFullSyncProcessorFactory;
     private final UnrelateProcessorFactory unrelateProcessorFactory;
+    private final MaxIncludeDepth maxIncludeDepth;
 
     /**
      * Creates and returns a default Agrest runtime
@@ -78,6 +80,8 @@ public class AgRuntime {
         this.idempotentCreateOrUpdateProcessorFactory = injector.getInstance(IdempotentCreateOrUpdateProcessorFactory.class);
         this.idempotentFullSyncProcessorFactory = injector.getInstance(IdempotentFullSyncProcessorFactory.class);
         this.unrelateProcessorFactory = injector.getInstance(UnrelateProcessorFactory.class);
+
+        this.maxIncludeDepth = injector.getInstance(MaxIncludeDepth.class);
     }
 
     /**
@@ -115,11 +119,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> SelectBuilder<T> select(Class<T> type) {
-        SelectContext<T> context = new SelectContext<>(type, requestBuilderFactory.builder(), injector);
-        return toSelectBuilder(context);
-    }
-
-    private <T> SelectBuilder<T> toSelectBuilder(SelectContext<T> context) {
+        SelectContext<T> context = new SelectContext<>(type, request(), injector);
         return new DefaultSelectBuilder<>(context, selectProcessorFactory);
     }
 
@@ -127,7 +127,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> UpdateBuilder<T> create(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), injector);
+        UpdateContext<T> context = new UpdateContext<>(type, request(), injector);
         return new DefaultUpdateBuilder<>(context, createProcessorFactory);
     }
 
@@ -135,7 +135,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> UpdateBuilder<T> createOrUpdate(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), injector);
+        UpdateContext<T> context = new UpdateContext<>(type, request(), injector);
         return new DefaultUpdateBuilder<>(context, createOrUpdateProcessorFactory);
     }
 

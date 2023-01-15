@@ -3,6 +3,7 @@
 * #582 AgRest own full-featured expression parser
 * #594 Support for escape char in "like" expressions
 * #597 Upgrade Cayenne to 4.2.RC2
+* #598 Max include depth
 
 ## Release 5.0.M9
 

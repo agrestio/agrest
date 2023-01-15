@@ -135,6 +135,17 @@ public interface SelectBuilder<T> {
     }
 
     /**
+     * Sets the policy for the maximum depth of relationship includes. This override runtime-defined policy for this one
+     * request. Includes are counted from the root of the request. Only non-negative depth are allowed. Zero depth
+     * blocks all relationships, "1" - blocks anything beyond direct relationships, and so on. This policy does not
+     * affect attribute includes (either root or nested).
+     *
+     * @return this builder instance
+     * @since 5.0
+     */
+    SelectBuilder<T> maxIncludeDepth(int maxIncludeDepth);
+
+    /**
      * Registers a consumer to be executed after a specified standard execution stage. The consumer can inspect and
      * modify provided {@link SelectContext}.
      * <p>This operation is composable. For each stage all custom processors will be invoked in the order they were
