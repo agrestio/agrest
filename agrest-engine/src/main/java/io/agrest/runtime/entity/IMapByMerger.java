@@ -13,5 +13,5 @@ public interface IMapByMerger {
     /**
      * @since 3.4 additionally takes request overlays
      */
-    <T> void merge(ResourceEntity<T> entity, String mapByPath, Map<Class<?>, AgEntityOverlay<?>> overlays);
+    <T> void merge(ResourceEntity<T> entity, String mapByPath, Map<Class<?>, AgEntityOverlay<?>> overlays, int maxPathDepth);
 }

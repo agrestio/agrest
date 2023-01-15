@@ -31,17 +31,20 @@ public class ResourceEntityTreeBuilder {
     private final AgSchema schema;
     private final Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
     private final int maxTreeDepth;
+    private final boolean quietTruncateLongPaths;
 
     public ResourceEntityTreeBuilder(
             ResourceEntity<?> rootEntity,
             AgSchema schema,
             Map<Class<?>, AgEntityOverlay<?>> entityOverlays,
-            int maxTreeDepth) {
+            int maxTreeDepth,
+            boolean quietTruncateLongPaths) {
 
         this.schema = Objects.requireNonNull(schema);
         this.rootEntity = Objects.requireNonNull(rootEntity);
         this.entityOverlays = entityOverlays != null ? entityOverlays : Collections.emptyMap();
         this.maxTreeDepth = maxTreeDepth;
+        this.quietTruncateLongPaths = quietTruncateLongPaths;
     }
 
     /**
@@ -84,12 +87,20 @@ public class ResourceEntityTreeBuilder {
         }
 
         if (remainingDepth == 0 && entity.hasRelationship(property)) {
-            LOGGER.info(
-                    "Truncated '{}' from the path as it exceeds the max allowed depth of {}",
-                    path,
-                    maxTreeDepth);
 
-            return entity;
+            if (quietTruncateLongPaths) {
+                LOGGER.info(
+                        "Truncated '{}' from the path as it exceeds the max allowed depth of {}",
+                        path,
+                        maxTreeDepth);
+
+                return entity;
+            } else {
+                throw AgException.badRequest(
+                        "Path exceeds the max allowed depth of %s, the remaining path '%s' can't be processed",
+                        maxTreeDepth,
+                        path);
+            }
         }
 
         if (entity.ensureRelationship(property)) {

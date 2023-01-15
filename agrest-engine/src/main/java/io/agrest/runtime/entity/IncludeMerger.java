@@ -56,10 +56,10 @@ public class IncludeMerger implements IIncludeMerger {
         // that are NOT expanded are those that are "phantom" entities included as a part of the longer path.
 
         PhantomTrackingResourceEntityTreeBuilder treeBuilder
-                = new PhantomTrackingResourceEntityTreeBuilder(entity, schema, overlays, maxPathDepth);
+                = new PhantomTrackingResourceEntityTreeBuilder(entity, schema, overlays, maxPathDepth, true);
 
         for (Include include : includes) {
-            mergeInclude(entity, include, treeBuilder, overlays);
+            mergeInclude(entity, include, treeBuilder, overlays, maxPathDepth);
         }
 
         for (ResourceEntity<?> e : treeBuilder.nonPhantomEntities()) {
@@ -71,12 +71,13 @@ public class IncludeMerger implements IIncludeMerger {
             ResourceEntity<?> entity,
             Include include,
             ResourceEntityTreeBuilder treeBuilder,
-            Map<Class<?>, AgEntityOverlay<?>> overlays) {
+            Map<Class<?>, AgEntityOverlay<?>> overlays,
+            int maxPathDepth) {
 
         String path = include.getPath();
         ResourceEntity<?> includeEntity = (path == null || path.isEmpty()) ? entity : treeBuilder.inflatePath(path);
 
-        mapByMerger.merge(includeEntity, include.getMapBy(), overlays);
+        mapByMerger.merge(includeEntity, include.getMapBy(), overlays, maxPathDepth);
         sortMerger.merge(includeEntity, include.getSorts());
         expMerger.merge(includeEntity, include.getExp());
         sizeMerger.merge(includeEntity, include.getStart(), include.getLimit());

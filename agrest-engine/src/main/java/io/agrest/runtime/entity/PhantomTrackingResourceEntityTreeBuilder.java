@@ -22,9 +22,10 @@ public class PhantomTrackingResourceEntityTreeBuilder extends ResourceEntityTree
             ResourceEntity<?> rootEntity,
             AgSchema schema,
             Map<Class<?>, AgEntityOverlay<?>> entityOverlays,
-            int maxTreeDepth) {
+            int maxTreeDepth,
+            boolean quietTruncateLongPaths) {
 
-        super(rootEntity, schema, entityOverlays, maxTreeDepth);
+        super(rootEntity, schema, entityOverlays, maxTreeDepth, quietTruncateLongPaths);
         this.nonPhantomEntities = new HashSet<>();
 
         // "root" always a candidate for defaults, as it is included implicitly
