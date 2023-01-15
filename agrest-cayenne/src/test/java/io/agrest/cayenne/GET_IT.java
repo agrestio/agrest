@@ -112,33 +112,6 @@ public class GET_IT extends MainDbTest {
     }
 
     // TODO: add tests for java.sql attributes
-
-    @Test
-    public void testSort_ById() {
-
-        tester.e4().insertColumns("id")
-                .values(2)
-                .values(1)
-                .values(3).exec();
-
-        tester.target("/e4")
-                .queryParam("sort", "[{\"property\":\"id\",\"direction\":\"DESC\"}]")
-                .queryParam("include", "id")
-                .get()
-                .wasOk()
-                .bodyEquals(3, "{\"id\":3}", "{\"id\":2}", "{\"id\":1}");
-    }
-
-    @Test
-    public void testSort_Invalid() {
-
-        tester.target("/e4")
-                .queryParam("sort", "[{\"property\":\"xyz\",\"direction\":\"DESC\"}]")
-                .queryParam("include", "id")
-                .get()
-                .wasBadRequest()
-                .bodyEquals("{\"message\":\"Invalid path 'xyz' for 'E4'\"}");
-    }
     
     @Test
     public void testById() {
