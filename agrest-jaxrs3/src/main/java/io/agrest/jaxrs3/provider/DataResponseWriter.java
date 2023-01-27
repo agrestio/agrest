@@ -58,7 +58,7 @@ public class DataResponseWriter implements MessageBodyWriter<DataResponse<?>> {
 
     private IJacksonService getJacksonService() {
         if (jacksonService == null) {
-            jacksonService = AgJaxrs.runtime(config).service(IJacksonService.class);;
+            jacksonService = AgJaxrs.runtime(config).service(IJacksonService.class);
         }
 
         return jacksonService;

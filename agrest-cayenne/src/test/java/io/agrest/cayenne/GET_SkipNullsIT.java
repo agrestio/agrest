@@ -6,6 +6,7 @@ import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs2.AgJaxrs;
+import io.agrest.runtime.AgRuntimeBuilder;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +21,7 @@ public class GET_SkipNullsIT extends MainDbTest {
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
             .entitiesAndDependencies(E2.class, E3.class)
-            .agCustomizer(b -> b.skipNullProperties())
+            .agCustomizer(AgRuntimeBuilder::skipNullProperties)
             .build();
 
     @Test
