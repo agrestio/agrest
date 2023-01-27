@@ -17,7 +17,7 @@ import io.agrest.encoder.ValueEncodersProvider;
 import io.agrest.id.AgObjectId;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
-import io.agrest.runtime.encoder.EncoderService;
+import io.agrest.runtime.encoder.EncoderFactory;
 import io.agrest.runtime.encoder.IEncodablePropertyFactory;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
@@ -36,10 +36,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class EncoderServiceTest extends MainNoDbTest {
+public class EncoderFactoryTest extends MainNoDbTest {
 
     private static final IJacksonService jacksonService = JacksonService.create();
-    private EncoderService encoderService;
+    private EncoderFactory encoderFactory;
 
     @BeforeEach
     public void before() {
@@ -48,7 +48,7 @@ public class EncoderServiceTest extends MainNoDbTest {
         IEncodablePropertyFactory epf = new EncodablePropertyFactory(
                 new ValueEncodersProvider(converters, Collections.emptyMap()).get());
 
-        encoderService = new EncoderService(
+        this.encoderFactory = new EncoderFactory(
                 epf,
                 converters,
                 new RelationshipMapper());
@@ -128,7 +128,7 @@ public class EncoderServiceTest extends MainNoDbTest {
     }
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
-        Encoder encoder = encoderService.dataEncoder(resourceEntity, mock(ProcessingContext.class));
+        Encoder encoder = encoderFactory.encoder(resourceEntity, mock(ProcessingContext.class));
         return toJson(encoder, DataResponse.of(List.of(object)).build());
     }
 

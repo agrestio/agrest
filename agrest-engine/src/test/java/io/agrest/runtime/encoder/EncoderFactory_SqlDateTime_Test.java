@@ -36,13 +36,13 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class EncoderService_SqlDateTime_Test {
+public class EncoderFactory_SqlDateTime_Test {
 
     // using pre-defined moments in time with and without fractional seconds
     private static final long EPOCH_MILLIS = 1458995247000L;
     private static final long EPOCH_MILLIS_WITH_FRACTION = 1458995247001L;
 
-    private EncoderService encoderService;
+    private EncoderFactory encoderFactory;
     private AgEntity<PSqlDateTime> sqlDateTimeEntity;
 
     @BeforeEach
@@ -56,7 +56,7 @@ public class EncoderService_SqlDateTime_Test {
 
         ValueStringConverters converters = new ValueStringConverters(converterMap, GenericConverter.converter());
 
-        this.encoderService = new EncoderService(
+        this.encoderFactory = new EncoderFactory(
                 new EncodablePropertyFactory(new ValueEncodersProvider(converters, Collections.emptyMap()).get()),
                 converters,
                 new RelationshipMapper());
@@ -128,7 +128,7 @@ public class EncoderService_SqlDateTime_Test {
     }
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
-        Encoder encoder = encoderService.dataEncoder(resourceEntity, mock(ProcessingContext.class));
+        Encoder encoder = encoderFactory.encoder(resourceEntity, mock(ProcessingContext.class));
         return Encoders.toJson(DataResponse.of(List.of(object)).encoder(encoder).build());
     }
 

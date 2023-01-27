@@ -34,10 +34,9 @@ import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgSchema;
 import io.agrest.runtime.constraints.ConstraintsHandler;
 import io.agrest.runtime.constraints.IConstraintsHandler;
+import io.agrest.runtime.encoder.EncoderFactory;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
-import io.agrest.runtime.encoder.EncoderService;
 import io.agrest.runtime.encoder.IEncodablePropertyFactory;
-import io.agrest.runtime.encoder.IEncoderService;
 import io.agrest.runtime.entity.ChangeAuthorizer;
 import io.agrest.runtime.entity.ExcludeMerger;
 import io.agrest.runtime.entity.ExpMerger;
@@ -257,7 +256,7 @@ public class AgCoreModule implements Module {
 
         binder.bind(ValueStringConverters.class).toProvider(ValueStringConvertersProvider.class);
 
-        binder.bind(IEncoderService.class).to(EncoderService.class);
+        binder.bind(EncoderFactory.class).to(EncoderFactory.class);
         binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);
         binder.bind(AgSchema.class).toProvider(LazySchemaProvider.class);
         binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);

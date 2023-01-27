@@ -19,6 +19,7 @@ import io.agrest.meta.AgRelationship;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.reader.DataReader;
 import io.agrest.runtime.semantics.IRelationshipMapper;
+import org.apache.cayenne.di.Inject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,24 +31,27 @@ import java.util.Map;
 import static java.util.Map.entry;
 
 /**
- * @since 3.4
+ * @since 5.0
  */
-public class DataEncoderFactory {
+public class EncoderFactory {
 
     protected final IEncodablePropertyFactory propertyFactory;
     protected final IRelationshipMapper relationshipMapper;
     protected final ValueStringConverters converters;
 
-    public DataEncoderFactory(
-            IEncodablePropertyFactory propertyFactory,
-            ValueStringConverters converters,
-            IRelationshipMapper relationshipMapper) {
+    public EncoderFactory(
+            @Inject IEncodablePropertyFactory propertyFactory,
+            @Inject ValueStringConverters converters,
+            @Inject IRelationshipMapper relationshipMapper) {
 
         this.propertyFactory = propertyFactory;
         this.relationshipMapper = relationshipMapper;
         this.converters = converters;
     }
 
+    /**
+     * Builds a hierarchical data encoder for a given resource entity.
+     */
     public <T> Encoder encoder(ResourceEntity<T> entity, ProcessingContext<T> context) {
         Encoder dataEncoder = dataEncoder(entity, context);
         return new DataResponseEncoder("data", dataEncoder, "total", GenericEncoder.encoder());

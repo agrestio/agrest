@@ -25,11 +25,11 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class EncoderService_Pojo_Test {
+public class EncoderFactory_Pojo_Test {
 
     static final AgSchema schema = new LazySchema(List.of(new AnnotationsAgEntityCompiler(Map.of())));
 
-    private EncoderService encoderService;
+    private EncoderFactory encoderFactory;
 
     @BeforeEach
     public void setUp() {
@@ -37,7 +37,7 @@ public class EncoderService_Pojo_Test {
         ValueStringConverters converters = new ValueStringConvertersProvider(Collections.emptyMap()).get();
         IEncodablePropertyFactory epf = new EncodablePropertyFactory(new ValueEncodersProvider(converters, Collections.emptyMap()).get());
 
-        this.encoderService = new EncoderService(
+        this.encoderFactory = new EncoderFactory(
                 epf,
                 converters,
                 new RelationshipMapper());
@@ -71,7 +71,7 @@ public class EncoderService_Pojo_Test {
     }
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
-        Encoder encoder = encoderService.dataEncoder(resourceEntity, mock(ProcessingContext.class));
+        Encoder encoder = encoderFactory.encoder(resourceEntity, mock(ProcessingContext.class));
         return Encoders.toJson(DataResponse.of(List.of(object)).encoder(encoder).build());
     }
 }
