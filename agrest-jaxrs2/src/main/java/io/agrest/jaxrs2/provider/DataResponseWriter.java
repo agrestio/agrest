@@ -2,6 +2,7 @@ package io.agrest.jaxrs2.provider;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.DataResponse;
+import io.agrest.encoder.EncodingPolicy;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.runtime.jackson.IJacksonService;
 
@@ -25,6 +26,7 @@ public class DataResponseWriter implements MessageBodyWriter<DataResponse<?>> {
     }
 
     private IJacksonService jacksonService;
+    private EncodingPolicy encodingPolicy;
 
     @Context
     private Configuration config;
@@ -50,18 +52,28 @@ public class DataResponseWriter implements MessageBodyWriter<DataResponse<?>> {
             OutputStream entityStream)
             throws IOException {
 
-        getJacksonService().outputJson(out -> writeData(t, out), entityStream);
+
+        boolean skipNullProperties = getEncodingPolicy().skipNullProperties();
+        getJacksonService().outputJson(out -> writeData(t, skipNullProperties, out), entityStream);
     }
 
     private IJacksonService getJacksonService() {
         if (jacksonService == null) {
-            jacksonService = AgJaxrs.runtime(config).service(IJacksonService.class);;
+            jacksonService = AgJaxrs.runtime(config).service(IJacksonService.class);
         }
 
         return jacksonService;
     }
 
-    protected void writeData(DataResponse<?> t, JsonGenerator out) throws IOException {
-        t.getEncoder().encode(null, t, out);
+    private EncodingPolicy getEncodingPolicy() {
+        if (encodingPolicy == null) {
+            encodingPolicy = AgJaxrs.runtime(config).service(EncodingPolicy.class);
+        }
+
+        return encodingPolicy;
+    }
+
+    protected void writeData(DataResponse<?> t, boolean skipNullProperties, JsonGenerator out) throws IOException {
+        t.getEncoder().encode(null, t, skipNullProperties, out);
     }
 }

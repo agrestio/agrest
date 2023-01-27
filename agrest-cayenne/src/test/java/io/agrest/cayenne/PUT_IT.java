@@ -1,6 +1,5 @@
 package io.agrest.cayenne;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.DataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.UpdateStage;
@@ -31,7 +30,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -507,13 +505,10 @@ public class PUT_IT extends MainDbTest {
         @Path("e7_custom_encoder")
         public DataResponse<E7> syncE7_CustomEncoder(@Context UriInfo uriInfo, String data) {
 
-            Encoder encoder = new Encoder() {
-                @Override
-                public void encode(String propertyName, Object object, JsonGenerator out) throws IOException {
-                    out.writeStartObject();
-                    out.writeObjectField("encoder", "custom");
-                    out.writeEndObject();
-                }
+            Encoder encoder = (propertyName, object, skipNullProperties, out) -> {
+                out.writeStartObject();
+                out.writeObjectField("encoder", "custom");
+                out.writeEndObject();
             };
 
             return AgJaxrs.idempotentFullSync(E7.class, config).clientParams(uriInfo.getQueryParameters())

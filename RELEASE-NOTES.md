@@ -1,3 +1,7 @@
+## Release 5.0.M11
+
+* #604 Allow to exclude null properties in responses
+
 ## Release 5.0.M10
 
 * #582 AgRest own full-featured expression parser

@@ -79,8 +79,7 @@ public class GET_StagesIT extends MainDbTest {
     static class NoIdEncoder implements Encoder {
 
         @Override
-        public void encode(String propertyName, Object object, JsonGenerator out) throws IOException {
-
+        public void encode(String propertyName, Object object, boolean skipNullProperties, JsonGenerator out) throws IOException {
             out.writeStartObject();
             out.writeStringField("name", object == null ? null : object.toString());
             out.writeEndObject();

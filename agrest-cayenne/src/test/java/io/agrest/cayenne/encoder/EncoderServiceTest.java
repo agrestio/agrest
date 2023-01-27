@@ -137,7 +137,7 @@ public class EncoderServiceTest extends MainNoDbTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         try {
-            jacksonService.outputJson(g -> encoder.encode(null, value, g), out);
+            jacksonService.outputJson(g -> encoder.encode(null, value, false, g), out);
         } catch (IOException e) {
             throw new RuntimeException("Encoding error: " + e.getMessage());
         }

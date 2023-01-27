@@ -2,6 +2,7 @@ package io.agrest.runtime;
 
 import io.agrest.AgModuleProvider;
 import io.agrest.access.PathChecker;
+import io.agrest.encoder.EncodingPolicy;
 import io.agrest.meta.AgEntityOverlay;
 import org.apache.cayenne.di.DIBootstrap;
 import org.apache.cayenne.di.Injector;
@@ -26,6 +27,7 @@ public class AgRuntimeBuilder {
     private final List<Module> modules;
     private final Map<String, AgEntityOverlay> entityOverlays;
     private PathChecker pathChecker;
+    private EncodingPolicy encodingPolicy;
 
     private boolean autoLoadModules;
 
@@ -100,6 +102,18 @@ public class AgRuntimeBuilder {
         return this;
     }
 
+    /**
+     * Configures Agrest runtime to exclude properties with null values from the JSON responses. If this method is
+     * not called, nulls will be rendered.
+     *
+     * @return this builder instance
+     * @since 5.0
+     */
+    public AgRuntimeBuilder skipNullProperties() {
+        this.encodingPolicy = new EncodingPolicy(true);
+        return this;
+    }
+
     public AgRuntime build() {
         return new AgRuntime(createInjector());
     }
@@ -127,7 +141,9 @@ public class AgRuntimeBuilder {
     private Module createCoreModule() {
         return new AgCoreModule(
                 entityOverlays,
-                pathChecker != null ? pathChecker : PathChecker.ofDefault());
+                pathChecker != null ? pathChecker : PathChecker.ofDefault(),
+                encodingPolicy != null ? encodingPolicy : new EncodingPolicy(false)
+        );
     }
 
     private void loadAutoLoadableModules(Collection<Module> collector) {

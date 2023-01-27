@@ -18,9 +18,9 @@ public class InheritanceAwareEntityEncoder extends AbstractEncoder {
     }
 
     @Override
-    protected void encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
+    protected void encodeNonNullObject(Object object, boolean skipNullProperties, JsonGenerator out) throws IOException {
         Class<?> type = object.getClass();
-        findEncoder(type, type).encode(null, object, out);
+        findEncoder(type, type).encode(null, object, skipNullProperties, out);
     }
 
     protected Encoder findEncoder(Class<?> startType, Class<?> type) {

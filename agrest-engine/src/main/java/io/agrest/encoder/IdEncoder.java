@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * @since 1.2
  */
-public class IdEncoder implements Encoder {
+public class IdEncoder extends AbstractEncoder {
 
     private Encoder valueEncoder;
     private Map<String, Encoder> valueEncoders;
@@ -24,45 +24,29 @@ public class IdEncoder implements Encoder {
         this.isCompoundId = true;
     }
 
-    @SuppressWarnings("unchecked")
+
     @Override
-    public void encode(String propertyName, Object object, JsonGenerator out) throws IOException {
-        if (object == null) {
-
-            if (propertyName != null) {
-                out.writeFieldName(propertyName);
-            }
-            out.writeNull();
-        } else {
-            encodeId(propertyName, (Map<String, Object>) object, out);
-        }
-    }
-
-    protected void encodeId(String propertyName, Map<String, Object> id, JsonGenerator out) throws IOException {
+    protected void encodeNonNullObject(Object object, boolean skipNullProperties, JsonGenerator out) throws IOException {
         if (isCompoundId) {
-            encodeCompoundId(propertyName, id, valueEncoders, out);
+            encodeCompoundId((Map<String, Object>) object, valueEncoders, skipNullProperties, out);
         } else {
-            encodeSingleId(propertyName, id, valueEncoder, out);
+            encodeSingleId((Map<String, Object>) object, valueEncoder, skipNullProperties, out);
         }
     }
 
-    private void encodeSingleId(String propertyName, Map<String, Object> values,
-                                Encoder valueEncoder, JsonGenerator out) throws IOException {
+    private void encodeSingleId(
+            Map<String, Object> values, Encoder valueEncoder, boolean skipNullProperties, JsonGenerator out) throws IOException {
 
         if (values.size() != 1) {
             throw new IllegalArgumentException("Can't serialize multi-value ObjectId: " + values);
         }
 
         Object value = values.entrySet().iterator().next().getValue();
-        valueEncoder.encode(propertyName, value, out);
+        valueEncoder.encode(null, value, skipNullProperties, out);
     }
 
-    private void encodeCompoundId(String propertyName, Map<String, Object> values,
-                                  Map<String, Encoder> valueEncoders, JsonGenerator out) throws IOException {
-
-        if (propertyName != null) {
-            out.writeFieldName(propertyName);
-        }
+    private void encodeCompoundId(
+            Map<String, Object> values, Map<String, Encoder> valueEncoders, boolean skipNullProperties, JsonGenerator out) throws IOException {
 
         out.writeStartObject();
 
@@ -72,7 +56,7 @@ public class IdEncoder implements Encoder {
             if (value == null) {
                 throw AgException.badRequest("Missing value for compound ID property: %s", entry.getKey());
             }
-            valueEncoder.encode(entry.getKey(), value, out);
+            valueEncoder.encode(entry.getKey(), value, skipNullProperties, out);
         }
 
         out.writeEndObject();

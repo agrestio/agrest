@@ -89,8 +89,8 @@ public class DataEncoderFactory {
 
         Map<Class<?>, Encoder> hierarchyEncoders = new HashMap<>();
 
-        for(ResourceEntityProjection<? extends T> p : entity.getProjections()) {
-            if(!p.getAgEntity().isAbstract()) {
+        for (ResourceEntityProjection<? extends T> p : entity.getProjections()) {
+            if (!p.getAgEntity().isAbstract()) {
                 Encoder encoder = singleEntityEncoder(entity, p, context);
                 hierarchyEncoders.put(p.getAgEntity().getType(), encoder);
             }

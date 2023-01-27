@@ -15,13 +15,14 @@ public class EntityEncoder extends EntityNoIdEncoder {
         this.idProperty = idProperty;
     }
 
-    protected void encodeProperties(Object object, JsonGenerator out) throws IOException {
-        encodeId(object, out);
-        super.encodeProperties(object, out);
+    @Override
+    protected void encodeProperties(Object object, boolean skipNullProperties, JsonGenerator out) throws IOException {
+        encodeId(object, skipNullProperties, out);
+        super.encodeProperties(object, skipNullProperties, out);
     }
 
-    protected void encodeId(Object object, JsonGenerator out) throws IOException {
+    protected void encodeId(Object object, boolean skipNullProperties, JsonGenerator out) throws IOException {
         Object v = object == null ? null : idProperty.getReader().read(object);
-        idProperty.getEncoder().encode(PathConstants.ID_PK_ATTRIBUTE, v, out);
+        idProperty.getEncoder().encode(PathConstants.ID_PK_ATTRIBUTE, v, skipNullProperties, out);
     }
 }

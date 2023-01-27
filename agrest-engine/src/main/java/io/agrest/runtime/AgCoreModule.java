@@ -27,6 +27,7 @@ import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.converter.valuestring.ValueStringConvertersProvider;
 import io.agrest.encoder.Encoder;
+import io.agrest.encoder.EncodingPolicy;
 import io.agrest.encoder.ValueEncoders;
 import io.agrest.encoder.ValueEncodersProvider;
 import io.agrest.meta.AgEntityOverlay;
@@ -139,10 +140,15 @@ public class AgCoreModule implements Module {
 
     private final Map<String, AgEntityOverlay> entityOverlays;
     private final PathChecker pathChecker;
+    private final EncodingPolicy encodingPolicy;
 
-    protected AgCoreModule(Map<String, AgEntityOverlay> entityOverlays, PathChecker pathChecker) {
+    protected AgCoreModule(
+            Map<String, AgEntityOverlay> entityOverlays,
+            PathChecker pathChecker,
+            EncodingPolicy encodingPolicy) {
         this.entityOverlays = Objects.requireNonNull(entityOverlays);
         this.pathChecker = Objects.requireNonNull(pathChecker);
+        this.encodingPolicy = Objects.requireNonNull(encodingPolicy);
     }
 
     @Override
@@ -152,6 +158,7 @@ public class AgCoreModule implements Module {
 
         binder.bindMap(AgEntityOverlay.class).putAll(entityOverlays);
         binder.bind(PathChecker.class).toInstance(pathChecker);
+        binder.bind(EncodingPolicy.class).toInstance(encodingPolicy);
 
         binder.bindMap(AgExceptionMapper.class)
                 .put(AgException.class.getName(), AgExceptionDefaultMapper.class);

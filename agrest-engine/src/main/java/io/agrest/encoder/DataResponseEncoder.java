@@ -29,19 +29,19 @@ public class DataResponseEncoder implements Encoder {
     }
 
     @Override
-    public void encode(String propertyName, Object object, JsonGenerator out) throws IOException {
+    public void encode(String propertyName, Object object, boolean skipNullProperties, JsonGenerator out) throws IOException {
 
         if (propertyName != null) {
             out.writeFieldName(propertyName);
         }
 
         out.writeStartObject();
-        encodeObjectBody((DataResponse<?>) object, out);
+        encodeObjectBody((DataResponse<?>) object, skipNullProperties, out);
         out.writeEndObject();
     }
 
-    protected void encodeObjectBody(DataResponse<?> response, JsonGenerator out) throws IOException {
-        dataEncoder.encode(dataProperty, response.getData(), out);
-        totalEncoder.encode(totalProperty, response.getTotal(), out);
+    protected void encodeObjectBody(DataResponse<?> response, boolean skipNullProperties, JsonGenerator out) throws IOException {
+        dataEncoder.encode(dataProperty, response.getData(), skipNullProperties, out);
+        totalEncoder.encode(totalProperty, response.getTotal(), skipNullProperties, out);
     }
 }
