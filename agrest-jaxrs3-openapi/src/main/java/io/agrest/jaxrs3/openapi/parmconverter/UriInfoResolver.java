@@ -38,9 +38,7 @@ public class UriInfoResolver {
         resolved.parameters.add(createExcludeParam());
         resolved.parameters.add(createSortParam());
         resolved.parameters.add(createDirectionParam());
-        resolved.parameters.add(createDirParam());
         resolved.parameters.add(createExpParam());
-        resolved.parameters.add(createCayenneExpParam());
         resolved.parameters.add(createMapByParam());
         resolved.parameters.add(createStartParam());
         resolved.parameters.add(createLimitParam());
@@ -72,32 +70,9 @@ public class UriInfoResolver {
         return queryParam(ControlParams.direction).schema(dirSchema);
     }
 
-    /**
-     * @deprecated since 5.0 {@link ControlParams#dir} was deprecated in favor of {@link ControlParams#direction}
-     */
-    @Deprecated
-    protected Parameter createDirParam() {
-        Schema<String> dirSchema = new StringSchema()
-                .addEnumItem(Direction.asc.name())
-                .addEnumItem(Direction.asc_ci.name())
-                .addEnumItem(Direction.desc.name())
-                .addEnumItem(Direction.desc_ci.name());
-
-        return queryParam(ControlParams.dir).schema(dirSchema).deprecated(true);
-    }
-
     protected Parameter createExpParam() {
         // TODO: detailed schema
         return queryParam(ControlParams.exp);
-    }
-
-    /**
-     * @deprecated since 4.1 {@link ControlParams#cayenneExp} was deprecated in favor of {@link ControlParams#exp}
-     */
-    @Deprecated
-    protected Parameter createCayenneExpParam() {
-        // TODO: detailed schema
-        return queryParam(ControlParams.cayenneExp).deprecated(true);
     }
 
     protected Parameter createMapByParam() {

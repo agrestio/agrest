@@ -37,7 +37,7 @@ public class ParamsTest {
         Operation get = pi.getGet();
 
         assertEquals(
-                "cayenneExp,dir,direction,exclude,exp,include,limit,mapBy,sort,start",
+                "direction,exclude,exp,include,limit,mapBy,sort,start",
                 get.getParameters().stream().map(Parameter::getName).sorted().collect(Collectors.joining(",")));
 
         // TODO assert the actual parameters
@@ -65,7 +65,7 @@ public class ParamsTest {
         Operation get = pi.getGet();
 
         assertEquals(
-                "cayenneExp,dir,direction,exclude,exp,include,limit,mapBy,sort,start,x",
+                "direction,exclude,exp,include,limit,mapBy,sort,start,x",
                 get.getParameters().stream().map(Parameter::getName).sorted().collect(Collectors.joining(",")));
 
         // TODO assert the actual parameters
