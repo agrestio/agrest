@@ -46,6 +46,16 @@ public class GET_Include_MaxPathDepthIT extends MainDbTest {
     }
 
     @Test
+    public void testDepth0_DefaultIncludes() {
+
+        tester.target("/e2")
+                .queryParam("depth", 0)
+                .get()
+                .wasOk()
+                .bodyEquals(1, "{\"id\":8,\"address\":null,\"name\":\"yyy\"}");
+    }
+
+    @Test
     public void testDepth0() {
 
         tester.target("/e2")
