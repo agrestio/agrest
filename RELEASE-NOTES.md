@@ -1,8 +1,11 @@
+## Release 5.0.M12
+
+* #606 Jackson upgrade, dependency management
+
 ## Release 5.0.M11
 
 * #604 Allow to exclude null properties in responses
 * #605 Hide deprecated protocol keys from OpenAPI descriptors
-* #606 Jackson upgrade, dependency management
 
 ## Release 5.0.M10
 
