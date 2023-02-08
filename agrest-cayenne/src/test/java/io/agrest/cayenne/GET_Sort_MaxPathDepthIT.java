@@ -48,6 +48,17 @@ public class GET_Sort_MaxPathDepthIT extends MainDbTest {
         tester.target("/e3")
                 .queryParam("depth", 0)
                 .queryParam("include", "id")
+                .queryParam("sort", "name")
+                .get()
+                .wasOk()
+                .bodyEquals(2, "{\"id\":4}", "{\"id\":3}");
+    }
+
+    @Test
+    public void testDepth0_ByRelated() {
+        tester.target("/e3")
+                .queryParam("depth", 0)
+                .queryParam("include", "id")
                 .queryParam("sort", "e2.name")
                 .get()
                 .wasBadRequest();

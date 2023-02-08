@@ -1,6 +1,7 @@
 ## Release 5.0.M12
 
 * #606 Jackson upgrade, dependency management
+* #608 "Path exceeds the max allowed depth" exception for attribute sort and 0 depth
 
 ## Release 5.0.M11
 

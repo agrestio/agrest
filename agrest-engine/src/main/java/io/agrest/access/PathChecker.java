@@ -72,13 +72,6 @@ public class PathChecker {
             return;
         }
 
-        if (depth == 0) {
-            throw AgException.badRequest(
-                    "Path exceeds the max allowed depth of %s, the remaining path '%s' can't be processed",
-                    depth,
-                    path);
-        }
-
         int dots = 0;
         for (int i = 0; i < len; i++) {
             if (path.charAt(i) == PathConstants.DOT) {
@@ -92,5 +85,7 @@ public class PathChecker {
                 }
             }
         }
+
+        // if no dots are found, allow even if the depth == 0 (same fuzzy logic as mentioned above)
     }
 }

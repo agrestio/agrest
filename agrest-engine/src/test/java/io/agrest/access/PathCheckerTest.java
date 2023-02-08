@@ -8,6 +8,17 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class PathCheckerTest {
 
     @Test
+    public void testCheckExceedsDepth_Zero() {
+
+        PathChecker d = PathChecker.of(0);
+        d.exceedsDepth(null);
+        d.exceedsDepth("");
+        d.exceedsDepth("a");
+
+        assertThrows(AgException.class, () -> d.exceedsDepth("a.b"));
+    }
+
+    @Test
     public void testCheckExceedsDepth() {
 
         PathChecker d = PathChecker.of(3);
