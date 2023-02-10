@@ -2,6 +2,7 @@
 
 * #606 Jackson upgrade, dependency management
 * #608 "Path exceeds the max allowed depth" exception for attribute sort and 0 depth
+* #609 EntityUpdate-style endpoints behave differently from String and List<EntityUpdate>
 
 ## Release 5.0.M11
 
