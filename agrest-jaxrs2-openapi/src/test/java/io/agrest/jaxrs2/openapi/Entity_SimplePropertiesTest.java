@@ -1,29 +1,28 @@
-package io.agrest.jaxrs3.openapi;
+package io.agrest.jaxrs2.openapi;
 
 import io.agrest.DataResponse;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
-import io.agrest.jaxrs3.openapi.junit.TestOpenAPIBuilder;
+import io.agrest.jaxrs2.openapi.junit.TestOpenAPIBuilder;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.core.Configuration;
-import jakarta.ws.rs.core.Context;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
-import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class Schema_EntityValues_Test {
+public class Entity_SimplePropertiesTest {
 
     static final OpenAPI oapi = new TestOpenAPIBuilder()
             .addPackage(P3.class)
@@ -36,7 +35,9 @@ public class Schema_EntityValues_Test {
         assertNotNull(p4);
 
         Map<String, Schema> props = p4.getProperties();
-        assertEquals(new HashSet(asList("b", "c", "id")), props.keySet());
+
+        // checking both presence and the ordering
+        assertEquals(List.of("id", "b", "c"), List.copyOf(props.keySet()));
     }
 
     @ParameterizedTest

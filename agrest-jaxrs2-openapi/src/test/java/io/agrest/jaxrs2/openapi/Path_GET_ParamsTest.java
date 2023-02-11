@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ParamsTest {
+public class Path_GET_ParamsTest {
 
     static final OpenAPI oapi = new TestOpenAPIBuilder()
             .addClass(Resource.class)

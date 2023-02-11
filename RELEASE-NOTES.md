@@ -1,6 +1,7 @@
 ## Release 5.0.M13
 
 * #607 OpenAPI docs for EntityUpdate should include relationships
+* #610 OpenAPI descriptors should be able to resolve multi-column AgId
 
 ## Release 5.0.M12
 

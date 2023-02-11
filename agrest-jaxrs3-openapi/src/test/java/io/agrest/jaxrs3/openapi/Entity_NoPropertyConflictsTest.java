@@ -19,7 +19,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class Schema_EntityValues_NoPropertyConflicts_Test {
+public class Entity_NoPropertyConflictsTest {
 
     static final OpenAPI oapi = new TestOpenAPIBuilder()
             .addPackage(P7.class)

@@ -1,8 +1,8 @@
-package io.agrest.jaxrs2.openapi;
+package io.agrest.jaxrs3.openapi;
 
 import io.agrest.DataResponse;
 import io.agrest.entity.AgP1;
-import io.agrest.jaxrs2.openapi.junit.TestOpenAPIBuilder;
+import io.agrest.jaxrs3.openapi.junit.TestOpenAPIBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -11,20 +11,19 @@ import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Configuration;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
 import org.example.entity.NonAgP1;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Configuration;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ResponseTest {
+public class Path_GETTest {
 
     static final OpenAPI oapi = new TestOpenAPIBuilder()
             .addClass(Resource.class)

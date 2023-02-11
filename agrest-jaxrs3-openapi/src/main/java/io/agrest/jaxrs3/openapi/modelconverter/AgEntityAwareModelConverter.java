@@ -8,16 +8,19 @@ import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.RefUtils;
 import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @since 5.0
  */
 public abstract class AgEntityAwareModelConverter extends AgModelConverter {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AgEntityAwareModelConverter.class);
 
     protected Schema doResolveValue(Class<?> type, ModelConverterContext context) {
         Schema primitive = PrimitiveType.createProperty(type);
@@ -27,14 +30,32 @@ public abstract class AgEntityAwareModelConverter extends AgModelConverter {
     }
 
     protected Schema doResolveId(AgEntity<?> entity, ModelConverterContext context) {
-        if (entity.getIdParts().size() == 1) {
-            AgIdPart idPart = entity.getIdParts().iterator().next();
-            return doResolveValue(idPart.getType(), context);
+        switch (entity.getIdParts().size()) {
+            case 0:
+                return null;
+            case 1:
+                return doResolveSingleId(entity, context);
+            default:
+                return doResolveIdMap(entity, context);
+        }
+    }
+
+    protected Schema doResolveSingleId(AgEntity<?> entity, ModelConverterContext context) {
+        AgIdPart idPart = entity.getIdParts().iterator().next();
+        return doResolveValue(idPart.getType(), context);
+    }
+
+    protected Schema doResolveIdMap(AgEntity<?> entity, ModelConverterContext context) {
+
+        Map<String, Schema> properties = new LinkedHashMap<>();
+
+        List<AgIdPart> sortedIds = new ArrayList<>(entity.getIdParts());
+        sortedIds.sort(Comparator.comparing(AgIdPart::getName));
+        for (AgIdPart idPart : sortedIds) {
+            properties.put(idPart.getName(), doResolveValue(idPart.getType(), context));
         }
 
-        // TODO: resolve multi-IDs as maps
-        LOGGER.warn("skipping multi-column ID for entity {}. TODO: need to handle it properly", entity.getName());
-        return null;
+        return new ObjectSchema().properties(properties);
     }
 
     protected Schema doResolveRelationship(AgRelationship relationship, ModelConverterContext context) {
