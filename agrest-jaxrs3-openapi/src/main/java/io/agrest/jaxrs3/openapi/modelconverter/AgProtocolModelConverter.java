@@ -37,7 +37,7 @@ import static java.util.Arrays.asList;
 /**
  * Provides OpenAPI Schema conversions for Agrest protocol objects. The object is stateless singleton.
  */
-public class AgProtocolModelConverter extends AgModelConverter {
+public class AgProtocolModelConverter extends AgEntityAwareModelConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AgProtocolModelConverter.class);
     private final static String BASE_AG_PACKAGE = AgException.class.getPackage().getName();

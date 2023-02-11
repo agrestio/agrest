@@ -26,7 +26,7 @@ import java.util.Objects;
 /**
  * Provides OpenAPI Schema conversions for Agrest entity objects
  */
-public class AgEntityModelConverter extends AgModelConverter {
+public class AgEntityModelConverter extends AgEntityAwareModelConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AgEntityModelConverter.class);
 
@@ -62,24 +62,24 @@ public class AgEntityModelConverter extends AgModelConverter {
 
         LOGGER.debug("resolve AgEntity ({}}", wrapped);
 
-        AgEntity<?> agEntity = schema.getEntity(wrapped.getRawClass());
-        String name = agEntity.getName();
+        AgEntity<?> entity = schema.getEntity(wrapped.getRawClass());
+        String name = entity.getName();
 
         // ensure stable property ordering
         Map<String, Schema> properties = new LinkedHashMap<>();
 
-        Schema idSchema = doResolveId(agEntity, context);
+        Schema idSchema = doResolveId(entity, context);
         if (idSchema != null) {
             properties.put(PathConstants.ID_PK_ATTRIBUTE, idSchema);
         }
 
-        List<AgAttribute> sortedAttributes = new ArrayList<>(agEntity.getAttributes());
+        List<AgAttribute> sortedAttributes = new ArrayList<>(entity.getAttributes());
         sortedAttributes.sort(Comparator.comparing(AgAttribute::getName));
         for (AgAttribute a : sortedAttributes) {
             properties.put(a.getName(), doResolveValue(a.getType(), context));
         }
 
-        List<AgRelationship> sortedRelationships = new ArrayList<>(agEntity.getRelationships());
+        List<AgRelationship> sortedRelationships = new ArrayList<>(entity.getRelationships());
         sortedRelationships.sort(Comparator.comparing(AgRelationship::getName));
         for (AgRelationship r : sortedRelationships) {
             properties.put(r.getName(), doResolveRelationship(r, context));
