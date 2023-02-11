@@ -1,5 +1,6 @@
 package io.agrest.jaxrs3.openapi.modelconverter;
 
+import io.agrest.PathConstants;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
@@ -81,5 +82,25 @@ public abstract class AgEntityAwareModelConverter extends AgModelConverter {
         }
 
         return null;
+    }
+
+    protected Map<String, Schema> doResolveProperties(
+            Schema idSchema,
+            List<Map.Entry<String, Schema>> attributesAndRelationships) {
+
+        // property sorting should be stable and match that of DataResponse: "id" goes first, then a mix of
+        // attributes and relationships in alphabetic order
+        
+        Map<String, Schema> properties = new LinkedHashMap<>();
+
+        if (idSchema != null) {
+            properties.put(PathConstants.ID_PK_ATTRIBUTE, idSchema);
+        }
+
+        attributesAndRelationships.stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(e -> properties.put(e.getKey(), e.getValue()));
+
+        return properties;
     }
 }

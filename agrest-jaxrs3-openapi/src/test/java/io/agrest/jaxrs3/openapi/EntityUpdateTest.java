@@ -31,16 +31,14 @@ public class EntityUpdateTest {
             .build();
 
     @Test
-    public void testProperties() {
+    public void testPropertiesPresentAndOrdered() {
         Schema p4Update = oapi.getComponents().getSchemas().get("EntityUpdate(P4)");
         assertNotNull(p4Update);
 
         Map<String, Schema> props = p4Update.getProperties();
 
         // ordering matters and must be alphabetic within property groups
-        assertEquals(List.of("id", "b", "c", "p5", "p6s"), List.copyOf(props.keySet()));
-
-        assertNotNull(p4Update);
+        assertEquals(List.of("id", "b", "p5", "p6s", "z"), List.copyOf(props.keySet()));
 
         Schema id = props.get("id");
         assertNotNull(id);
@@ -52,9 +50,9 @@ public class EntityUpdateTest {
         assertEquals("integer", b.getType());
         assertEquals("int32", b.getFormat());
 
-        Schema c = props.get("c");
-        assertNotNull(c);
-        assertEquals("string", c.getType());
+        Schema z = props.get("z");
+        assertNotNull(z);
+        assertEquals("string", z.getType());
 
         Schema p5 = props.get("p5");
         assertNotNull(p5);
@@ -116,7 +114,7 @@ public class EntityUpdateTest {
         // intentionally declare properties in non-alphabetic order
 
         @AgAttribute
-        public String getC() {
+        public String getZ() {
             return "";
         }
 

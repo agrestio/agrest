@@ -3,7 +3,6 @@ package io.agrest.jaxrs3.openapi.modelconverter;
 import io.agrest.AgException;
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
-import io.agrest.PathConstants;
 import io.agrest.SimpleResponse;
 import io.agrest.jaxrs3.openapi.TypeWrapper;
 import io.agrest.meta.AgAttribute;
@@ -24,10 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -157,29 +154,20 @@ public class AgProtocolModelConverter extends AgEntityAwareModelConverter {
         AgEntity<?> entity = schema.getEntity(entityType.getRawClass());
         String name = "EntityUpdate(" + entity.getName() + ")";
 
-        // ensure stable property ordering
-        Map<String, Schema> properties = new LinkedHashMap<>();
+        List<Map.Entry<String, Schema>> entries = new ArrayList<>();
 
-        Schema idSchema = doResolveId(entity, context);
-        if (idSchema != null) {
-            properties.put(PathConstants.ID_PK_ATTRIBUTE, idSchema);
+        for (AgAttribute a : entity.getAttributes()) {
+            entries.add(Map.entry(a.getName(), doResolveValue(a.getType(), context)));
         }
 
-        List<AgAttribute> sortedAttributes = new ArrayList<>(entity.getAttributes());
-        sortedAttributes.sort(Comparator.comparing(AgAttribute::getName));
-        for (AgAttribute a : sortedAttributes) {
-            properties.put(a.getName(), doResolveValue(a.getType(), context));
-        }
-
-        List<AgRelationship> sortedRelationships = new ArrayList<>(entity.getRelationships());
-        sortedRelationships.sort(Comparator.comparing(AgRelationship::getName));
-        for (AgRelationship r : sortedRelationships) {
+        for (AgRelationship r : entity.getRelationships()) {
             Schema relIdSchema = doResolveRelationshipRef(r, context);
             if (relIdSchema != null) {
-                properties.put(r.getName(), relIdSchema);
+                entries.add(Map.entry(r.getName(), relIdSchema));
             }
         }
 
+        Map<String, Schema> properties = doResolveProperties(doResolveId(entity, context), entries);
         Schema<?> schema = new ObjectSchema().name(name).properties(properties);
         return onSchemaResolved(type, context, schema);
     }

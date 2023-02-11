@@ -3,8 +3,10 @@ package io.agrest.jaxrs2.openapi;
 import io.agrest.DataResponse;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
+import io.agrest.annotation.AgRelationship;
 import io.agrest.jaxrs2.openapi.junit.TestOpenAPIBuilder;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Schema;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,10 +21,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class Entity_SimplePropertiesTest {
+public class EntityTest {
 
     static final OpenAPI oapi = new TestOpenAPIBuilder()
             .addPackage(P3.class)
@@ -30,14 +33,46 @@ public class Entity_SimplePropertiesTest {
             .build();
 
     @Test
-    public void testIdsAndAttributes() {
+    public void testPropertiesPresentAndOrdered() {
         Schema p4 = oapi.getComponents().getSchemas().get("P4");
         assertNotNull(p4);
 
         Map<String, Schema> props = p4.getProperties();
 
-        // checking both presence and the ordering
-        assertEquals(List.of("id", "b", "c"), List.copyOf(props.keySet()));
+        // checking both presence and ordering
+        assertEquals(List.of("id", "b", "p5", "p6s", "z"), List.copyOf(props.keySet()));
+
+        Schema id = props.get("id");
+        assertNotNull(id);
+        assertEquals("integer", id.getType());
+        assertEquals("int32", id.getFormat());
+
+        Schema b = props.get("b");
+        assertNotNull(b);
+        assertEquals("integer", b.getType());
+        assertEquals("int32", b.getFormat());
+
+        Schema z = props.get("z");
+        assertNotNull(z);
+        assertEquals("string", z.getType());
+
+        Schema p5 = props.get("p5");
+        assertNotNull(p5);
+        assertNull(p5.getName());
+        assertNull(p5.getType());
+        assertNull(p5.getFormat());
+        assertEquals("#/components/schemas/P5", p5.get$ref());
+
+        Schema p6s = props.get("p6s");
+        assertNotNull(p6s);
+        assertEquals("array", p6s.getType());
+
+        Schema p6sItems = ((ArraySchema) p6s).getItems();
+        assertNotNull(p6sItems);
+        assertNull(p6sItems.getName());
+        assertNull(p6sItems.getType());
+        assertNull(p6sItems.getFormat());
+        assertEquals("#/components/schemas/P6", p6sItems.get$ref());
     }
 
     @ParameterizedTest
@@ -240,9 +275,11 @@ public class Entity_SimplePropertiesTest {
 
     public static class P4 {
 
-        @AgId
-        public int getA() {
-            return -1;
+        // intentionally declare properties in non-alphabetic order
+
+        @AgAttribute
+        public String getZ() {
+            return "";
         }
 
         @AgAttribute
@@ -250,9 +287,43 @@ public class Entity_SimplePropertiesTest {
             return -1;
         }
 
+        @AgId
+        public int getA() {
+            return -1;
+        }
+
+        @AgRelationship
+        public Set<EntityUpdateTest.P6> getP6s() {
+            return Set.of();
+        }
+
+        @AgRelationship
+        public EntityUpdateTest.P5 getP5() {
+            return null;
+        }
+    }
+
+    public static class P5 {
+        @AgId
+        public long getA() {
+            return -1L;
+        }
+
         @AgAttribute
-        public String getC() {
+        public int getB() {
+            return -1;
+        }
+    }
+
+    public static class P6 {
+        @AgId
+        public String getA() {
             return "";
+        }
+
+        @AgAttribute
+        public int getB() {
+            return -1;
         }
     }
 }

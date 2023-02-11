@@ -2,6 +2,7 @@
 
 * #607 OpenAPI docs for EntityUpdate should include relationships
 * #610 OpenAPI descriptors should be able to resolve multi-column AgId
+* #611 OpenAPI: properties must be sorted in same order as responses
 
 ## Release 5.0.M12
 
