@@ -75,6 +75,21 @@ public class EntityTest {
         assertEquals("#/components/schemas/P6", p6sItems.get$ref());
     }
 
+    @Test
+    public void testProperties_FilterByAccess() {
+        Schema p8Update = oapi.getComponents().getSchemas().get("P8");
+        assertNotNull(p8Update);
+
+        Map<String, Schema> props = p8Update.getProperties();
+
+        assertEquals(List.of("b"), List.copyOf(props.keySet()));
+
+        Schema b = props.get("b");
+        assertNotNull(b);
+        assertEquals("integer", b.getType());
+        assertEquals("int32", b.getFormat());
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"a", "b"})
     public void testIntegerTypes(String propertyName) {
@@ -191,6 +206,11 @@ public class EntityTest {
 
         @GET
         public DataResponse<P4> getP4() {
+            throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
+        }
+
+        @GET
+        public DataResponse<P8> getP8() {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
     }
@@ -324,6 +344,34 @@ public class EntityTest {
         @AgAttribute
         public int getB() {
             return -1;
+        }
+    }
+
+    public static class P8 {
+
+        @AgAttribute
+        public int getB() {
+            return -1;
+        }
+
+        @AgAttribute(readable = false)
+        public String getZ() {
+            return "";
+        }
+
+        @AgId(readable = false)
+        public int getA() {
+            return -1;
+        }
+
+        @AgRelationship(readable = false)
+        public Set<P6> getP6s() {
+            return Set.of();
+        }
+
+        @AgRelationship(readable = false)
+        public P5 getP5() {
+            return null;
         }
     }
 }

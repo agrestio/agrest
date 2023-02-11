@@ -63,19 +63,23 @@ public class AgEntityModelConverter extends AgEntityAwareModelConverter {
         String name = entity.getName();
 
         List<Map.Entry<String, Schema>> entries = new ArrayList<>();
+        PropertyAccessChecker accessChecker = PropertyAccessChecker.checkRead();
 
         for (AgAttribute a : entity.getAttributes()) {
-            entries.add(Map.entry(a.getName(), doResolveValue(a.getType(), context)));
+            Schema aSchema = doResolveAttribute(a, context, accessChecker);
+            if (aSchema != null) {
+                entries.add(Map.entry(a.getName(), aSchema));
+            }
         }
 
         for (AgRelationship r : entity.getRelationships()) {
-            Schema relSchema = doResolveRelationship(r, context);
+            Schema relSchema = doResolveRelationship(r, context, accessChecker);
             if (relSchema != null) {
                 entries.add(Map.entry(r.getName(), relSchema));
             }
         }
 
-        Map<String, Schema> properties = doResolveProperties(doResolveId(entity, context), entries);
+        Map<String, Schema> properties = doCollectProperties(doResolveId(entity, context, accessChecker), entries);
         Schema<?> schema = new ObjectSchema().name(name).properties(properties);
         return onSchemaResolved(type, context, schema);
     }

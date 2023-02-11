@@ -69,6 +69,21 @@ public class EntityUpdateTest {
     }
 
     @Test
+    public void testProperties_FilterByAccess() {
+        Schema p8Update = oapi.getComponents().getSchemas().get("EntityUpdate(P8)");
+        assertNotNull(p8Update);
+
+        Map<String, Schema> props = p8Update.getProperties();
+
+        assertEquals(List.of("b"), List.copyOf(props.keySet()));
+
+        Schema b = props.get("b");
+        assertNotNull(b);
+        assertEquals("integer", b.getType());
+        assertEquals("int32", b.getFormat());
+    }
+
+    @Test
     public void testProperties_MultiColumnId() {
 
         Schema p7Update = oapi.getComponents().getSchemas().get("EntityUpdate(P7)");
@@ -97,14 +112,20 @@ public class EntityUpdateTest {
         private Configuration config;
 
         @PUT
-        @Path("collection")
-        public SimpleResponse putP4(List<EntityUpdate<P4>> p4Updates) {
+        @Path("p4")
+        public SimpleResponse putP4(List<EntityUpdate<P4>> u) {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
 
         @PUT
-        @Path("single/multi-id/{id}")
-        public SimpleResponse putP7ById(@PathParam("id") int id, EntityUpdate<P7> update) {
+        @Path("p7")
+        public SimpleResponse putP7(@PathParam("id") int id, EntityUpdate<P7> u) {
+            throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
+        }
+
+        @PUT
+        @Path("p8")
+        public SimpleResponse putP8(List<EntityUpdate<P8>> u) {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
     }
@@ -172,6 +193,34 @@ public class EntityUpdateTest {
         @AgId
         public String getId2() {
             return "";
+        }
+    }
+
+    public static class P8 {
+
+        @AgAttribute
+        public int getB() {
+            return -1;
+        }
+
+        @AgAttribute(writable = false)
+        public String getZ() {
+            return "";
+        }
+
+        @AgId(writable = false)
+        public int getA() {
+            return -1;
+        }
+
+        @AgRelationship(writable = false)
+        public Set<P6> getP6s() {
+            return Set.of();
+        }
+
+        @AgRelationship(writable = false)
+        public P5 getP5() {
+            return null;
         }
     }
 }
