@@ -4,6 +4,7 @@ import io.agrest.EntityUpdate;
 import io.agrest.SimpleResponse;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
+import io.agrest.annotation.AgRelationship;
 import io.agrest.jaxrs3.openapi.junit.TestOpenAPIBuilder;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
@@ -21,6 +22,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,12 +60,43 @@ public class EntityUpdateTest {
         MediaType mt = rb.getContent().get("*/*");
         assertNotNull(mt);
 
-        Schema schema = mt.getSchema();
-        assertNotNull(schema);
+        Schema mtSchema = mt.getSchema();
+        assertNotNull(mtSchema);
 
-        assertNull(schema.getName());
-        assertNull(schema.getType());
-        assertEquals("#/components/schemas/EntityUpdate(P4)", schema.get$ref());
+        assertNull(mtSchema.getName());
+        assertNull(mtSchema.getType());
+        assertEquals("#/components/schemas/EntityUpdate(P4)", mtSchema.get$ref());
+
+        Schema updateSchema = oapi.getComponents().getSchemas().get("EntityUpdate(P4)");
+        assertNotNull(updateSchema);
+
+        assertEquals(5, updateSchema.getProperties().size());
+        Schema idSchema = (Schema) updateSchema.getProperties().get("id");
+        assertNotNull(idSchema);
+        assertEquals("integer", idSchema.getType());
+        assertEquals("int32", idSchema.getFormat());
+
+        Schema bSchema = (Schema) updateSchema.getProperties().get("b");
+        assertNotNull(bSchema);
+        assertEquals("integer", bSchema.getType());
+        assertEquals("int32", bSchema.getFormat());
+
+        Schema cSchema = (Schema) updateSchema.getProperties().get("c");
+        assertNotNull(cSchema);
+        assertEquals("string", cSchema.getType());
+
+        Schema p5Schema = (Schema) updateSchema.getProperties().get("p5");
+        assertNotNull(p5Schema);
+        assertEquals("integer", p5Schema.getType());
+        assertEquals("int64", p5Schema.getFormat());
+
+        Schema p6sSchema = (Schema) updateSchema.getProperties().get("p6s");
+        assertNotNull(p6sSchema);
+        assertEquals("array", p6sSchema.getType());
+
+        Schema p6sItemsSchema = ((ArraySchema) p6sSchema).getItems();
+        assertNotNull(p6sItemsSchema);
+        assertEquals("string", p6sItemsSchema.getType());
     }
 
     @Test
@@ -148,6 +181,40 @@ public class EntityUpdateTest {
         @AgAttribute
         public String getC() {
             return "";
+        }
+
+        @AgRelationship
+        public P5 getP5() {
+            return null;
+        }
+
+        @AgRelationship
+        public Set<P6> getP6s() {
+            return Set.of();
+        }
+    }
+
+    public static class P5 {
+        @AgId
+        public long getA() {
+            return -1L;
+        }
+
+        @AgAttribute
+        public int getB() {
+            return -1;
+        }
+    }
+
+    public static class P6 {
+        @AgId
+        public String getA() {
+            return "";
+        }
+
+        @AgAttribute
+        public int getB() {
+            return -1;
         }
     }
 }

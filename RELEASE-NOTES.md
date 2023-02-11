@@ -1,3 +1,7 @@
+## Release 5.0.M13
+
+* #607 OpenAPI docs for EntityUpdate should include relationships
+
 ## Release 5.0.M12
 
 * #606 Jackson upgrade, dependency management

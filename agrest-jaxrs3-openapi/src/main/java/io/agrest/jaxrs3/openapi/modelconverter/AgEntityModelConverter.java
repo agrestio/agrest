@@ -2,20 +2,26 @@ package io.agrest.jaxrs3.openapi.modelconverter;
 
 import io.agrest.PathConstants;
 import io.agrest.jaxrs3.openapi.TypeWrapper;
-import io.agrest.meta.*;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
+import io.agrest.meta.AgSchema;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
-import io.swagger.v3.core.util.PrimitiveType;
-import io.swagger.v3.core.util.RefUtils;
-import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Provides OpenAPI Schema conversions for Agrest entity objects
@@ -62,10 +68,9 @@ public class AgEntityModelConverter extends AgModelConverter {
         // ensure stable property ordering
         Map<String, Schema> properties = new LinkedHashMap<>();
 
-        // TODO: multi-key ids must be exposed as maps
-        if (agEntity.getIdParts().size() == 1) {
-            AgIdPart id = agEntity.getIdParts().iterator().next();
-            properties.put(PathConstants.ID_PK_ATTRIBUTE, doResolveValue(id.getType(), context));
+        Schema idSchema = doResolveId(agEntity, context);
+        if (idSchema != null) {
+            properties.put(PathConstants.ID_PK_ATTRIBUTE, idSchema);
         }
 
         List<AgAttribute> sortedAttributes = new ArrayList<>(agEntity.getAttributes());
@@ -82,27 +87,6 @@ public class AgEntityModelConverter extends AgModelConverter {
 
         Schema<?> schema = new ObjectSchema().name(name).properties(properties);
         return onSchemaResolved(type, context, schema);
-    }
-
-    protected Schema doResolveValue(Class<?> type, ModelConverterContext context) {
-        Schema primitive = PrimitiveType.createProperty(type);
-        return primitive != null
-                ? primitive
-                : context.resolve(new AnnotatedType().type(type));
-    }
-
-    protected Schema doResolveRelationship(AgRelationship relationship, ModelConverterContext context) {
-
-        AgEntity<?> targetEntity = relationship.getTargetEntity();
-
-        // ensure related entity and any other entities reachable from it are resolved
-        context.resolve(new AnnotatedType().type(targetEntity.getType()));
-
-        // link to resolved entity
-        Schema relatedSchemaRef = new Schema().$ref(RefUtils.constructRef(targetEntity.getName()));
-        return relationship.isToMany()
-                ? new ArraySchema().items(relatedSchemaRef)
-                : relatedSchemaRef;
     }
 
     // implementing equals/hashCode to be able to detect previously installed converters in the static context

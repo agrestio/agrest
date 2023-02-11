@@ -1,23 +1,34 @@
 package io.agrest.jaxrs2.openapi.modelconverter;
 
-import io.agrest.*;
+import io.agrest.AgException;
+import io.agrest.DataResponse;
+import io.agrest.EntityUpdate;
+import io.agrest.PathConstants;
+import io.agrest.SimpleResponse;
 import io.agrest.jaxrs2.openapi.TypeWrapper;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgIdPart;
+import io.agrest.meta.AgRelationship;
+import io.agrest.meta.AgSchema;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
-import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.RefUtils;
-import io.swagger.v3.oas.models.media.*;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.ObjectSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -143,35 +154,34 @@ public class AgProtocolModelConverter extends AgModelConverter {
     protected Schema resolveAsParameterizedEntityUpdate(AnnotatedType type, ModelConverterContext context, TypeWrapper wrapped) {
 
         TypeWrapper entityType = wrapped.containedType(0);
-        AgEntity<?> agEntity = schema.getEntity(entityType.getRawClass());
-        String name = "EntityUpdate(" + agEntity.getName() + ")";
-        Map<String, Schema> properties = new HashMap<>();
+        AgEntity<?> entity = schema.getEntity(entityType.getRawClass());
+        String name = "EntityUpdate(" + entity.getName() + ")";
 
-        // TODO: multi-key ids must be exposed as maps
-        if (agEntity.getIdParts().size() == 1) {
-            AgIdPart id = agEntity.getIdParts().iterator().next();
-            properties.put(PathConstants.ID_PK_ATTRIBUTE, doResolveValue(
-                    PathConstants.ID_PK_ATTRIBUTE,
-                    id.getType(),
-                    context));
+        // ensure stable property ordering
+        Map<String, Schema> properties = new LinkedHashMap<>();
+
+        Schema idSchema = doResolveId(entity, context);
+        if (idSchema != null) {
+            properties.put(PathConstants.ID_PK_ATTRIBUTE, idSchema);
         }
 
-        for (AgAttribute a : agEntity.getAttributes()) {
-            properties.put(a.getName(), doResolveValue(a.getName(), a.getType(), context));
+        List<AgAttribute> sortedAttributes = new ArrayList<>(entity.getAttributes());
+        sortedAttributes.sort(Comparator.comparing(AgAttribute::getName));
+        for (AgAttribute a : sortedAttributes) {
+            properties.put(a.getName(), doResolveValue(a.getType(), context));
         }
 
-        // TODO: include FKs of to-one and to many ids collections
+        List<AgRelationship> sortedRelationships = new ArrayList<>(entity.getRelationships());
+        sortedRelationships.sort(Comparator.comparing(AgRelationship::getName));
+        for (AgRelationship r : sortedRelationships) {
+            Schema relIdSchema = doResolveRelationshipRef(r, context);
+            if (relIdSchema != null) {
+                properties.put(r.getName(), relIdSchema);
+            }
+        }
 
         Schema<?> schema = new ObjectSchema().name(name).properties(properties);
         return onSchemaResolved(type, context, schema);
-    }
-
-    // TODO: duplicate of a method in AgEntityModelConverter
-    protected Schema doResolveValue(String name, Class<?> type, ModelConverterContext context) {
-        Schema primitive = PrimitiveType.createProperty(type);
-        return primitive != null
-                ? primitive
-                : context.resolve(new AnnotatedType().type(type));
     }
 
     @Override
