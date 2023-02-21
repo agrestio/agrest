@@ -79,6 +79,15 @@ public class DefaultRequestBuilder implements AgRequestBuilder {
     }
 
     @Override
+    public AgRequestBuilder addSorts(List<String> unparsedSorts) {
+        for (String us : unparsedSorts) {
+            addSort(us);
+        }
+
+        return this;
+    }
+
+    @Override
     public AgRequestBuilder addSort(String unparsedSort) {
         if (unparsedSort != null && unparsedSort.length() > 0) {
             request.sorts.addAll(sortParser.parse(unparsedSort, null));

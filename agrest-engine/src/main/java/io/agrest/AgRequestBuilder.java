@@ -30,6 +30,11 @@ public interface AgRequestBuilder {
     /**
      * @since 5.0
      */
+    AgRequestBuilder addSorts(List<String> unparsedSorts);
+
+    /**
+     * @since 5.0
+     */
     AgRequestBuilder addSort(String unparsedSort);
 
 
