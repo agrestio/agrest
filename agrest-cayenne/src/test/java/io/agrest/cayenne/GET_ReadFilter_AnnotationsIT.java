@@ -49,6 +49,22 @@ public class GET_ReadFilter_AnnotationsIT extends MainDbTest {
                 .bodyEquals(1, "{\"id\":1,\"cBoolean\":true,\"cInt\":5,\"e11s\":[{\"address\":\"aaa\"}]}");
     }
 
+    @Test
+    public void testReadWithInclude_ToManyToOne_MiddleIdNotReadable() {
+
+        tester.e10().insertColumns("id", "c_boolean")
+                .values(1, true).exec();
+
+        tester.e11().insertColumns("id", "e10_id")
+                .values(15, 1).exec();
+
+        tester.target("e10")
+                .queryParam("include", "cBoolean", "e11s.e10.cBoolean")
+                .get()
+                .wasOk()
+                .bodyEquals(1, "{\"cBoolean\":true,\"e11s\":[{\"e10\":{\"cBoolean\":true}}]}");
+    }
+
     @Path("")
     public static class Resource {
 

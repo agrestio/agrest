@@ -1,5 +1,6 @@
 package io.agrest.cayenne.compiler;
 
+import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.access.CreateAuthorizer;
 import io.agrest.access.DeleteAuthorizer;
@@ -7,11 +8,11 @@ import io.agrest.access.ReadFilter;
 import io.agrest.access.UpdateAuthorizer;
 import io.agrest.compiler.AnnotationsAgEntityBuilder;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.DefaultAttribute;
 import io.agrest.meta.DefaultEntity;
 import io.agrest.meta.DefaultIdPart;
@@ -19,6 +20,7 @@ import io.agrest.meta.DefaultRelationship;
 import io.agrest.resolver.RelatedDataResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
+import org.apache.cayenne.ObjectId;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.map.DbAttribute;
@@ -31,11 +33,13 @@ import org.apache.cayenne.reflect.ClassDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static io.agrest.reflect.Types.typeForName;
 
@@ -205,20 +209,21 @@ public class CayenneAgEntityBuilder<T> {
         // Load a separate entity built purely from annotations, then merge it with our entity.
 
         AgEntity<T> annotatedEntity = new AnnotationsAgEntityBuilder<>(type, schema).build();
+        Collection<AgIdPart> annotatedIdParts = annotatedEntity.getIdParts();
 
-        if (annotatedEntity.getIdParts().size() > 0) {
-
-            // if annotated ids are present, remove all Cayenne-originated ids, regardless of their type and count
-            if (!ids.isEmpty()) {
-                LOGGER.debug("Cayenne ObjectId is overridden from annotations.");
-                ids.clear();
-            }
-
-            // TODO: smarter handling of overridden Cayenne IDs the same way for we do for attributes and relationships
+        if (!annotatedIdParts.isEmpty()) {
 
             // TODO: we should remove a possible matching regular persistent attributes from the model, since it was
             //  also declared as ID, and hence should not be exposed as an attribute anymore
-            annotatedEntity.getIdParts().forEach(this::addId);
+
+            switch (IdMergeType.of(cayenneEntity.getName(), annotatedIdParts)) {
+                case replace:
+                    replaceIds(annotatedIdParts);
+                    break;
+                case merge_single:
+                    mergeSingleId(annotatedIdParts.iterator().next());
+                    break;
+            }
         }
 
         for (AgAttribute attribute : annotatedEntity.getAttributes()) {
@@ -241,6 +246,37 @@ public class CayenneAgEntityBuilder<T> {
                 addRelationship(relationship);
             }
         }
+    }
+
+    protected void replaceIds(Collection<AgIdPart> annotatedIds) {
+        ids.clear();
+        annotatedIds.forEach(this::addId);
+    }
+
+    protected void mergeSingleId(AgIdPart annotatedId) {
+
+        if (this.ids.isEmpty()) {
+            return;
+        }
+
+        // merge read/write access to the existing IDs
+        // we can't iterate and change the ids collection. So iterate by copy
+        for (AgIdPart id : new ArrayList<>(this.ids.values())) {
+            addId(merge(annotatedId, id));
+        }
+    }
+
+    protected AgIdPart merge(AgIdPart annotatedId, AgIdPart cayenneId) {
+        // TODO: use Overlays here.. Overlays are intended for merging on top of entities
+        return new DefaultIdPart(
+                cayenneId.getName(),
+                cayenneId.getType(),
+
+                // only read/write access can be overridden by annotations as of now
+                annotatedId.isReadable(),
+                annotatedId.isWritable(),
+
+                cayenneId.getDataReader());
     }
 
     protected AgAttribute merge(AgAttribute annotatedAttribute, AgAttribute cayenneAttribute) {
@@ -323,5 +359,32 @@ public class CayenneAgEntityBuilder<T> {
         }
 
         return byClass;
+    }
+
+    enum IdMergeType {
+        replace, merge_single;
+
+        static IdMergeType of(String entityName, Collection<AgIdPart> annotatedIds) {
+
+            if (annotatedIds.size() == 1) {
+                AgIdPart part = annotatedIds.iterator().next();
+                return isCayenneObjectId(part) ? merge_single : replace;
+            }
+
+            for (AgIdPart p : annotatedIds) {
+                if (isCayenneObjectId(p)) {
+                    throw AgException.internalServerError(
+                            "Entity '%s': unsupported combination of @AgId-annotated properties - %s (both 'objectId' and custom properties)",
+                            entityName,
+                            annotatedIds.stream().map(AgIdPart::getName).collect(Collectors.joining(",")));
+                }
+            }
+
+            return replace;
+        }
+
+        static boolean isCayenneObjectId(AgIdPart part) {
+            return "objectId".equals(part.getName()) && ObjectId.class.equals(part.getType());
+        }
     }
 }

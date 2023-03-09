@@ -2,6 +2,7 @@
 
 * #615 Swagger: ignore UriInfo if @Parameter(hidden=true) is set
 * #616 Swagger: duplicate param properties
+* #617 Proper handling of ObjectId annotated with @AgId
 
 ## Release 5.0.M13
 
