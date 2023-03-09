@@ -6,7 +6,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
- * A wrapper of a {@link Type}. Needed as a common API to for one of the following cases: {@link JavaType},
+ * A wrapper of a {@link Type}. Needed as a common API for one of the following cases: {@link JavaType},
  * {@link ParameterizedType} or {@link Class}.
  */
 public interface TypeWrapper {

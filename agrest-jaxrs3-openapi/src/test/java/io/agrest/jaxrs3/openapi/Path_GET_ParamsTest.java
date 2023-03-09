@@ -14,6 +14,7 @@ import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
 import org.example.entity.NonAgP1;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -71,6 +72,19 @@ public class Path_GET_ParamsTest {
         // TODO assert the actual parameters
     }
 
+    @Disabled("There's no fix within Swagger API. As a workaround users must annotate irrelevant parameters with @Parameter(hidden=true)")
+    @Test
+    public void testMixedParametersAgrest() {
+        PathItem pi = oapi.getPaths().get("/r/mixed-params-agrest");
+        Operation get = pi.getGet();
+
+        assertEquals(
+                "direction,exclude,exp,include,limit,mapBy,sort,start",
+                get.getParameters().stream().map(Parameter::getName).sorted().collect(Collectors.joining(",")));
+
+        // TODO assert the actual parameters
+    }
+
     @Test
     public void testMixedParametersUriInfoHidden() {
         PathItem pi = oapi.getPaths().get("/r/mixed-params-uri-info-hidden");
@@ -106,6 +120,12 @@ public class Path_GET_ParamsTest {
         @GET
         @Path("mixed-params")
         public DataResponse<NonAgP1> mixedParams(@QueryParam("x") String x, @Context UriInfo uriInfo) {
+            throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
+        }
+
+        @GET
+        @Path("mixed-params-agrest")
+        public DataResponse<NonAgP1> mixedParamsAgrest(@QueryParam("sort") String sort, @Context UriInfo uriInfo) {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
 
