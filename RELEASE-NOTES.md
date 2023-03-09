@@ -1,6 +1,7 @@
 ## Release 5.0.M14
 
 * #615 Swagger: ignore UriInfo if @Parameter(hidden=true) is set
+* #616 Swagger: duplicate param properties
 
 ## Release 5.0.M13
 

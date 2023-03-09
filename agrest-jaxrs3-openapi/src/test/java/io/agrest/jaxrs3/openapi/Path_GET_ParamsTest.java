@@ -14,7 +14,6 @@ import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
 import org.example.entity.NonAgP1;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -72,7 +71,6 @@ public class Path_GET_ParamsTest {
         // TODO assert the actual parameters
     }
 
-    @Disabled("There's no fix within Swagger API. As a workaround users must annotate irrelevant parameters with @Parameter(hidden=true)")
     @Test
     public void testMixedParametersAgrest() {
         PathItem pi = oapi.getPaths().get("/r/mixed-params-agrest");

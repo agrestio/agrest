@@ -8,7 +8,6 @@ import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import org.example.entity.NonAgP1;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -72,7 +71,6 @@ public class Path_GET_ParamsTest {
         // TODO assert the actual parameters
     }
 
-    @Disabled("There's no fix within Swagger API. As a workaround users must annotate irrelevant parameters with @Parameter(hidden=true)")
     @Test
     public void testMixedParametersAgrest() {
         PathItem pi = oapi.getPaths().get("/r/mixed-params-agrest");
