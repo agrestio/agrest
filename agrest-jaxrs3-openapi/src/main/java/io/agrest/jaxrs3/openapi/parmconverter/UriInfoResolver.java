@@ -18,11 +18,18 @@ public class UriInfoResolver {
 
     public boolean willResolve(TypeWrapper wrapper, List<Annotation> annotations) {
         if (wrapper != null && wrapper.getRawClass() == UriInfo.class) {
+            boolean isContext = false;
+            boolean notHidden = true;
+
             for (Annotation a : annotations) {
                 if (a instanceof Context) {
-                    return true;
+                    isContext = true;
+                } else if (a instanceof io.swagger.v3.oas.annotations.Parameter) {
+                    notHidden = !((io.swagger.v3.oas.annotations.Parameter) a).hidden();
                 }
             }
+
+            return isContext && notHidden;
         }
 
         return false;

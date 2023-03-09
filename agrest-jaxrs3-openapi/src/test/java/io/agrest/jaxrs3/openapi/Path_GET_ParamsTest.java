@@ -71,6 +71,18 @@ public class Path_GET_ParamsTest {
         // TODO assert the actual parameters
     }
 
+    @Test
+    public void testMixedParametersUriInfoHidden() {
+        PathItem pi = oapi.getPaths().get("/r/mixed-params-uri-info-hidden");
+        Operation get = pi.getGet();
+
+        assertEquals(
+                "x",
+                get.getParameters().stream().map(Parameter::getName).collect(Collectors.joining(",")));
+
+        // TODO assert the actual parameters
+    }
+
     @Path("r")
     public static class Resource {
 
@@ -94,6 +106,14 @@ public class Path_GET_ParamsTest {
         @GET
         @Path("mixed-params")
         public DataResponse<NonAgP1> mixedParams(@QueryParam("x") String x, @Context UriInfo uriInfo) {
+            throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
+        }
+
+        @GET
+        @Path("mixed-params-uri-info-hidden")
+        public DataResponse<NonAgP1> mixedParamsUriInfoHidden(
+                @QueryParam("x") String x,
+                @io.swagger.v3.oas.annotations.Parameter(hidden = true) @Context UriInfo uriInfo) {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
     }

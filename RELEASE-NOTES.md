@@ -1,3 +1,7 @@
+## Release 5.0.M14
+
+* #615 Swagger: ignore UriInfo if @Parameter(hidden=true) is set
+
 ## Release 5.0.M13
 
 * #607 OpenAPI docs for EntityUpdate should include relationships
