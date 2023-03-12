@@ -311,6 +311,15 @@
         </plugins>
     </build>
     <profiles>
+        <profile>
+            <id>java17</id>
+            <activation>
+                <jdk>17</jdk>
+            </activation>
+            <modules>
+                <module>agrest-java17-tests</module>
+            </modules>
+        </profile>
         <!-- Release profile - sign artifacts; do extra checks to ensure we don't miss anything.. -->
         <profile>
             <id>release</id>

@@ -7,7 +7,8 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Annotates a getter of a property in a Java object to indicate that the property is an attribute exposed via Agrest.
+ * Annotates a getter of a property in a POJO or a record component to indicate that the property is an "attribute"
+ * in the Agrest schema, and set it default access rules.
  *
  * @since 1.15
  */

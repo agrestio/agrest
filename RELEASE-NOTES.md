@@ -1,5 +1,6 @@
 ## Release 5.0.M15
 
+* #614 Improve support for Java records as Agrest entities
 * #618 Expand the definition of "getter" and "setter"
 
 ## Release 5.0.M14
