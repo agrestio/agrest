@@ -1,3 +1,7 @@
+## Release 5.0.M15
+
+* #618 Expand the definition of "getter" and "setter"
+
 ## Release 5.0.M14
 
 * #613 Exception on include when entity id is unreadable
