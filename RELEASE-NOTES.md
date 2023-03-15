@@ -2,6 +2,7 @@
 
 * #614 Improve support for Java records as Agrest entities
 * #618 Expand the definition of "getter" and "setter"
+* #619 Swagger: do not expose UriInfo unless annotated with @Parameter
 
 ## Release 5.0.M14
 

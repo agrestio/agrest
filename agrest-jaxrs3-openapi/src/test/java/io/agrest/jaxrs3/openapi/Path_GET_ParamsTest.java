@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class Path_GET_ParamsTest {
 
@@ -95,6 +96,13 @@ public class Path_GET_ParamsTest {
         // TODO assert the actual parameters
     }
 
+    @Test
+    public void testUriInfo_NotParameter() {
+        PathItem pi = oapi.getPaths().get("/r/uri-info-not-parameter");
+        Operation get = pi.getGet();
+        assertNull(get.getParameters());
+    }
+
     @Path("r")
     public static class Resource {
 
@@ -102,8 +110,14 @@ public class Path_GET_ParamsTest {
         private Configuration config;
 
         @GET
+        @Path("uri-info-not-parameter")
+        public DataResponse<NonAgP1> uriInfoNotParameter(@Context UriInfo uriInfo) {
+            throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
+        }
+
+        @GET
         @Path("uri-info")
-        public DataResponse<NonAgP1> uriInfo(@Context UriInfo uriInfo) {
+        public DataResponse<NonAgP1> uriInfo(@io.swagger.v3.oas.annotations.Parameter @Context UriInfo uriInfo) {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
 
@@ -117,13 +131,13 @@ public class Path_GET_ParamsTest {
 
         @GET
         @Path("mixed-params")
-        public DataResponse<NonAgP1> mixedParams(@QueryParam("x") String x, @Context UriInfo uriInfo) {
+        public DataResponse<NonAgP1> mixedParams(@QueryParam("x") String x, @io.swagger.v3.oas.annotations.Parameter @Context UriInfo uriInfo) {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
 
         @GET
         @Path("mixed-params-agrest")
-        public DataResponse<NonAgP1> mixedParamsAgrest(@QueryParam("sort") String sort, @Context UriInfo uriInfo) {
+        public DataResponse<NonAgP1> mixedParamsAgrest(@QueryParam("sort") String sort, @io.swagger.v3.oas.annotations.Parameter @Context UriInfo uriInfo) {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
 

@@ -1,6 +1,15 @@
 _This document contains upgrade notes for Agrest 5.x and newer. Older versions are documented in 
 [UPGRADE-NOTES-1-4](./UPGRADE-NOTES-1-to-4.md)._
 
+## Upgrading to 5.0.M15
+
+### To include UriInfo in OpenAPI, an explicit annotation is required [#619](https://github.com/agrestio/agrest/issues/619)
+This only affects projects that auto-generate OpenAPI documentation descriptors from Agrest endpoints.
+Previously, the framework would automatically add every single Ag Protocol parameter to the endpoint signature
+if an endpoint method had `@Context UriInfo` as one of the parameters. This proved to be rather inflexible
+in many situations. So now by default `UriInfo` will be ignored for documentation purposes, and the way to
+turn on the old behavior is to annotate it explicitly like this: `@Parameter UriInfo` (with or without `@Context`).
+
 ## Upgrading to 5.0.M1
 
 5.0 is a major release with a number of breaking changes. Still the upgrade should be fairly straightforward in most

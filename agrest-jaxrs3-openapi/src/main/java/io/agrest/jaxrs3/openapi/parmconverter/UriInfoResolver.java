@@ -9,7 +9,6 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.QueryParameter;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
 
 import java.lang.annotation.Annotation;
@@ -26,7 +25,7 @@ public class UriInfoResolver {
     static void removeDuplicatedParams(Operation operation) {
 
         List<Parameter> params = operation.getParameters();
-        if(params == null) {
+        if (params == null) {
             return;
         }
 
@@ -51,18 +50,13 @@ public class UriInfoResolver {
 
     public boolean willResolve(TypeWrapper wrapper, List<Annotation> annotations) {
         if (wrapper != null && wrapper.getRawClass() == UriInfo.class) {
-            boolean isContext = false;
-            boolean notHidden = true;
 
             for (Annotation a : annotations) {
-                if (a instanceof Context) {
-                    isContext = true;
-                } else if (a instanceof io.swagger.v3.oas.annotations.Parameter) {
-                    notHidden = !((io.swagger.v3.oas.annotations.Parameter) a).hidden();
+                if (a instanceof io.swagger.v3.oas.annotations.Parameter) {
+                    io.swagger.v3.oas.annotations.Parameter pa = (io.swagger.v3.oas.annotations.Parameter) a;
+                    return !pa.hidden();
                 }
             }
-
-            return isContext && notHidden;
         }
 
         return false;
