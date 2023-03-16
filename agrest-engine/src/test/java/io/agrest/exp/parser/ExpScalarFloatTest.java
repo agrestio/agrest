@@ -10,7 +10,7 @@ class ExpScalarFloatTest extends AbstractExpTest {
 
     @Override
     ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpScalarFloat.class);
+        return new ExpTestVisitor(ExpScalar.class);
     }
 
     @Override

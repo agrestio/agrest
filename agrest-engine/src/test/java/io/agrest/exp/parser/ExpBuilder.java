@@ -31,9 +31,7 @@ public class ExpBuilder {
         expIdMap.put(ExpNotIn.class, AgExpressionParserTreeConstants.JJTNOTIN);
         expIdMap.put(ExpNotBetween.class, AgExpressionParserTreeConstants.JJTNOTBETWEEN);
         expIdMap.put(ExpScalarList.class, AgExpressionParserTreeConstants.JJTSCALARLIST);
-        expIdMap.put(ExpScalarNull.class, AgExpressionParserTreeConstants.JJTSCALARNULL);
-        expIdMap.put(ExpScalarString.class, AgExpressionParserTreeConstants.JJTSCALARSTRING);
-        expIdMap.put(ExpScalarBool.class, AgExpressionParserTreeConstants.JJTSCALARBOOL);
+        expIdMap.put(ExpScalar.class, AgExpressionParserTreeConstants.JJTSCALAR);
         expIdMap.put(ExpBitwiseOr.class, AgExpressionParserTreeConstants.JJTBITWISEOR);
         expIdMap.put(ExpBitwiseXor.class, AgExpressionParserTreeConstants.JJTBITWISEXOR);
         expIdMap.put(ExpBitwiseAnd.class, AgExpressionParserTreeConstants.JJTBITWISEAND);
@@ -45,8 +43,6 @@ public class ExpBuilder {
         expIdMap.put(ExpDivide.class, AgExpressionParserTreeConstants.JJTDIVIDE);
         expIdMap.put(ExpBitwiseNot.class, AgExpressionParserTreeConstants.JJTBITWISENOT);
         expIdMap.put(ExpNegate.class, AgExpressionParserTreeConstants.JJTNEGATE);
-        expIdMap.put(ExpScalarInt.class, AgExpressionParserTreeConstants.JJTSCALARINT);
-        expIdMap.put(ExpScalarFloat.class, AgExpressionParserTreeConstants.JJTSCALARFLOAT);
         expIdMap.put(ExpConcat.class, AgExpressionParserTreeConstants.JJTCONCAT);
         expIdMap.put(ExpSubstring.class, AgExpressionParserTreeConstants.JJTSUBSTRING);
         expIdMap.put(ExpTrim.class, AgExpressionParserTreeConstants.JJTTRIM);

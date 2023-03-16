@@ -25,38 +25,34 @@ public interface AgExpressionParserTreeConstants
   public int JJTNOTIN = 19;
   public int JJTNOTBETWEEN = 20;
   public int JJTSCALARLIST = 21;
-  public int JJTSCALARNULL = 22;
-  public int JJTSCALARSTRING = 23;
-  public int JJTSCALARBOOL = 24;
-  public int JJTBITWISEOR = 25;
-  public int JJTBITWISEXOR = 26;
-  public int JJTBITWISEAND = 27;
-  public int JJTBITWISELEFTSHIFT = 28;
-  public int JJTBITWISERIGHTSHIFT = 29;
-  public int JJTADD = 30;
-  public int JJTSUBTRACT = 31;
-  public int JJTMULTIPLY = 32;
-  public int JJTDIVIDE = 33;
-  public int JJTBITWISENOT = 34;
-  public int JJTNEGATE = 35;
-  public int JJTSCALARINT = 36;
-  public int JJTSCALARFLOAT = 37;
-  public int JJTCONCAT = 38;
-  public int JJTSUBSTRING = 39;
-  public int JJTTRIM = 40;
-  public int JJTLOWER = 41;
-  public int JJTUPPER = 42;
-  public int JJTLENGTH = 43;
-  public int JJTLOCATE = 44;
-  public int JJTABS = 45;
-  public int JJTSQRT = 46;
-  public int JJTMOD = 47;
-  public int JJTCURRENTDATE = 48;
-  public int JJTCURRENTTIME = 49;
-  public int JJTCURRENTTIMESTAMP = 50;
-  public int JJTEXTRACT = 51;
-  public int JJTNAMEDPARAMETER = 52;
-  public int JJTOBJPATH = 53;
+  public int JJTSCALAR = 22;
+  public int JJTBITWISEOR = 23;
+  public int JJTBITWISEXOR = 24;
+  public int JJTBITWISEAND = 25;
+  public int JJTBITWISELEFTSHIFT = 26;
+  public int JJTBITWISERIGHTSHIFT = 27;
+  public int JJTADD = 28;
+  public int JJTSUBTRACT = 29;
+  public int JJTMULTIPLY = 30;
+  public int JJTDIVIDE = 31;
+  public int JJTBITWISENOT = 32;
+  public int JJTNEGATE = 33;
+  public int JJTCONCAT = 34;
+  public int JJTSUBSTRING = 35;
+  public int JJTTRIM = 36;
+  public int JJTLOWER = 37;
+  public int JJTUPPER = 38;
+  public int JJTLENGTH = 39;
+  public int JJTLOCATE = 40;
+  public int JJTABS = 41;
+  public int JJTSQRT = 42;
+  public int JJTMOD = 43;
+  public int JJTCURRENTDATE = 44;
+  public int JJTCURRENTTIME = 45;
+  public int JJTCURRENTTIMESTAMP = 46;
+  public int JJTEXTRACT = 47;
+  public int JJTNAMEDPARAMETER = 48;
+  public int JJTOBJPATH = 49;
 
 
   public String[] jjtNodeName = {
@@ -82,9 +78,7 @@ public interface AgExpressionParserTreeConstants
     "NotIn",
     "NotBetween",
     "ScalarList",
-    "ScalarNull",
-    "ScalarString",
-    "ScalarBool",
+    "Scalar",
     "BitwiseOr",
     "BitwiseXor",
     "BitwiseAnd",
@@ -96,8 +90,6 @@ public interface AgExpressionParserTreeConstants
     "Divide",
     "BitwiseNot",
     "Negate",
-    "ScalarInt",
-    "ScalarFloat",
     "Concat",
     "Substring",
     "Trim",
@@ -116,4 +108,4 @@ public interface AgExpressionParserTreeConstants
     "ObjPath",
   };
 }
-/* JavaCC - OriginalChecksum=22bc94b645caacf38b5f6161bc9ad9d4 (do not edit this line) */
+/* JavaCC - OriginalChecksum=d912c7438e037247155592fc4a99eb58 (do not edit this line) */

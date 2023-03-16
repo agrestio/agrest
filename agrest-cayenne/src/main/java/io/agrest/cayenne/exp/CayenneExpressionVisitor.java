@@ -1,62 +1,15 @@
 package io.agrest.cayenne.exp;
 
-import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.function.BiFunction;
-
 import io.agrest.cayenne.path.PathOps;
+import io.agrest.exp.parser.SimpleNode;
 import io.agrest.exp.parser.*;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionParameter;
-import org.apache.cayenne.exp.parser.ASTAbs;
-import org.apache.cayenne.exp.parser.ASTAdd;
-import org.apache.cayenne.exp.parser.ASTAnd;
-import org.apache.cayenne.exp.parser.ASTBetween;
-import org.apache.cayenne.exp.parser.ASTBitwiseAnd;
-import org.apache.cayenne.exp.parser.ASTBitwiseLeftShift;
-import org.apache.cayenne.exp.parser.ASTBitwiseNot;
-import org.apache.cayenne.exp.parser.ASTBitwiseOr;
-import org.apache.cayenne.exp.parser.ASTBitwiseRightShift;
-import org.apache.cayenne.exp.parser.ASTBitwiseXor;
-import org.apache.cayenne.exp.parser.ASTConcat;
-import org.apache.cayenne.exp.parser.ASTCurrentDate;
-import org.apache.cayenne.exp.parser.ASTCurrentTime;
-import org.apache.cayenne.exp.parser.ASTCurrentTimestamp;
-import org.apache.cayenne.exp.parser.ASTDivide;
-import org.apache.cayenne.exp.parser.ASTEqual;
-import org.apache.cayenne.exp.parser.ASTExtract;
-import org.apache.cayenne.exp.parser.ASTFalse;
-import org.apache.cayenne.exp.parser.ASTGreater;
-import org.apache.cayenne.exp.parser.ASTGreaterOrEqual;
-import org.apache.cayenne.exp.parser.ASTIn;
-import org.apache.cayenne.exp.parser.ASTLength;
-import org.apache.cayenne.exp.parser.ASTLess;
-import org.apache.cayenne.exp.parser.ASTLessOrEqual;
-import org.apache.cayenne.exp.parser.ASTLike;
-import org.apache.cayenne.exp.parser.ASTLikeIgnoreCase;
-import org.apache.cayenne.exp.parser.ASTList;
-import org.apache.cayenne.exp.parser.ASTLocate;
-import org.apache.cayenne.exp.parser.ASTLower;
-import org.apache.cayenne.exp.parser.ASTMod;
-import org.apache.cayenne.exp.parser.ASTMultiply;
-import org.apache.cayenne.exp.parser.ASTNamedParameter;
-import org.apache.cayenne.exp.parser.ASTNegate;
-import org.apache.cayenne.exp.parser.ASTNot;
-import org.apache.cayenne.exp.parser.ASTNotBetween;
-import org.apache.cayenne.exp.parser.ASTNotEqual;
-import org.apache.cayenne.exp.parser.ASTNotIn;
-import org.apache.cayenne.exp.parser.ASTNotLike;
-import org.apache.cayenne.exp.parser.ASTNotLikeIgnoreCase;
-import org.apache.cayenne.exp.parser.ASTOr;
-import org.apache.cayenne.exp.parser.ASTPath;
-import org.apache.cayenne.exp.parser.ASTScalar;
-import org.apache.cayenne.exp.parser.ASTSqrt;
-import org.apache.cayenne.exp.parser.ASTSubstring;
-import org.apache.cayenne.exp.parser.ASTSubtract;
-import org.apache.cayenne.exp.parser.ASTTrim;
-import org.apache.cayenne.exp.parser.ASTTrue;
-import org.apache.cayenne.exp.parser.ASTUpper;
-import org.apache.cayenne.exp.parser.PatternMatchNode;
+import org.apache.cayenne.exp.parser.*;
+
+import java.lang.reflect.Constructor;
+import java.util.Collection;
+import java.util.function.BiFunction;
 
 class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> {
 
@@ -71,9 +24,9 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
             return null;
         }
         Expression expression = node.jjtGetChild(0).jjtAccept(this, data);
-        if(node.hasNamedParams()) {
+        if (node.hasNamedParams()) {
             return expression.params(node.getNamedParams());
-        } else if(node.hasPositionalParams()) {
+        } else if (node.hasPositionalParams()) {
             return expression.paramsArray(node.getPositionalParams());
         } else {
             return expression;
@@ -181,8 +134,8 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
         Collection<?> value = node.getValue();
         Object[] cayenneValues = new Object[value.size()];
         int i = 0;
-        for(Object next : value) {
-            if(next instanceof NamedParameter) {
+        for (Object next : value) {
+            if (next instanceof NamedParameter) {
                 cayenneValues[i++] = new ExpressionParameter(((NamedParameter) next).getName());
             } else {
                 cayenneValues[i++] = next;
@@ -190,7 +143,7 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
         }
 
         ASTList list = new ASTList(cayenneValues);
-        if(data != null) {
+        if (data != null) {
             data.setOperand(data.getOperandCount(), list);
             return data;
         }
@@ -198,17 +151,7 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
     }
 
     @Override
-    public Expression visit(ExpScalarNull node, Expression data) {
-        return process(node, data, new ASTScalar(null));
-    }
-
-    @Override
-    public Expression visit(ExpScalarString node, Expression data) {
-        return process(node, data, new ASTScalar(node.jjtGetValue()));
-    }
-
-    @Override
-    public Expression visit(ExpScalarBool node, Expression data) {
+    public Expression visit(ExpScalar node, Expression data) {
         return process(node, data, new ASTScalar(node.jjtGetValue()));
     }
 
@@ -265,16 +208,6 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
     @Override
     public Expression visit(ExpNegate node, Expression data) {
         return process(node, data, new ASTNegate());
-    }
-
-    @Override
-    public Expression visit(ExpScalarInt node, Expression parent) {
-        return process(node, parent, new ASTScalar(node.jjtGetValue()));
-    }
-
-    @Override
-    public Expression visit(ExpScalarFloat node, Expression data) {
-        return process(node, data, new ASTScalar(node.jjtGetValue()));
     }
 
     @Override
@@ -368,7 +301,7 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
 
     @Override
     public Expression visit(ExpObjPath node, Expression parent) {
-        ASTPath path = PathOps.parsePath((String)node.jjtGetValue());
+        ASTPath path = PathOps.parsePath((String) node.jjtGetValue());
         return process(node, parent, path);
     }
 
@@ -387,7 +320,7 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
     }
 
     BiFunction<Expression, Expression, Expression> getMergerForNode(Expression node) {
-        if(node instanceof PatternMatchNode) {
+        if (node instanceof PatternMatchNode) {
             return this::addToLikeNode;
         } else {
             return this::addToParent;
@@ -400,16 +333,16 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
     }
 
     private Expression addToLikeNode(Expression parent, Expression child) {
-        if(!(parent instanceof PatternMatchNode)) {
+        if (!(parent instanceof PatternMatchNode)) {
             throw new IllegalArgumentException("ParentMatchNode expected, got " + parent.getClass().getSimpleName());
         }
         PatternMatchNode patternMatchNode = (PatternMatchNode) parent;
-        if(parent.getOperandCount() == 2) {
-            if(!(child instanceof ASTScalar)) {
+        if (parent.getOperandCount() == 2) {
+            if (!(child instanceof ASTScalar)) {
                 throw new IllegalArgumentException("ASTScalar expected, got " + child.getClass().getSimpleName());
             }
-            String escape = ((ASTScalar)child).getValue().toString();
-            if(escape.length() != 1) {
+            String escape = ((ASTScalar) child).getValue().toString();
+            if (escape.length() != 1) {
                 throw new IllegalArgumentException("Single escape char expected, got '" + escape + "'");
             }
             patternMatchNode.setEscapeChar(escape.charAt(0));

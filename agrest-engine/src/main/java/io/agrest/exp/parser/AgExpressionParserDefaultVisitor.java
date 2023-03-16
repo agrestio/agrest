@@ -72,13 +72,7 @@ public class AgExpressionParserDefaultVisitor<T> implements AgExpressionParserVi
   public T visit(ExpScalarList node, T data){
     return defaultVisit(node, data);
   }
-  public T visit(ExpScalarNull node, T data){
-    return defaultVisit(node, data);
-  }
-  public T visit(ExpScalarString node, T data){
-    return defaultVisit(node, data);
-  }
-  public T visit(ExpScalarBool node, T data){
+  public T visit(ExpScalar node, T data){
     return defaultVisit(node, data);
   }
   public T visit(ExpBitwiseOr node, T data){
@@ -112,12 +106,6 @@ public class AgExpressionParserDefaultVisitor<T> implements AgExpressionParserVi
     return defaultVisit(node, data);
   }
   public T visit(ExpNegate node, T data){
-    return defaultVisit(node, data);
-  }
-  public T visit(ExpScalarInt node, T data){
-    return defaultVisit(node, data);
-  }
-  public T visit(ExpScalarFloat node, T data){
     return defaultVisit(node, data);
   }
   public T visit(ExpConcat node, T data){
@@ -169,4 +157,4 @@ public class AgExpressionParserDefaultVisitor<T> implements AgExpressionParserVi
     return defaultVisit(node, data);
   }
 }
-/* JavaCC - OriginalChecksum=5ad65aa2447293df9168f4677ec559b7 (do not edit this line) */
+/* JavaCC - OriginalChecksum=4307ade49c12dfc988d547fc2c8bdc23 (do not edit this line) */

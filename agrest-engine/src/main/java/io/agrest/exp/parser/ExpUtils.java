@@ -2,35 +2,35 @@ package io.agrest.exp.parser;
 
 public class ExpUtils {
 
-    public static Node in(ExpObjPath path, ExpScalar<?> scalar) {
+    public static Node in(ExpObjPath path, ExpGenericScalar<?> scalar) {
         return compose(new ExpIn(AgExpressionParserTreeConstants.JJTIN), path, scalar);
     }
 
-    public static Node likeIgnoreCase(ExpObjPath path, ExpScalar<?> scalar) {
+    public static Node likeIgnoreCase(ExpObjPath path, ExpGenericScalar<?> scalar) {
         return compose(new ExpLikeIgnoreCase(AgExpressionParserTreeConstants.JJTLIKEIGNORECASE), path, scalar);
     }
 
-    public static Node like(ExpObjPath path, ExpScalar<?> scalar) {
+    public static Node like(ExpObjPath path, ExpGenericScalar<?> scalar) {
         return compose(new ExpLike(AgExpressionParserTreeConstants.JJTLIKE), path, scalar);
     }
 
-    public static Node greaterOrEqual(ExpObjPath path, ExpScalar<?> scalar) {
+    public static Node greaterOrEqual(ExpObjPath path, ExpGenericScalar<?> scalar) {
         return compose(new ExpGreaterOrEqual(AgExpressionParserTreeConstants.JJTGREATEROREQUAL), path, scalar);
     }
 
-    public static Node lessOrEqual(ExpObjPath path, ExpScalar<?> scalar) {
+    public static Node lessOrEqual(ExpObjPath path, ExpGenericScalar<?> scalar) {
         return compose(new ExpLessOrEqual(AgExpressionParserTreeConstants.JJTLESSOREQUAL), path, scalar);
     }
 
-    public static Node greater(ExpObjPath path, ExpScalar<?> scalar) {
+    public static Node greater(ExpObjPath path, ExpGenericScalar<?> scalar) {
         return compose(new ExpGreater(AgExpressionParserTreeConstants.JJTGREATER), path, scalar);
     }
 
-    public static Node less(ExpObjPath path, ExpScalar<?> scalar) {
+    public static Node less(ExpObjPath path, ExpGenericScalar<?> scalar) {
         return compose(new ExpLess(AgExpressionParserTreeConstants.JJTLESS), path, scalar);
     }
 
-    public static Node equal(ExpObjPath path, ExpScalar<?> scalar) {
+    public static Node equal(ExpObjPath path, ExpGenericScalar<?> scalar) {
         return compose(new ExpEqual(AgExpressionParserTreeConstants.JJTEQUAL), path, scalar);
     }
 

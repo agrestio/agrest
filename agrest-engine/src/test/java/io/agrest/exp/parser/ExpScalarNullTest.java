@@ -9,7 +9,7 @@ class ExpScalarNullTest extends AbstractExpTest {
 
     @Override
     ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpScalarNull.class);
+        return new ExpTestVisitor(ExpScalar.class);
     }
 
     @Override

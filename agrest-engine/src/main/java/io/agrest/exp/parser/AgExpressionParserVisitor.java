@@ -25,9 +25,7 @@ public interface AgExpressionParserVisitor<T>
   public T visit(ExpNotIn node, T data);
   public T visit(ExpNotBetween node, T data);
   public T visit(ExpScalarList node, T data);
-  public T visit(ExpScalarNull node, T data);
-  public T visit(ExpScalarString node, T data);
-  public T visit(ExpScalarBool node, T data);
+  public T visit(ExpScalar node, T data);
   public T visit(ExpBitwiseOr node, T data);
   public T visit(ExpBitwiseXor node, T data);
   public T visit(ExpBitwiseAnd node, T data);
@@ -39,8 +37,6 @@ public interface AgExpressionParserVisitor<T>
   public T visit(ExpDivide node, T data);
   public T visit(ExpBitwiseNot node, T data);
   public T visit(ExpNegate node, T data);
-  public T visit(ExpScalarInt node, T data);
-  public T visit(ExpScalarFloat node, T data);
   public T visit(ExpConcat node, T data);
   public T visit(ExpSubstring node, T data);
   public T visit(ExpTrim node, T data);
@@ -58,4 +54,4 @@ public interface AgExpressionParserVisitor<T>
   public T visit(ExpNamedParameter node, T data);
   public T visit(ExpObjPath node, T data);
 }
-/* JavaCC - OriginalChecksum=115711f624aed354569f5b5f4fc0f7ff (do not edit this line) */
+/* JavaCC - OriginalChecksum=56ef26b5fcb3e2da9191be55d2b31125 (do not edit this line) */

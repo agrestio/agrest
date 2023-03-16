@@ -6,7 +6,7 @@ import io.agrest.exp.parser.AgExpressionParserVisitor;
 import io.agrest.exp.parser.ExpUtils;
 import io.agrest.exp.parser.ExpObjPath;
 import io.agrest.exp.parser.ExpRoot;
-import io.agrest.exp.parser.ExpScalar;
+import io.agrest.exp.parser.ExpGenericScalar;
 import io.agrest.exp.parser.Node;
 
 import java.util.Map;
@@ -36,7 +36,7 @@ public interface Exp {
      */
     static Exp keyValue(String key, String op, Object value) {
         ExpObjPath path = ExpObjPath.of(Objects.requireNonNull(key));
-        ExpScalar<?> scalar = ExpScalar.of(value);
+        ExpGenericScalar<?> scalar = ExpGenericScalar.of(value);
         switch (op) {
             case "=":
                 return ExpUtils.equal(path, scalar);

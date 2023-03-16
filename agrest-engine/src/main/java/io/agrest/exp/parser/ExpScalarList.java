@@ -7,86 +7,63 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class ExpScalarList extends ExpScalar<Collection<?>> {
+public
+class ExpScalarList extends ExpGenericScalar<Collection<?>> {
 
-    private static final ListValueVisitor LIST_VALUE_VISITOR = new ListValueVisitor();
+  private static final ListValueVisitor LIST_VALUE_VISITOR = new ListValueVisitor();
 
-    public ExpScalarList(int id) {
-        super(id);
+  public ExpScalarList(int id) {
+    super(id);
+  }
+
+  public ExpScalarList(AgExpressionParser p, int id) {
+    super(p, id);
+  }
+
+  public Collection<?> getValue() {
+    Collection<?> value = (Collection<?>) jjtGetValue();
+    if (value != null) {
+      return value;
     }
 
-    public Collection<?> getValue() {
-        Collection<?> value = (Collection<?>) jjtGetValue();
-        if (value != null) {
-            return value;
-        }
-
-        if (jjtGetNumChildren() == 0) {
-            return Collections.emptyList();
-        }
-
-        List<Object> list = new ArrayList<>();
-        for (int i = 0; i < jjtGetNumChildren(); ++i) {
-            jjtGetChild(i).jjtAccept(LIST_VALUE_VISITOR, list);
-        }
-
-        return list;
+    if (jjtGetNumChildren() == 0) {
+      return Collections.emptyList();
     }
 
-    public ExpScalarList(AgExpressionParser p, int id) {
-        super(p, id);
+    List<Object> list = new ArrayList<>();
+    for (int i = 0; i < jjtGetNumChildren(); ++i) {
+      jjtGetChild(i).jjtAccept(LIST_VALUE_VISITOR, list);
     }
 
-    /**
-     * Accept the visitor.
-     **/
-    public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
-        return visitor.visit(this, data);
+    return list;
+  }
+
+  /** Accept the visitor. **/
+  public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
+
+    return
+    visitor.visit(this, data);
+  }
+
+  private static class ListValueVisitor extends AgExpressionParserDefaultVisitor<List<Object>> {
+
+    @Override
+    public List<Object> visit(ExpScalar node, List<Object> data) {
+      data.add(node.getValue());
+      return data;
     }
 
-    private static class ListValueVisitor extends AgExpressionParserDefaultVisitor<List<Object>> {
-        @Override
-        public List<Object> visit(ExpScalarInt node, List<Object> data) {
-            data.add(node.getValue());
-            return data;
-        }
-
-        @Override
-        public List<Object> visit(ExpScalarFloat node, List<Object> data) {
-            data.add(node.getValue());
-            return data;
-        }
-
-        @Override
-        public List<Object> visit(ExpScalarBool node, List<Object> data) {
-            data.add(node.getValue());
-            return data;
-        }
-
-        @Override
-        public List<Object> visit(ExpScalarString node, List<Object> data) {
-            data.add(node.getValue());
-            return data;
-        }
-
-        @Override
-        public List<Object> visit(ExpScalarNull node, List<Object> data) {
-            data.add(node.getValue());
-            return data;
-        }
-
-        @Override
-        public List<Object> visit(ExpScalarList node, List<Object> data) {
-            data.add(node.getValue());
-            return data;
-        }
-
-        @Override
-        public List<Object> visit(ExpNamedParameter node, List<Object> data) {
-            data.add(new NamedParameter((String) node.jjtGetValue()));
-            return data;
-        }
+    @Override
+    public List<Object> visit(ExpScalarList node, List<Object> data) {
+      data.add(node.getValue());
+      return data;
     }
 
+    @Override
+    public List<Object> visit(ExpNamedParameter node, List<Object> data) {
+      data.add(new NamedParameter((String) node.jjtGetValue()));
+      return data;
+    }
+  }
 }
-/* JavaCC - OriginalChecksum=fe5a28fa1f7d38505f4fb33af25ae45b (do not edit this line) */
+/* JavaCC - OriginalChecksum=a0eb03d3d264fa55970f6e6f130c84e2 (do not edit this line) */

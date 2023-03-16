@@ -937,7 +937,7 @@ if (jjtc001) {
       break;
       }
     case NULL:{
-ExpScalarNull jjtn001 = new ExpScalarNull(JJTSCALARNULL);
+ExpScalar jjtn001 = new ExpScalar(JJTSCALAR);
                   boolean jjtc001 = true;
                   jjtree.openNodeScope(jjtn001);
       try {
@@ -989,7 +989,7 @@ if (jjtc001) {
     switch (jj_nt.kind) {
     case SINGLE_QUOTED_STRING:{
       jj_consume_token(SINGLE_QUOTED_STRING);
-ExpScalarString jjtn001 = new ExpScalarString(JJTSCALARSTRING);
+ExpScalar jjtn001 = new ExpScalar(JJTSCALAR);
                              boolean jjtc001 = true;
                              jjtree.openNodeScope(jjtn001);
       try {
@@ -1005,7 +1005,7 @@ if (jjtc001) {
       }
     case DOUBLE_QUOTED_STRING:{
       jj_consume_token(DOUBLE_QUOTED_STRING);
-ExpScalarString jjtn002 = new ExpScalarString(JJTSCALARSTRING);
+ExpScalar jjtn002 = new ExpScalar(JJTSCALAR);
                              boolean jjtc002 = true;
                              jjtree.openNodeScope(jjtn002);
       try {
@@ -1089,7 +1089,7 @@ if (jjtc002) {
       }
     case TRUE:{
       jj_consume_token(TRUE);
-ExpScalarBool jjtn001 = new ExpScalarBool(JJTSCALARBOOL);
+ExpScalar jjtn001 = new ExpScalar(JJTSCALAR);
                    boolean jjtc001 = true;
                    jjtree.openNodeScope(jjtn001);
       try {
@@ -1105,7 +1105,7 @@ if (jjtc001) {
       }
     case FALSE:{
       jj_consume_token(FALSE);
-ExpScalarBool jjtn002 = new ExpScalarBool(JJTSCALARBOOL);
+ExpScalar jjtn002 = new ExpScalar(JJTSCALAR);
                     boolean jjtc002 = true;
                     jjtree.openNodeScope(jjtn002);
       try {
@@ -1130,7 +1130,7 @@ if (jjtc002) {
     switch (jj_nt.kind) {
     case SINGLE_QUOTED_STRING:{
       jj_consume_token(SINGLE_QUOTED_STRING);
-ExpScalarString jjtn001 = new ExpScalarString(JJTSCALARSTRING);
+ExpScalar jjtn001 = new ExpScalar(JJTSCALAR);
                                    boolean jjtc001 = true;
                                    jjtree.openNodeScope(jjtn001);
       try {
@@ -1146,7 +1146,7 @@ if (jjtc001) {
       }
     case DOUBLE_QUOTED_STRING:{
       jj_consume_token(DOUBLE_QUOTED_STRING);
-ExpScalarString jjtn002 = new ExpScalarString(JJTSCALARSTRING);
+ExpScalar jjtn002 = new ExpScalar(JJTSCALAR);
                                    boolean jjtc002 = true;
                                    jjtree.openNodeScope(jjtn002);
       try {
@@ -1174,7 +1174,7 @@ if (jjtc002) {
       }
     case TRUE:{
       jj_consume_token(TRUE);
-ExpScalarBool jjtn003 = new ExpScalarBool(JJTSCALARBOOL);
+ExpScalar jjtn003 = new ExpScalar(JJTSCALAR);
                     boolean jjtc003 = true;
                     jjtree.openNodeScope(jjtn003);
       try {
@@ -1190,7 +1190,7 @@ if (jjtc003) {
       }
     case FALSE:{
       jj_consume_token(FALSE);
-ExpScalarBool jjtn004 = new ExpScalarBool(JJTSCALARBOOL);
+ExpScalar jjtn004 = new ExpScalar(JJTSCALAR);
                     boolean jjtc004 = true;
                     jjtree.openNodeScope(jjtn004);
       try {
@@ -1756,8 +1756,8 @@ if (jjtc001) {
     }
 }
 
-  final public void intLiteral() throws ParseException {/*@bgen(jjtree) #ScalarInt( 0) */
-  ExpScalarInt jjtn000 = new ExpScalarInt(JJTSCALARINT);
+  final public void intLiteral() throws ParseException {/*@bgen(jjtree) #Scalar( 0) */
+  ExpScalar jjtn000 = new ExpScalar(JJTSCALAR);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
@@ -1772,8 +1772,8 @@ if (jjtc000) {
     }
 }
 
-  final public void floatLiteral() throws ParseException {/*@bgen(jjtree) #ScalarFloat( 0) */
-  ExpScalarFloat jjtn000 = new ExpScalarFloat(JJTSCALARFLOAT);
+  final public void floatLiteral() throws ParseException {/*@bgen(jjtree) #Scalar( 0) */
+  ExpScalar jjtn000 = new ExpScalar(JJTSCALAR);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {

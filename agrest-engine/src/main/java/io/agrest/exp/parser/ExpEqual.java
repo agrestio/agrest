@@ -11,7 +11,7 @@ public class ExpEqual extends SimpleNode {
         super(p, id);
     }
 
-    public static ExpEqual of(ExpObjPath path, ExpScalar<?> value) {
+    public static ExpEqual of(ExpObjPath path, ExpGenericScalar<?> value) {
         ExpEqual equal = new ExpEqual(AgExpressionParserTreeConstants.JJTEQUAL);
         equal.jjtAddChild(path, 0);
         equal.jjtAddChild(value, 1);

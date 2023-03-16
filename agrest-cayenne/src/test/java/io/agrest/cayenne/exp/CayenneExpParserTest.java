@@ -3,7 +3,6 @@ package io.agrest.cayenne.exp;
 import io.agrest.protocol.Exp;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -41,7 +40,6 @@ public class CayenneExpParserTest {
     }
 
     @Test
-    @Disabled("Until #601 is fixed")
     public void testParseKeyValue_Eq_Date() {
         LocalDate d = LocalDate.of(1999, 8, 7);
         Expression e = parser.parse(Exp.keyValue("a", "=", d));

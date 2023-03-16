@@ -157,7 +157,7 @@ void conditionExpression() : {}
     |
         stringExpression()
 	|
-		<NULL> #ScalarNull(0)
+		<NULL> #Scalar(0)
     |
         dateTimeFunction()
 }
@@ -171,9 +171,9 @@ void stringParameter() : {}
 
 void stringLiteral() :  {}
 {
-    <SINGLE_QUOTED_STRING> { jjtThis.jjtSetValue(token_source.literalValue); } #ScalarString(0)
+    <SINGLE_QUOTED_STRING> { jjtThis.jjtSetValue(token_source.literalValue); } #Scalar(0)
     |
-    <DOUBLE_QUOTED_STRING> { jjtThis.jjtSetValue(token_source.literalValue); } #ScalarString(0)
+    <DOUBLE_QUOTED_STRING> { jjtThis.jjtSetValue(token_source.literalValue); } #Scalar(0)
 }
 
 void stringExpression() : {}
@@ -187,16 +187,16 @@ void scalarExpression() : {}
 {
   	   conditionExpression()
 	|
-	  <TRUE> { jjtThis.jjtSetValue(true); }  #ScalarBool(0)
+	  <TRUE> { jjtThis.jjtSetValue(true); }  #Scalar(0)
 	| 
-	  <FALSE> { jjtThis.jjtSetValue(false); }  #ScalarBool(0)
+	  <FALSE> { jjtThis.jjtSetValue(false); }  #Scalar(0)
 }
 
 void scalarConstExpression() : {}
 {
-	  <SINGLE_QUOTED_STRING> { jjtThis.jjtSetValue(token_source.literalValue); } #ScalarString(0)
+	  <SINGLE_QUOTED_STRING> { jjtThis.jjtSetValue(token_source.literalValue); } #Scalar(0)
 	|
-	  <DOUBLE_QUOTED_STRING> { jjtThis.jjtSetValue(token_source.literalValue); } #ScalarString(0)
+	  <DOUBLE_QUOTED_STRING> { jjtThis.jjtSetValue(token_source.literalValue); } #Scalar(0)
 	| 
 	  namedParameter()
 	| 
@@ -204,9 +204,9 @@ void scalarConstExpression() : {}
 	| 
 	  floatLiteral()
 	|
-	  <TRUE>  { jjtThis.jjtSetValue(true);  } #ScalarBool(0)
+	  <TRUE>  { jjtThis.jjtSetValue(true);  } #Scalar(0)
 	| 
-	  <FALSE> { jjtThis.jjtSetValue(false); } #ScalarBool(0)
+	  <FALSE> { jjtThis.jjtSetValue(false); } #Scalar(0)
 }
 
 void numericExpression() : {}
@@ -303,12 +303,12 @@ void numericPrimary() : {}
         pathExpression()
 }
 
-void intLiteral() #ScalarInt(0) : {}
+void intLiteral() #Scalar(0) : {}
 {
     <INT_LITERAL> { jjtThis.jjtSetValue(token_source.literalValue); }
 }
 
-void floatLiteral() #ScalarFloat(0) : {}
+void floatLiteral() #Scalar(0) : {}
 {
     <FLOAT_LITERAL>{ jjtThis.jjtSetValue(token_source.literalValue); }
 }
