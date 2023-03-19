@@ -13,7 +13,7 @@ more correct than the previous version) :
 previously render as `00:00:00`
 * If a property is modeled as the old `java.sql.Time`, we will no longer allow to parse times starting with "T". So
 `T00:00:00` will no longer work, while `00:00:00` will. This does not affect parsing of `java.time.LocalTime`, as it 
-already diallowed the leading "T".
+already disallowed the leading "T".
 
 ## Upgrading to 5.0.M15
 
