@@ -1,9 +1,7 @@
 package io.agrest.converter.valuestring;
 
-import io.agrest.encoder.DateTimeFormatters;
-
 import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 
 public class SqlTimestampConverter extends AbstractConverter<Timestamp> {
 
@@ -18,6 +16,6 @@ public class SqlTimestampConverter extends AbstractConverter<Timestamp> {
 
 	@Override
 	protected String asStringNonNull(Timestamp timestamp) {
-		return DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(timestamp.getTime()));
+		return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(timestamp.toLocalDateTime());
 	}
 }

@@ -17,6 +17,11 @@ public class SqlTimestampConverterTest {
     }
 
     @Test
+    public void testDistantPast() {
+        assertEquals("1815-02-02T01:00:01", converter.asString(Timestamp.valueOf(LocalDateTime.of(1815, 2, 2, 1, 0, 1))));
+    }
+
+    @Test
     public void test1ms() {
         assertEquals("2016-03-26T13:27:27.001",
                 converter.asString(Timestamp.valueOf(LocalDateTime.of(2016, 3, 26, 13, 27, 27, 1_000_000))));
