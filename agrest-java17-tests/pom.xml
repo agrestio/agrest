@@ -6,11 +6,11 @@
     <parent>
         <groupId>io.agrest</groupId>
         <artifactId>agrest-parent</artifactId>
-        <version>5.0.M15-SNAPSHOT</version>
+        <version>5.0.M16-SNAPSHOT</version>
     </parent>
 
     <artifactId>agrest-java17-tests</artifactId>
-    <version>5.0.M15-SNAPSHOT</version>
+    <version>5.0.M16-SNAPSHOT</version>
     <name>agrest-java17-tests: (module not published) tests for J17 records</name>
 
     <properties>
