@@ -1,9 +1,10 @@
 package io.agrest.converter.valuestring;
 
-import io.agrest.encoder.DateTimeFormatters;
-
 import java.sql.Time;
 import java.time.Instant;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 public class SqlTimeConverter extends AbstractConverter<Time> {
 
@@ -18,6 +19,8 @@ public class SqlTimeConverter extends AbstractConverter<Time> {
 
 	@Override
 	protected String asStringNonNull(Time time) {
-		return DateTimeFormatters.isoLocalTime().format(Instant.ofEpochMilli(time.getTime()));
+		// can't use Time.toLocalTime() as it loses milliseconds
+		LocalTime lt = LocalTime.ofInstant(Instant.ofEpochMilli(time.getTime()), ZoneId.systemDefault());
+		return DateTimeFormatter.ISO_LOCAL_TIME.format(lt);
 	}
 }

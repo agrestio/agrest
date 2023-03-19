@@ -87,8 +87,8 @@ public class EncoderFactory_DateTime_Test {
     public void testLocalTime() {
         // fractional part is not printed, when less than a millisecond
         testLocalTime(LocalTime.of(10, 0, 0), "HH:mm:ss");
-        testLocalTime(LocalTime.of(10, 0, 0, 1), "HH:mm:ss");
-        testLocalTime(LocalTime.of(10, 0, 0, 999_999), "HH:mm:ss");
+        testLocalTime(LocalTime.of(10, 0, 0, 1), "HH:mm:ss.nnnnnnnnn");
+        testLocalTime(LocalTime.of(10, 0, 0, 999_999), "HH:mm:ss.nnnnnnnnn");
         testLocalTime(LocalTime.of(10, 0, 0, 1_000_000), "HH:mm:ss.SSS"); // millisecond is 10^6 nanoseconds
     }
 
@@ -108,9 +108,9 @@ public class EncoderFactory_DateTime_Test {
     public void testLocalDateTime() {
         // fractional part is not printed, when less than a millisecond
         testLocalDateTime(LocalDateTime.of(2017, 1, 1, 10, 0, 0), "yyyy-MM-dd'T'HH:mm:ss");
-        testLocalDateTime(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1), "yyyy-MM-dd'T'HH:mm:ss");
-        testLocalDateTime(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 999_999), "yyyy-MM-dd'T'HH:mm:ss");
-        testLocalDateTime(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1_000_000), "yyyy-MM-dd'T'HH:mm:ss.SSS"); // millisecond is 10^6 nanoseconds
+        testLocalDateTime(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1), "yyyy-MM-dd'T'HH:mm:ss.nnnnnnnnn");
+        testLocalDateTime(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 999_999), "yyyy-MM-dd'T'HH:mm:ss.nnnnnnnnn");
+        testLocalDateTime(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1_000_000), "yyyy-MM-dd'T'HH:mm:ss.SSS");
     }
 
     private void testLocalDateTime(LocalDateTime dateTime, String expectedPattern) {

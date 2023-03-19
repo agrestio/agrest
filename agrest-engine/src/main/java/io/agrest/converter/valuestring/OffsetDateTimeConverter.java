@@ -1,8 +1,7 @@
 package io.agrest.converter.valuestring;
 
-import io.agrest.encoder.DateTimeFormatters;
-
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class OffsetDateTimeConverter extends AbstractConverter<OffsetDateTime> {
 
@@ -17,6 +16,6 @@ public class OffsetDateTimeConverter extends AbstractConverter<OffsetDateTime> {
 
     @Override
     protected String asStringNonNull(OffsetDateTime time) {
-        return DateTimeFormatters.isoOffsetDateTime().format(time);
+        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(time);
     }
 }

@@ -1,8 +1,7 @@
 package io.agrest.converter.valuestring;
 
-import io.agrest.encoder.DateTimeFormatters;
-
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class LocalTimeConverter extends AbstractConverter<LocalTime> {
 
@@ -17,6 +16,6 @@ public class LocalTimeConverter extends AbstractConverter<LocalTime> {
 
 	@Override
 	protected String asStringNonNull(LocalTime time) {
-		return DateTimeFormatters.isoLocalTime().format(time);
+		return DateTimeFormatter.ISO_LOCAL_TIME.format(time);
 	}
 }

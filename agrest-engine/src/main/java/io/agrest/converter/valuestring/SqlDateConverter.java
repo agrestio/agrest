@@ -1,9 +1,7 @@
 package io.agrest.converter.valuestring;
 
-import io.agrest.encoder.DateTimeFormatters;
-
 import java.sql.Date;
-import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 
 public class SqlDateConverter extends AbstractConverter<Date> {
 
@@ -18,6 +16,6 @@ public class SqlDateConverter extends AbstractConverter<Date> {
 
 	@Override
 	protected String asStringNonNull(Date date) {
-		return DateTimeFormatters.isoLocalDate().format(Instant.ofEpochMilli(date.getTime()));
+		return DateTimeFormatter.ISO_LOCAL_DATE.format(date.toLocalDate());
 	}
 }

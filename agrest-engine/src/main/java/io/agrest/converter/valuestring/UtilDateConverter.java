@@ -1,8 +1,8 @@
 package io.agrest.converter.valuestring;
 
-import io.agrest.encoder.DateTimeFormatters;
-
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class UtilDateConverter extends AbstractConverter<Date> {
@@ -18,6 +18,7 @@ public class UtilDateConverter extends AbstractConverter<Date> {
 
 	@Override
 	protected String asStringNonNull(Date date) {
-		return DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(date.getTime()));
+		LocalDateTime ldt = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(ldt);
 	}
 }
