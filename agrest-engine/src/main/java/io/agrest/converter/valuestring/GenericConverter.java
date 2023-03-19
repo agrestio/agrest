@@ -1,11 +1,11 @@
 package io.agrest.converter.valuestring;
 
 
-public class GenericConverter extends AbstractConverter {
+public class GenericConverter extends AbstractConverter<Object> {
 
-	private static final ValueStringConverter instance = new GenericConverter();
+	private static final GenericConverter instance = new GenericConverter();
 
-	public static ValueStringConverter converter() {
+	public static GenericConverter converter() {
 		return instance;
 	}
 

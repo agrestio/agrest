@@ -16,13 +16,14 @@ import io.agrest.converter.jsonvalue.JsonValueConverters;
 import io.agrest.converter.jsonvalue.JsonValueConvertersProvider;
 import io.agrest.converter.jsonvalue.LongConverter;
 import io.agrest.converter.jsonvalue.UtcDateConverter;
-import io.agrest.converter.valuestring.ISODateConverter;
-import io.agrest.converter.valuestring.ISODateTimeConverter;
-import io.agrest.converter.valuestring.ISOLocalDateConverter;
-import io.agrest.converter.valuestring.ISOLocalDateTimeConverter;
-import io.agrest.converter.valuestring.ISOLocalTimeConverter;
-import io.agrest.converter.valuestring.ISOOffsetDateTimeConverter;
-import io.agrest.converter.valuestring.ISOTimeConverter;
+import io.agrest.converter.valuestring.SqlDateConverter;
+import io.agrest.converter.valuestring.SqlTimestampConverter;
+import io.agrest.converter.valuestring.LocalDateConverter;
+import io.agrest.converter.valuestring.LocalDateTimeConverter;
+import io.agrest.converter.valuestring.LocalTimeConverter;
+import io.agrest.converter.valuestring.OffsetDateTimeConverter;
+import io.agrest.converter.valuestring.SqlTimeConverter;
+import io.agrest.converter.valuestring.UtilDateConverter;
 import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.converter.valuestring.ValueStringConvertersProvider;
@@ -245,14 +246,14 @@ public class AgCoreModule implements Module {
 
         // custom to String converters
         binder.bindMap(ValueStringConverter.class)
-                .put(LocalDate.class.getName(), ISOLocalDateConverter.converter())
-                .put(LocalTime.class.getName(), ISOLocalTimeConverter.converter())
-                .put(LocalDateTime.class.getName(), ISOLocalDateTimeConverter.converter())
-                .put(OffsetDateTime.class.getName(), ISOOffsetDateTimeConverter.converter())
-                .put(java.util.Date.class.getName(), ISODateTimeConverter.converter())
-                .put(Timestamp.class.getName(), ISODateTimeConverter.converter())
-                .put(java.sql.Date.class.getName(), ISODateConverter.converter())
-                .put(Time.class.getName(), ISOTimeConverter.converter());
+                .put(LocalDate.class.getName(), LocalDateConverter.converter())
+                .put(LocalTime.class.getName(), LocalTimeConverter.converter())
+                .put(LocalDateTime.class.getName(), LocalDateTimeConverter.converter())
+                .put(OffsetDateTime.class.getName(), OffsetDateTimeConverter.converter())
+                .put(Date.class.getName(), UtilDateConverter.converter())
+                .put(Timestamp.class.getName(), SqlTimestampConverter.converter())
+                .put(java.sql.Date.class.getName(), SqlDateConverter.converter())
+                .put(Time.class.getName(), SqlTimeConverter.converter());
 
         binder.bind(ValueStringConverters.class).toProvider(ValueStringConvertersProvider.class);
 

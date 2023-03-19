@@ -7,10 +7,10 @@ import io.agrest.annotation.AgAttribute;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.converter.valuestring.GenericConverter;
-import io.agrest.converter.valuestring.ISOLocalDateConverter;
-import io.agrest.converter.valuestring.ISOLocalDateTimeConverter;
-import io.agrest.converter.valuestring.ISOLocalTimeConverter;
-import io.agrest.converter.valuestring.ISOOffsetDateTimeConverter;
+import io.agrest.converter.valuestring.LocalDateConverter;
+import io.agrest.converter.valuestring.LocalDateTimeConverter;
+import io.agrest.converter.valuestring.LocalTimeConverter;
+import io.agrest.converter.valuestring.OffsetDateTimeConverter;
 import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.encoder.Encoder;
@@ -47,11 +47,11 @@ public class EncoderFactory_DateTime_Test {
     @BeforeEach
     public void before() {
 
-        Map<Class<?>, ValueStringConverter> converterMap = Map.of(
-                LocalDate.class, ISOLocalDateConverter.converter(),
-                LocalTime.class, ISOLocalTimeConverter.converter(),
-                LocalDateTime.class, ISOLocalDateTimeConverter.converter(),
-                OffsetDateTime.class, ISOOffsetDateTimeConverter.converter()
+        Map<Class<?>, ValueStringConverter<?>> converterMap = Map.of(
+                LocalDate.class, LocalDateConverter.converter(),
+                LocalTime.class, LocalTimeConverter.converter(),
+                LocalDateTime.class, LocalDateTimeConverter.converter(),
+                OffsetDateTime.class, OffsetDateTimeConverter.converter()
         );
 
         ValueStringConverters converters = new ValueStringConverters(converterMap, GenericConverter.converter());

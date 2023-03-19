@@ -1,17 +1,16 @@
 package io.agrest.cayenne.converter.valuestring;
 
 import io.agrest.converter.valuestring.AbstractConverter;
-import io.agrest.converter.valuestring.ValueStringConverter;
 import org.apache.cayenne.value.Json;
 
 /**
  * @since 5.0
  */
-public class JsonConverter extends AbstractConverter {
+public class JsonConverter extends AbstractConverter<Json> {
 
-    private static final ValueStringConverter instance = new JsonConverter();
+    private static final JsonConverter instance = new JsonConverter();
 
-    public static ValueStringConverter converter() {
+    public static JsonConverter converter() {
         return instance;
     }
 
@@ -19,8 +18,7 @@ public class JsonConverter extends AbstractConverter {
     }
 
     @Override
-    protected String asStringNonNull(Object object) {
-        Json json = (Json) object;
+    protected String asStringNonNull(Json json) {
         return json.getRawJson();
     }
 }

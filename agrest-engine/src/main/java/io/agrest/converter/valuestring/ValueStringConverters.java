@@ -10,22 +10,22 @@ import java.util.Map;
  */
 public class ValueStringConverters {
 
-    private final Map<Class<?>, ValueStringConverter> convertersByJavaType;
-    private final ValueStringConverter defaultConverter;
+    private final Map<Class<?>, ValueStringConverter<?>> convertersByJavaType;
+    private final ValueStringConverter<Object> defaultConverter;
 
     public ValueStringConverters(
-            Map<Class<?>, ValueStringConverter> knownConverters,
+            Map<Class<?>, ValueStringConverter<?>> knownConverters,
             ValueStringConverter defaultConverter) {
 
         this.convertersByJavaType = knownConverters;
         this.defaultConverter = defaultConverter;
     }
 
-    public Map<Class<?>, ValueStringConverter> getConverters() {
+    public Map<Class<?>, ValueStringConverter<?>> getConverters() {
         return convertersByJavaType;
     }
 
-    public ValueStringConverter getConverter(Class<?> type) {
+    public <T> ValueStringConverter getConverter(Class<? extends T> type) {
         return convertersByJavaType.getOrDefault(type, defaultConverter);
     }
 }

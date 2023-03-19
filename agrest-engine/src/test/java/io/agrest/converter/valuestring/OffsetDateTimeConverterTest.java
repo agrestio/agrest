@@ -1,7 +1,5 @@
 package io.agrest.converter.valuestring;
 
-import io.agrest.converter.valuestring.ISOOffsetDateTimeConverter;
-import io.agrest.converter.valuestring.ValueStringConverter;
 import org.junit.jupiter.api.Test;
 
 import java.time.*;
@@ -9,9 +7,9 @@ import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ISOOffsetDateTimeConverterTest {
+public class OffsetDateTimeConverterTest {
 
-    private ValueStringConverter converter = ISOOffsetDateTimeConverter.converter();
+    private ValueStringConverter converter = OffsetDateTimeConverter.converter();
 
     @Test
     public void testISOOffsetDateTimeConverter() {
