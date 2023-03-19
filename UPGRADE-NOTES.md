@@ -6,8 +6,8 @@ _This document contains upgrade notes for Agrest 5.x and newer. Older versions a
 ### Got rid of custom date/time formatters [#621](https://github.com/agrestio/agrest/issues/621)
 
 To fix formatting issues of the older dates (19th century and earlier), date/time parsing and encoding code was
-refactored. Instead of a set of custom DateTimeFormatters, we are using standard ISO versions. This introduced 
-slight behavior changes (most are actually more positive) :
+refactored. Instead of a set of custom DateTimeFormatters, we are using the standard ISO formatters from the JDK. 
+This introduced slight behavior changes (most are actually desirable in any sane codebase) :
 
 * No more arbitrary truncation of time precision. E.g. a time with 1ns would render as `00:00:00.000000001`, where it would
 previously render as `00:00:00`
