@@ -1,3 +1,7 @@
+## Release 5.0.M16
+
+* #621 Problem with timestamp formatting
+
 ## Release 5.0.M15
 
 * #614 Improve support for Java records as Agrest entities
