@@ -12,8 +12,6 @@ import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.cayenne.main.E6;
 import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
-import io.agrest.converter.jsonvalue.UtcDateConverter;
-import io.agrest.encoder.DateTimeFormatters;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
@@ -30,10 +28,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 import java.nio.charset.StandardCharsets;
-import java.sql.Time;
-import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,46 +70,34 @@ public class GET_IT extends MainDbTest {
     @Test
     public void testDateTime() {
 
-        Date date = Date.from(Instant.from(UtcDateConverter.dateParser().fromString("2012-02-03T11:01:02Z")));
-        tester.e4().insertColumns("c_timestamp").values(date).exec();
-
-        String dateString = DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(date.getTime()));
+        LocalDateTime dateTime = LocalDateTime.of(2012, 2, 3, 11, 1, 2);
+        tester.e4().insertColumns("c_timestamp").values(dateTime).exec();
 
         tester.target("/e4").queryParam("include", E4.C_TIMESTAMP.getName()).get()
-                .wasOk().bodyEquals(1, "{\"cTimestamp\":\"" + dateString + "\"}");
+                .wasOk().bodyEquals(1, "{\"cTimestamp\":\"2012-02-03T11:01:02\"}");
     }
 
     @Test
-    public void testDate() {
+    public void testSqlDate() {
 
-        Date date = Date.from(Instant.from(UtcDateConverter.dateParser().fromString("2012-02-03")));
+        LocalDate date = LocalDate.of(2012, 2, 3);
         tester.e4().insertColumns("c_date").values(date).exec();
-
-        String dateString = DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(date.getTime()));
 
         tester.target("/e4").queryParam("include", E4.C_DATE.getName())
                 .get()
                 .wasOk()
-                .bodyEquals(1, "{\"cDate\":\"" + dateString + "\"}");
+                .bodyEquals(1, "{\"cDate\":\"2012-02-03T00:00:00\"}");
     }
 
     @Test
     public void testTime() {
-
         LocalTime lt = LocalTime.of(14, 0, 1);
-
-        // "14:00:01"
-        Time time = Time.valueOf(lt);
-
-        tester.e4().insertColumns("c_time").values(time).exec();
-
-        String timeString = DateTimeFormatters.isoLocalDateTime().format(Instant.ofEpochMilli(time.getTime()));
-
-        tester.target("/e4").queryParam("include", E4.C_TIME.getName()).get().wasOk().bodyEquals(1, "{\"cTime\":\"" + timeString + "\"}");
+        tester.e4().insertColumns("c_time").values(lt).exec();
+        tester.target("/e4").queryParam("include", E4.C_TIME.getName()).get().wasOk().bodyEquals(1, "{\"cTime\":\"1970-01-01T14:00:01\"}");
     }
 
     // TODO: add tests for java.sql attributes
-    
+
     @Test
     public void testById() {
 

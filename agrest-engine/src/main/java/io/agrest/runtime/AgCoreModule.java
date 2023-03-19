@@ -15,14 +15,13 @@ import io.agrest.converter.jsonvalue.JsonValueConverter;
 import io.agrest.converter.jsonvalue.JsonValueConverters;
 import io.agrest.converter.jsonvalue.JsonValueConvertersProvider;
 import io.agrest.converter.jsonvalue.LongConverter;
-import io.agrest.converter.jsonvalue.UtcDateConverter;
-import io.agrest.converter.valuestring.SqlDateConverter;
-import io.agrest.converter.valuestring.SqlTimestampConverter;
 import io.agrest.converter.valuestring.LocalDateConverter;
 import io.agrest.converter.valuestring.LocalDateTimeConverter;
 import io.agrest.converter.valuestring.LocalTimeConverter;
 import io.agrest.converter.valuestring.OffsetDateTimeConverter;
+import io.agrest.converter.valuestring.SqlDateConverter;
 import io.agrest.converter.valuestring.SqlTimeConverter;
+import io.agrest.converter.valuestring.SqlTimestampConverter;
 import io.agrest.converter.valuestring.UtilDateConverter;
 import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.converter.valuestring.ValueStringConverters;
@@ -35,8 +34,8 @@ import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgSchema;
 import io.agrest.runtime.constraints.ConstraintsHandler;
 import io.agrest.runtime.constraints.IConstraintsHandler;
-import io.agrest.runtime.encoder.EncoderFactory;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
+import io.agrest.runtime.encoder.EncoderFactory;
 import io.agrest.runtime.encoder.IEncodablePropertyFactory;
 import io.agrest.runtime.entity.ChangeAuthorizer;
 import io.agrest.runtime.entity.ExcludeMerger;
@@ -232,10 +231,10 @@ public class AgCoreModule implements Module {
                 .put("double", DoubleConverter.converter())
                 .put(Long.class.getName(), LongConverter.converter())
                 .put("long", LongConverter.converter())
-                .put(Date.class.getName(), UtcDateConverter.converter())
-                .put(java.sql.Date.class.getName(), UtcDateConverter.converter(java.sql.Date.class))
-                .put(java.sql.Time.class.getName(), UtcDateConverter.converter(java.sql.Time.class))
-                .put(java.sql.Timestamp.class.getName(), UtcDateConverter.converter(java.sql.Timestamp.class))
+                .put(Date.class.getName(), io.agrest.converter.jsonvalue.UtilDateConverter.converter())
+                .put(java.sql.Date.class.getName(), io.agrest.converter.jsonvalue.SqlDateConverter.converter())
+                .put(java.sql.Time.class.getName(), io.agrest.converter.jsonvalue.SqlTimeConverter.converter())
+                .put(java.sql.Timestamp.class.getName(), io.agrest.converter.jsonvalue.SqlTimestampConverter.converter())
                 .put(LocalDate.class.getName(), io.agrest.converter.jsonvalue.LocalDateConverter.converter())
                 .put(LocalTime.class.getName(), io.agrest.converter.jsonvalue.LocalTimeConverter.converter())
                 .put(LocalDateTime.class.getName(), io.agrest.converter.jsonvalue.LocalDateTimeConverter.converter())

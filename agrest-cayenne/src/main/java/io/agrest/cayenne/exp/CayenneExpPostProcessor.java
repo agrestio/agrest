@@ -3,15 +3,22 @@ package io.agrest.cayenne.exp;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.agrest.AgException;
-import io.agrest.converter.jsonvalue.JsonValueConverter;
-import io.agrest.converter.jsonvalue.UtcDateConverter;
-import io.agrest.meta.AgEntity;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.path.PathDescriptor;
+import io.agrest.converter.jsonvalue.JsonValueConverter;
+import io.agrest.converter.jsonvalue.SqlDateConverter;
+import io.agrest.converter.jsonvalue.SqlTimeConverter;
+import io.agrest.converter.jsonvalue.SqlTimestampConverter;
+import io.agrest.converter.jsonvalue.UtilDateConverter;
+import io.agrest.meta.AgEntity;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.TraversalHelper;
-import org.apache.cayenne.exp.parser.*;
+import org.apache.cayenne.exp.parser.ASTDbPath;
+import org.apache.cayenne.exp.parser.ASTObjPath;
+import org.apache.cayenne.exp.parser.ASTPath;
+import org.apache.cayenne.exp.parser.ConditionNode;
+import org.apache.cayenne.exp.parser.SimpleNode;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -32,10 +39,10 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
         //  The tricky part is the "id" attribute that is converted to DbPath
         //  , so its type can not be mapped with existing tools
         Map<Class<?>, JsonValueConverter<?>> converters = new HashMap<>();
-        converters.put(Date.class, UtcDateConverter.converter());
-        converters.put(java.sql.Date.class, UtcDateConverter.converter());
-        converters.put(java.sql.Time.class, UtcDateConverter.converter());
-        converters.put(java.sql.Timestamp.class, UtcDateConverter.converter());
+        converters.put(Date.class, UtilDateConverter.converter());
+        converters.put(java.sql.Date.class, SqlDateConverter.converter());
+        converters.put(java.sql.Time.class, SqlTimeConverter.converter());
+        converters.put(java.sql.Timestamp.class, SqlTimestampConverter.converter());
         this.converters = converters;
 
         postProcessors = new ConcurrentHashMap<>();
