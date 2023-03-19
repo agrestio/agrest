@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.time.LocalDate;
 
-public class ISOLocalDateConverter extends AbstractConverter<LocalDate> {
+public class LocalDateConverter extends AbstractConverter<LocalDate> {
 
-    private static final ISOLocalDateConverter instance = new ISOLocalDateConverter();
+    private static final LocalDateConverter instance = new LocalDateConverter();
 
-    public static ISOLocalDateConverter converter() {
+    public static LocalDateConverter converter() {
         return instance;
     }
 

@@ -236,10 +236,10 @@ public class AgCoreModule implements Module {
                 .put(java.sql.Date.class.getName(), UtcDateConverter.converter(java.sql.Date.class))
                 .put(java.sql.Time.class.getName(), UtcDateConverter.converter(java.sql.Time.class))
                 .put(java.sql.Timestamp.class.getName(), UtcDateConverter.converter(java.sql.Timestamp.class))
-                .put(LocalDate.class.getName(), io.agrest.converter.jsonvalue.ISOLocalDateConverter.converter())
-                .put(LocalTime.class.getName(), io.agrest.converter.jsonvalue.ISOLocalTimeConverter.converter())
-                .put(LocalDateTime.class.getName(), io.agrest.converter.jsonvalue.ISOLocalDateTimeConverter.converter())
-                .put(OffsetDateTime.class.getName(), io.agrest.converter.jsonvalue.ISOOffsetDateTimeConverter.converter())
+                .put(LocalDate.class.getName(), io.agrest.converter.jsonvalue.LocalDateConverter.converter())
+                .put(LocalTime.class.getName(), io.agrest.converter.jsonvalue.LocalTimeConverter.converter())
+                .put(LocalDateTime.class.getName(), io.agrest.converter.jsonvalue.LocalDateTimeConverter.converter())
+                .put(OffsetDateTime.class.getName(), io.agrest.converter.jsonvalue.OffsetDateTimeConverter.converter())
                 .put(JsonNode.class.getName(), JsonNodeConverter.converter());
 
         binder.bind(JsonValueConverters.class).toProvider(JsonValueConvertersProvider.class);
