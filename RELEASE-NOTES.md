@@ -1,6 +1,7 @@
 ## Release 5.0.M16
 
 * #621 Problem with timestamp formatting
+* #622 Upgrade Jackson to 2.14.2 
 
 ## Release 5.0.M15
 
