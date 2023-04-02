@@ -6,8 +6,6 @@ import org.apache.cayenne.exp.property.Property;
 import org.apache.cayenne.query.ColumnSelect;
 import org.apache.cayenne.query.ObjectSelect;
 
-import java.util.Iterator;
-
 /**
  * @since 3.7
  */
@@ -19,7 +17,7 @@ public interface ICayenneQueryAssembler {
 
     <T, P> ColumnSelect<Object[]> createQueryWithParentIdsQualifier(
             RelatedResourceEntity<T> entity,
-            Iterator<P> parentData);
+            Iterable<P> parentData);
 
     <T> Property<?>[] queryColumns(RelatedResourceEntity<T> entity);
 

@@ -121,6 +121,20 @@ public class GET_IncludeIT extends MainDbTest {
                 .values(10, "zzz", 1)
                 .values(11, "zzz", 1).exec();
 
+        // aligned with Cayenne "page" boundaries
+        tester.target("/e3")
+                .queryParam("include", "id", "e2.id")
+                .queryParam("sort", "id")
+                .queryParam("start", "2")
+                .queryParam("limit", "2")
+
+                .get().wasOk().bodyEquals(4,
+                        "{\"id\":10,\"e2\":{\"id\":1}}",
+                        "{\"id\":11,\"e2\":{\"id\":1}}");
+
+        // There are 3 queries, while our counter catches only 2 (the last query in paginated result is not reported).
+        tester.assertQueryCount(2);
+
         tester.target("/e3")
                 .queryParam("include", "id", "e2.id")
                 .queryParam("sort", "id")
@@ -131,10 +145,8 @@ public class GET_IncludeIT extends MainDbTest {
                         "{\"id\":9,\"e2\":{\"id\":1}}",
                         "{\"id\":10,\"e2\":{\"id\":1}}");
 
-        // There are 3 queries, while our counter catches only 2 (the last query in paginated result is not reported).
-        tester.assertQueryCount(2);
-
-        // TODO: e2 is fetched via a join.. If we have lots of E2s, this will be problematic
+        // not aligned with Cayenne "page" boundaries ... extra query
+        tester.assertQueryCount(2 + 3);
     }
 
 
