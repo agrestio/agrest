@@ -1,5 +1,7 @@
 package io.agrest.exp.parser;
 
+import io.agrest.exp.AgExpression;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +12,6 @@ public class ExpBuilder {
     private static final Map<Class<? extends SimpleNode>, Integer> expIdMap = new HashMap<>();
 
     static {
-        expIdMap.put(ExpRoot.class, AgExpressionParserTreeConstants.JJTROOT);
         expIdMap.put(ExpOr.class, AgExpressionParserTreeConstants.JJTOR);
         expIdMap.put(ExpAnd.class, AgExpressionParserTreeConstants.JJTAND);
         expIdMap.put(ExpNot.class, AgExpressionParserTreeConstants.JJTNOT);
@@ -61,14 +62,14 @@ public class ExpBuilder {
         expIdMap.put(ExpObjPath.class, AgExpressionParserTreeConstants.JJTOBJPATH);
     }
 
-    private final SimpleNode exp;
+    private final AgExpression exp;
     private final List<ExpBuilder> children = new ArrayList<>();
     private Object value;
     private Object[] positionalParams;
     private Map<String, Object> namedParams;
     private SimpleNode parent;
 
-    public ExpBuilder(Class<? extends SimpleNode> expType) {
+    public ExpBuilder(Class<? extends AgExpression> expType) {
         try {
             exp = expType.getConstructor(int.class).newInstance(expIdMap.get(expType));
         } catch (Exception e) {
@@ -76,7 +77,7 @@ public class ExpBuilder {
         }
     }
 
-    public static ExpBuilder expFromType(Class<? extends SimpleNode> expType) {
+    public static ExpBuilder expFromType(Class<? extends AgExpression> expType) {
         return new ExpBuilder(expType);
     }
 
@@ -101,19 +102,26 @@ public class ExpBuilder {
         return this;
     }
 
-    public SimpleNode build() {
-        if (exp.getClass() == ExpRoot.class) {
-            ExpRoot expRoot = (ExpRoot) exp;
-            expRoot.positionalParams(positionalParams);
-            expRoot.namedParams(namedParams);
-        }
-
-        SimpleNode[] children = this.children.stream().map(ExpBuilder::build).toArray(SimpleNode[]::new);
-        if (children.length != 0) {
-            exp.children = children;
-        }
-        exp.parent = parent;
-        exp.value = value;
+    public AgExpression build() {
+        buildBasic();
+        exp.withPositionalParams(positionalParams);
+        exp.withNamedParams(namedParams);
         return exp;
+    }
+
+    private AgExpression buildBasic() {
+        buildChildren();
+        exp.jjtSetParent(parent);
+        exp.jjtSetValue(value);
+        return exp;
+    }
+
+    private void buildChildren() {
+        AgExpression[] children = this.children.stream().map(ExpBuilder::buildBasic).toArray(AgExpression[]::new);
+        if (children.length != 0) {
+            for (int i = 0; i < children.length; i++) {
+                exp.jjtAddChild(children[i], i);
+            }
+        }
     }
 }

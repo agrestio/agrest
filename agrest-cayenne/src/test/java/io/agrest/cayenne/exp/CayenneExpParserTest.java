@@ -17,19 +17,19 @@ public class CayenneExpParserTest {
 
     @Test
     public void testParseSimple() {
-        Expression e = parser.parse(Exp.simple("a = 'b'"));
+        Expression e = parser.parse(Exp.from("a = 'b'"));
         assertEquals(ExpressionFactory.exp("a = 'b'"), e);
     }
 
     @Test
     public void testParseNamedParams() {
-        Expression e = parser.parse(Exp.withNamedParams("a = $a", Map.of("a", "x")));
+        Expression e = parser.parse(Exp.from("a = $a").withNamedParams(Map.of("a", "x")));
         assertEquals(ExpressionFactory.exp("a = 'x'"), e);
     }
 
     @Test
     public void testParsePositionalParams() {
-        Expression e = parser.parse(Exp.withPositionalParams("a = $a", "x"));
+        Expression e = parser.parse(Exp.from("a = $a").withPositionalParams("x"));
         assertEquals(ExpressionFactory.exp("a = 'x'"), e);
     }
 
@@ -74,12 +74,12 @@ public class CayenneExpParserTest {
     @Test
     public void testParseComposite() {
 
-        Exp e0 = Exp.simple("a = 'b'");
-        Exp e1 = Exp.withNamedParams("b = $a", Map.of("a", "x"));
-        Exp e2 = Exp.withPositionalParams("c = $a", "y");
+        Exp e0 = Exp.from("a = 'b'");
+        Exp e1 = Exp.from("b = $a").withNamedParams(Map.of("a", "x"));
+        Exp e2 = Exp.from("c = $a").withPositionalParams("y");
 
         // multilevel composite with heterogeneous params
-        Exp e3 = Exp.simple("d = 'z'")
+        Exp e3 = Exp.from("d = 'z'")
                 .and(e0)
                 .or(e1)
                 .and(e2);

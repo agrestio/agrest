@@ -40,7 +40,7 @@ public abstract class AbstractExpTest {
     private void parseExpString(String expString) {
         Exp expression = AgExpressionParser.parse(expString);
         assertNotNull(expression);
-        assertEquals(visitor.getNodeType(), expression.accept(visitor, null));
+        assertEquals(visitor.getNodeType(), expression.getClass());
     }
 
     @ParameterizedTest

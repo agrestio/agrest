@@ -24,7 +24,7 @@ public class ControlParams_v10_Test {
         ControlParamsTester.test(Pojo.class, tester.runtime())
                 .param("cayenneExp", "name = 'Joe'")
                 .parseRequest()
-                .assertExp(Exp.simple("name = 'Joe'"));
+                .assertExp(Exp.from("name = 'Joe'"));
     }
 
     public static class Pojo {

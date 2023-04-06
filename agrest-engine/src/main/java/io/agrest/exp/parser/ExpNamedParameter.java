@@ -2,8 +2,12 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
+import io.agrest.exp.AgExpression;
+import io.agrest.exp.AgExpressionException;
+import io.agrest.exp.AgExpressionParameter;
+
 public
-class ExpNamedParameter extends SimpleNode {
+class ExpNamedParameter extends ExpScalar {
   public ExpNamedParameter(int id) {
     super(id);
   }
@@ -12,6 +16,9 @@ class ExpNamedParameter extends SimpleNode {
     super(p, id);
   }
 
+  public ExpNamedParameter() {
+    super(AgExpressionParserTreeConstants.JJTNAMEDPARAMETER);
+  }
 
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
@@ -19,5 +26,26 @@ class ExpNamedParameter extends SimpleNode {
     return
     visitor.visit(this, data);
   }
+
+  @Override
+  public void jjtSetValue(Object value) {
+    if (value == null) {
+      throw new AgExpressionException("Null Parameter value");
+    }
+
+    String name = value.toString().trim();
+    if (name.length() == 0) {
+      throw new AgExpressionException("Empty Parameter value");
+    }
+
+    super.jjtSetValue(new AgExpressionParameter(name));
+  }
+
+  @Override
+  protected AgExpression shallowCopy() {
+    ExpNamedParameter copy = new ExpNamedParameter(id);
+    copy.value = value;
+    return copy;
+  }
 }
-/* JavaCC - OriginalChecksum=0f846793afdcf903f407ba56845fbc51 (do not edit this line) */
+/* JavaCC - OriginalChecksum=7b4e7b4225063fe3b24686d5b6a2ada2 (do not edit this line) */

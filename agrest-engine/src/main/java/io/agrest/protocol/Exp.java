@@ -1,12 +1,12 @@
 package io.agrest.protocol;
 
+import io.agrest.exp.AgExpression;
 import io.agrest.exp.ExpVisitor;
 import io.agrest.exp.parser.AgExpressionParser;
 import io.agrest.exp.parser.AgExpressionParserVisitor;
-import io.agrest.exp.parser.ExpUtils;
-import io.agrest.exp.parser.ExpObjPath;
-import io.agrest.exp.parser.ExpRoot;
 import io.agrest.exp.parser.ExpGenericScalar;
+import io.agrest.exp.parser.ExpObjPath;
+import io.agrest.exp.parser.ExpUtils;
 import io.agrest.exp.parser.Node;
 
 import java.util.Map;
@@ -19,16 +19,8 @@ import java.util.Objects;
  */
 public interface Exp {
 
-    static Exp simple(String template) {
+    static Exp from(String template) {
         return parseTemplate(template);
-    }
-
-    static Exp withPositionalParams(String template, Object... params) {
-        return parseTemplate(template).positionalParams(params);
-    }
-
-    static Exp withNamedParams(String template, Map<String, Object> params) {
-        return parseTemplate(template).namedParams(params);
     }
 
     /**
@@ -57,6 +49,18 @@ public interface Exp {
             default:
                 throw new IllegalArgumentException("Unsupported operation in Expression: " + op);
         }
+    }
+
+    default Exp withPositionalParams(Object... params) {
+        return this;
+    }
+
+    default Exp withNamedParams(Map<String, Object> params) {
+        return this;
+    }
+
+    default Exp withNamedParams(Map<String, Object> params, boolean pruneMissing) {
+        return this;
     }
 
     /**
@@ -88,14 +92,14 @@ public interface Exp {
     }
 
     default Exp and(Exp exp) {
-        return exp != null ? ExpUtils.and((Node)this, (Node)exp) : this;
+        return exp != null ? ExpUtils.and((Node) this, (Node) exp) : this;
     }
 
     default Exp or(Exp exp) {
-        return exp != null ? ExpUtils.or((Node)this, (Node)exp) : this;
+        return exp != null ? ExpUtils.or((Node) this, (Node) exp) : this;
     }
 
-    private static ExpRoot parseTemplate(String template) {
+    private static AgExpression parseTemplate(String template) {
         return AgExpressionParser.parse(Objects.requireNonNull(template));
     }
 }

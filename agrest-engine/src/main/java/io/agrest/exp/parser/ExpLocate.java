@@ -2,8 +2,10 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
+import io.agrest.exp.AgExpression;
+
 public
-class ExpLocate extends SimpleNode {
+class ExpLocate extends AgExpression {
   public ExpLocate(int id) {
     super(id);
   }
@@ -12,12 +14,21 @@ class ExpLocate extends SimpleNode {
     super(p, id);
   }
 
-
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 
     return
     visitor.visit(this, data);
   }
+
+  @Override
+  protected AgExpression shallowCopy() {
+    return new ExpLocate(id);
+  }
+
+  @Override
+  public String toString() {
+    return "(" + children[0] + ", " + children[1] + (children.length > 2 ? ", " + children[2] : "") + ")";
+  }
 }
-/* JavaCC - OriginalChecksum=c50e91a8965893f4ae7ee984e0631ce2 (do not edit this line) */
+/* JavaCC - OriginalChecksum=f84e448f9a20bd2e9cfcd100ef030c8a (do not edit this line) */

@@ -31,6 +31,7 @@ options {
     VISITOR_RETURN_TYPE = "T"; // Need to add generics manually to a Visitor interface and DefaultVisitor class
     VISITOR_DATA_TYPE = "T";
     VISITOR_METHOD_NAME_INCLUDES_TYPE_NAME = false;
+    NODE_CLASS = "AgExpression";
     NODE_PREFIX = "Exp"; // the default one "AST" will clash with the Cayenne parser
 }
 
@@ -39,10 +40,8 @@ PARSER_BEGIN(AgExpressionParser)
 package io.agrest.exp.parser;
 
 // note: Parser doesn't use this import, but it's shared with the TokenManager
-import java.math.BigDecimal;
-import java.math.BigInteger;
 
-import io.agrest.AgException;
+import io.agrest.AgException;import io.agrest.exp.AgExpression;
 
 /**
   * Parser of AgRest Expressions.
@@ -51,26 +50,24 @@ import io.agrest.AgException;
   */
 public class AgExpressionParser {
 
-    public static ExpRoot parse(String expressionString) {
+    public static AgExpression parse(String expressionString) {
         try {
             AgExpressionParser parser = new AgExpressionParser(expressionString);
-            ExpRoot root = parser.expression();
-            root.jjtSetValue(expressionString);
-            return root;
-        } catch(ParseException e) {
+            return parser.expression();
+        } catch (ParseException e) {
             throw AgException.badRequest(e, e.getMessage());
         }
     }
-
+}
 }
 
 PARSER_END(AgExpressionParser)
 
-ExpRoot expression() #Root(1) : {}
+AgExpression expression() : {}
 {
 	orCondition() <EOF> 
     { 
-        return jjtThis;
+        return (AgExpression) jjtree.rootNode();
     }
 }
 

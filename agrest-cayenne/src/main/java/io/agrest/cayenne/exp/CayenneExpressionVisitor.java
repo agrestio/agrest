@@ -1,6 +1,7 @@
 package io.agrest.cayenne.exp;
 
 import io.agrest.cayenne.path.PathOps;
+import io.agrest.exp.AgExpressionParameter;
 import io.agrest.exp.parser.SimpleNode;
 import io.agrest.exp.parser.*;
 import org.apache.cayenne.exp.Expression;
@@ -16,21 +17,6 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
     @Override
     public Expression visit(SimpleNode node, Expression data) {
         return node.jjtAccept(this, data);
-    }
-
-    @Override
-    public Expression visit(ExpRoot node, Expression data) {
-        if (node.jjtGetNumChildren() == 0) {
-            return null;
-        }
-        Expression expression = node.jjtGetChild(0).jjtAccept(this, data);
-        if (node.hasNamedParams()) {
-            return expression.params(node.getNamedParams());
-        } else if (node.hasPositionalParams()) {
-            return expression.paramsArray(node.getPositionalParams());
-        } else {
-            return expression;
-        }
     }
 
     @Override
@@ -135,8 +121,8 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
         Object[] cayenneValues = new Object[value.size()];
         int i = 0;
         for (Object next : value) {
-            if (next instanceof NamedParameter) {
-                cayenneValues[i++] = new ExpressionParameter(((NamedParameter) next).getName());
+            if (next instanceof AgExpressionParameter) {
+                cayenneValues[i++] = new ExpressionParameter(((AgExpressionParameter) next).getName());
             } else {
                 cayenneValues[i++] = next;
             }

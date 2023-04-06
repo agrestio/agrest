@@ -2,9 +2,9 @@ package io.agrest.runtime.request;
 
 import io.agrest.AgException;
 import io.agrest.AgRequest;
+import io.agrest.exp.parser.ExpEqual;
 import io.agrest.protocol.Direction;
 import io.agrest.protocol.Sort;
-import io.agrest.exp.parser.ExpRoot;
 import io.agrest.runtime.jackson.IJacksonService;
 import io.agrest.runtime.jackson.JacksonService;
 import io.agrest.runtime.protocol.ExcludeParser;
@@ -249,6 +249,6 @@ public class DefaultRequestBuilderTest {
 
         assertNotNull(request.getExp());
 
-        assertEquals("a = 'John Smith'", ((ExpRoot) request.getExp()).getTemplate());
+        assertEquals(ExpEqual.class, request.getExp().getClass());
     }
 }

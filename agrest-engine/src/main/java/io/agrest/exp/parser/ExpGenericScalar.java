@@ -1,6 +1,7 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.exp.AgExpression;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-public class ExpGenericScalar<T> extends SimpleNode {
+public abstract class ExpGenericScalar<T> extends AgExpression {
 
     public ExpGenericScalar(int i) {
         super(i);

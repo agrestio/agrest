@@ -2,52 +2,70 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
-public class ExpObjPath extends SimpleNode {
+import io.agrest.exp.AgExpression;
 
-    public ExpObjPath(int id) {
-        super(id);
+public
+class ExpObjPath extends AgExpression {
+  public ExpObjPath(int id) {
+    super(id);
+  }
+
+  public ExpObjPath(AgExpressionParser p, int id) {
+    super(p, id);
+  }
+
+  static public ExpObjPath of(String path) {
+    ExpObjPath pathExp = new ExpObjPath(AgExpressionParserTreeConstants.JJTOBJPATH);
+    pathExp.jjtSetValue(path);
+    return pathExp;
+  }
+
+  public String getPath() {
+    return (String)jjtGetValue();
+  }
+
+  public void setPath(String path) {
+    jjtSetValue(path);
+  }
+
+  /** Accept the visitor. **/
+  public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
+
+    return
+    visitor.visit(this, data);
+  }
+
+  @Override
+  protected AgExpression shallowCopy() {
+    ExpObjPath copy = new ExpObjPath(id);
+    copy.setPath(getPath());
+    return copy;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
     }
 
-    public ExpObjPath(AgExpressionParser p, int id) {
-        super(p, id);
-    }
+    ExpObjPath expPath = (ExpObjPath) o;
+    return getPath().equals(expPath.getPath());
+  }
 
-    static public ExpObjPath of(String path) {
-        ExpObjPath pathExp = new ExpObjPath(AgExpressionParserTreeConstants.JJTOBJPATH);
-        pathExp.jjtSetValue(path);
-        return pathExp;
-    }
+  @Override
+  public int hashCode() {
+    return 31 * super.hashCode() + getPath().hashCode();
+  }
 
-    public String getPath() {
-        return (String)jjtGetValue();
-    }
-
-    /**
-     * Accept the visitor.
-     **/
-    public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
-        return visitor.visit(this, data);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-
-        ExpObjPath expPath = (ExpObjPath) o;
-        return getPath().equals(expPath.getPath());
-    }
-
-    @Override
-    public int hashCode() {
-        return 31 * super.hashCode() + getPath().hashCode();
-    }
+  @Override
+  public String toString() {
+    return String.valueOf(value);
+  }
 }
-/* JavaCC - OriginalChecksum=f3fc0e41f8e5d171c8f1c25fefc6c8d4 (do not edit this line) */
+/* JavaCC - OriginalChecksum=ffcf3b869e9e5d281a4b47d7ac3ebd15 (do not edit this line) */

@@ -4,7 +4,6 @@ package io.agrest.exp.parser;
 public interface AgExpressionParserVisitor<T>
 {
   public T visit(SimpleNode node, T data);
-  public T visit(ExpRoot node, T data);
   public T visit(ExpOr node, T data);
   public T visit(ExpAnd node, T data);
   public T visit(ExpNot node, T data);
@@ -54,4 +53,4 @@ public interface AgExpressionParserVisitor<T>
   public T visit(ExpNamedParameter node, T data);
   public T visit(ExpObjPath node, T data);
 }
-/* JavaCC - OriginalChecksum=56ef26b5fcb3e2da9191be55d2b31125 (do not edit this line) */
+/* JavaCC - OriginalChecksum=07bf064c3b4fb526a1f18cfe68cf8d9d (do not edit this line) */

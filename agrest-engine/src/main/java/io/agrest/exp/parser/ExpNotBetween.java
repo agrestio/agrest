@@ -2,8 +2,10 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
+import io.agrest.exp.AgExpression;
+
 public
-class ExpNotBetween extends SimpleNode {
+class ExpNotBetween extends AgExpression {
   public ExpNotBetween(int id) {
     super(id);
   }
@@ -12,12 +14,21 @@ class ExpNotBetween extends SimpleNode {
     super(p, id);
   }
 
-
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 
     return
     visitor.visit(this, data);
   }
+
+  @Override
+  protected AgExpression shallowCopy() {
+    return new ExpNotBetween(id);
+  }
+
+  @Override
+  public String toString() {
+    return "!between " + children[0] + " and " + children[1];
+  }
 }
-/* JavaCC - OriginalChecksum=ff18cee74af8328a2ed01df13333fccf (do not edit this line) */
+/* JavaCC - OriginalChecksum=1af9c63e271dbd73a0ef825dda231d68 (do not edit this line) */

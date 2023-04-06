@@ -2,8 +2,10 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
+import io.agrest.exp.AgExpression;
+
 public
-class ExpBitwiseXor extends SimpleNode {
+class ExpBitwiseXor extends AgExpression {
   public ExpBitwiseXor(int id) {
     super(id);
   }
@@ -12,12 +14,21 @@ class ExpBitwiseXor extends SimpleNode {
     super(p, id);
   }
 
-
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 
     return
     visitor.visit(this, data);
   }
+
+  @Override
+  protected AgExpression shallowCopy() {
+    return new ExpBitwiseXor(id);
+  }
+
+  @Override
+  public String toString() {
+    return children[0] + " ^ " + children[1];
+  }
 }
-/* JavaCC - OriginalChecksum=336d0981f41ead75770ede0ffe57a1a6 (do not edit this line) */
+/* JavaCC - OriginalChecksum=9e28b3f45bea0aa6bcbfd7fa8910fd4e (do not edit this line) */

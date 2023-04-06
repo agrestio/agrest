@@ -2,8 +2,10 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
+import io.agrest.exp.AgExpression;
+
 public
-class ExpCurrentDate extends SimpleNode {
+class ExpCurrentDate extends AgExpression {
   public ExpCurrentDate(int id) {
     super(id);
   }
@@ -12,12 +14,21 @@ class ExpCurrentDate extends SimpleNode {
     super(p, id);
   }
 
-
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 
     return
     visitor.visit(this, data);
   }
+
+  @Override
+  protected AgExpression shallowCopy() {
+    return new ExpCurrentDate(id);
+  }
+
+  @Override
+  public String toString() {
+    return "currentDate()";
+  }
 }
-/* JavaCC - OriginalChecksum=11489a8212cd3fe2bb6f0452d8c139d3 (do not edit this line) */
+/* JavaCC - OriginalChecksum=e13391251cba769cc41551502e16e0ac (do not edit this line) */

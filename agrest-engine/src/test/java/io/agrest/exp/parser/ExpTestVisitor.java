@@ -11,9 +11,4 @@ class ExpTestVisitor extends AgExpressionParserDefaultVisitor<Class<?>> {
     public Class<? extends SimpleNode> getNodeType() {
         return nodeType;
     }
-
-    @Override
-    public Class<?> visit(ExpRoot node, Class<?> data) {
-        return node.children[0].getClass();
-    }
 }

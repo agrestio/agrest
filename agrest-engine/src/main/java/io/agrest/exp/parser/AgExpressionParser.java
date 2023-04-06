@@ -3,10 +3,9 @@
 package io.agrest.exp.parser;
 
 // note: Parser doesn't use this import, but it's shared with the TokenManager
-import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import io.agrest.AgException;
+import io.agrest.exp.AgExpression;
 
 /**
   * Parser of AgRest Expressions.
@@ -15,47 +14,19 @@ import io.agrest.AgException;
   */
 public class AgExpressionParser/*@bgen(jjtree)*/implements AgExpressionParserTreeConstants, AgExpressionParserConstants {/*@bgen(jjtree)*/
   protected JJTAgExpressionParserState jjtree = new JJTAgExpressionParserState();
-    public static ExpRoot parse(String expressionString) {
+    public static AgExpression parse(String expressionString) {
         try {
             AgExpressionParser parser = new AgExpressionParser(expressionString);
-            ExpRoot root = parser.expression();
-            root.jjtSetValue(expressionString);
-            return root;
-        } catch(ParseException e) {
+            return parser.expression();
+        } catch (ParseException e) {
             throw AgException.badRequest(e, e.getMessage());
         }
     }
 
-  final public ExpRoot expression() throws ParseException {/*@bgen(jjtree) #Root( 1) */
-  ExpRoot jjtn000 = new ExpRoot(JJTROOT);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-    try {
-      orCondition();
-      jj_consume_token(0);
-jjtree.closeNodeScope(jjtn000,  1);
-      jjtc000 = false;
-return jjtn000;
-    } catch (Throwable jjte000) {
-if (jjtc000) {
-            jjtree.clearNodeScope(jjtn000);
-            jjtc000 = false;
-          } else {
-            jjtree.popNode();
-          }
-          if (jjte000 instanceof RuntimeException) {
-            {if (true) throw (RuntimeException)jjte000;}
-          }
-          if (jjte000 instanceof ParseException) {
-            {if (true) throw (ParseException)jjte000;}
-          }
-          {if (true) throw (Error)jjte000;}
-    } finally {
-if (jjtc000) {
-            jjtree.closeNodeScope(jjtn000,  1);
-          }
-    }
-    throw new RuntimeException("Missing return statement in function");
+  final public AgExpression expression() throws ParseException {
+    orCondition();
+    jj_consume_token(0);
+return (AgExpression) jjtree.rootNode();
 }
 
   final public void orCondition() throws ParseException {

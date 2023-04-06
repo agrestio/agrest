@@ -2,10 +2,16 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
+import io.agrest.exp.AgExpression;
+import io.agrest.exp.AgExpressionParameter;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public
 class ExpScalarList extends ExpGenericScalar<Collection<?>> {
@@ -18,6 +24,15 @@ class ExpScalarList extends ExpGenericScalar<Collection<?>> {
 
   public ExpScalarList(AgExpressionParser p, int id) {
     super(p, id);
+  }
+
+  public ExpScalarList(Object[] values) {
+    this(Arrays.asList(values));
+  }
+
+  public ExpScalarList(Collection<?> value) {
+    super(AgExpressionParserTreeConstants.JJTSCALARLIST);
+    setValue(value);
   }
 
   public Collection<?> getValue() {
@@ -45,6 +60,16 @@ class ExpScalarList extends ExpGenericScalar<Collection<?>> {
     visitor.visit(this, data);
   }
 
+  @Override
+  protected AgExpression shallowCopy() {
+    return new ExpScalarList(id);
+  }
+
+  @Override
+  public String toString() {
+    return getValue().stream().map(Objects::toString).collect(Collectors.joining(", "));
+  }
+
   private static class ListValueVisitor extends AgExpressionParserDefaultVisitor<List<Object>> {
 
     @Override
@@ -61,7 +86,7 @@ class ExpScalarList extends ExpGenericScalar<Collection<?>> {
 
     @Override
     public List<Object> visit(ExpNamedParameter node, List<Object> data) {
-      data.add(new NamedParameter((String) node.jjtGetValue()));
+      data.add(new AgExpressionParameter((String) node.jjtGetValue()));
       return data;
     }
   }

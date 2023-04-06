@@ -1,42 +1,88 @@
 package io.agrest.protocol;
 
+import io.agrest.exp.AgExpressionException;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ExpTest {
 
     @Test
-    public void testEquals() {
+    public void testBind_equals() {
 
-        Exp e1 = Exp.withPositionalParams("a = $1", "b");
-        Exp e2 = Exp.withPositionalParams("a = $1", "b");
-        Exp e3 = Exp.withPositionalParams("a = $1", "c");
-        Exp e4 = Exp.withPositionalParams("b = $1", "b");
+        Exp raw = Exp.from("a = $1");
+        Exp e1 = raw.withPositionalParams("b");
+        Exp e2 = raw.withNamedParams(Map.of("1", "b"));
 
-        // this is an invariant of e1, but we can't tell that until
-        // the expression is parsed, so not equals
-        Exp e5 = Exp.withNamedParams("a = $1", Map.of("1", "b"));
-        Exp e6 = Exp.withNamedParams("a = $1", Map.of("1", "c"));
-
-        assertEquals(e1, e1);
         assertEquals(e1, e2);
-        assertNotEquals(e1, e3);
-        assertNotEquals(e1, e4);
-        assertNotEquals(e1, e5);
-        assertNotEquals(e5, e6);
+        assertNotEquals(raw, e1);
+        assertNotEquals(raw, e2);
+
+        assertEquals("a = $1", raw.toString());
+        assertEquals("a = 'b'", e1.toString());
+        assertEquals("a = 'b'", e2.toString());
     }
 
     @Test
-    public void testEquals_PositionalInvariants() {
+    public void testBind_reusable() {
+        Exp raw = Exp.from("a = $1 and b = $2");
 
-        Exp e0 = Exp.simple("a = $1");
-        Exp e1 = Exp.withPositionalParams("a = $1");
-        Exp e2 = Exp.withPositionalParams("a = $1", new Object[0]);
-        assertEquals(e0, e1);
-        assertEquals(e1, e2);
+        Exp e1 = raw.withPositionalParams(5, 7);
+        Exp e2 = raw.withPositionalParams(7, 5);
+        Exp e3 = raw.withNamedParams(Map.of("1", 3, "2", 4));
+        Exp e4 = raw.withNamedParams(Map.of("1", 4, "2", 3));
+        Collection<Exp> all = List.of(e1, e2, e3, e4);
+
+        // Make sure all of them are different.
+        assertEquals(new ArrayList<>(all), new ArrayList<>(new LinkedHashSet<>(all)));
+
+        assertEquals("a = 5 and b = 7", e1.toString());
+        assertEquals("a = 7 and b = 5", e2.toString());
+        assertEquals("a = 3 and b = 4", e3.toString());
+        assertEquals("a = 4 and b = 3", e4.toString());
+    }
+
+    @Test
+    public void testBind_pruning() {
+        Exp raw = Exp.from("a = $1 and b = $2 or c = $3 and not d = $4");
+
+        Exp e1 = raw.withNamedParams(Map.of("1", 2, "2", 4, "3", 8, "4", 16));
+        Exp e2 = raw.withNamedParams(Map.of("1", 2, "2", 4, "3", 8));
+        Exp e3 = raw.withNamedParams(Map.of("3", 8));
+        Exp e4 = raw.withNamedParams(new HashMap<>() {{
+            put("1", null);
+            put("3", 8);
+        }});
+
+        assertEquals("a = 2 and b = 4 or c = 8 and !(d = 16)", e1.toString());
+        assertEquals("a = 2 and b = 4 or c = 8", e2.toString());
+        assertEquals("c = 8", e3.toString());
+        assertEquals("a = null or c = 8", e4.toString());
+    }
+
+    @Test
+    public void testBind_throwsOn_tooFewParameters() {
+        Exp raw = Exp.from("a = $1");
+        assertThrows(AgExpressionException.class, () -> raw.withPositionalParams());
+        assertThrows(AgExpressionException.class, () -> raw.withNamedParams(Collections.emptyMap(), false));
+    }
+
+    @Test
+    public void testBind_throwsOn_tooManyParameters() {
+        Exp raw = Exp.from("a = $1");
+        assertThrows(AgExpressionException.class, () -> raw.withPositionalParams("a", "b"));
+
+        // Unnecessary parameters are simply not used.
+        raw.withNamedParams(Map.of("1", 2, "2", 4));
     }
 }

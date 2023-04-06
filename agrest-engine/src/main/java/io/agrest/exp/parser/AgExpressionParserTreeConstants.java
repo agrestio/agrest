@@ -3,60 +3,58 @@ package io.agrest.exp.parser;
 
 public interface AgExpressionParserTreeConstants
 {
-  public int JJTROOT = 0;
-  public int JJTVOID = 1;
-  public int JJTOR = 2;
-  public int JJTAND = 3;
-  public int JJTNOT = 4;
-  public int JJTTRUE = 5;
-  public int JJTFALSE = 6;
-  public int JJTEQUAL = 7;
-  public int JJTNOTEQUAL = 8;
-  public int JJTLESSOREQUAL = 9;
-  public int JJTLESS = 10;
-  public int JJTGREATER = 11;
-  public int JJTGREATEROREQUAL = 12;
-  public int JJTLIKE = 13;
-  public int JJTLIKEIGNORECASE = 14;
-  public int JJTIN = 15;
-  public int JJTBETWEEN = 16;
-  public int JJTNOTLIKE = 17;
-  public int JJTNOTLIKEIGNORECASE = 18;
-  public int JJTNOTIN = 19;
-  public int JJTNOTBETWEEN = 20;
-  public int JJTSCALARLIST = 21;
-  public int JJTSCALAR = 22;
-  public int JJTBITWISEOR = 23;
-  public int JJTBITWISEXOR = 24;
-  public int JJTBITWISEAND = 25;
-  public int JJTBITWISELEFTSHIFT = 26;
-  public int JJTBITWISERIGHTSHIFT = 27;
-  public int JJTADD = 28;
-  public int JJTSUBTRACT = 29;
-  public int JJTMULTIPLY = 30;
-  public int JJTDIVIDE = 31;
-  public int JJTBITWISENOT = 32;
-  public int JJTNEGATE = 33;
-  public int JJTCONCAT = 34;
-  public int JJTSUBSTRING = 35;
-  public int JJTTRIM = 36;
-  public int JJTLOWER = 37;
-  public int JJTUPPER = 38;
-  public int JJTLENGTH = 39;
-  public int JJTLOCATE = 40;
-  public int JJTABS = 41;
-  public int JJTSQRT = 42;
-  public int JJTMOD = 43;
-  public int JJTCURRENTDATE = 44;
-  public int JJTCURRENTTIME = 45;
-  public int JJTCURRENTTIMESTAMP = 46;
-  public int JJTEXTRACT = 47;
-  public int JJTNAMEDPARAMETER = 48;
-  public int JJTOBJPATH = 49;
+  public int JJTVOID = 0;
+  public int JJTOR = 1;
+  public int JJTAND = 2;
+  public int JJTNOT = 3;
+  public int JJTTRUE = 4;
+  public int JJTFALSE = 5;
+  public int JJTEQUAL = 6;
+  public int JJTNOTEQUAL = 7;
+  public int JJTLESSOREQUAL = 8;
+  public int JJTLESS = 9;
+  public int JJTGREATER = 10;
+  public int JJTGREATEROREQUAL = 11;
+  public int JJTLIKE = 12;
+  public int JJTLIKEIGNORECASE = 13;
+  public int JJTIN = 14;
+  public int JJTBETWEEN = 15;
+  public int JJTNOTLIKE = 16;
+  public int JJTNOTLIKEIGNORECASE = 17;
+  public int JJTNOTIN = 18;
+  public int JJTNOTBETWEEN = 19;
+  public int JJTSCALARLIST = 20;
+  public int JJTSCALAR = 21;
+  public int JJTBITWISEOR = 22;
+  public int JJTBITWISEXOR = 23;
+  public int JJTBITWISEAND = 24;
+  public int JJTBITWISELEFTSHIFT = 25;
+  public int JJTBITWISERIGHTSHIFT = 26;
+  public int JJTADD = 27;
+  public int JJTSUBTRACT = 28;
+  public int JJTMULTIPLY = 29;
+  public int JJTDIVIDE = 30;
+  public int JJTBITWISENOT = 31;
+  public int JJTNEGATE = 32;
+  public int JJTCONCAT = 33;
+  public int JJTSUBSTRING = 34;
+  public int JJTTRIM = 35;
+  public int JJTLOWER = 36;
+  public int JJTUPPER = 37;
+  public int JJTLENGTH = 38;
+  public int JJTLOCATE = 39;
+  public int JJTABS = 40;
+  public int JJTSQRT = 41;
+  public int JJTMOD = 42;
+  public int JJTCURRENTDATE = 43;
+  public int JJTCURRENTTIME = 44;
+  public int JJTCURRENTTIMESTAMP = 45;
+  public int JJTEXTRACT = 46;
+  public int JJTNAMEDPARAMETER = 47;
+  public int JJTOBJPATH = 48;
 
 
   public String[] jjtNodeName = {
-    "Root",
     "void",
     "Or",
     "And",
@@ -108,4 +106,4 @@ public interface AgExpressionParserTreeConstants
     "ObjPath",
   };
 }
-/* JavaCC - OriginalChecksum=d912c7438e037247155592fc4a99eb58 (do not edit this line) */
+/* JavaCC - OriginalChecksum=02270a257b9c8c966235aa790c144441 (do not edit this line) */

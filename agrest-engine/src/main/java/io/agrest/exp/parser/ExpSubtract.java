@@ -2,8 +2,10 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
+import io.agrest.exp.AgExpression;
+
 public
-class ExpSubtract extends SimpleNode {
+class ExpSubtract extends AgExpression {
   public ExpSubtract(int id) {
     super(id);
   }
@@ -19,5 +21,15 @@ class ExpSubtract extends SimpleNode {
     return
     visitor.visit(this, data);
   }
+
+  @Override
+  protected AgExpression shallowCopy() {
+    return new ExpSubtract(id);
+  }
+
+  @Override
+  public String toString() {
+    return children[0] + " - " + children[1];
+  }
 }
-/* JavaCC - OriginalChecksum=8ae86a81c8b5d3f35150b586801f8e13 (do not edit this line) */
+/* JavaCC - OriginalChecksum=9461ebb6e8a7eebd514bd15e14ac0623 (do not edit this line) */

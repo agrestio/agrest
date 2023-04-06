@@ -9,9 +9,6 @@ public class AgExpressionParserDefaultVisitor<T> implements AgExpressionParserVi
   public T visit(SimpleNode node, T data){
     return defaultVisit(node, data);
   }
-  public T visit(ExpRoot node, T data){
-    return defaultVisit(node, data);
-  }
   public T visit(ExpOr node, T data){
     return defaultVisit(node, data);
   }
@@ -157,4 +154,4 @@ public class AgExpressionParserDefaultVisitor<T> implements AgExpressionParserVi
     return defaultVisit(node, data);
   }
 }
-/* JavaCC - OriginalChecksum=4307ade49c12dfc988d547fc2c8bdc23 (do not edit this line) */
+/* JavaCC - OriginalChecksum=acc06b23f092e34d68a8514fa6bdfb2a (do not edit this line) */

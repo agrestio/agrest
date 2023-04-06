@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
+import io.agrest.exp.AgExpression;
+
 public
 class ExpScalar extends ExpGenericScalar<Object> {
   public ExpScalar(int id) {
@@ -12,12 +14,31 @@ class ExpScalar extends ExpGenericScalar<Object> {
     super(p, id);
   }
 
+  public ExpScalar(Object value) {
+    super(AgExpressionParserTreeConstants.JJTSCALAR);
+    setValue(value);
+  }
+
 
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 
     return
     visitor.visit(this, data);
+  }
+
+  @Override
+  protected AgExpression shallowCopy() {
+    return new ExpScalar(getValue());
+  }
+
+  @Override
+  public String toString() {
+    if (value instanceof CharSequence) {
+      return "'" + value + "'";
+    } else {
+      return String.valueOf(value);
+    }
   }
 }
 /* JavaCC - OriginalChecksum=21004db13a44c6b16cc9797a6f36a4af (do not edit this line) */

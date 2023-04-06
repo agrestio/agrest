@@ -89,11 +89,11 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
 
         c.setEntity(entity);
 
-        entity.andExp(Exp.simple("name = 'X'"));
+        entity.andExp(Exp.from("name = 'X'"));
         ObjectSelect<E1> q1 = queryAssembler.createRootQuery(c);
         assertEquals(E1.NAME.eq("X"), q1.getWhere());
 
-        entity.andExp(Exp.simple("name in ('a', 'b')"));
+        entity.andExp(Exp.from("name in ('a', 'b')"));
         ObjectSelect<E1> q2 = queryAssembler.createRootQuery(c);
         assertEquals(E1.NAME.eq("X").andExp(E1.NAME.in("a", "b")), q2.getWhere());
     }
