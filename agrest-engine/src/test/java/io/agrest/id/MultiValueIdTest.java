@@ -55,7 +55,7 @@ public class MultiValueIdTest {
     }
 
     @Test
-    public void testHashcode() {
+    public void testHashCode() {
 
         assertEquals(new MultiValueId(new HashMap<>()), new MultiValueId(new HashMap<>()));
 
