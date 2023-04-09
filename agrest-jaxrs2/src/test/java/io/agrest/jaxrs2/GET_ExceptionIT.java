@@ -5,7 +5,7 @@ import io.agrest.DataResponse;
 import io.agrest.SelectStage;
 import io.agrest.jaxrs2.junit.AgPojoTester;
 import io.agrest.jaxrs2.junit.PojoTest;
-import io.agrest.jaxrs2.pojo.model.P1;
+import io.agrest.jaxrs2.junit.pojo.P1;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 

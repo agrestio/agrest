@@ -3,7 +3,7 @@ package io.agrest.runtime;
 import io.agrest.AgRequestBuilder;
 import io.agrest.SelectStage;
 import io.agrest.access.PathChecker;
-import io.agrest.pojo.model.P1;
+import io.agrest.junit.pojo.P1;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.select.SelectContext;

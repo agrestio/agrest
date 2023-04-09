@@ -5,7 +5,7 @@ import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
-import io.agrest.pojo.model.P1;
+import io.agrest.junit.pojo.P1;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.reader.DataReader;
 import io.agrest.resolver.RelatedDataResolver;

@@ -4,7 +4,7 @@ import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.LazySchema;
-import io.agrest.pojo.model.P8;
+import io.agrest.junit.pojo.P8;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
