@@ -47,6 +47,13 @@ public class CayenneExpParserTest {
     }
 
     @Test
+    public void testParseKeyValue_Eq_Object() {
+        Object o = new Object();
+        Expression e = parser.parse(Exp.keyValue("a", "=", o));
+        assertEquals(ExpressionFactory.exp("a = $a").paramsArray(o), e);
+    }
+
+    @Test
     public void testParseKeyValue_In() {
         Expression e1 = parser.parse(Exp.keyValue("a", "in", asList(5, 6, 7)));
         assertEquals(ExpressionFactory.exp("a in (5, 6, 7)"), e1);

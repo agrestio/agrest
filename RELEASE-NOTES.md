@@ -1,5 +1,6 @@
 ## Release 5.0.M16
 
+* #601 Exp.keyValue() only works with a narrow range of value types
 * #621 Problem with timestamp formatting
 * #622 Upgrade Jackson to 2.14.2 
 * #624 Optimization: "relatedViaQueryWithParentIds" strategy when limit is involved
