@@ -1,7 +1,7 @@
 package io.agrest.resolver;
 
-import io.agrest.pojo.model.P3;
-import io.agrest.pojo.model.P4;
+import io.agrest.junit.pojo.P3;
+import io.agrest.junit.pojo.P4;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

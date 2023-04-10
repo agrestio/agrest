@@ -4,9 +4,9 @@ import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.meta.LazySchema;
-import io.agrest.pojo.model.P3;
-import io.agrest.pojo.model.P4;
-import io.agrest.pojo.model.P5;
+import io.agrest.junit.pojo.P3;
+import io.agrest.junit.pojo.P4;
+import io.agrest.junit.pojo.P5;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

@@ -1,3 +1,9 @@
+## Release 5.0.M16
+
+* #621 Problem with timestamp formatting
+* #622 Upgrade Jackson to 2.14.2 
+* #624 Optimization: "relatedViaQueryWithParentIds" strategy when limit is involved
+
 ## Release 5.0.M15
 
 * #614 Improve support for Java records as Agrest entities

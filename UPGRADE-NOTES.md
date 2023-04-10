@@ -1,6 +1,20 @@
 _This document contains upgrade notes for Agrest 5.x and newer. Older versions are documented in 
 [UPGRADE-NOTES-1-4](./UPGRADE-NOTES-1-to-4.md)._
 
+## Upgrading to 5.0.M16
+
+### Got rid of custom date/time formatters [#621](https://github.com/agrestio/agrest/issues/621)
+
+To fix formatting issues of the older dates (19th century and earlier), date/time parsing and encoding code was
+refactored. Instead of a set of custom DateTimeFormatters, we are using the standard ISO formatters from the JDK. 
+This introduced slight behavior changes (most are actually desirable in any sane codebase) :
+
+* No more arbitrary truncation of time precision. E.g. a time with 1ns would render as `00:00:00.000000001`, where it would
+previously render as `00:00:00`
+* If a property is modeled as the old `java.sql.Time`, we will no longer allow to parse times starting with "T". So
+`T00:00:00` will no longer work, while `00:00:00` will. This does not affect parsing of `java.time.LocalTime`, as it 
+already disallowed the leading "T".
+
 ## Upgrading to 5.0.M15
 
 ### To include UriInfo in OpenAPI, an explicit annotation is required [#619](https://github.com/agrestio/agrest/issues/619)

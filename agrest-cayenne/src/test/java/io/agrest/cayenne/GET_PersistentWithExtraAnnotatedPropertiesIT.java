@@ -7,7 +7,7 @@ import io.agrest.cayenne.cayenne.main.E15;
 import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs2.AgJaxrs;
-import io.agrest.jaxrs2.pojo.model.P7;
+import io.agrest.jaxrs2.junit.pojo.P7;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.Cayenne;

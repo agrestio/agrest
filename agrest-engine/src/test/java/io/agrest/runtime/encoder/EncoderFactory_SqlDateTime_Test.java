@@ -7,9 +7,9 @@ import io.agrest.annotation.AgAttribute;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.converter.valuestring.GenericConverter;
-import io.agrest.converter.valuestring.ISODateConverter;
-import io.agrest.converter.valuestring.ISODateTimeConverter;
-import io.agrest.converter.valuestring.ISOTimeConverter;
+import io.agrest.converter.valuestring.SqlDateConverter;
+import io.agrest.converter.valuestring.SqlTimestampConverter;
+import io.agrest.converter.valuestring.SqlTimeConverter;
 import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.encoder.Encoder;
@@ -48,10 +48,10 @@ public class EncoderFactory_SqlDateTime_Test {
     @BeforeEach
     public void before() {
 
-        Map<Class<?>, ValueStringConverter> converterMap = Map.of(
-                Timestamp.class, ISODateTimeConverter.converter(),
-                java.sql.Date.class, ISODateConverter.converter(),
-                Time.class, ISOTimeConverter.converter()
+        Map<Class<?>, ValueStringConverter<?>> converterMap = Map.of(
+                Timestamp.class, SqlTimestampConverter.converter(),
+                java.sql.Date.class, SqlDateConverter.converter(),
+                Time.class, SqlTimeConverter.converter()
         );
 
         ValueStringConverters converters = new ValueStringConverters(converterMap, GenericConverter.converter());

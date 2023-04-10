@@ -8,7 +8,7 @@ import io.agrest.access.DeleteAuthorizer;
 import io.agrest.access.PathChecker;
 import io.agrest.access.ReadFilter;
 import io.agrest.access.UpdateAuthorizer;
-import io.agrest.pojo.model.P1;
+import io.agrest.junit.pojo.P1;
 import io.agrest.reader.DataReader;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;

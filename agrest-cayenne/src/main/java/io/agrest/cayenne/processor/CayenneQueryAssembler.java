@@ -222,7 +222,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
     }
 
     @Override
-    public <T, P> ColumnSelect<Object[]> createQueryWithParentIdsQualifier(RelatedResourceEntity<T> entity, Iterator<P> parentData) {
+    public <T, P> ColumnSelect<Object[]> createQueryWithParentIdsQualifier(RelatedResourceEntity<T> entity, Iterable<P> parentData) {
 
         ColumnSelect<Object[]> query = createBaseQuery(entity).columns(queryColumns(entity));
 
@@ -245,10 +245,19 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         return query.and(ExpressionFactory.or(qualifiers));
     }
 
-    static <P> void consumeRange(Iterator<P> parentData, int offset, int len, Consumer<P> consumer) {
+    static <P> void consumeRange(Iterable<P> parentData, int offset, int limit, Consumer<P> consumer) {
+        if (parentData instanceof List) {
+            // this optimization prevents faulting of paginated lists
+            consumeRangeList((List<P>) parentData, offset, limit, consumer);
+        } else {
+            consumeRangeIterator(parentData.iterator(), offset, limit, consumer);
+        }
+    }
+
+    static <P> void consumeRangeIterator(Iterator<P> parentData, int offset, int limit, Consumer<P> consumer) {
 
         int from = Math.max(0, offset);
-        int to = len > 0 ? Math.min(from + len, Integer.MAX_VALUE) : Integer.MAX_VALUE;
+        int to = limit > 0 ? Math.min(from + limit, Integer.MAX_VALUE) : Integer.MAX_VALUE;
 
         for (int i = 0; i < from && parentData.hasNext(); i++) {
             parentData.next();
@@ -256,6 +265,26 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
         for (int i = from; i < to && parentData.hasNext(); i++) {
             consumer.accept(parentData.next());
+        }
+    }
+
+    static <P> void consumeRangeList(List<P> parents, int offset, int limit, Consumer<P> consumer) {
+
+
+        int len = parents.size();
+        if (len == 0) {
+            return;
+        }
+
+        int from = Math.max(0, offset);
+        if (from >= len) {
+            return;
+        }
+
+        int to = limit > 0 ? Math.min(from + limit, len) : len;
+
+        for (int i = from; i < to; i++) {
+            consumer.accept(parents.get(i));
         }
     }
 

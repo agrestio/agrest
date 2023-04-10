@@ -7,7 +7,7 @@ import io.agrest.annotation.AgAttribute;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.converter.valuestring.GenericConverter;
-import io.agrest.converter.valuestring.ISODateTimeConverter;
+import io.agrest.converter.valuestring.UtilDateConverter;
 import io.agrest.converter.valuestring.ValueStringConverter;
 import io.agrest.converter.valuestring.ValueStringConverters;
 import io.agrest.encoder.Encoder;
@@ -43,8 +43,8 @@ public class EncoderFactory_UtilDate_Test {
     @BeforeEach
     public void before() {
 
-        Map<Class<?>, ValueStringConverter> converterMap = Map.of(
-                java.util.Date.class, ISODateTimeConverter.converter()
+        Map<Class<?>, ValueStringConverter<?>> converterMap = Map.of(
+                java.util.Date.class, UtilDateConverter.converter()
         );
 
         ValueStringConverters converters = new ValueStringConverters(converterMap, GenericConverter.converter());
