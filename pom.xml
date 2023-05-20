@@ -78,7 +78,7 @@
 
 
     <repositories>
-        <!-- TODO: remove this repo declaration once Bootuque 3.0.M1 is released and we can reference it in tests -->
+        <!-- TODO: remove this repo declaration once Bootuque 3.0.M2 is released and we can reference it in tests -->
         <repository>
             <id>bootique-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
