@@ -126,6 +126,18 @@ public class GET_ConvertersIT extends MainDbTest  {
     }
 
     @Test
+    public void testByte() {
+
+        tester.e19().insertColumns("id", "byte_object", "byte_primitive")
+                .values(35, 1, 2).exec();
+
+        tester.target("/e19/35")
+                .queryParam("include", E19.BYTE_OBJECT.getName(), E19.BYTE_PRIMITIVE.getName())
+                .get().wasOk().bodyEquals(1, "{\"byteObject\":1,\"bytePrimitive\":2}");
+    }
+
+
+    @Test
     public void testShort() {
 
         tester.e19().insertColumns("id", "short_object", "short_primitive")
