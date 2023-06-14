@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
 
 /**
- * @since 1.10
+ * @since 5.0
  */
 public class ShortConverter extends AbstractConverter<Short> {
 

@@ -119,6 +119,17 @@ public class POST_ConvertersIT extends MainDbTest {
     }
 
     @Test
+    public void testByte() {
+
+        tester.target("/e19")
+                .queryParam("include", E19.BYTE_OBJECT.getName(), E19.BYTE_PRIMITIVE.getName())
+                .post("{\"byteObject\":1,\"bytePrimitive\":2}")
+                .wasCreated()
+                .bodyEquals(1, "{\"byteObject\":1,\"bytePrimitive\":2}");
+        tester.e19().matcher().eq("byte_object", 1).eq("byte_primitive", 2).assertOneMatch();
+    }
+
+    @Test
     public void testShort() {
 
         tester.target("/e19")

@@ -8,6 +8,7 @@ import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.converter.jsonvalue.Base64Converter;
 import io.agrest.converter.jsonvalue.BigDecimalConverter;
 import io.agrest.converter.jsonvalue.BigIntegerConverter;
+import io.agrest.converter.jsonvalue.ByteConverter;
 import io.agrest.converter.jsonvalue.DoubleConverter;
 import io.agrest.converter.jsonvalue.FloatConverter;
 import io.agrest.converter.jsonvalue.GenericConverter;
@@ -237,6 +238,8 @@ public class AgCoreModule implements Module {
                 .put("long", LongConverter.converter())
                 .put(Short.class.getName(), ShortConverter.converter())
                 .put("short", ShortConverter.converter())
+                .put(Byte.class.getName(), ByteConverter.converter())
+                .put("byte", ByteConverter.converter())
                 .put(Date.class.getName(), io.agrest.converter.jsonvalue.UtilDateConverter.converter())
                 .put(java.sql.Date.class.getName(), io.agrest.converter.jsonvalue.SqlDateConverter.converter())
                 .put(Time.class.getName(), io.agrest.converter.jsonvalue.SqlTimeConverter.converter())
