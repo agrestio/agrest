@@ -1,3 +1,7 @@
+## Release 5.0.M17
+
+* #630 POST/PUT breaks for Short and BigInteger types
+
 ## Release 5.0.M16
 
 * #601 Exp.keyValue() only works with a narrow range of value types

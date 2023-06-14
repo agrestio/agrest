@@ -19,6 +19,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 public class POST_ConvertersIT extends MainDbTest {
@@ -104,6 +105,28 @@ public class POST_ConvertersIT extends MainDbTest {
                 .wasCreated()
                 .bodyEquals(1, "{\"bigDecimal\":123456789.12}");
         tester.e19().matcher().eq("big_decimal", new BigDecimal("123456789.12")).assertOneMatch();
+    }
+
+    @Test
+    public void testBigInteger() {
+
+        tester.target("/e19")
+                .queryParam("include", E19.BIG_INTEGER.getName())
+                .post("{\"bigInteger\":123456789}")
+                .wasCreated()
+                .bodyEquals(1, "{\"bigInteger\":123456789}");
+        tester.e19().matcher().eq("big_integer", new BigInteger("123456789")).assertOneMatch();
+    }
+
+    @Test
+    public void testShort() {
+
+        tester.target("/e19")
+                .queryParam("include", E19.SHORT_OBJECT.getName(), E19.SHORT_PRIMITIVE.getName())
+                .post("{\"shortObject\":1,\"shortPrimitive\":2}")
+                .wasCreated()
+                .bodyEquals(1, "{\"shortObject\":1,\"shortPrimitive\":2}");
+        tester.e19().matcher().eq("short_object", 1).eq("short_primitive", 2).assertOneMatch();
     }
 
     @Test

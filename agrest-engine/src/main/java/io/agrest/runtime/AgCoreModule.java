@@ -7,6 +7,7 @@ import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.converter.jsonvalue.Base64Converter;
 import io.agrest.converter.jsonvalue.BigDecimalConverter;
+import io.agrest.converter.jsonvalue.BigIntegerConverter;
 import io.agrest.converter.jsonvalue.DoubleConverter;
 import io.agrest.converter.jsonvalue.FloatConverter;
 import io.agrest.converter.jsonvalue.GenericConverter;
@@ -15,6 +16,7 @@ import io.agrest.converter.jsonvalue.JsonValueConverter;
 import io.agrest.converter.jsonvalue.JsonValueConverters;
 import io.agrest.converter.jsonvalue.JsonValueConvertersProvider;
 import io.agrest.converter.jsonvalue.LongConverter;
+import io.agrest.converter.jsonvalue.ShortConverter;
 import io.agrest.converter.valuestring.LocalDateConverter;
 import io.agrest.converter.valuestring.LocalDateTimeConverter;
 import io.agrest.converter.valuestring.LocalTimeConverter;
@@ -120,6 +122,7 @@ import org.apache.cayenne.di.Key;
 import org.apache.cayenne.di.Module;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -225,16 +228,19 @@ public class AgCoreModule implements Module {
                 .put(Object.class.getName(), GenericConverter.converter())
                 .put("byte[]", Base64Converter.converter())
                 .put(BigDecimal.class.getName(), BigDecimalConverter.converter())
+                .put(BigInteger.class.getName(), BigIntegerConverter.converter())
                 .put(Float.class.getName(), FloatConverter.converter())
                 .put("float", FloatConverter.converter())
                 .put(Double.class.getName(), DoubleConverter.converter())
                 .put("double", DoubleConverter.converter())
                 .put(Long.class.getName(), LongConverter.converter())
                 .put("long", LongConverter.converter())
+                .put(Short.class.getName(), ShortConverter.converter())
+                .put("short", ShortConverter.converter())
                 .put(Date.class.getName(), io.agrest.converter.jsonvalue.UtilDateConverter.converter())
                 .put(java.sql.Date.class.getName(), io.agrest.converter.jsonvalue.SqlDateConverter.converter())
-                .put(java.sql.Time.class.getName(), io.agrest.converter.jsonvalue.SqlTimeConverter.converter())
-                .put(java.sql.Timestamp.class.getName(), io.agrest.converter.jsonvalue.SqlTimestampConverter.converter())
+                .put(Time.class.getName(), io.agrest.converter.jsonvalue.SqlTimeConverter.converter())
+                .put(Timestamp.class.getName(), io.agrest.converter.jsonvalue.SqlTimestampConverter.converter())
                 .put(LocalDate.class.getName(), io.agrest.converter.jsonvalue.LocalDateConverter.converter())
                 .put(LocalTime.class.getName(), io.agrest.converter.jsonvalue.LocalTimeConverter.converter())
                 .put(LocalDateTime.class.getName(), io.agrest.converter.jsonvalue.LocalDateTimeConverter.converter())
