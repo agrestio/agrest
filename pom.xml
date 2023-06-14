@@ -188,11 +188,6 @@
                 <version>${bq.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.bootique.jdbc</groupId>
-                <artifactId>bootique-jdbc-junit5-derby</artifactId>
-                <version>${bq.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>io.bootique.jersey</groupId>
                 <artifactId>bootique-jersey</artifactId>
                 <version>${bq.version}</version>
