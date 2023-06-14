@@ -3,9 +3,7 @@ package io.agrest.cayenne;
 
 import io.agrest.DataResponse;
 import io.agrest.SimpleResponse;
-import io.agrest.cayenne.cayenne.main.E16;
 import io.agrest.cayenne.cayenne.main.E17;
-import io.agrest.cayenne.cayenne.main.E19;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E31;
@@ -31,7 +29,7 @@ public class POST_IT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E16.class, E17.class, E19.class, E31.class)
+            .entities(E2.class, E3.class, E4.class, E17.class, E31.class)
             .build();
 
     @Test
@@ -76,15 +74,6 @@ public class POST_IT extends MainDbTest {
                 .post("{\"name\":\"xxx\"}")
                 .wasCreated()
                 .bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"xxx\"}");
-    }
-
-    @Test
-    public void testDateTime() {
-        tester.target("e16")
-                .post("{\"cDate\":\"2015-03-14\", \"cTime\":\"19:00:00\", \"cTimestamp\":\"2015-03-14T19:00:00.000\"}")
-                .wasCreated()
-                // TODO: why is time returned back without a "T" prefix?
-                .bodyEquals(1, "{\"id\":1,\"cDate\":\"2015-03-14\",\"cTime\":\"19:00:00\",\"cTimestamp\":\"2015-03-14T19:00:00\"}");
     }
 
     @Test
@@ -173,50 +162,6 @@ public class POST_IT extends MainDbTest {
         tester.e3().matcher().eq("e2_id", id).assertMatches(2);
     }
 
-    @Test
-    public void testByteArrayProperty() {
-
-        String base64Encoded = "c29tZVZhbHVlMTIz"; // someValue123
-
-        tester.target("/e19")
-                .queryParam("include", E19.GUID.getName())
-                .post("{\"guid\":\"" + base64Encoded + "\"}")
-                .wasCreated()
-                .bodyEquals(1, "{\"guid\":\"" + base64Encoded + "\"}");
-    }
-
-    @Test
-    public void testFloatProperty() {
-        tester.target("/e19/float")
-                .queryParam("include", "floatObject", "floatPrimitive")
-                .post("{\"floatObject\":1.0,\"floatPrimitive\":2.0}")
-                .wasCreated()
-                .bodyEquals(1, "{\"floatObject\":1.0,\"floatPrimitive\":2.0}");
-        tester.e19().matcher().eq("float_object", 1.0).eq("float_primitive", 2.0).assertOneMatch();
-    }
-
-    @Test
-    public void testFloatProperty_FromInt() {
-        tester.target("/e19/float")
-                .queryParam("include", "floatObject", "floatPrimitive")
-                .post("{\"floatObject\":1,\"floatPrimitive\":2}")
-                .wasCreated()
-                .bodyEquals(1, "{\"floatObject\":1.0,\"floatPrimitive\":2.0}");
-        tester.e19().matcher().eq("float_object", 1.0).eq("float_primitive", 2.0).assertOneMatch();
-    }
-
-    @Test
-    public void testDoubleProperty() {
-        tester.target("/e19/double").post("{\"doubleObject\":1.0,\"doublePrimitive\":2.0}").wasCreated();
-        tester.e19().matcher().eq("double_object", 1.0).eq("double_primitive", 2.0).assertOneMatch();
-    }
-
-    @Test
-    public void testDoubleProperty_FromInt() {
-        tester.target("/e19/double").post("{\"doubleObject\":1,\"doublePrimitive\":2}").wasCreated();
-        tester.e19().matcher().eq("double_object", 1.0).eq("double_primitive", 2.0).assertOneMatch();
-    }
-
     @Path("")
     public static class Resource {
 
@@ -248,12 +193,6 @@ public class POST_IT extends MainDbTest {
         }
 
         @POST
-        @Path("e16")
-        public DataResponse<E16> createE16(String requestBody) {
-            return AgJaxrs.create(E16.class, config).syncAndSelect(requestBody);
-        }
-
-        @POST
         @Path("e17")
         public DataResponse<E17> createE17(
                 @Context UriInfo uriInfo,
@@ -266,24 +205,6 @@ public class POST_IT extends MainDbTest {
             ids.put(E17.ID2.getName(), id2);
 
             return AgJaxrs.create(E17.class, config).byId(ids).syncAndSelect(requestBody);
-        }
-
-        @POST
-        @Path("e19")
-        public DataResponse<E19> createE19(@Context UriInfo uriInfo, String data) {
-            return AgJaxrs.create(E19.class, config).clientParams(uriInfo.getQueryParameters()).syncAndSelect(data);
-        }
-
-        @POST
-        @Path("e19/float")
-        public DataResponse<E19> createE19_FloatAttribute(@Context UriInfo uriInfo, String data) {
-            return AgJaxrs.create(E19.class, config).clientParams(uriInfo.getQueryParameters()).syncAndSelect(data);
-        }
-
-        @POST
-        @Path("e19/double")
-        public SimpleResponse create_E19_DoubleAttribute(String entityData) {
-            return AgJaxrs.create(E19.class, config).sync(entityData);
         }
 
         @POST

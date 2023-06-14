@@ -2,9 +2,7 @@ package io.agrest.cayenne;
 
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E17;
-import io.agrest.cayenne.cayenne.main.E19;
 import io.agrest.cayenne.cayenne.main.E2;
-import io.agrest.cayenne.cayenne.main.E28;
 import io.agrest.cayenne.cayenne.main.E29;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E31;
@@ -13,8 +11,6 @@ import io.agrest.cayenne.cayenne.main.E6;
 import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs2.AgJaxrs;
-import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgEntityOverlay;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -27,10 +23,6 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +30,7 @@ public class GET_IT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E6.class, E17.class, E19.class, E28.class, E31.class)
+            .entities(E2.class, E3.class, E4.class, E6.class, E17.class, E31.class)
             .entitiesAndDependencies(E29.class)
             .build();
 
@@ -66,37 +58,6 @@ public class GET_IT extends MainDbTest {
                 .wasOk()
                 .bodyEquals(2, "{\"id\":5,\"name\":\"30\"}", "{\"id\":4,\"name\":\"31\"}");
     }
-
-    @Test
-    public void testDateTime() {
-
-        LocalDateTime dateTime = LocalDateTime.of(2012, 2, 3, 11, 1, 2);
-        tester.e4().insertColumns("c_timestamp").values(dateTime).exec();
-
-        tester.target("/e4").queryParam("include", E4.C_TIMESTAMP.getName()).get()
-                .wasOk().bodyEquals(1, "{\"cTimestamp\":\"2012-02-03T11:01:02\"}");
-    }
-
-    @Test
-    public void testSqlDate() {
-
-        LocalDate date = LocalDate.of(2012, 2, 3);
-        tester.e4().insertColumns("c_date").values(date).exec();
-
-        tester.target("/e4").queryParam("include", E4.C_DATE.getName())
-                .get()
-                .wasOk()
-                .bodyEquals(1, "{\"cDate\":\"2012-02-03T00:00:00\"}");
-    }
-
-    @Test
-    public void testTime() {
-        LocalTime lt = LocalTime.of(14, 0, 1);
-        tester.e4().insertColumns("c_time").values(lt).exec();
-        tester.target("/e4").queryParam("include", E4.C_TIME.getName()).get().wasOk().bodyEquals(1, "{\"cTime\":\"1970-01-01T14:00:01\"}");
-    }
-
-    // TODO: add tests for java.sql attributes
 
     @Test
     public void testById() {
@@ -283,50 +244,6 @@ public class GET_IT extends MainDbTest {
                 .get().wasOk().bodyEquals(1, "{\"cVarchar\":\"First line\\u2028Second line...\\u2029\"}");
     }
 
-    @Test
-    public void testByteArrayProperty() {
-
-        tester.e19().insertColumns("id", "guid").values(35, "someValue123".getBytes(StandardCharsets.UTF_8)).exec();
-
-        tester.target("/e19/35")
-                .queryParam("include", E19.GUID.getName())
-                .get().wasOk().bodyEquals(1, "{\"guid\":\"c29tZVZhbHVlMTIz\"}");
-    }
-
-    @Test
-    public void testJsonProperty() {
-
-        tester.e28().insertColumns("id", "json")
-                .values(35, "[1,2]")
-                .values(36, "{\"a\":1}")
-                .values(37, "{}")
-                .values(38, "5")
-                .values(39, null)
-                .exec();
-
-        tester.target("/e28")
-                .queryParam("include", E28.JSON.getName())
-                .queryParam("sort", "id")
-                .get()
-                .wasOk()
-                .bodyEquals(5, "{\"json\":[1,2]}", "{\"json\":{\"a\":1}}", "{\"json\":{}}", "{\"json\":5}", "{\"json\":null}");
-    }
-
-    @Test
-    public void testJsonProperty_WithOtherProps() {
-
-        tester.e28().insertColumns("id", "json")
-                .values(35, "[1,2]")
-                .values(37, "{}")
-                .exec();
-
-        tester.target("/e28/expanded")
-                .queryParam("include", "a", E28.JSON.getName(), "z")
-                .queryParam("sort", "id")
-                .get()
-                .wasOk()
-                .bodyEquals(2, "{\"a\":\"A\",\"json\":[1,2],\"z\":\"Z\"}", "{\"a\":\"A\",\"json\":{},\"z\":\"Z\"}");
-    }
 
     @Path("")
     @Produces(MediaType.APPLICATION_JSON)
@@ -375,33 +292,6 @@ public class GET_IT extends MainDbTest {
         @Path("e6/{id}")
         public DataResponse<E6> getOneE6(@PathParam("id") String id) {
             return AgJaxrs.select(E6.class, config).byId(id).get();
-        }
-
-        @GET
-        @Path("e19/{id}")
-        public DataResponse<E19> getById(@Context UriInfo uriInfo, @PathParam("id") Integer id) {
-            return AgJaxrs.select(E19.class, config).clientParams(uriInfo.getQueryParameters()).byId(id).getOne();
-        }
-
-        @GET
-        @Path("e28")
-        public DataResponse<E28> get28(@Context UriInfo uriInfo) {
-            return AgJaxrs.select(E28.class, config).clientParams(uriInfo.getQueryParameters()).get();
-        }
-
-        @GET
-        @Path("e28/expanded")
-        public DataResponse<E28> get28Expanded(@Context UriInfo uriInfo) {
-
-            // adding regular properties to see if JSON property can be encoded when other properties are present
-            AgEntityOverlay<E28> overlay = AgEntity.overlay(E28.class)
-                    .attribute("a", String.class, o -> "A")
-                    .attribute("z", String.class, o -> "Z");
-
-            return AgJaxrs.select(E28.class, config)
-                    .entityOverlay(overlay)
-                    .clientParams(uriInfo.getQueryParameters())
-                    .get();
         }
 
         @GET

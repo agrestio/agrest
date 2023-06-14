@@ -1,14 +1,12 @@
 package io.agrest.cayenne;
 
 import io.agrest.DataResponse;
-import io.agrest.SimpleResponse;
 import io.agrest.UpdateStage;
 import io.agrest.cayenne.cayenne.main.E14;
 import io.agrest.cayenne.cayenne.main.E17;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E23;
 import io.agrest.cayenne.cayenne.main.E26;
-import io.agrest.cayenne.cayenne.main.E28;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E31;
 import io.agrest.cayenne.cayenne.main.E4;
@@ -20,7 +18,6 @@ import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.encoder.Encoder;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.PUT;
@@ -34,11 +31,13 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
 public class PUT_IT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E7.class, E8.class, E9.class, E14.class, E17.class, E23.class, E26.class, E28.class, E31.class)
+            .entities(E2.class, E3.class, E4.class, E7.class, E8.class, E9.class, E14.class, E17.class, E23.class, E26.class, E31.class)
             .build();
 
     @Test
@@ -81,7 +80,7 @@ public class PUT_IT extends MainDbTest {
                 .where("id", 8)
                 .selectOne();
 
-        Assertions.assertArrayEquals(new Object[]{"zzz", new BigDecimal("12.99")}, data);
+        assertArrayEquals(new Object[]{"zzz", new BigDecimal("12.99")}, data);
     }
 
     @Test
@@ -448,22 +447,7 @@ public class PUT_IT extends MainDbTest {
         tester.e3().matcher().eq("e2_id", 8).eq("id_", 5).assertOneMatch();
     }
 
-    @Test
-    public void testJson() {
 
-        String e1 = "[{\"id\":5,\"json\":[1,2]},{\"id\":6,\"json\":{\"a\":1}},{\"id\":7,\"json\":5}]";
-        tester.target("/e28/").put(e1).wasCreated();
-        tester.e28().matcher().assertMatches(3);
-        tester.e28().matcher().eq("id", 5).eq("json", "[1,2]").assertOneMatch();
-        tester.e28().matcher().eq("id", 6).eq("json", "{\"a\":1}").assertOneMatch();
-        tester.e28().matcher().eq("id", 7).eq("json", "5").assertOneMatch();
-
-        // try updating
-        String e2 = "[{\"id\":5,\"json\":[1,3]}]";
-        tester.target("/e28/").put(e2).wasOk();
-        tester.e28().matcher().assertMatches(3);
-        tester.e28().matcher().eq("id", 5).eq("json", "[1,3]").assertOneMatch();
-    }
 
     @Path("")
     public static class Resource {
@@ -565,12 +549,6 @@ public class PUT_IT extends MainDbTest {
         @Path("e23_create_or_update/{id}")
         public DataResponse<E23> createOrUpdateE4(@PathParam("id") int id, String requestBody) {
             return AgJaxrs.createOrUpdate(E23.class, config).byId(id).syncAndSelect(requestBody);
-        }
-
-        @PUT
-        @Path("e28")
-        public SimpleResponse syncE28(String data) {
-            return AgJaxrs.createOrUpdate(E28.class, config).sync(data);
         }
     }
 }
