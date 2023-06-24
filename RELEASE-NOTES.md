@@ -1,6 +1,7 @@
 ## Release 5.0.M17
 
 * #630 POST/PUT breaks for Short and BigInteger types
+* #631 POST/PUT - can't update multi-key relationships
 
 ## Release 5.0.M16
 
