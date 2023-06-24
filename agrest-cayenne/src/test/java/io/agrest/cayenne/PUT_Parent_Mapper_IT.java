@@ -19,7 +19,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 
-public class PUT_Related_ByKeyIT extends MainDbTest {
+public class PUT_Parent_Mapper_IT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)

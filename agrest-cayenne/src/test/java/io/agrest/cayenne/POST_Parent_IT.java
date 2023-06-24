@@ -25,7 +25,7 @@ import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.Map;
 
-public class POST_Related_IT extends MainDbTest {
+public class POST_Parent_IT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)

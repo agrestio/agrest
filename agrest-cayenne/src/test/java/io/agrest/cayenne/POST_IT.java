@@ -4,7 +4,6 @@ package io.agrest.cayenne;
 import io.agrest.DataResponse;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.cayenne.main.E17;
-import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.cayenne.main.E31;
 import io.agrest.cayenne.cayenne.main.E4;
@@ -23,13 +22,11 @@ import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class POST_IT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E17.class, E31.class)
+            .entities(E3.class, E4.class, E17.class, E31.class)
             .build();
 
     @Test
@@ -89,47 +86,6 @@ public class POST_IT extends MainDbTest {
     }
 
     @Test
-    public void testToOne() {
-
-        tester.e2().insertColumns("id_", "name")
-                .values(1, "xxx")
-                .values(8, "yyy").exec();
-
-        tester.target("/e3")
-                .post("{\"e2\":8,\"name\":\"MM\"}")
-                .wasCreated()
-                .replaceId("RID")
-                .bodyEquals(1, "{\"id\":RID,\"name\":\"MM\",\"phoneNumber\":null}");
-
-        tester.e3().matcher().assertOneMatch();
-        tester.e3().matcher().eq("e2_id", 8).eq("name", "MM").assertOneMatch();
-    }
-
-    @Test
-    public void testToOne_Null() {
-
-        tester.target("/e3")
-                .post("{\"e2_id\":null,\"name\":\"MM\"}")
-                .wasCreated()
-                .replaceId("RID")
-                .bodyEquals(1, "{\"id\":RID,\"name\":\"MM\",\"phoneNumber\":null}");
-
-        tester.e3().matcher().assertOneMatch();
-        tester.e3().matcher().eq("e2_id", null).assertOneMatch();
-    }
-
-    @Test
-    public void testToOne_BadFK() {
-
-        tester.target("/e3")
-                .post("{\"e2\":15,\"name\":\"MM\"}")
-                .wasNotFound()
-                .bodyEquals("{\"message\":\"Related object 'E2' with ID '[15]' is not found\"}");
-
-        tester.e3().matcher().assertNoMatches();
-    }
-
-    @Test
     public void testBulk() {
 
         tester.target("/e3/")
@@ -141,38 +97,12 @@ public class POST_IT extends MainDbTest {
                 .bodyEquals(4, "{\"name\":\"aaa\"},{\"name\":\"zzz\"},{\"name\":\"bbb\"},{\"name\":\"yyy\"}");
     }
 
-    @Test
-    public void testToMany() {
-
-        tester.e3().insertColumns("id_", "name")
-                .values(1, "xxx")
-                .values(8, "yyy").exec();
-
-        Long id = tester.target("/e2")
-                .queryParam("include", E2.E3S.getName())
-                .queryParam("exclude", E2.ADDRESS.getName(), E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
-                .post("{\"e3s\":[1,8],\"name\":\"MM\"}")
-                .wasCreated()
-                .replaceId("RID")
-                .bodyEquals(1, "{\"id\":RID,\"e3s\":[{\"id\":1},{\"id\":8}],\"name\":\"MM\"}")
-                .getId();
-
-        assertNotNull(id);
-
-        tester.e3().matcher().eq("e2_id", id).assertMatches(2);
-    }
 
     @Path("")
     public static class Resource {
 
         @Context
         private Configuration config;
-
-        @POST
-        @Path("e2")
-        public DataResponse<E2> createE2(String targetData, @Context UriInfo uriInfo) {
-            return AgJaxrs.create(E2.class, config).clientParams(uriInfo.getQueryParameters()).syncAndSelect(targetData);
-        }
 
         @POST
         @Path("e3")

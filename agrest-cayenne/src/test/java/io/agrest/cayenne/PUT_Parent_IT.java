@@ -27,7 +27,7 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-public class PUT_Related_IT extends MainDbTest {
+public class PUT_Parent_IT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
@@ -406,7 +406,10 @@ public class PUT_Related_IT extends MainDbTest {
         @PUT
         @Path("e15/{id}")
         public DataResponse<E15> createOrUpdate_Joins_FlattenedRel(@PathParam("id") long id, @Context UriInfo info, String entityData) {
-            return AgJaxrs.createOrUpdate(E15.class, config).byId(id).clientParams(info.getQueryParameters()).syncAndSelect(entityData);
+            return AgJaxrs.createOrUpdate(E15.class, config)
+                    .byId(id)
+                    .clientParams(info.getQueryParameters())
+                    .syncAndSelect(entityData);
         }
     }
 }
