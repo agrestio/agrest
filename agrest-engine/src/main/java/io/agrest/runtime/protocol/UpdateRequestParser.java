@@ -41,7 +41,7 @@ public class UpdateRequestParser implements IUpdateRequestParser {
 
     protected <T> Collection<EntityUpdate<T>> parse(AgEntity<T> entity, JsonNode json) {
         return perEntityParsers
-                .computeIfAbsent(entity.getName(), n -> new EntityUpdateParser(entity, converters))
+                .computeIfAbsent(entity.getName(), n -> new EntityUpdateParser<>(entity, converters))
                 .parse(json);
     }
 

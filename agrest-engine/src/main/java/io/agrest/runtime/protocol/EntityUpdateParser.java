@@ -219,7 +219,7 @@ class EntityUpdateParser<T> {
 
     private Predicate<JsonNode> createSingleColumnRelationshipAsObjectChecker() {
         // TODO: this will give false positives if the target entity ID single value is a compound object
-        return j -> j.isObject();
+        return JsonNode::isObject;
     }
 
     private Predicate<JsonNode> createMultiColumnRelationshipAsObjectChecker(AgEntity<?> targetEntity) {
