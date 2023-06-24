@@ -13,8 +13,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.resolver.RelatedDataResolverFactory;
 import io.bootique.junit5.BQTestTool;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -35,29 +34,10 @@ public class GET_Resolvers_CombinationsIT extends MainDbTest {
     static final MainModelTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E5.class)
             .entitiesAndDependencies(E15.class)
-            // manually manage data... we only create it once for all test permutations
-            .doNotCleanData()
             .build();
 
-    @AfterAll
-    static void cleanup() {
-        tester.e3().deleteAll();
-        tester.e15_5().deleteAll();
-        tester.e5().deleteAll();
-        tester.e2().deleteAll();
-        tester.e14().deleteAll();
-        tester.e15().deleteAll();
-    }
-
-    @BeforeAll
-    static void loadData() {
-
-        tester.e3().deleteAll();
-        tester.e15_5().deleteAll();
-        tester.e5().deleteAll();
-        tester.e2().deleteAll();
-        tester.e14().deleteAll();
-        tester.e15().deleteAll();
+    @BeforeEach
+    void loadData() {
 
         tester.e5().insertColumns("id", "name")
                 .values(1, "e5_1")
