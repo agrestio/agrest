@@ -26,7 +26,6 @@ public final class CayenneUtil {
     private CayenneUtil() {
     }
 
-    @SuppressWarnings("unchecked")
     public static <A> A findById(
             IPathResolver pathResolver,
             ObjectContext context,
