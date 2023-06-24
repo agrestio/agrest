@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 /**
  * @since 5.0
  */
-class EntityUpdateParserStrategy<T> {
+class EntityUpdateParser<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EntityUpdateParserStrategy.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EntityUpdateParser.class);
 
     private final AgEntity<T> entity;
     private final JsonValueConverters converters;
@@ -38,7 +38,7 @@ class EntityUpdateParserStrategy<T> {
     private final Map<String, BiConsumer<EntityUpdateBuilder<T>, JsonNode>> relationshipExtractors;
     private final Map<String, Predicate<JsonNode>> relationshipAsObjectCheckers;
 
-    public EntityUpdateParserStrategy(AgEntity<T> entity, JsonValueConverters converters) {
+    public EntityUpdateParser(AgEntity<T> entity, JsonValueConverters converters) {
         this.entity = entity;
         this.converters = converters;
         this.idsExtractor = createIdsExtractor();
@@ -220,12 +220,12 @@ class EntityUpdateParserStrategy<T> {
 
         AgEntity<?> targetEntity = relationship.getTargetEntity();
         return targetEntity.getIdParts().size() == 1
-                ? createSingleColumnRelationshipAsObjectChecker(targetEntity)
+                ? createSingleColumnRelationshipAsObjectChecker()
                 : createMultiColumnRelationshipAsObjectChecker(targetEntity);
     }
 
-    private Predicate<JsonNode> createSingleColumnRelationshipAsObjectChecker(AgEntity<?> targetEntity) {
-        // TODO: this will give false positives if target entity ID is a compound object
+    private Predicate<JsonNode> createSingleColumnRelationshipAsObjectChecker() {
+        // TODO: this will give false positives if the target entity ID single value is a compound object
         return j -> j.isObject();
     }
 

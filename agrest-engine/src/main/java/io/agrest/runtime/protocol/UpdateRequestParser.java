@@ -19,12 +19,12 @@ public class UpdateRequestParser implements IUpdateRequestParser {
 
     private final IJacksonService jacksonService;
     private final JsonValueConverters converters;
-    private final Map<String, EntityUpdateParserStrategy> parseStrategies;
+    private final Map<String, EntityUpdateParser> perEntityParsers;
 
     public UpdateRequestParser(@Inject IJacksonService jacksonService, @Inject JsonValueConverters converters) {
         this.jacksonService = jacksonService;
         this.converters = converters;
-        this.parseStrategies = new ConcurrentHashMap<>();
+        this.perEntityParsers = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -40,8 +40,8 @@ public class UpdateRequestParser implements IUpdateRequestParser {
     }
 
     protected <T> Collection<EntityUpdate<T>> parse(AgEntity<T> entity, JsonNode json) {
-        return parseStrategies
-                .computeIfAbsent(entity.getName(), n -> new EntityUpdateParserStrategy(entity, converters))
+        return perEntityParsers
+                .computeIfAbsent(entity.getName(), n -> new EntityUpdateParser(entity, converters))
                 .parse(json);
     }
 
