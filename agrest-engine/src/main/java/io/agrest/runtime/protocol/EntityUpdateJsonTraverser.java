@@ -6,6 +6,7 @@ import io.agrest.AgException;
 import io.agrest.PathConstants;
 import io.agrest.converter.jsonvalue.JsonValueConverter;
 import io.agrest.converter.jsonvalue.JsonValueConverters;
+import io.agrest.converter.jsonvalue.MapConverter;
 import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
@@ -15,7 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class EntityUpdateJsonTraverser {
@@ -69,15 +72,14 @@ public class EntityUpdateJsonTraverser {
             AgAttribute attribute = entity.getAttribute(key);
             if (attribute != null) {
                 JsonNode valueNode = objectNode.get(key);
-                Object value = converter(attribute).value(valueNode);
-                visitor.visitAttribute(key, value);
+                extractAttribute(visitor, attribute, valueNode);
                 continue;
             }
 
             AgRelationship relationship = relationshipMapper.toRelationship(entity, key);
             if (relationship != null) {
                 JsonNode valueNode = objectNode.get(key);
-                processRelationship(visitor, relationship, valueNode);
+                extractRelationship(visitor, relationship, valueNode);
                 continue;
             }
 
@@ -85,33 +87,6 @@ public class EntityUpdateJsonTraverser {
         }
 
         visitor.endObject();
-    }
-
-    private void processRelationship(EntityUpdateJsonVisitor visitor, AgRelationship relationship, JsonNode valueNode) {
-
-        if (valueNode.isArray()) {
-            ArrayNode arrayNode = (ArrayNode) valueNode;
-            if (arrayNode.size() == 0) {
-                // this is kind of a a hack/workaround
-                addRelatedObject(visitor, relationship, null);
-            } else {
-                for (int i = 0; i < arrayNode.size(); i++) {
-                    addRelatedObject(visitor, relationship, converter(relationship).value(arrayNode.get(i)));
-                }
-            }
-        } else {
-            if (relationship.isToMany() && valueNode.isNull()) {
-                LOGGER.warn("Unexpected 'null' for a to-many relationship: {}. Skipping...", relationship.getName());
-            } else {
-                addRelatedObject(visitor, relationship, converter(relationship).value(valueNode));
-            }
-        }
-    }
-
-    private void addRelatedObject(EntityUpdateJsonVisitor visitor, AgRelationship relationship, Object value) {
-
-        // record FK, whether it is a PK or not
-        visitor.visitRelationship(relationship.getName(), value);
     }
 
     protected void extractPK(AgEntity<?> entity, EntityUpdateJsonVisitor visitor, JsonNode valueNode) {
@@ -140,6 +115,32 @@ public class EntityUpdateJsonTraverser {
                 converter(id).value(valueNode));
     }
 
+    private void extractAttribute(EntityUpdateJsonVisitor visitor, AgAttribute attribute, JsonNode valueNode) {
+        Object value = converter(attribute).value(valueNode);
+        visitor.visitAttribute(attribute.getName(), value);
+    }
+
+    private void extractRelationship(EntityUpdateJsonVisitor visitor, AgRelationship relationship, JsonNode valueNode) {
+
+        if (valueNode.isArray()) {
+            ArrayNode arrayNode = (ArrayNode) valueNode;
+            if (arrayNode.size() == 0) {
+                // this is kind of a hack/workaround
+                visitor.visitRelationship(relationship.getName(), null);
+            } else {
+                for (int i = 0; i < arrayNode.size(); i++) {
+                    visitor.visitRelationship(relationship.getName(), converter(relationship).value(arrayNode.get(i)));
+                }
+            }
+        } else {
+            if (relationship.isToMany() && valueNode.isNull()) {
+                LOGGER.warn("Unexpected 'null' for a to-many relationship: {}. Skipping...", relationship.getName());
+            } else {
+                visitor.visitRelationship(relationship.getName(), converter(relationship).value(valueNode));
+            }
+        }
+    }
+
     private JsonValueConverter<?> converter(AgIdPart idPart) {
         return converters.converter(idPart.getType());
     }
@@ -150,13 +151,18 @@ public class EntityUpdateJsonTraverser {
 
     private JsonValueConverter<?> converter(AgRelationship relationship) {
 
-        AgEntity<?> target = relationship.getTargetEntity();
+        Collection<AgIdPart> idParts = relationship.getTargetEntity().getIdParts();
 
-        int ids = target.getIdParts().size();
-        if (ids != 1) {
-            throw new IllegalArgumentException("Entity '" + target.getName() +
-                    "' has unexpected number of ID attributes: " + ids);
+        int len = idParts.size();
+        if (len == 1) {
+            return converters.converter(idParts.iterator().next().getType());
         }
-        return converters.converter(target.getIdParts().iterator().next().getType());
+
+        // TODO: cache compound converter?
+
+        Map<String, JsonValueConverter<?>> idPartsConverters = new HashMap<>();
+        idParts.forEach(p -> idPartsConverters.put(p.getName(), converters.converter(p.getType())));
+
+        return new MapConverter(idPartsConverters);
     }
 }

@@ -2,27 +2,28 @@ package io.agrest.cayenne.PUT;
 
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E2;
+import io.agrest.cayenne.cayenne.main.E29;
 import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.cayenne.main.E30;
 import io.agrest.cayenne.cayenne.main.E7;
 import io.agrest.cayenne.cayenne.main.E8;
 import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs3.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
-import org.junit.jupiter.api.Test;
-
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
+import org.junit.jupiter.api.Test;
 
 public class Relate_IT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E7.class)
+            .entitiesAndDependencies(E2.class, E3.class, E7.class, E29.class, E30.class)
             .build();
 
     @Test
@@ -39,6 +40,25 @@ public class Relate_IT extends MainDbTest {
                 .bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
         tester.e3().matcher().eq("id_", 3).eq("e2_id", 1).assertOneMatch();
+    }
+
+    @Test
+    public void toOne_CompoundId() {
+
+        tester.e29().insertColumns("id1", "id2")
+                .values(11, 21)
+                .values(12, 22).exec();
+
+        tester.e30().insertColumns("id", "e29_id1", "e29_id2")
+                .values(3, 11, 21).exec();
+
+        tester.target("/e30/3")
+                .queryParam("include", "e29.id")
+                .put("{\"id\":3,\"e29\":{\"db:id1\":12,\"id2Prop\":22}}")
+                .wasOk()
+                .bodyEquals(1, "{\"id\":3,\"e29\":{\"id\":{\"db:id1\":12,\"id2Prop\":22}}}");
+
+        tester.e30().matcher().eq("id", 3).andEq("e29_id1", 12).andEq("e29_id2", 22).assertOneMatch();
     }
 
     @Test
@@ -164,7 +184,6 @@ public class Relate_IT extends MainDbTest {
     }
 
 
-
     @Path("")
     public static class Resource {
 
@@ -187,6 +206,15 @@ public class Relate_IT extends MainDbTest {
         @Path("e7/{id}")
         public DataResponse<E7> syncOneE7(@PathParam("id") int id, @Context UriInfo uriInfo, String data) {
             return AgJaxrs.idempotentFullSync(E7.class, config).byId(id).clientParams(uriInfo.getQueryParameters()).syncAndSelect(data);
+        }
+
+        @PUT
+        @Path("e30/{id}")
+        public DataResponse<E30> updateE30(@PathParam("id") int id, @Context UriInfo uriInfo, String requestBody) {
+            return AgJaxrs.update(E30.class, config)
+                    .byId(id)
+                    .clientParams(uriInfo.getQueryParameters())
+                    .syncAndSelect(requestBody);
         }
     }
 }

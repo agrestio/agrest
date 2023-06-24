@@ -18,6 +18,7 @@ import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.DataRow;
 import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.ObjectId;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.parser.ASTPath;
@@ -26,9 +27,7 @@ import org.apache.cayenne.map.DbEntity;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.ObjectSelect;
-import org.apache.cayenne.reflect.ClassDescriptor;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -251,31 +250,27 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
 
         for (Map.Entry<String, Set<Object>> e : entityUpdate.getRelatedIds().entrySet()) {
 
-            ObjRelationship relationship = entity.getRelationship(e.getKey());
-            AgRelationship agRelationship = entityUpdate.getEntity().getRelationship(e.getKey());
+            AgRelationship relationship = entityUpdate.getEntity().getRelationship(e.getKey());
 
             // sanity check
-            if (agRelationship == null) {
+            if (relationship == null) {
                 continue;
             }
 
             final Set<Object> relatedIds = e.getValue();
             if (relatedIds == null || relatedIds.isEmpty() || allElementsNull(relatedIds)) {
 
-                relator.unrelateAll(agRelationship, o);
+                relator.unrelateAll(relationship, o);
                 continue;
             }
 
-            if (!agRelationship.isToMany() && relatedIds.size() > 1) {
+            if (!relationship.isToMany() && relatedIds.size() > 1) {
                 throw AgException.badRequest(
                         "Relationship is to-one, but received update with multiple objects: %s",
-                        agRelationship.getName());
+                        relationship.getName());
             }
 
-            ClassDescriptor relatedDescriptor = context.getEntityResolver().getClassDescriptor(
-                    relationship.getTargetEntityName());
-
-            relator.unrelateAll(agRelationship, o, new RelationshipUpdate() {
+            relator.unrelateAll(relationship, o, new RelationshipUpdate() {
                 @Override
                 public boolean containsRelatedObject(DataObject relatedObject) {
                     return relatedIds.contains(Cayenne.pkForObject(relatedObject));
@@ -293,16 +288,23 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
                     continue;
                 }
 
-                DataObject related = (DataObject) Cayenne.objectForPK(context, relatedDescriptor.getObjectClass(),
+                ObjectId relatedCayenneId = CayenneUtil.toObjectId(
+                        pathResolver,
+                        context,
+                        relationship.getTargetEntity(),
                         relatedId);
+
+                // TODO: Note that "parent" (a special flavor of related object) is resolved via CayenneUtil. So
+                //  here we should use CayenneUtil as well for consistency, and preferably batch-faulting related objects
+                DataObject related = (DataObject) Cayenne.objectForPK(context, relatedCayenneId);
 
                 if (related == null) {
                     throw AgException.notFound("Related object '%s' with ID '%s' is not found",
-                            relationship.getTargetEntityName(),
+                            relationship.getTargetEntity().getName(),
                             e.getValue());
                 }
 
-                relator.relate(agRelationship, o, related);
+                relator.relate(relationship, o, related);
             }
         }
 

@@ -1,30 +1,85 @@
 package io.agrest.cayenne.processor;
 
 import io.agrest.AgException;
-import io.agrest.id.AgObjectId;
-import io.agrest.runtime.EntityParent;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.path.PathOps;
+import io.agrest.id.AgObjectId;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
+import io.agrest.runtime.EntityParent;
 import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.ObjectId;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.map.EntityResolver;
+import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.ObjectSelect;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public final class CayenneUtil {
 
     private CayenneUtil() {
     }
+
+    /**
+     * @since 5.0
+     */
+    public static ObjectId toObjectId(
+            IPathResolver pathResolver,
+            ObjectContext context,
+            AgEntity<?> agEntity,
+            Object idValueOrMap) {
+
+        if (idValueOrMap == null) {
+            throw AgException.badRequest("No id specified");
+        }
+
+        ObjEntity entity = context.getEntityResolver().getObjEntity(agEntity.getType());
+        if (entity == null) {
+            throw AgException.internalServerError("Unknown entity class: %s", agEntity.getType());
+        }
+
+        Collection<ObjAttribute> pks = entity.getPrimaryKeys();
+        if (pks.size() == 1) {
+            ObjAttribute pk = pks.iterator().next();
+            return ObjectId.of(entity.getName(), pk.getDbAttributeName(), idValueOrMap);
+        } else {
+
+            if (!(idValueOrMap instanceof Map)) {
+                throw AgException.internalServerError("Expected a map of id values for entity: %s", agEntity.getName());
+            }
+
+            Map<String, ?> idMap = (Map<String, ?>) idValueOrMap;
+            Map<String, Object> normalizedIdMap = new HashMap<>(pks.size() * 2);
+            idMap.forEach((k, v) -> {
+
+                ASTPath kp = pathResolver.resolve(agEntity, k).getPathExp();
+                if (kp instanceof ASTDbPath) {
+                    normalizedIdMap.put(kp.getPath(), v);
+                } else {
+                    ObjAttribute pk = entity.getAttribute(kp.getPath());
+                    if (pk == null) {
+                        throw AgException.internalServerError("No pk attribute %s.%s", entity.getName(), kp.getPath());
+                    }
+
+                    normalizedIdMap.put(pk.getDbAttributeName(), v);
+                }
+            });
+
+            return ObjectId.of(entity.getName(), normalizedIdMap);
+        }
+    }
+
 
     public static <A> A findById(
             IPathResolver pathResolver,
