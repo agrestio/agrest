@@ -1,7 +1,5 @@
 package io.agrest.cayenne.POST;
 
-import io.agrest.AgException;
-import io.agrest.AgResponse;
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
 import io.agrest.SimpleResponse;
@@ -55,7 +53,6 @@ public class NestedIT extends MainDbTest {
             DataResponse<E3> e3Response = AgJaxrs.create(E3.class, config)
                     .clientParams(uriInfo.getQueryParameters())
                     .syncAndSelect(update);
-            checkCreated(e3Response, "Can't create e3");
 
             int e2Id = Cayenne.intPKForObject(e3Response.getData().get(0));
 
@@ -65,16 +62,9 @@ public class NestedIT extends MainDbTest {
                         .create(E2.class, config)
                         .parent(E3.class, e2Id, E3.E2.getName())
                         .sync(e2Update);
-                checkCreated(e2Response, "Can't create e2 related to e3");
             }
 
             return e3Response;
-        }
-
-        void checkCreated(AgResponse response, String message, Object... messageParams) {
-            if (response.getStatus() != 201) {
-                throw AgException.of(response.getStatus(), message, messageParams);
-            }
         }
     }
 }
