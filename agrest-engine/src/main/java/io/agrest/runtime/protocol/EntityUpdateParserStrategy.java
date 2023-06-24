@@ -18,8 +18,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @since 5.0
@@ -33,6 +36,7 @@ class EntityUpdateParserStrategy<T> {
     private final BiConsumer<EntityUpdateBuilder<T>, JsonNode> idsExtractor;
     private final Map<String, BiConsumer<EntityUpdateBuilder<T>, JsonNode>> attributeExtractors;
     private final Map<String, BiConsumer<EntityUpdateBuilder<T>, JsonNode>> relationshipExtractors;
+    private final Map<String, Predicate<JsonNode>> relationshipAsObjectCheckers;
 
     public EntityUpdateParserStrategy(AgEntity<T> entity, JsonValueConverters converters) {
         this.entity = entity;
@@ -40,6 +44,7 @@ class EntityUpdateParserStrategy<T> {
         this.idsExtractor = createIdsExtractor();
         this.attributeExtractors = new ConcurrentHashMap<>();
         this.relationshipExtractors = new ConcurrentHashMap<>();
+        this.relationshipAsObjectCheckers = new ConcurrentHashMap<>();
     }
 
     public Collection<EntityUpdate<T>> parse(JsonNode json) {
@@ -159,13 +164,24 @@ class EntityUpdateParserStrategy<T> {
     private BiConsumer<EntityUpdateBuilder<T>, JsonNode> createToOneRelationshipExtractor(AgRelationship relationship) {
         JsonValueConverter<?> converter = relatedIdConverter(relationship);
         String name = relationship.getName();
-        return (b, j) -> b.relationship(name, converter.value(j));
+        Predicate<JsonNode> relationshipAsObjectChecker = relationshipAsObjectCheckers
+                .computeIfAbsent(name, n -> createRelationshipAsObjectChecker(relationship));
+
+        return (b, j) -> {
+            if (relationshipAsObjectChecker.test(j)) {
+                // TODO: process nested objects
+            } else {
+                b.relationship(name, converter.value(j));
+            }
+        };
     }
 
     private BiConsumer<EntityUpdateBuilder<T>, JsonNode> createToManyRelationshipExtractor(AgRelationship relationship) {
 
         JsonValueConverter<?> converter = relatedIdConverter(relationship);
         String name = relationship.getName();
+        Predicate<JsonNode> relationshipAsObjectChecker = relationshipAsObjectCheckers
+                .computeIfAbsent(name, n -> createRelationshipAsObjectChecker(relationship));
 
         return (b, j) -> {
             if (j.isArray()) {
@@ -175,16 +191,70 @@ class EntityUpdateParserStrategy<T> {
                     b.relationship(name, null);
                 } else {
                     for (JsonNode child : j) {
-                        b.relationship(name, converter.value(child));
+                        if (relationshipAsObjectChecker.test(child)) {
+                            // TODO: process nested objects
+                        } else {
+                            b.relationship(name, converter.value(child));
+                        }
                     }
                 }
 
             } else if (j.isNull()) {
                 LOGGER.warn("Unexpected 'null' for a to-many relationship: {}. Skipping...", name);
             } else {
-                // TODO: this goes against to-many semantics. Why are we supporting it here?
-                b.relationship(name, converter.value(j));
+
+                // TODO: this branch goes against to-many semantics. Why are we supporting it here?
+
+                if (relationshipAsObjectChecker.test(j)) {
+                    // TODO: process nested objects
+                } else {
+                    b.relationship(name, converter.value(j));
+                }
             }
+        };
+    }
+
+    private Predicate<JsonNode> createRelationshipAsObjectChecker(AgRelationship relationship) {
+
+        // try to guess whether we are dealing with a related ID or a full object
+
+        AgEntity<?> targetEntity = relationship.getTargetEntity();
+        return targetEntity.getIdParts().size() == 1
+                ? createSingleColumnRelationshipAsObjectChecker(targetEntity)
+                : createMultiColumnRelationshipAsObjectChecker(targetEntity);
+    }
+
+    private Predicate<JsonNode> createSingleColumnRelationshipAsObjectChecker(AgEntity<?> targetEntity) {
+        // TODO: this will give false positives if target entity ID is a compound object
+        return j -> j.isObject();
+    }
+
+    private Predicate<JsonNode> createMultiColumnRelationshipAsObjectChecker(AgEntity<?> targetEntity) {
+
+
+        Set<String> idNames = targetEntity.getIdParts().stream().map(AgIdPart::getName).collect(Collectors.toSet());
+        int idSize = idNames.size();
+
+        return j -> {
+
+            // actually, this is neither an object nor a proper ID
+            if (!j.isObject()) {
+                return false;
+            }
+
+            // JSON will be treated as ID only if it contains all ID values and no other properties
+
+            if (j.size() != idSize) {
+                return true;
+            }
+
+            for (String idName : idNames) {
+                if (j.get(idName) == null) {
+                    return true;
+                }
+            }
+
+            return false;
         };
     }
 
@@ -202,4 +272,6 @@ class EntityUpdateParserStrategy<T> {
 
         return new MapConverter(idPartsConverters);
     }
+
+
 }

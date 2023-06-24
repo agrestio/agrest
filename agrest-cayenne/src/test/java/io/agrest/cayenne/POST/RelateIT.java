@@ -124,6 +124,38 @@ public class RelateIT extends MainDbTest {
         tester.e29().matcher().assertOneMatch();
     }
 
+    @Test
+    public void toMany_AsNewObjects() {
+
+        tester.target("/e2")
+                .queryParam("include", "name", "e3s.name")
+                .post("{\"e3s\":[{\"name\":\"new_to_many1\"},{\"name\":\"new_to_many2\"}],\"name\":\"MM\"}")
+                .wasCreated()
+                .bodyEquals(1, "{\"e3s\":[],\"name\":\"MM\"}")
+                .getId();
+
+        tester.e2().matcher().assertOneMatch();
+        tester.e3().matcher().assertNoMatches();
+    }
+
+
+    @Test
+    public void toOne_AsNewObject() {
+
+        // While Agrest does not yet support processing full related objects, it should not fail either.
+        // Testing this condition here.
+
+        tester.target("/e3")
+                .queryParam("include", "name", "e2.id")
+                .post("{\"e2\":{\"name\":\"new_to_one\"},\"name\":\"MM\"}")
+                .wasCreated()
+                .replaceId("RID")
+                .bodyEquals(1, "{\"e2\":null,\"name\":\"MM\"}");
+
+        tester.e3().matcher().assertOneMatch();
+        tester.e2().matcher().assertNoMatches();
+    }
+
     @Path("")
     public static class Resource {
 
