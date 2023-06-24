@@ -151,35 +151,41 @@ class EntityUpdateParserStrategy<T> {
     }
 
     private BiConsumer<EntityUpdateBuilder<T>, JsonNode> createRelationshipExtractor(AgRelationship relationship) {
+        return relationship.isToMany()
+                ? createToManyRelationshipExtractor(relationship)
+                : createToOneRelationshipExtractor(relationship);
+    }
+
+    private BiConsumer<EntityUpdateBuilder<T>, JsonNode> createToOneRelationshipExtractor(AgRelationship relationship) {
+        JsonValueConverter<?> converter = relatedIdConverter(relationship);
+        String name = relationship.getName();
+        return (b, j) -> b.relationship(name, converter.value(j));
+    }
+
+    private BiConsumer<EntityUpdateBuilder<T>, JsonNode> createToManyRelationshipExtractor(AgRelationship relationship) {
 
         JsonValueConverter<?> converter = relatedIdConverter(relationship);
         String name = relationship.getName();
 
-        if (relationship.isToMany()) {
+        return (b, j) -> {
+            if (j.isArray()) {
 
-            return (b, j) -> {
-                if (j.isArray()) {
-
-                    if (j.isEmpty()) {
-                        // this is a hackish way to tell the visitor, that it should unrelate all objects
-                        b.relationship(name, null);
-                    } else {
-                        for (JsonNode child : j) {
-                            b.relationship(name, converter.value(child));
-                        }
-                    }
-
-                } else if (j.isNull()) {
-                    LOGGER.warn("Unexpected 'null' for a to-many relationship: {}. Skipping...", name);
+                if (j.isEmpty()) {
+                    // this is a hackish way to tell the visitor, that it should unrelate all objects
+                    b.relationship(name, null);
                 } else {
-                    // TODO: this goes against to-many semantics. Why are we supporting it here?
-                    b.relationship(name, converter.value(j));
+                    for (JsonNode child : j) {
+                        b.relationship(name, converter.value(child));
+                    }
                 }
-            };
 
-        } else {
-            return (b, j) -> b.relationship(name, converter.value(j));
-        }
+            } else if (j.isNull()) {
+                LOGGER.warn("Unexpected 'null' for a to-many relationship: {}. Skipping...", name);
+            } else {
+                // TODO: this goes against to-many semantics. Why are we supporting it here?
+                b.relationship(name, converter.value(j));
+            }
+        };
     }
 
     private JsonValueConverter<?> relatedIdConverter(AgRelationship relationship) {
