@@ -37,7 +37,7 @@ public class ObjectIncludeIT extends MainDbTest {
                 .wasOk()
                 .bodyEquals(1, "{\"id\":3,\"e2\":{\"id\":8},\"e5\":{\"id\":45},\"name\":\"zzz\",\"phoneNumber\":null}");
 
-        tester.e3().matcher().eq("id_", 3).eq("e2_id", 8).assertOneMatch();
+        tester.e3().matcher().eq("id_", 3).andEq("e2_id", 8).assertOneMatch();
     }
 
     @Test
@@ -54,7 +54,7 @@ public class ObjectIncludeIT extends MainDbTest {
                 .wasOk()
                 .bodyEquals(1, "{\"id\":3,\"e2\":{\"id\":1,\"address\":null,\"name\":\"xxx\"},\"name\":\"zzz\",\"phoneNumber\":null}");
 
-        tester.e3().matcher().eq("id_", 3).eq("e2_id", 1).assertOneMatch();
+        tester.e3().matcher().eq("id_", 3).andEq("e2_id", 1).assertOneMatch();
     }
 
     @Test
