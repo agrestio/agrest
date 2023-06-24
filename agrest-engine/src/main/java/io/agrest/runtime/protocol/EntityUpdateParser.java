@@ -202,14 +202,7 @@ class EntityUpdateParser<T> {
             } else if (j.isNull()) {
                 LOGGER.warn("Unexpected 'null' for a to-many relationship: {}. Skipping...", name);
             } else {
-
-                // TODO: this branch goes against to-many semantics. Why are we supporting it here?
-
-                if (relationshipAsObjectChecker.test(j)) {
-                    // TODO: process nested objects
-                } else {
-                    b.relationship(name, converter.value(j));
-                }
+                throw AgException.badRequest("Expected an array for a to-many relationship %s, instead received {}", name, j.asText());
             }
         };
     }
@@ -272,6 +265,4 @@ class EntityUpdateParser<T> {
 
         return new MapConverter(idPartsConverters);
     }
-
-
 }
