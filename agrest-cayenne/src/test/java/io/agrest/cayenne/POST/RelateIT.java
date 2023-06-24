@@ -40,7 +40,7 @@ public class RelateIT extends MainDbTest {
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"MM\",\"phoneNumber\":null}");
 
         tester.e3().matcher().assertOneMatch();
-        tester.e3().matcher().eq("e2_id", 8).eq("name", "MM").assertOneMatch();
+        tester.e3().matcher().eq("e2_id", 8).andEq("name", "MM").assertOneMatch();
     }
 
     @Test
