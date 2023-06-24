@@ -41,7 +41,7 @@ public class PUT_StagesIT extends MainDbTest {
     }
 
     @Test
-    public void testToOne() {
+    public void toOne() {
 
         tester.e3().insertColumns("id_", "name")
                 .values(3, "z")

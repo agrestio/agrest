@@ -36,7 +36,7 @@ public class DELETE_StagesIT extends MainDbTest {
     }
 
     @Test
-    public void testDeleteAll() {
+    public void deleteAll() {
 
         tester.e3().insertColumns("id_").values(3).values(4).exec();
         tester.target("/e3").delete().wasOk();
@@ -50,7 +50,7 @@ public class DELETE_StagesIT extends MainDbTest {
     }
 
     @Test
-    public void testDeleteNone() {
+    public void deleteNone() {
 
         tester.target("/e3").delete().wasOk();
 

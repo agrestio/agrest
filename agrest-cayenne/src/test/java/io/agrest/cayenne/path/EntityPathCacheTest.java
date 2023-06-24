@@ -26,7 +26,7 @@ public class EntityPathCacheTest {
     }
 
     @Test
-    public void testGetOrCreate_Attribute() {
+    public void getOrCreate_Attribute() {
         EntityPathCache cache = new EntityPathCache(schema.getEntity(X.class));
         PathDescriptor pd = cache.getOrCreate("name");
         assertNotNull(pd);
@@ -37,7 +37,7 @@ public class EntityPathCacheTest {
     }
 
     @Test
-    public void testGetOrCreate_Relationship() {
+    public void getOrCreate_Relationship() {
         EntityPathCache cache = new EntityPathCache(schema.getEntity(X.class));
         PathDescriptor pd = cache.getOrCreate("y");
         assertNotNull(pd);
@@ -48,7 +48,7 @@ public class EntityPathCacheTest {
     }
 
     @Test
-    public void testGetOrCreate_RelatedAttribute() {
+    public void getOrCreate_RelatedAttribute() {
         EntityPathCache cache = new EntityPathCache(schema.getEntity(X.class));
         PathDescriptor pd = cache.getOrCreate("y.name");
         assertNotNull(pd);
@@ -65,7 +65,7 @@ public class EntityPathCacheTest {
     }
 
     @Test
-    public void testGetOrCreate_OuterRelatedAttribute() {
+    public void getOrCreate_OuterRelatedAttribute() {
         EntityPathCache cache = new EntityPathCache(schema.getEntity(X.class));
         PathDescriptor pd = cache.getOrCreate("y+.name");
         assertNotNull(pd);

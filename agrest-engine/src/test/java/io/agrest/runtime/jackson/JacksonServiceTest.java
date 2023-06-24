@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JacksonServiceTest {
 
     @Test
-    public void testOutputJson() throws IOException {
+    public void outputJson() throws IOException {
         JacksonService service = JacksonService.create();
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -20,7 +20,7 @@ public class JacksonServiceTest {
     }
 
     @Test
-    public void testParse_BadJson() {
+    public void parse_BadJson() {
         JacksonService service = JacksonService.create();
 
         try {

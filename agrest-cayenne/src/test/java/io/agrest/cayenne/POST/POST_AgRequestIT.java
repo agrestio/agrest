@@ -24,7 +24,7 @@ public class POST_AgRequestIT extends MainDbTest {
             .build();
 
     @Test
-    public void testIncludes_OverriddenByAgRequest() {
+    public void includes_OverriddenByAgRequest() {
 
         tester.target("/e3_includes")
                 .queryParam("include", "id")
@@ -34,7 +34,7 @@ public class POST_AgRequestIT extends MainDbTest {
     }
 
     @Test
-    public void testExcludes_OverriddenByAgRequest() {
+    public void excludes_OverriddenByAgRequest() {
 
         tester.target("/e3_excludes")
                 .queryParam("exclude", "name")

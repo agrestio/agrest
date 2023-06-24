@@ -12,17 +12,17 @@ public class OffsetDateTimeConverterTest {
     private ValueStringConverter converter = OffsetDateTimeConverter.converter();
 
     @Test
-    public void testISOOffsetDateTimeConverter() {
+    public void iSOOffsetDateTimeConverter() {
     	_testISOOffsetDateTimeConverter(1458995247000L);
     }
 
     @Test
-    public void testISOOffsetDateTimeConverter_FractionalPart1() {
+    public void iSOOffsetDateTimeConverter_FractionalPart1() {
     	_testISOOffsetDateTimeConverter(1458995247001L);
     }
 
     @Test
-    public void testISOOffsetDateTimeConverter_FractionalPart2() {
+    public void iSOOffsetDateTimeConverter_FractionalPart2() {
     	_testISOOffsetDateTimeConverter(1458995247100L);
     }
 

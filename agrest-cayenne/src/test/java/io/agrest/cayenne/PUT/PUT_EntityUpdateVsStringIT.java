@@ -26,7 +26,7 @@ public class PUT_EntityUpdateVsStringIT extends MainDbTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"full_sync_as_string", "full_sync_as_single_update", "full_sync_as_list_update"})
-    public void testFullSync_EmptyBodyMustDelete(String path) {
+    public void fullSync_EmptyBodyMustDelete(String path) {
 
         tester.e3().insertColumns("id_", "name").values(3, "aaa").exec();
 

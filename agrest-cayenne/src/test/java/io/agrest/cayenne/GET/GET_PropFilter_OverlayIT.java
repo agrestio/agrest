@@ -27,7 +27,7 @@ public class GET_PropFilter_OverlayIT extends MainDbTest {
             .build();
 
     @Test
-    public void testImplicit() {
+    public void implicit() {
 
         tester.e4().insertColumns("id", "c_varchar", "c_int").values(1, "xxx", 5).exec();
 
@@ -37,7 +37,7 @@ public class GET_PropFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testExplicit() {
+    public void explicit() {
 
         tester.e4().insertColumns("id", "c_varchar", "c_int").values(1, "xxx", 5).exec();
 
@@ -48,7 +48,7 @@ public class GET_PropFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testExplicit_ToMany() {
+    public void explicit_ToMany() {
 
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
@@ -66,7 +66,7 @@ public class GET_PropFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testId() {
+    public void id() {
 
         tester.e14().insertColumns("long_id", "name")
                 .values(5L, "aaa")

@@ -42,7 +42,7 @@ public class GET_ReadFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testRootFilter_InRequest() {
+    public void rootFilter_InRequest() {
 
         tester.e4().insertColumns("id", "c_varchar")
                 .values(1, "a")
@@ -61,7 +61,7 @@ public class GET_ReadFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testRelatedFilter_ToOne() {
+    public void relatedFilter_ToOne() {
 
         tester.e2().insertColumns("id_")
                 .values(2)
@@ -83,7 +83,7 @@ public class GET_ReadFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testRelatedFilter_ToMany() {
+    public void relatedFilter_ToMany() {
 
         tester.e2().insertColumns("id_")
                 .values(2)
@@ -104,7 +104,7 @@ public class GET_ReadFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testFilter_InStack() {
+    public void filter_InStack() {
 
         tester.e4().insertColumns("id").values(1).values(2).exec();
 
@@ -116,7 +116,7 @@ public class GET_ReadFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testFilteredPagination1() {
+    public void filteredPagination1() {
 
         tester.e4().insertColumns("id")
                 .values(1)
@@ -140,7 +140,7 @@ public class GET_ReadFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testFilteredPagination2() {
+    public void filteredPagination2() {
 
         tester.e4().insertColumns("id")
                 .values(1)
@@ -164,7 +164,7 @@ public class GET_ReadFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testFilteredPagination3() {
+    public void filteredPagination3() {
 
         tester.e4().insertColumns("id")
                 .values(1)

@@ -29,7 +29,7 @@ public class GET_PropFilter_Overlay_Runtime_Inheritance2IT extends InheritanceDb
             .build();
 
     @Test
-    public void testSuper_ExcludeSubAttributes() {
+    public void super_ExcludeSubAttributes() {
 
         tester.ie1().insertColumns("id", "type", "a0", "a1", "a2")
                 .values(10, 1, "v01", "v11", null)

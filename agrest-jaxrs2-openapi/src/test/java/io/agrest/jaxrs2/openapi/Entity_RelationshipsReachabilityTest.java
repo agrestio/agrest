@@ -24,7 +24,7 @@ public class Entity_RelationshipsReachabilityTest {
             .build();
 
     @Test
-    public void testRelatedIncluded() {
+    public void relatedIncluded() {
         // P9, P10, P11 are all related to each other, some have circular relationships
 
         Schema p9 = oapi.getComponents().getSchemas().get("P9");

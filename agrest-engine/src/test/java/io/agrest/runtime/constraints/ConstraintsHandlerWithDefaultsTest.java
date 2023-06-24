@@ -22,7 +22,7 @@ public class ConstraintsHandlerWithDefaultsTest {
     static final AgSchema schema = new LazySchema(List.of(new AnnotationsAgEntityCompiler(Map.of())));
 
     @Test
-    public void testConstrainResponse_Default() {
+    public void constrainResponse_Default() {
 
         AgEntity<Tr> entity = schema.getEntity(Tr.class);
 
@@ -37,7 +37,7 @@ public class ConstraintsHandlerWithDefaultsTest {
     }
 
     @Test
-    public void testConstrainResponse_None() {
+    public void constrainResponse_None() {
 
         AgEntity<Ts> entity = schema.getEntity(Ts.class);
 

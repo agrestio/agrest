@@ -26,7 +26,7 @@ public class PUT_Relate_IT extends MainDbTest {
             .build();
 
     @Test
-    public void testToOne() {
+    public void toOne() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -42,7 +42,7 @@ public class PUT_Relate_IT extends MainDbTest {
     }
 
     @Test
-    public void testToOne_ArraySyntax() {
+    public void toOne_ArraySyntax() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -58,7 +58,7 @@ public class PUT_Relate_IT extends MainDbTest {
     }
 
     @Test
-    public void testToOne_ToNull() {
+    public void toOne_ToNull() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -74,7 +74,7 @@ public class PUT_Relate_IT extends MainDbTest {
     }
 
     @Test
-    public void testToOne_FromNull() {
+    public void toOne_FromNull() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -89,7 +89,7 @@ public class PUT_Relate_IT extends MainDbTest {
     }
 
     @Test
-    public void testSingle_ResponseToOneRelationshipFilter() {
+    public void single_ResponseToOneRelationshipFilter() {
 
         tester.e8().insertColumns("id", "name").values(5, "aaa").values(6, "ert").exec();
         tester.e9().insertColumns("e8_id").values(5).values(6).exec();
@@ -103,7 +103,7 @@ public class PUT_Relate_IT extends MainDbTest {
     }
 
     @Test
-    public void testToMany() {
+    public void toMany() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -123,7 +123,7 @@ public class PUT_Relate_IT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_UnrelateAll() {
+    public void toMany_UnrelateAll() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -143,7 +143,7 @@ public class PUT_Relate_IT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_UnrelateOne() {
+    public void toMany_UnrelateOne() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")

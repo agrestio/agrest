@@ -30,7 +30,7 @@ public class DELETE_IT extends MainDbTest {
             .build();
 
     @Test
-    public void testDeleteAll() {
+    public void deleteAll() {
 
         tester.e4().insertColumns("id", "c_varchar")
                 .values(1, "xxx")
@@ -46,7 +46,7 @@ public class DELETE_IT extends MainDbTest {
     }
 
     @Test
-    public void testDeleteAll_Empty() {
+    public void deleteAll_Empty() {
 
         tester.target("/e4")
                 .delete()
@@ -55,7 +55,7 @@ public class DELETE_IT extends MainDbTest {
     }
 
     @Test
-    public void testDeleteById() {
+    public void deleteById() {
 
         tester.e4().insertColumns("id", "c_varchar")
                 .values(1, "xxx")
@@ -70,7 +70,7 @@ public class DELETE_IT extends MainDbTest {
     }
 
     @Test
-    public void testDeleteById_CompoundId() {
+    public void deleteById_CompoundId() {
 
         tester.e17().insertColumns("id1", "id2", "name").values(1, 1, "aaa").values(2, 2, "bbb").exec();
 
@@ -84,7 +84,7 @@ public class DELETE_IT extends MainDbTest {
     }
 
     @Test
-    public void testDeleteById_BadId() {
+    public void deleteById_BadId() {
 
         tester.e4().insertColumns("id", "c_varchar").values(1, "xxx").exec();
 
@@ -97,7 +97,7 @@ public class DELETE_IT extends MainDbTest {
     }
 
     @Test
-    public void testDeleteTwice() {
+    public void deleteTwice() {
 
         tester.e4().insertColumns("id", "c_varchar")
                 .values(1, "xxx")
@@ -115,7 +115,7 @@ public class DELETE_IT extends MainDbTest {
     }
 
     @Test
-    public void testDelete_UpperCasePK() {
+    public void delete_UpperCasePK() {
 
         tester.e24().insertColumns("TYPE", "name").values(1, "xyz").exec();
 
@@ -126,7 +126,7 @@ public class DELETE_IT extends MainDbTest {
     }
 
     @Test
-    public void testDelete_ByParentId() {
+    public void delete_ByParentId() {
 
         tester.e2().insertColumns("id_")
                 .values(1)

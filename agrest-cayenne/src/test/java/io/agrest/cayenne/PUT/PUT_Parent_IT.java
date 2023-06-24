@@ -36,7 +36,7 @@ public class PUT_Parent_IT extends MainDbTest {
             .build();
 
     @Test
-    public void testRelate_EmptyPutWithID() {
+    public void relate_EmptyPutWithID() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(24, "xxx").exec();
@@ -54,7 +54,7 @@ public class PUT_Parent_IT extends MainDbTest {
     }
 
     @Test
-    public void testRelate_ValidRel_ToOne_Existing() {
+    public void relate_ValidRel_ToOne_Existing() {
         tester.e2().insertColumns("id_", "name")
                 .values(24, "xxx").exec();
 
@@ -70,7 +70,7 @@ public class PUT_Parent_IT extends MainDbTest {
     }
 
     @Test
-    public void testRelate_ValidRel_ToOne_Existing_WithUpdate() {
+    public void relate_ValidRel_ToOne_Existing_WithUpdate() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(24, "xxx").exec();
@@ -89,7 +89,7 @@ public class PUT_Parent_IT extends MainDbTest {
     }
 
     @Test
-    public void testRelate_ToMany_MixedCollection() {
+    public void relate_ToMany_MixedCollection() {
 
         tester.e8().insertColumns("id", "name")
                 .values(15, "xxx")
@@ -117,7 +117,7 @@ public class PUT_Parent_IT extends MainDbTest {
     }
 
     @Test
-    public void test_ToMany_CreateUpdateDelete() {
+    public void toMany_CreateUpdateDelete() {
 
         tester.e8().insertColumns("id", "name")
                 .values(15, "xxx")
@@ -149,7 +149,7 @@ public class PUT_Parent_IT extends MainDbTest {
     }
 
     @Test
-    public void testRelate_ValidRel_ToOne_New_AutogenId() {
+    public void relate_ValidRel_ToOne_New_AutogenId() {
 
         tester.e3().insertColumns("id_", "name")
                 .values(7, "zzz")
@@ -164,7 +164,7 @@ public class PUT_Parent_IT extends MainDbTest {
     }
 
     @Test
-    public void testRelate_ValidRel_ToOne_New_DefaultId() {
+    public void relate_ValidRel_ToOne_New_DefaultId() {
 
         tester.e7().insertColumns("id")
                 .values(7)
@@ -195,7 +195,7 @@ public class PUT_Parent_IT extends MainDbTest {
     }
 
     @Test
-    public void testRelate_ValidRel_ToOne_New_PropagatedId() {
+    public void relate_ValidRel_ToOne_New_PropagatedId() {
 
         tester.e8().insertColumns("id")
                 .values(7)
@@ -216,7 +216,7 @@ public class PUT_Parent_IT extends MainDbTest {
     }
 
     @Test
-    public void testRelate_ToMany_NoIds() {
+    public void relate_ToMany_NoIds() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(15, "xxx")
@@ -238,7 +238,7 @@ public class PUT_Parent_IT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_Join() {
+    public void toMany_Join() {
 
         tester.e12().insertColumns("id").values(11).values(12).exec();
         tester.e13().insertColumns("id").values(14).values(15).values(16).exec();
@@ -277,7 +277,7 @@ public class PUT_Parent_IT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_DifferentIdTypes() {
+    public void toMany_DifferentIdTypes() {
 
         tester.e1().insertColumns("id", "name")
                 .values(1, "xxx")
@@ -304,7 +304,7 @@ public class PUT_Parent_IT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_Flattened_DifferentIdTypes() {
+    public void toMany_Flattened_DifferentIdTypes() {
 
         tester.e5().insertColumns("id", "name")
                 .values(1, "xxx")

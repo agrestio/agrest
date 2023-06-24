@@ -27,7 +27,7 @@ public class GET_IncludeIT extends MainDbTest {
             .build();
 
     @Test
-    public void testRelated() {
+    public void related() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx").exec();
@@ -47,7 +47,7 @@ public class GET_IncludeIT extends MainDbTest {
     }
 
     @Test
-    public void testOrderOfInclude() {
+    public void orderOfInclude() {
 
         tester.e5().insertColumns("id", "name", "date").values(45, "T", "2013-01-03").exec();
         tester.e2().insertColumns("id_", "name").values(8, "yyy").exec();
@@ -67,7 +67,7 @@ public class GET_IncludeIT extends MainDbTest {
     }
 
     @Test
-    public void testPhantom() {
+    public void phantom() {
         tester.e5().insertColumns("id", "name", "date").values(45, "T", "2013-01-03").exec();
         tester.e2().insertColumns("id_", "name").values(8, "yyy").exec();
         tester.e3().insertColumns("id_", "name", "e2_id", "e5_id").values(3, "zzz", 8, 45).exec();
@@ -83,7 +83,7 @@ public class GET_IncludeIT extends MainDbTest {
     }
 
     @Test
-    public void testPhantom_OverExplicitJoinTable() {
+    public void phantom_OverExplicitJoinTable() {
         tester.e1().insertColumns("id", "name")
                 .values(1, "xxx")
                 .values(2, "yyy").exec();
@@ -111,7 +111,7 @@ public class GET_IncludeIT extends MainDbTest {
     }
 
     @Test
-    public void testStartLimit() {
+    public void startLimit() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
 

@@ -27,7 +27,7 @@ public class DELETE_NaturalIdIT extends MainDbTest {
             .build();
 
     @Test
-    public void testSingleId() {
+    public void singleId() {
 
         tester.e20().insertColumns("name_col")
                 .values("John")
@@ -42,7 +42,7 @@ public class DELETE_NaturalIdIT extends MainDbTest {
     }
 
     @Test
-    public void testMultiId() {
+    public void multiId() {
 
         tester.e21().insertColumns("age", "name")
                 .values(18, "John")

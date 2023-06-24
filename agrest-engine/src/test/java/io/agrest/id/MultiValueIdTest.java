@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MultiValueIdTest {
 
     @Test
-    public void testEquals() {
+    public void equals() {
 
         assertTrue(new MultiValueId(new HashMap<>()).equals(new MultiValueId(new HashMap<>())));
 
@@ -35,7 +35,7 @@ public class MultiValueIdTest {
     }
 
     @Test
-    public void testNotEquals() {
+    public void notEquals() {
 
         Map<String, Object> ids1 = new HashMap<>();
         ids1.put("id1", new Integer(1));
@@ -55,7 +55,7 @@ public class MultiValueIdTest {
     }
 
     @Test
-    public void testHashCode() {
+    public void _hashCode() {
 
         assertEquals(new MultiValueId(new HashMap<>()), new MultiValueId(new HashMap<>()));
 

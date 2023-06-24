@@ -33,7 +33,7 @@ public class GET_Resolvers_PojoToPersistentIT extends MainDbTest {
 
     @ParameterizedTest
     @EnumSource(GET_Resolvers_CombinationsIT.Overlay.class)
-    public void testFail(GET_Resolvers_CombinationsIT.Overlay overlay) {
+    public void fail(GET_Resolvers_CombinationsIT.Overlay overlay) {
 
         tester.target("/px1")
                 .queryParam("overlay", overlay)

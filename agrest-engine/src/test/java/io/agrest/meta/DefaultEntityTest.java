@@ -61,7 +61,7 @@ public class DefaultEntityTest {
     );
 
     @Test
-    public void testResolveOverlayHierarchy_NoSubclasses() {
+    public void resolveOverlayHierarchy_NoSubclasses() {
         assertSame(e111, e111.resolveOverlayHierarchy(mockSchema, Map.of()));
         assertSame(e111, e111.resolveOverlayHierarchy(mockSchema, Map.of(O111.class, AgEntity.overlay(O111.class))));
 
@@ -72,7 +72,7 @@ public class DefaultEntityTest {
     }
 
     @Test
-    public void testResolveOverlayHierarchy_RootChanges() {
+    public void resolveOverlayHierarchy_RootChanges() {
 
         assertSame(e1, e1.resolveOverlayHierarchy(mockSchema, Map.of()));
         assertSame(e1, e1.resolveOverlayHierarchy(mockSchema, Map.of(O1.class, AgEntity.overlay(O1.class))));
@@ -89,7 +89,7 @@ public class DefaultEntityTest {
     }
 
     @Test
-    public void testResolveOverlayHierarchy_ChildChanges() {
+    public void resolveOverlayHierarchy_ChildChanges() {
 
         AgEntityOverlay<O111> o111 = AgEntity.overlay(O111.class).attribute("a111", String.class, o -> "a111");
 

@@ -26,7 +26,7 @@ public class POST_NaturalIdIT extends MainDbTest {
             .build();
 
     @Test
-    public void testSingleId() {
+    public void singleId() {
 
         tester.target("/single-id")
                 .queryParam("exclude", "age", "description")
@@ -44,7 +44,7 @@ public class POST_NaturalIdIT extends MainDbTest {
     }
 
     @Test
-    public void testMultiId() {
+    public void multiId() {
 
         tester.target("/multi-id")
                 .queryParam("exclude", "description")
@@ -61,7 +61,7 @@ public class POST_NaturalIdIT extends MainDbTest {
     }
 
     @Test
-    public void testMultiId_MixedDbObj() {
+    public void multiId_MixedDbObj() {
 
         tester.target("/mixed-multi-id")
                 .post("{\"id\":{\"db:id1\":18,\"id2Prop\":345}}")

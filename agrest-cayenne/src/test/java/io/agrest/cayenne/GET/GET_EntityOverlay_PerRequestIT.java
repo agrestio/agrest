@@ -34,7 +34,7 @@ public class GET_EntityOverlay_PerRequestIT extends MainDbTest {
             .build();
 
     @Test
-    public void test_DefaultIncludes() {
+    public void defaultIncludes() {
 
         tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
 
@@ -49,7 +49,7 @@ public class GET_EntityOverlay_PerRequestIT extends MainDbTest {
     }
 
     @Test
-    public void test_Includes() {
+    public void includes() {
 
         tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
 
@@ -63,7 +63,7 @@ public class GET_EntityOverlay_PerRequestIT extends MainDbTest {
     }
 
     @Test
-    public void test_Overlay_NoReaderCaching() {
+    public void overlay_NoReaderCaching() {
 
         tester.e4().insertColumns("id").values(2).values(4).exec();
 
@@ -84,7 +84,7 @@ public class GET_EntityOverlay_PerRequestIT extends MainDbTest {
     }
 
     @Test
-    public void test_RequestOverlaidProperties_ConstrainedEntity() {
+    public void requestOverlaidProperties_ConstrainedEntity() {
 
         tester.e10().insertColumns("id", "c_int").values(2, 5).values(4, 8).exec();
         tester.e22().insertColumns("id", "name")
@@ -104,7 +104,7 @@ public class GET_EntityOverlay_PerRequestIT extends MainDbTest {
     }
 
     @Test
-    public void test_OverlaidRelationship() {
+    public void overlaidRelationship() {
 
         tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
         tester.e22().insertColumns("id", "name")
@@ -124,7 +124,7 @@ public class GET_EntityOverlay_PerRequestIT extends MainDbTest {
     }
 
     @Test
-    public void test_OverlaidRelationship_ExpOnParent() {
+    public void overlaidRelationship_ExpOnParent() {
 
         tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
         tester.e22().insertColumns("id", "name")
@@ -141,7 +141,7 @@ public class GET_EntityOverlay_PerRequestIT extends MainDbTest {
     }
 
     @Test
-    public void test_OverlaidRelationship_ExpOnParent_RelatedToOne() {
+    public void overlaidRelationship_ExpOnParent_RelatedToOne() {
 
         tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
 
@@ -163,7 +163,7 @@ public class GET_EntityOverlay_PerRequestIT extends MainDbTest {
     }
 
     @Test
-    public void test_OverlaidRelatedExclude() {
+    public void overlaidRelatedExclude() {
 
         tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
         tester.e3().insertColumns("id_", "name", "phone_number", "e2_id")
@@ -178,7 +178,7 @@ public class GET_EntityOverlay_PerRequestIT extends MainDbTest {
     }
 
     @Test
-    public void test_OverlaidExclude() {
+    public void overlaidExclude() {
 
         tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
 
@@ -189,7 +189,7 @@ public class GET_EntityOverlay_PerRequestIT extends MainDbTest {
     }
 
     @Test
-    public void test_OverlaidDataReaderException() {
+    public void overlaidDataReaderException() {
 
         tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
 

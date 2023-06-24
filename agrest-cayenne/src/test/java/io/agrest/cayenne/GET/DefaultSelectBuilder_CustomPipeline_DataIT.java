@@ -29,7 +29,7 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT extends MainDbTest {
     }
 
     @Test
-    public void testStage() {
+    public void stage() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -44,7 +44,7 @@ public class DefaultSelectBuilder_CustomPipeline_DataIT extends MainDbTest {
     }
 
     @Test
-    public void testTerminalStage() {
+    public void terminalStage() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
 

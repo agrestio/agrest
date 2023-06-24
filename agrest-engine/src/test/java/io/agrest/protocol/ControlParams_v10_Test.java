@@ -20,7 +20,7 @@ public class ControlParams_v10_Test {
             .build();
 
     @Test
-    public void testCayenneExp() {
+    public void cayenneExp() {
         ControlParamsTester.test(Pojo.class, tester.runtime())
                 .param("cayenneExp", "name = 'Joe'")
                 .parseRequest()

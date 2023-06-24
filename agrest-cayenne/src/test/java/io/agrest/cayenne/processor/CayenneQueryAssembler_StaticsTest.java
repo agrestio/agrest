@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CayenneQueryAssembler_StaticsTest {
 
     @Test
-    public void testConsumeRangeIterator_NoOffset_NoLimit_Negative() {
+    public void consumeRangeIterator_NoOffset_NoLimit_Negative() {
 
         List<String> list = asList("a", "b", "c", "d");
         List<String> consumed = new ArrayList<>();
@@ -20,7 +20,7 @@ public class CayenneQueryAssembler_StaticsTest {
     }
 
     @Test
-    public void testConsumeRangeIterator_NoOffset_NoLimit() {
+    public void consumeRangeIterator_NoOffset_NoLimit() {
 
         List<String> list = asList("a", "b", "c", "d");
         List<String> consumed = new ArrayList<>();
@@ -29,7 +29,7 @@ public class CayenneQueryAssembler_StaticsTest {
     }
 
     @Test
-    public void testConsumeRangeIterator_Offset_Limit() {
+    public void consumeRangeIterator_Offset_Limit() {
 
         List<String> list = asList("a", "b", "c", "d");
         List<String> consumed = new ArrayList<>();
@@ -38,7 +38,7 @@ public class CayenneQueryAssembler_StaticsTest {
     }
 
     @Test
-    public void testConsumeRangeIterator_Offset_NoLimit() {
+    public void consumeRangeIterator_Offset_NoLimit() {
 
         List<String> list = asList("a", "b", "c", "d");
         List<String> consumed = new ArrayList<>();
@@ -48,7 +48,7 @@ public class CayenneQueryAssembler_StaticsTest {
 
 
     @Test
-    public void testConsumeRangeList_NoOffset_NoLimit_Negative() {
+    public void consumeRangeList_NoOffset_NoLimit_Negative() {
 
         List<String> list = asList("a", "b", "c", "d");
         List<String> consumed = new ArrayList<>();
@@ -57,7 +57,7 @@ public class CayenneQueryAssembler_StaticsTest {
     }
 
     @Test
-    public void testConsumeRangeList_NoOffset_NoLimit() {
+    public void consumeRangeList_NoOffset_NoLimit() {
 
         List<String> list = asList("a", "b", "c", "d");
         List<String> consumed = new ArrayList<>();
@@ -66,7 +66,7 @@ public class CayenneQueryAssembler_StaticsTest {
     }
 
     @Test
-    public void testConsumeRangeList_Offset_Limit() {
+    public void consumeRangeList_Offset_Limit() {
 
         List<String> list = asList("a", "b", "c", "d");
         List<String> consumed = new ArrayList<>();
@@ -75,7 +75,7 @@ public class CayenneQueryAssembler_StaticsTest {
     }
 
     @Test
-    public void testConsumeRangeList_Offset_NoLimit() {
+    public void consumeRangeList_Offset_NoLimit() {
 
         List<String> list = asList("a", "b", "c", "d");
         List<String> consumed = new ArrayList<>();

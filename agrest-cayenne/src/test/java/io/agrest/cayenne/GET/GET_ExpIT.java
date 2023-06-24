@@ -26,7 +26,7 @@ public class GET_ExpIT extends MainDbTest {
             .build();
 
     @Test
-    public void testMap() {
+    public void map() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -40,7 +40,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testMap_Params() {
+    public void map_Params() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -55,7 +55,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testBare() {
+    public void bare() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -71,7 +71,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testList() {
+    public void list() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -86,7 +86,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testList_Params() {
+    public void list_Params() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -102,7 +102,7 @@ public class GET_ExpIT extends MainDbTest {
 
     @Test
     @DisplayName("positional binding of repeating name")
-    public void testList_Params_Repeating() {
+    public void list_Params_Repeating() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -117,7 +117,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testList_Params_Timestamp() {
+    public void list_Params_Timestamp() {
 
         tester.e4().insertColumns("id", "c_timestamp")
                 .values(1, LocalDateTime.of(2017, 2, 3, 5, 6, 7))
@@ -131,7 +131,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testIn_Array() {
+    public void in_Array() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -150,7 +150,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testNotIn_Array() {
+    public void notIn_Array() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -168,7 +168,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testOuter() {
+    public void outer() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -186,7 +186,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testOuter_Relationship() {
+    public void outer_Relationship() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -204,7 +204,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testOuter_To_Many_Relationship() {
+    public void outer_To_Many_Relationship() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -222,7 +222,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testIn_TwoObjects() {
+    public void in_TwoObjects() {
 
         tester.e3().insertColumns("id_", "name")
                 .values(8, "yyy")
@@ -236,7 +236,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testIn_TwoRelatedObjects() {
+    public void in_TwoRelatedObjects() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -254,7 +254,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testNotIn_ById() {
+    public void notIn_ById() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -271,7 +271,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testNotIn_By2Ids() {
+    public void notIn_By2Ids() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -289,7 +289,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testLike_MatchSingleQuote() {
+    public void like_MatchSingleQuote() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -307,7 +307,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testLike_MatchDoubleQuote() {
+    public void like_MatchDoubleQuote() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -325,7 +325,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testLike_SingleChar_Pattern() {
+    public void like_SingleChar_Pattern() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -343,7 +343,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testLike_MultiChar_Pattern() {
+    public void like_MultiChar_Pattern() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -361,7 +361,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testLike_SingleChar_Pattern_Escape() {
+    public void like_SingleChar_Pattern_Escape() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -380,7 +380,7 @@ public class GET_ExpIT extends MainDbTest {
     }
 
     @Test
-    public void testLike_MultiChar_Pattern_Escape() {
+    public void like_MultiChar_Pattern_Escape() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")

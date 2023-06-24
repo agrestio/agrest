@@ -109,7 +109,7 @@ public class GET_Resolvers_CombinationsIT extends MainDbTest {
 
     @ParameterizedTest
     @MethodSource("provideTestInputs")
-    public void test_ToManyToOne(Overlay o1, Overlay o2, int queryCount) {
+    public void toManyToOne(Overlay o1, Overlay o2, int queryCount) {
 
         tester.target("/tomany_toone")
                 .queryParam("include", "id")
@@ -130,7 +130,7 @@ public class GET_Resolvers_CombinationsIT extends MainDbTest {
 
     @ParameterizedTest
     @MethodSource("provideTestInputs")
-    public void test_ToOneToMany(Overlay o1, Overlay o2, int queryCount) {
+    public void toOneToMany(Overlay o1, Overlay o2, int queryCount) {
 
         tester.target("/toone_tomany")
                 .queryParam("include", "id")

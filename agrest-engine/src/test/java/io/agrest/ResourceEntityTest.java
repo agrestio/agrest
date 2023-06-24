@@ -23,7 +23,7 @@ public class ResourceEntityTest {
     }
 
     @Test
-    public void testQualifier() {
+    public void qualifier() {
         ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity(P1.class));
         assertNull(e.getExp());
 
@@ -36,7 +36,7 @@ public class ResourceEntityTest {
 
 
     @Test
-    public void testGetDataWindow_NoOffsetLimit() {
+    public void getDataWindow_NoOffsetLimit() {
         List<P1> data = asList(new P1(), new P1(), new P1());
 
         ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity(P1.class));
@@ -44,7 +44,7 @@ public class ResourceEntityTest {
     }
 
     @Test
-    public void testGetDataWindow_Offset() {
+    public void getDataWindow_Offset() {
         List<P1> data = asList(new P1(), new P1(), new P1());
 
         ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity(P1.class));
@@ -53,7 +53,7 @@ public class ResourceEntityTest {
     }
 
     @Test
-    public void testGetDataWindow_OffsetPastEnd() {
+    public void getDataWindow_OffsetPastEnd() {
         List<P1> data = asList(new P1(), new P1(), new P1());
 
         ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity(P1.class));
@@ -62,7 +62,7 @@ public class ResourceEntityTest {
     }
 
     @Test
-    public void testGetDataWindow_Limit() {
+    public void getDataWindow_Limit() {
         List<P1> data = asList(new P1(), new P1(), new P1());
 
         ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity(P1.class));
@@ -71,7 +71,7 @@ public class ResourceEntityTest {
     }
 
     @Test
-    public void testGetDataWindow_LimitPastEnd() {
+    public void getDataWindow_LimitPastEnd() {
         List<P1> data = asList(new P1(), new P1(), new P1());
 
         ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity(P1.class));
@@ -80,7 +80,7 @@ public class ResourceEntityTest {
     }
 
     @Test
-    public void testGetDataWindow_OffsetLimit() {
+    public void getDataWindow_OffsetLimit() {
         List<P1> data = asList(new P1(), new P1(), new P1());
 
         ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity(P1.class));
@@ -90,7 +90,7 @@ public class ResourceEntityTest {
     }
 
     @Test
-    public void testGetDataWindow_OffsetNegativeLimit() {
+    public void getDataWindow_OffsetNegativeLimit() {
         List<P1> data = asList(new P1(), new P1(), new P1());
 
         ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity(P1.class));
@@ -100,7 +100,7 @@ public class ResourceEntityTest {
     }
 
     @Test
-    public void testGetDataWindow_LimitNegativeOffset() {
+    public void getDataWindow_LimitNegativeOffset() {
         List<P1> data = asList(new P1(), new P1(), new P1());
 
         ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity(P1.class));

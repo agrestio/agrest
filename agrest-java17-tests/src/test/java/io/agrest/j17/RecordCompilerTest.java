@@ -25,7 +25,7 @@ public class RecordCompilerTest {
             .build();
 
     @Test
-    public void testRecordPropertiesRecognized() {
+    public void recordPropertiesRecognized() {
         AgSchema schema = tester.runtime().service(AgSchema.class);
         AgEntity<R1> r1 = schema.getEntity(R1.class);
 

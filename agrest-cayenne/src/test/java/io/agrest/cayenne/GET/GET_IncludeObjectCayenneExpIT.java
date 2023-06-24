@@ -26,7 +26,7 @@ public class GET_IncludeObjectCayenneExpIT extends MainDbTest {
             .build();
 
     @Test
-    public void testMapBy_ToMany_WithCayenneExp() {
+    public void mapBy_ToMany_WithCayenneExp() {
 
         // see LF-294 - filter applied too late may cause a AgException
 
@@ -47,7 +47,7 @@ public class GET_IncludeObjectCayenneExpIT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_CayenneExp() {
+    public void toMany_CayenneExp() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
@@ -66,7 +66,7 @@ public class GET_IncludeObjectCayenneExpIT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_CayenneExpById() {
+    public void toMany_CayenneExpById() {
 
         tester.e5().insertColumns("id", "name")
                 .values(545, "B")

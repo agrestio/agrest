@@ -68,7 +68,7 @@ public class EncoderFactory_UtilDate_Test {
      * See https://github.com/nhl/link-rest/issues/275
      */
     @Test
-    public void testUtilDate() {
+    public void utilDate() {
         testUtilDate(new java.util.Date(EPOCH_MILLIS), "yyyy-MM-dd'T'HH:mm:ss");
         testUtilDate(new java.util.Date(EPOCH_MILLIS_WITH_FRACTION), "yyyy-MM-dd'T'HH:mm:ss.SSS");
     }

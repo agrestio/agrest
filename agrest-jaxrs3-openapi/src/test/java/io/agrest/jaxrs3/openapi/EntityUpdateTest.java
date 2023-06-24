@@ -31,7 +31,7 @@ public class EntityUpdateTest {
             .build();
 
     @Test
-    public void testPropertiesPresentAndOrdered() {
+    public void propertiesPresentAndOrdered() {
         Schema p4Update = oapi.getComponents().getSchemas().get("EntityUpdate(P4)");
         assertNotNull(p4Update);
 
@@ -69,7 +69,7 @@ public class EntityUpdateTest {
     }
 
     @Test
-    public void testProperties_FilterByAccess() {
+    public void properties_FilterByAccess() {
         Schema p8Update = oapi.getComponents().getSchemas().get("EntityUpdate(P8)");
         assertNotNull(p8Update);
 
@@ -84,7 +84,7 @@ public class EntityUpdateTest {
     }
 
     @Test
-    public void testProperties_MultiColumnId() {
+    public void properties_MultiColumnId() {
 
         Schema p7Update = oapi.getComponents().getSchemas().get("EntityUpdate(P7)");
         assertNotNull(p7Update);

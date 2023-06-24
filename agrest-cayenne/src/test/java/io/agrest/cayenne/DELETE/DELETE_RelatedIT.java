@@ -28,7 +28,7 @@ public class DELETE_RelatedIT extends MainDbTest {
             .build();
 
     @Test
-    public void testAll_ToMany() {
+    public void all_ToMany() {
 
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
@@ -47,7 +47,7 @@ public class DELETE_RelatedIT extends MainDbTest {
     }
 
     @Test
-    public void testValidRel_ToMany() {
+    public void validRel_ToMany() {
 
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
@@ -67,7 +67,7 @@ public class DELETE_RelatedIT extends MainDbTest {
     }
 
     @Test
-    public void testValidRel_ToOne() {
+    public void validRel_ToOne() {
 
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
@@ -87,7 +87,7 @@ public class DELETE_RelatedIT extends MainDbTest {
     }
 
     @Test
-    public void testValidRel_ToOne_All() {
+    public void validRel_ToOne_All() {
 
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
@@ -106,7 +106,7 @@ public class DELETE_RelatedIT extends MainDbTest {
     }
 
     @Test
-    public void testInvalidRel() {
+    public void invalidRel() {
         tester.target("/e2/1/dummyRel/9")
                 .delete()
                 .wasBadRequest()
@@ -114,7 +114,7 @@ public class DELETE_RelatedIT extends MainDbTest {
     }
 
     @Test
-    public void testNoSuchId_Source() {
+    public void noSuchId_Source() {
         tester.target("/e2/22/e3s/9")
                 .delete()
                 .wasNotFound()

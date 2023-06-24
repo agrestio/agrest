@@ -29,7 +29,7 @@ public class JsonValueConverters_PojoTest {
     }
 
     @Test
-    public void testCompiler_SimpleProperties() {
+    public void compiler_SimpleProperties() {
         JsonValueConverter<T1> reader = compile(T1.class);
 
         ObjectNode objectNode = nodeFactory().objectNode();
@@ -44,7 +44,7 @@ public class JsonValueConverters_PojoTest {
     }
 
     @Test
-    public void testCompiler_CollectionProperties() {
+    public void compiler_CollectionProperties() {
         JsonValueConverter<T2> reader = compile(T2.class);
 
         ObjectNode objectNode = nodeFactory().objectNode();
@@ -59,7 +59,7 @@ public class JsonValueConverters_PojoTest {
     }
 
     @Test
-    public void testCompiler_RelationshipProperties() {
+    public void compiler_RelationshipProperties() {
         JsonValueConverter<T3> reader = compile(T3.class);
 
         ObjectNode t3_objectNode_Hollow = nodeFactory().objectNode();

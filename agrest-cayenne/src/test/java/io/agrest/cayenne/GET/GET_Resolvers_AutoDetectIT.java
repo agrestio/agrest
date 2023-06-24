@@ -25,7 +25,7 @@ public class GET_Resolvers_AutoDetectIT extends MainDbTest {
             .build();
 
     @Test
-    public void test_ViaParentExpResolver() {
+    public void viaParentExpResolver() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -51,7 +51,7 @@ public class GET_Resolvers_AutoDetectIT extends MainDbTest {
     }
 
     @Test
-    public void test_ViaParentIdsResolver() {
+    public void viaParentIdsResolver() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")

@@ -22,14 +22,14 @@ public class GET_ExceptionIT extends PojoTest {
     static final AgPojoTester tester = PojoTest.tester(Resource.class).build();
 
     @Test
-    public void testNoData() {
+    public void noData() {
         tester.target("/nodata").get()
                 .wasNotFound()
                 .bodyEquals("{\"message\":\"request failed\"}");
     }
 
     @Test
-    public void testNoData_WithThrowable() {
+    public void noData_WithThrowable() {
         tester.target("/nodata/th").get()
                 .wasServerError()
                 .mediaTypeEquals(MediaType.APPLICATION_JSON_TYPE)
@@ -37,7 +37,7 @@ public class GET_ExceptionIT extends PojoTest {
     }
 
     @Test
-    public void testNoData_WithWebApplicationException() {
+    public void noData_WithWebApplicationException() {
         // must not be wrapped in AgException, and the status must be preserved
         tester.target("/nodata/wae").get()
                 .wasForbidden()
@@ -45,7 +45,7 @@ public class GET_ExceptionIT extends PojoTest {
     }
 
     @Test
-    public void testNoData_WithWebApplicationException_InsidePipeline() {
+    public void noData_WithWebApplicationException_InsidePipeline() {
         // AgException must be unwrapped
         tester.target("/nodata/wae_inside_ag").get()
                 .wasForbidden()

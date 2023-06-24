@@ -35,7 +35,7 @@ public class GET_Resolvers_RootIT extends MainDbTest {
             .build();
 
     @Test
-    public void test_ViaQueryResolver() {
+    public void viaQueryResolver() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -60,7 +60,7 @@ public class GET_Resolvers_RootIT extends MainDbTest {
     }
 
     @Test
-    public void test_ViaCustomResolver() {
+    public void viaCustomResolver() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")

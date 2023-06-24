@@ -21,7 +21,7 @@ public class JaxrsAgExceptionMapperIT extends PojoTest {
     static final AgPojoTester tester = PojoTest.tester(Resource.class).build();
 
     @Test
-    public void testException() {
+    public void exception() {
         tester.target("/p1").get()
                 .wasForbidden()
                 .bodyEquals("{\"message\":\"_was_forbidden_\"}");

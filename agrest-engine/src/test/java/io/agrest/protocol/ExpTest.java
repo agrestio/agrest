@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class ExpTest {
 
     @Test
-    public void testEquals() {
+    public void equals() {
 
         Exp e1 = Exp.withPositionalParams("a = $1", "b");
         Exp e2 = Exp.withPositionalParams("a = $1", "b");
@@ -31,7 +31,7 @@ public class ExpTest {
     }
 
     @Test
-    public void testEquals_PositionalInvariants() {
+    public void equals_PositionalInvariants() {
 
         Exp e0 = Exp.simple("a = $1");
         Exp e1 = Exp.withPositionalParams("a = $1");

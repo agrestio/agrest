@@ -30,7 +30,7 @@ public class POST_ConvertersIT extends MainDbTest {
             .build();
 
     @Test
-    public void testString() {
+    public void string() {
 
         tester.target("/e4")
                 .queryParam("include", "cVarchar")
@@ -43,7 +43,7 @@ public class POST_ConvertersIT extends MainDbTest {
     }
 
     @Test
-    public void testBoolean() {
+    public void _boolean() {
 
         tester.target("/e4")
                 .queryParam("include", "cBoolean")
@@ -56,7 +56,7 @@ public class POST_ConvertersIT extends MainDbTest {
     }
 
     @Test
-    public void testSqlDate() {
+    public void sqlDate() {
         tester.target("e16")
                 .queryParam("include", "cDate")
                 .post("{\"cDate\":\"2015-03-14\"}")
@@ -65,7 +65,7 @@ public class POST_ConvertersIT extends MainDbTest {
     }
 
     @Test
-    public void testSqlTime() {
+    public void sqlTime() {
         tester.target("e16")
                 .queryParam("include", "cTime")
                 .post("{\"cTime\":\"19:00:00\"}")
@@ -75,7 +75,7 @@ public class POST_ConvertersIT extends MainDbTest {
     }
 
     @Test
-    public void testSqlTimestamp() {
+    public void sqlTimestamp() {
         tester.target("e16")
                 .queryParam("include", "cTimestamp")
                 .post("{\"cTimestamp\":\"2015-03-14T19:00:00.000\"}")
@@ -85,7 +85,7 @@ public class POST_ConvertersIT extends MainDbTest {
     }
 
     @Test
-    public void testByteArray() {
+    public void byteArray() {
 
         String base64Encoded = "c29tZVZhbHVlMTIz"; // someValue123
 
@@ -97,7 +97,7 @@ public class POST_ConvertersIT extends MainDbTest {
     }
 
     @Test
-    public void testBigDecimal() {
+    public void bigDecimal() {
 
         tester.target("/e19")
                 .queryParam("include", E19.BIG_DECIMAL.getName())
@@ -108,7 +108,7 @@ public class POST_ConvertersIT extends MainDbTest {
     }
 
     @Test
-    public void testBigInteger() {
+    public void bigInteger() {
 
         tester.target("/e19")
                 .queryParam("include", E19.BIG_INTEGER.getName())
@@ -119,7 +119,7 @@ public class POST_ConvertersIT extends MainDbTest {
     }
 
     @Test
-    public void testByte() {
+    public void _byte() {
 
         tester.target("/e19")
                 .queryParam("include", E19.BYTE_OBJECT.getName(), E19.BYTE_PRIMITIVE.getName())
@@ -130,7 +130,7 @@ public class POST_ConvertersIT extends MainDbTest {
     }
 
     @Test
-    public void testShort() {
+    public void _short() {
 
         tester.target("/e19")
                 .queryParam("include", E19.SHORT_OBJECT.getName(), E19.SHORT_PRIMITIVE.getName())
@@ -141,7 +141,7 @@ public class POST_ConvertersIT extends MainDbTest {
     }
 
     @Test
-    public void testFloat() {
+    public void _float() {
         tester.target("/e19/float")
                 .queryParam("include", "floatObject", "floatPrimitive")
                 .post("{\"floatObject\":1.0,\"floatPrimitive\":2.0}")
@@ -151,7 +151,7 @@ public class POST_ConvertersIT extends MainDbTest {
     }
 
     @Test
-    public void testFloat_FromInt() {
+    public void float_FromInt() {
         tester.target("/e19/float")
                 .queryParam("include", "floatObject", "floatPrimitive")
                 .post("{\"floatObject\":1,\"floatPrimitive\":2}")
@@ -161,13 +161,13 @@ public class POST_ConvertersIT extends MainDbTest {
     }
 
     @Test
-    public void testDouble() {
+    public void _double() {
         tester.target("/e19/double").post("{\"doubleObject\":1.0,\"doublePrimitive\":2.0}").wasCreated();
         tester.e19().matcher().eq("double_object", 1.0).eq("double_primitive", 2.0).assertOneMatch();
     }
 
     @Test
-    public void testDouble_FromInt() {
+    public void double_FromInt() {
         tester.target("/e19/double").post("{\"doubleObject\":1,\"doublePrimitive\":2}").wasCreated();
         tester.e19().matcher().eq("double_object", 1.0).eq("double_primitive", 2.0).assertOneMatch();
     }

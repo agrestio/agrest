@@ -32,7 +32,7 @@ public class Path_GETTest {
             .build();
 
     @Test
-    public void testDataResponseWithType() {
+    public void dataResponseWithType() {
         PathItem pi = oapi.getPaths().get("/r/data-response-with-type");
         ApiResponses responses = pi.getGet().getResponses();
 
@@ -52,7 +52,7 @@ public class Path_GETTest {
     }
 
     @Test
-    public void testDataResponseWithIoAgrestType() {
+    public void dataResponseWithIoAgrestType() {
         PathItem pi = oapi.getPaths().get("/r/data-response-with-ioagrest-type");
         ApiResponses responses = pi.getGet().getResponses();
 
@@ -73,7 +73,7 @@ public class Path_GETTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"/r/data-response-bare", "/r/data-response-wildcard"})
-    public void testDataResponseWithNoType(String uri) {
+    public void dataResponseWithNoType(String uri) {
         PathItem pi = oapi.getPaths().get(uri);
         ApiResponses responses = pi.getGet().getResponses();
 
@@ -93,7 +93,7 @@ public class Path_GETTest {
     }
 
     @Test
-    public void testResponseAnnotated() {
+    public void responseAnnotated() {
         PathItem pi = oapi.getPaths().get("/r/response-annotated");
         ApiResponses responses = pi.getGet().getResponses();
 

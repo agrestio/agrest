@@ -25,7 +25,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
             .build();
 
     @Test
-    public void testPathAttribute() {
+    public void pathAttribute() {
 
         tester.e4().insertColumns("c_int").values(55).exec();
 
@@ -36,7 +36,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testPathRelationship() {
+    public void pathRelationship() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
         tester.e3().insertColumns("id_", "name", "e2_id").values(8, "yyy", 1).exec();
@@ -50,7 +50,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testMapBy_ToOne() {
+    public void mapBy_ToOne() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
         tester.e3().insertColumns("id_", "name", "e2_id").values(8, "yyy", 1).exec();
@@ -65,7 +65,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testMapBy_ToMany() {
+    public void mapBy_ToMany() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
         tester.e3().insertColumns("id_", "name", "e2_id")
@@ -84,7 +84,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testMapBy_ToMany_ById() {
+    public void mapBy_ToMany_ById() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
         tester.e3().insertColumns("id_", "name", "e2_id")
@@ -104,7 +104,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testMapBy_ToMany_ByRelatedId() {
+    public void mapBy_ToMany_ByRelatedId() {
 
         tester.e5().insertColumns("id").values(45).values(46).exec();
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
@@ -124,7 +124,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testMapBy_ToMany_ByRelatedAttribute() {
+    public void mapBy_ToMany_ByRelatedAttribute() {
 
         tester.e5().insertColumns("id", "name")
                 .values(45, "T")
@@ -148,7 +148,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testMapBy_ToMany_ByRelatedDate() {
+    public void mapBy_ToMany_ByRelatedDate() {
 
         tester.e5().insertColumns("id", "name", "date")
                 .values(45, "T", "2013-01-03")
@@ -172,7 +172,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testMapBy_ToMany_WithExp() {
+    public void mapBy_ToMany_WithExp() {
 
         // see LF-294 - filter applied too late may cause a AgException
 
@@ -193,7 +193,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_Sort() {
+    public void toMany_Sort() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
         tester.e3().insertColumns("id_", "name", "e2_id")
@@ -211,7 +211,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_SortPath() {
+    public void toMany_SortPath() {
 
         tester.e5().insertColumns("id", "name")
                 .values(145, "B")
@@ -236,7 +236,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_SortPath_Dir() {
+    public void toMany_SortPath_Dir() {
 
         tester.e5().insertColumns("id", "name")
                 .values(245, "B")
@@ -260,7 +260,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_Exp() {
+    public void toMany_Exp() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
@@ -279,7 +279,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_ExpById() {
+    public void toMany_ExpById() {
 
         tester.e5().insertColumns("id", "name")
                 .values(545, "B")
@@ -300,7 +300,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_Exclude() {
+    public void toMany_Exclude() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
         tester.e3().insertColumns("id_", "name", "e2_id")
@@ -318,7 +318,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_IncludeRelated() {
+    public void toMany_IncludeRelated() {
 
         tester.e5().insertColumns("id", "name")
                 .values(345, "B")
@@ -342,7 +342,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_IncludeArrayRelated() {
+    public void toMany_IncludeArrayRelated() {
 
         tester.e5().insertColumns("id", "name")
                 .values(345, "B")
@@ -365,7 +365,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_IncludeMapRelated() {
+    public void toMany_IncludeMapRelated() {
 
         tester.e5().insertColumns("id", "name")
                 .values(345, "B")
@@ -388,7 +388,7 @@ public class GET_IncludeObjectIT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_IncludeExtMapRelated() {
+    public void toMany_IncludeExtMapRelated() {
 
         tester.e5().insertColumns("id", "name")
                 .values(345, "B")

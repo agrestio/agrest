@@ -33,7 +33,7 @@ public class DefaultSelectBuilder_CustomPipelineIT extends MainDbTest {
     }
 
     @Test
-    public void testStage_AllStages() {
+    public void stage_AllStages() {
 
         Map<SelectStage, Integer> stages = new EnumMap<>(SelectStage.class);
         Consumer<SelectStage> stageRecorder = s -> stages.put(s, stages.size());
@@ -54,7 +54,7 @@ public class DefaultSelectBuilder_CustomPipelineIT extends MainDbTest {
     }
 
     @Test
-    public void testStage_Composition() {
+    public void stage_Composition() {
 
         Map<SelectStage, String> stages = new EnumMap<>(SelectStage.class);
         BiConsumer<SelectStage, String> stageRecorder = (stage, value) -> {

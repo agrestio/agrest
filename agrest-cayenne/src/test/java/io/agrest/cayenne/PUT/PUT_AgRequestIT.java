@@ -26,7 +26,7 @@ public class PUT_AgRequestIT extends MainDbTest {
             .build();
 
     @Test
-    public void testPUT_Includes_OverrideByAgRequest() {
+    public void includes_OverrideByAgRequest() {
 
         tester.e3().insertColumns("id_", "name")
                 .values(5, "aaa")
@@ -49,7 +49,7 @@ public class PUT_AgRequestIT extends MainDbTest {
     }
 
     @Test
-    public void testPUT_Excludes_OverrideByAgRequest() {
+    public void excludes_OverrideByAgRequest() {
 
         tester.e3().insertColumns("id_", "name")
                 .values(5, "aaa")

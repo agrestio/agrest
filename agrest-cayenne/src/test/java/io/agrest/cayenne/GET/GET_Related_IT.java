@@ -35,7 +35,7 @@ public class GET_Related_IT extends MainDbTest {
             .build();
 
     @Test
-    public void testToMany_CompoundId() {
+    public void toMany_CompoundId() {
 
         tester.e17().insertColumns("id1", "id2", "name")
                 .values(1, 1, "aaa")
@@ -53,7 +53,7 @@ public class GET_Related_IT extends MainDbTest {
     }
 
     @Test
-    public void testValidRel_ToOne_CompoundId() {
+    public void validRel_ToOne_CompoundId() {
 
         tester.e17().insertColumns("id1", "id2", "name")
                 .values(1, 1, "aaa")
@@ -69,7 +69,7 @@ public class GET_Related_IT extends MainDbTest {
     }
 
     @Test
-    public void testValidRel_ToMany() {
+    public void validRel_ToMany() {
 
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
@@ -87,7 +87,7 @@ public class GET_Related_IT extends MainDbTest {
     }
 
     @Test
-    public void testValidRel_ToOne() {
+    public void validRel_ToOne() {
 
         // make sure we have e3s for more than one e2 - this will help us
         // confirm that relationship queries are properly filtered.
@@ -105,14 +105,14 @@ public class GET_Related_IT extends MainDbTest {
     }
 
     @Test
-    public void testInvalidRel() {
+    public void invalidRel() {
         tester.target("/e2/1/dummyrel").get()
                 .wasServerError()
                 .bodyEquals("{\"message\":\"Invalid parent relationship: 'dummyrel'\"}");
     }
 
     @Test
-    public void testToManyJoin() {
+    public void toManyJoin() {
 
         tester.e12().insertColumns("id")
                 .values(11)
@@ -136,7 +136,7 @@ public class GET_Related_IT extends MainDbTest {
     }
 
     @Test
-    public void testByParentCompoundDbId() {
+    public void byParentCompoundDbId() {
 
         tester.e29().insertColumns("id1", "id2")
                 .values(1, 15)

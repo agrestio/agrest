@@ -33,7 +33,7 @@ public class GET_StagesIT extends MainDbTest {
             .build();
 
     @Test
-    public void testNoId() {
+    public void noId() {
         tester.e27NoPk().insertColumns("name")
                 .values("z")
                 .values("a").exec();

@@ -33,7 +33,7 @@ public class DefaultSelectBuilderTest {
     }
 
     @Test
-    public void testStage_FunctionTypes() {
+    public void stage_FunctionTypes() {
 
         // note that we do not make any assertions here.. just making sure methods with certain generic signatures
         // would compile without casting...
@@ -51,7 +51,7 @@ public class DefaultSelectBuilderTest {
     }
 
     @Test
-    public void testTerminalStage_FunctionTypes() {
+    public void terminalStage_FunctionTypes() {
 
         // note that we do not make any assertions here.. just making sure methods with certain generic signatures
         // would compile without casting...
@@ -69,7 +69,7 @@ public class DefaultSelectBuilderTest {
     }
 
     @Test
-    public void testRoutingStage_FunctionTypes() {
+    public void routingStage_FunctionTypes() {
 
         // note that we do not make any assertions here.. just making sure methods with certain generic signatures
         // would compile without casting...

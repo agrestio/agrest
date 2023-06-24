@@ -35,7 +35,7 @@ public class PUT_EntityOverlay_PerRequestIT extends MainDbTest {
             .build();
 
     @Test
-    public void test_RequestOverlaidProperties_ConstrainedEntity() {
+    public void requestOverlaidProperties_ConstrainedEntity() {
 
         tester.e10().insertColumns("id", "c_int").values(2, 5).values(4, 8).exec();
         tester.e22().insertColumns("id", "name").values(1, "a").values(2, "b").exec();
@@ -50,7 +50,7 @@ public class PUT_EntityOverlay_PerRequestIT extends MainDbTest {
     }
 
     @Test
-    public void test_DefaultIncludes() {
+    public void defaultIncludes() {
 
         tester.e4().insertColumns("id", "c_varchar").values(2, "a").values(4, "b").exec();
 
@@ -67,7 +67,7 @@ public class PUT_EntityOverlay_PerRequestIT extends MainDbTest {
     }
 
     @Test
-    public void test_OverlaidRelatedExclude() {
+    public void overlaidRelatedExclude() {
 
         tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
         tester.e3().insertColumns("id_", "name", "phone_number", "e2_id")
@@ -84,7 +84,7 @@ public class PUT_EntityOverlay_PerRequestIT extends MainDbTest {
     }
 
     @Test
-    public void test_OverlaidExclude() {
+    public void overlaidExclude() {
 
         tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
 
@@ -97,7 +97,7 @@ public class PUT_EntityOverlay_PerRequestIT extends MainDbTest {
     }
 
     @Test
-    public void test_WritablePropFilter_ToManyBlocked() {
+    public void writablePropFilter_ToManyBlocked() {
 
         tester.e2().insertColumns("id_", "name", "address").values(11, "N", "A").exec();
         tester.e3().insertColumns("id_", "name", "phone_number", "e2_id")
@@ -115,7 +115,7 @@ public class PUT_EntityOverlay_PerRequestIT extends MainDbTest {
     }
 
     @Test
-    public void test_WritablePropFilter_ToOneBlocked() {
+    public void writablePropFilter_ToOneBlocked() {
 
         tester.e2().insertColumns("id_", "name", "address").values(11, "N", "A").exec();
         tester.e3().insertColumns("id_", "name", "phone_number", "e2_id")

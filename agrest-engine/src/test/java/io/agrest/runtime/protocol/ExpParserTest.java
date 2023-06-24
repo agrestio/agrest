@@ -17,28 +17,28 @@ public class ExpParserTest {
 	}
 
 	@Test
-	public void testProcess_Bare() {
+	public void process_Bare() {
         ExpRoot exp = (ExpRoot) parser.fromString("a = 12345 and b = 'John Smith' and c = true");
 		assertNotNull(exp);
 		assertEquals("a = 12345 and b = 'John Smith' and c = true", exp.getTemplate());
 	}
 
 	@Test
-	public void testProcess_Functions() {
+	public void process_Functions() {
 		ExpRoot exp = (ExpRoot) parser.fromString("length(b) > 5");
 		assertNotNull(exp);
 		assertEquals("length(b) > 5", exp.getTemplate());
 	}
 
 	@Test
-	public void testProcess_List() {
+	public void process_List() {
 		ExpRoot exp = (ExpRoot) parser.fromString("[\"a = 12345 and b = 'John Smith' and c = true\"]");
 		assertNotNull(exp);
 		assertEquals("a = 12345 and b = 'John Smith' and c = true", exp.getTemplate());
 	}
 
 	@Test
-	public void testProcess_List_Params_String() {
+	public void process_List_Params_String() {
 		ExpRoot exp = (ExpRoot) parser.fromString("[\"b=$s\",\"x\"]");
 		assertNotNull(exp);
 		assertEquals("b=$s", exp.getTemplate());
@@ -47,7 +47,7 @@ public class ExpParserTest {
 	}
 
 	@Test
-	public void testProcess_List_Params_Multiple() {
+	public void process_List_Params_Multiple() {
 		ExpRoot exp = (ExpRoot) parser.fromString( "[\"b=$s or b =$x or b =$s\",\"x\",\"y\"]");
 		assertNotNull(exp);
 		assertEquals("b=$s or b =$x or b =$s", exp.getTemplate());
@@ -57,14 +57,14 @@ public class ExpParserTest {
 	}
 
 	@Test
-	public void testProcess_Map() {
+	public void process_Map() {
 		ExpRoot exp = (ExpRoot) parser.fromString("{\"exp\" : \"a = 12345 and b = 'John Smith' and c = true\"}");
 		assertNotNull(exp);
 		assertEquals("a = 12345 and b = 'John Smith' and c = true", exp.getTemplate());
 	}
 
 	@Test
-	public void testProcess_Map_Params_String() {
+	public void process_Map_Params_String() {
 		ExpRoot exp = (ExpRoot) parser.fromString("{\"exp\" : \"b=$s\", \"params\":{\"s\":\"x\"}}");
 		assertNotNull(exp);
 		assertEquals("b=$s", exp.getTemplate());
@@ -73,7 +73,7 @@ public class ExpParserTest {
 	}
 
 	@Test
-	public void testProcess_Map_Params_Null() {
+	public void process_Map_Params_Null() {
 		ExpRoot exp = (ExpRoot) parser.fromString( "{\"exp\" : \"c=$b\", \"params\":{\"b\": null}}");
 		assertNotNull(exp);
 		assertEquals("c=$b", exp.getTemplate());

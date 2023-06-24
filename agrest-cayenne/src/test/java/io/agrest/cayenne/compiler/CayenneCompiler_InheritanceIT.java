@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CayenneCompiler_InheritanceIT extends InheritanceNoDbTest {
 
     @Test
-    public void testGetAttributes_Sub() {
+    public void getAttributes_Sub() {
         AgEntity<Ie1Sub2> ieSub2 = getAgEntity(Ie1Sub2.class);
         String as = ieSub2.getAttributes().stream()
                 .map(AgAttribute::getName)
@@ -29,7 +29,7 @@ public class CayenneCompiler_InheritanceIT extends InheritanceNoDbTest {
     }
 
     @Test
-    public void testGetAttributes_SubSub() {
+    public void getAttributes_SubSub() {
         AgEntity<Ie1Sub1Sub1> ieSub1Sub1 = getAgEntity(Ie1Sub1Sub1.class);
         String as = ieSub1Sub1.getAttributes().stream()
                 .map(AgAttribute::getName)
@@ -39,7 +39,7 @@ public class CayenneCompiler_InheritanceIT extends InheritanceNoDbTest {
     }
 
     @Test
-    public void testGetAttributes_Super() {
+    public void getAttributes_Super() {
         String as = getAgEntity(Ie1Super.class).getAttributes().stream()
                 .map(AgAttribute::getName)
                 .sorted()
@@ -48,7 +48,7 @@ public class CayenneCompiler_InheritanceIT extends InheritanceNoDbTest {
     }
 
     @Test
-    public void testGetRelationships_Sub() {
+    public void getRelationships_Sub() {
         AgEntity<Ie1Sub1> ieSub1 = getAgEntity(Ie1Sub1.class);
         String rs = ieSub1.getRelationships().stream()
                 .map(AgRelationship::getName)
@@ -58,7 +58,7 @@ public class CayenneCompiler_InheritanceIT extends InheritanceNoDbTest {
     }
 
     @Test
-    public void testGetSubEntities_Super() {
+    public void getSubEntities_Super() {
         String es1 = getAgEntity(Ie1Super.class).getSubEntities().stream()
                 .map(AgEntity::getName)
                 .sorted()
@@ -73,12 +73,12 @@ public class CayenneCompiler_InheritanceIT extends InheritanceNoDbTest {
     }
 
     @Test
-    public void testGetSubEntities_Sub() {
+    public void getSubEntities_Sub() {
         assertTrue(getAgEntity(Ie1Sub2.class).getSubEntities().isEmpty());
     }
 
     @Test
-    public void testGetSubEntities_NoInheritance() {
+    public void getSubEntities_NoInheritance() {
         assertTrue(getAgEntity(Ie2.class).getSubEntities().isEmpty());
     }
 }

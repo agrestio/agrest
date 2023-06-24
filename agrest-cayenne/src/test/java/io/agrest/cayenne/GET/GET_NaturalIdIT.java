@@ -27,7 +27,7 @@ public class GET_NaturalIdIT extends MainDbTest {
             .build();
 
     @Test
-    public void test_SelectById() {
+    public void selectById() {
 
         tester.e20().insertColumns("name_col").values("John").exec();
 
@@ -42,7 +42,7 @@ public class GET_NaturalIdIT extends MainDbTest {
     }
 
     @Test
-    public void test_SelectById_MultiId() {
+    public void selectById_MultiId() {
 
         tester.e21().insertColumns("age", "name").values(18, "John").exec();
 

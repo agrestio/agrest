@@ -28,7 +28,7 @@ public class GET_Resolvers_Related_ToOneIT extends MainDbTest {
             .build();
 
     @Test
-    public void test_JointPrefetchResolver() {
+    public void jointPrefetchResolver() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
         tester.e3().insertColumns("id_", "name", "e2_id")
@@ -51,7 +51,7 @@ public class GET_Resolvers_Related_ToOneIT extends MainDbTest {
     }
 
     @Test
-    public void test_QueryWithParentIdsResolver() {
+    public void queryWithParentIdsResolver() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
         tester.e3().insertColumns("id_", "name", "e2_id")
@@ -73,7 +73,7 @@ public class GET_Resolvers_Related_ToOneIT extends MainDbTest {
     }
 
     @Test
-    public void test_QueryWithParentIdsResolver_Pagination() {
+    public void queryWithParentIdsResolver_Pagination() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "aaa")
@@ -102,7 +102,7 @@ public class GET_Resolvers_Related_ToOneIT extends MainDbTest {
     }
 
     @Test
-    public void test_QueryWithParentQualifierResolver() {
+    public void queryWithParentQualifierResolver() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
         tester.e3().insertColumns("id_", "name", "e2_id")
@@ -124,7 +124,7 @@ public class GET_Resolvers_Related_ToOneIT extends MainDbTest {
     }
 
     @Test
-    public void test_QueryWithParentQualifierResolver_NoFetchIfNoParent() {
+    public void queryWithParentQualifierResolver_NoFetchIfNoParent() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
         tester.e3().insertColumns("id_", "name", "e2_id")

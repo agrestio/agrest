@@ -16,14 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class ToOneFlattenedIteratorTest {
 
     @Test
-    public void testIterator_Empty() {
+    public void iterator_Empty() {
         List<P4> parents = Collections.emptyList();
         ToOneFlattenedIterator<P4> children = new ToOneFlattenedIterator<>(parents.iterator(), p -> ((P4) p).getP3());
         assertFalse(children.hasNext());
     }
 
     @Test
-    public void testIterator() {
+    public void iterator() {
 
         List<P4> parents = asList(
                 newP4("a", true),

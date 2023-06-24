@@ -21,7 +21,7 @@ import static org.mockito.Mockito.mock;
 public class CayenneQueryAssemblerTest extends MainNoDbTest {
 
     @Test
-    public void testCreateRootQuery_Ordering() {
+    public void createRootQuery_Ordering() {
 
         RootResourceEntity<E1> entity = getResourceEntity(E1.class);
         entity.getOrderings().add(new Sort("name", Direction.asc));
@@ -40,7 +40,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
     }
 
     @Test
-    public void testCreateRootQuery_Pagination() {
+    public void createRootQuery_Pagination() {
 
         RootResourceEntity<E1> entity = new RootResourceEntity<>(getAgEntity(E1.class));
         entity.setLimit(10);
@@ -78,7 +78,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
     }
 
     @Test
-    public void testCreateRootQuery_Qualifier() {
+    public void createRootQuery_Qualifier() {
         RootResourceEntity<E1> entity = getResourceEntity(E1.class);
 
         SelectContext<E1> c = new SelectContext<>(
@@ -99,7 +99,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
     }
 
     @Test
-    public void testCreateRootQuery_ById() {
+    public void createRootQuery_ById() {
 
         SelectContext<E1> c = new SelectContext<>(
                 E1.class,
@@ -115,7 +115,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
     }
 
     @Test
-    public void testCreateRootQuery_ById_WithQuery() {
+    public void createRootQuery_ById_WithQuery() {
         ObjectSelect<E1> select = ObjectSelect.query(E1.class);
 
         SelectContext<E1> c = new SelectContext<>(

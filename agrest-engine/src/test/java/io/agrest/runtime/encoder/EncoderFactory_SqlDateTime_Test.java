@@ -70,7 +70,7 @@ public class EncoderFactory_SqlDateTime_Test {
      * {@link java.sql.Date} is always formatted as ISO 8601 local date {@code yyyy-MM-dd}, e.g. 2017-01-01
      */
     @Test
-    public void testJavaSqlDate() {
+    public void javaSqlDate() {
         ResourceEntity<PSqlDateTime> re = new RootResourceEntity<>(sqlDateTimeEntity);
         re.ensureAttribute("date", false);
         Date date = new Date(EPOCH_MILLIS);
@@ -86,7 +86,7 @@ public class EncoderFactory_SqlDateTime_Test {
      * {@link java.sql.Time} is always formatted as ISO 8601 local time {@code HH:mm:ss[.SSS]}, e.g. 10:00:00
      */
     @Test
-    public void testJavaSqlTime() {
+    public void javaSqlTime() {
         _testISOTimeEncoder_javaSqlTime(new java.sql.Time(EPOCH_MILLIS), "HH:mm:ss");
         _testISOTimeEncoder_javaSqlTime(new java.sql.Time(EPOCH_MILLIS_WITH_FRACTION), "HH:mm:ss.SSS");
     }
@@ -106,7 +106,7 @@ public class EncoderFactory_SqlDateTime_Test {
      * {@link java.sql.Timestamp} is always formatted as ISO 8601 local date-time {@code yyyy-MM-dd'T'HH:mm:ss[.SSS]}, e.g. 2017-01-01T10:00:00
      */
     @Test
-    public void testJavaSqlTimestamp() {
+    public void javaSqlTimestamp() {
         _testISODateTimeEncoder_javaSqlTimestamp(new java.sql.Timestamp(EPOCH_MILLIS), "yyyy-MM-dd'T'HH:mm:ss");
         _testISODateTimeEncoder_javaSqlTimestamp(new java.sql.Timestamp(EPOCH_MILLIS_WITH_FRACTION), "yyyy-MM-dd'T'HH:mm:ss.SSS");
     }

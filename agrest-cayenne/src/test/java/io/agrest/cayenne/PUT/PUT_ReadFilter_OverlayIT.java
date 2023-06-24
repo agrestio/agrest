@@ -45,7 +45,7 @@ public class PUT_ReadFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testInStack() {
+    public void inStack() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "a")
@@ -67,7 +67,7 @@ public class PUT_ReadFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testInStack_Related() {
+    public void inStack_Related() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "a")
@@ -89,7 +89,7 @@ public class PUT_ReadFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testInStackAndRequest() {
+    public void inStackAndRequest() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "a")

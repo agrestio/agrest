@@ -27,7 +27,7 @@ public class POST_WritablePropFilter_OverlayIT extends MainDbTest {
             .build();
 
     @Test
-    public void testWriteConstraints_Id_Allowed() {
+    public void writeConstraints_Id_Allowed() {
 
         // endpoint constraint allows "name" and "id"
 
@@ -41,7 +41,7 @@ public class POST_WritablePropFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testWriteConstraints_Id_Blocked() {
+    public void writeConstraints_Id_Blocked() {
 
         // endpoint constraint allows "name", but not "id"
 
@@ -54,7 +54,7 @@ public class POST_WritablePropFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testWriteConstraints1() {
+    public void writeConstraints1() {
 
         tester.target("/e3/w/constrained")
                 .post("{\"name\":\"zzz\"}")
@@ -64,7 +64,7 @@ public class POST_WritablePropFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testWriteConstraints2() {
+    public void writeConstraints2() {
 
         tester.target("/e3/w/constrained")
                 .post("{\"name\":\"zzz\",\"phoneNumber\":\"12345\"}")
@@ -78,7 +78,7 @@ public class POST_WritablePropFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testReadConstraints1() {
+    public void readConstraints1() {
 
         tester.target("/e3/constrained")
                 .post("{\"name\":\"zzz\"}")
@@ -88,7 +88,7 @@ public class POST_WritablePropFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testInclude_ReadConstraints() {
+    public void include_ReadConstraints() {
 
         // writing "phoneNumber" is allowed, but reading is not ... must be in DB, but not in response
 
@@ -104,7 +104,7 @@ public class POST_WritablePropFilter_OverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testReadConstraints_DisallowRelated() {
+    public void readConstraints_DisallowRelated() {
 
         tester.target("/e3/constrained")
                 .queryParam("include", E3.E2.getName())

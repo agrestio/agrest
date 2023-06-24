@@ -28,7 +28,7 @@ public class GET_ReadFilter_Overlay_Request_InheritanceIT extends InheritanceDbT
             .build();
 
     @Test
-    public void testSuper_FilterSuperAttributes() {
+    public void super_FilterSuperAttributes() {
 
         tester.ie1().insertColumns("id", "type", "a0", "a1", "a2")
                 .values(10, 1, "allowed_v01", "v11", null)
@@ -45,7 +45,7 @@ public class GET_ReadFilter_Overlay_Request_InheritanceIT extends InheritanceDbT
     }
 
     @Test
-    public void testSuper_FilterSubAttributes() {
+    public void super_FilterSubAttributes() {
 
         tester.ie1().insertColumns("id", "type", "a0", "a1", "a2")
                 .values(10, 1, "v01", "allowed_v11", null)
@@ -62,7 +62,7 @@ public class GET_ReadFilter_Overlay_Request_InheritanceIT extends InheritanceDbT
     }
 
     @Test
-    public void testSuper_FilterSuperAttributesAtSub() {
+    public void super_FilterSuperAttributesAtSub() {
 
         tester.ie1().insertColumns("id", "type", "a0", "a1", "a2")
                 .values(10, 1, "v01", "v11", null)
@@ -80,7 +80,7 @@ public class GET_ReadFilter_Overlay_Request_InheritanceIT extends InheritanceDbT
     }
 
     @Test
-    public void testSuper_FilterSuperAttributesAtSubIgnoreSuper() {
+    public void super_FilterSuperAttributesAtSubIgnoreSuper() {
 
         tester.ie1().insertColumns("id", "type", "a0", "a1", "a2")
                 .values(10, 1, "v01", "v11", null)

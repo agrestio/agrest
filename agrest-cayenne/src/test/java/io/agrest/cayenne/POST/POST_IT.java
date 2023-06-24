@@ -30,7 +30,7 @@ public class POST_IT extends MainDbTest {
             .build();
 
     @Test
-    public void test() {
+    public void basic() {
 
         tester.target("/e4").post("{\"cVarchar\":\"zzz\"}")
                 .wasCreated()
@@ -52,7 +52,7 @@ public class POST_IT extends MainDbTest {
     }
 
     @Test
-    public void testIdCalledId() {
+    public void idCalledId() {
 
         tester.target("/e31").post("{\"id\":5,\"name\":\"31\"}")
                 .wasCreated()
@@ -63,7 +63,7 @@ public class POST_IT extends MainDbTest {
     }
 
     @Test
-    public void testCompoundId() {
+    public void compoundId() {
 
         tester.target("/e17")
                 .queryParam("id1", 1)
@@ -74,7 +74,7 @@ public class POST_IT extends MainDbTest {
     }
 
     @Test
-    public void testSync_NoData() {
+    public void sync_NoData() {
 
         tester.target("/e4/sync")
                 .post("{\"cVarchar\":\"zzz\"}")
@@ -86,7 +86,7 @@ public class POST_IT extends MainDbTest {
     }
 
     @Test
-    public void testBulk() {
+    public void bulk() {
 
         tester.target("/e3/")
                 .queryParam("exclude", "id")

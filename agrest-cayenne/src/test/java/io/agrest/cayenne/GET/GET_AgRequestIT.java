@@ -27,7 +27,7 @@ public class GET_AgRequestIT extends MainDbTest {
             .build();
 
     @Test
-    public void test_Exp_OverrideByAgRequest() {
+    public void exp_OverrideByAgRequest() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -44,7 +44,7 @@ public class GET_AgRequestIT extends MainDbTest {
     }
 
     @Test
-    public void testIncludes_OverrideByAgRequest() {
+    public void includes_OverrideByAgRequest() {
 
         tester.e3().insertColumns("id_", "name")
                 .values(6, "yyy")
@@ -60,7 +60,7 @@ public class GET_AgRequestIT extends MainDbTest {
     }
 
     @Test
-    public void testExcludes_OverrideByAgRequest() {
+    public void excludes_OverrideByAgRequest() {
 
         tester.e3().insertColumns("id_", "name")
                 .values(6, "yyy")
@@ -79,7 +79,7 @@ public class GET_AgRequestIT extends MainDbTest {
     }
 
     @Test
-    public void test_Sort_OverrideByAgRequest() {
+    public void sort_OverrideByAgRequest() {
 
         tester.e4().insertColumns("id")
                 .values(2)
@@ -96,7 +96,7 @@ public class GET_AgRequestIT extends MainDbTest {
     }
 
     @Test
-    public void test_MapBy_OverrideByAgRequest() {
+    public void mapBy_OverrideByAgRequest() {
 
         tester.e4().insertColumns("c_varchar", "c_int")
                 .values("xxx", 1)

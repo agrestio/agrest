@@ -15,7 +15,7 @@ public class GET_SimpleResponseIT extends PojoTest {
     static final AgPojoTester tester = PojoTest.tester(Resource.class).build();
 
     @Test
-    public void testWrite() {
+    public void write() {
 
         tester.target("/simple").get()
                 .wasOk()

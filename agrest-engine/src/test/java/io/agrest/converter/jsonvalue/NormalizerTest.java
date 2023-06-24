@@ -7,20 +7,20 @@ import static org.junit.jupiter.api.Assertions.*;
 public class NormalizerTest {
 
 	@Test
-	public void testNormalize_Null() {
+	public void normalize_Null() {
 		assertNull(Normalizer.normalize(null, Integer.class));
 		assertNull(Normalizer.normalize(null, Long.class));
 	}
 
 	@Test
-	public void testNormalize_NonNumber() {
+	public void normalize_NonNumber() {
 		Object x = new Object();
 		assertSame(x, Normalizer.normalize(x, Integer.class));
 		assertSame(x, Normalizer.normalize(x, Long.class));
 	}
 
 	@Test
-	public void testNormalize_Long() {
+	public void normalize_Long() {
 		Long smallLong = new Long(5);
 		assertSame(smallLong, Normalizer.normalize(smallLong, Integer.class));
 		assertSame(smallLong, Normalizer.normalize(smallLong, Long.class));
@@ -31,7 +31,7 @@ public class NormalizerTest {
 	}
 
 	@Test
-	public void testNormalize_Int() {
+	public void normalize_Int() {
 		Integer integer = new Integer(5);
 		Long smallLong = new Long(5);
 		assertSame(integer, Normalizer.normalize(integer, Integer.class));

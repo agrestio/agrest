@@ -11,27 +11,27 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ShortConverterTest {
 
     @Test
-    public void testZero() {
+    public void zero() {
         assertEquals(Short.valueOf((short) 0), convert((short) 0));
     }
 
     @Test
-    public void testInteger_Zero() {
+    public void integer_Zero() {
         assertEquals(Short.valueOf((short) 0), convert(0));
     }
 
     @Test
-    public void testMinValue() {
+    public void minValue() {
         assertEquals(Short.MIN_VALUE, convert(Short.MIN_VALUE));
     }
 
     @Test
-    public void testMaxValue() {
+    public void maxValue() {
         assertEquals(Short.MAX_VALUE, convert(Short.MAX_VALUE));
     }
 
     @Test
-    public void testOverflow() {
+    public void overflow() {
         assertThrows(AgException.class, () -> ShortConverter.converter().value(new IntNode(Short.MAX_VALUE + 5)));
     }
 

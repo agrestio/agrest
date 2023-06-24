@@ -20,7 +20,7 @@ public class PUT_ConvertersIT extends MainDbTest {
             .build();
 
     @Test
-    public void testJson() {
+    public void json() {
 
         String e1 = "[{\"id\":5,\"json\":[1,2]},{\"id\":6,\"json\":{\"a\":1}},{\"id\":7,\"json\":5}]";
         tester.target("/e28/").put(e1).wasCreated();

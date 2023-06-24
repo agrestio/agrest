@@ -29,7 +29,7 @@ public class ProcessorTest {
     }
 
     @Test
-    public void testAndThen() {
+    public void andThen() {
 
         Processor<SelectContext<?>> start = c -> ProcessorOutcome.CONTINUE;
         start.andThen(shouldContinue1).andThen(shouldContinue2).execute(mockContext);
@@ -39,7 +39,7 @@ public class ProcessorTest {
     }
 
     @Test
-    public void testAndThen_Stop() {
+    public void andThen_Stop() {
 
         Processor<SelectContext<?>> start = c -> ProcessorOutcome.CONTINUE;
         start.andThen(shouldContinue1)

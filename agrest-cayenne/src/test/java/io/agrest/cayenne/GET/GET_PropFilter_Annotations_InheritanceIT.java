@@ -27,7 +27,7 @@ public class GET_PropFilter_Annotations_InheritanceIT extends InheritanceDbTest 
             .build();
 
     @Test
-    public void testSuper() {
+    public void aie1super() {
 
         tester.ie1().insertColumns("id", "type", "a0", "a1", "a2", "a3")
                 .values(10, 1, "v01", "v11", null, null)
@@ -45,7 +45,7 @@ public class GET_PropFilter_Annotations_InheritanceIT extends InheritanceDbTest 
     }
 
     @Test
-    public void testSuper_RequestOverlay() {
+    public void aie1super_RequestOverlay() {
 
         tester.ie1().insertColumns("id", "type", "a0", "a1", "a2", "a3")
                 .values(10, 1, "v01", "v11", null, null)

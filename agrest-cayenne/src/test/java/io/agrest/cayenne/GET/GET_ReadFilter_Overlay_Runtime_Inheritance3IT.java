@@ -33,7 +33,7 @@ public class GET_ReadFilter_Overlay_Runtime_Inheritance3IT extends InheritanceDb
             .build();
 
     @Test
-    public void testSuper_FilterSuperAttributesAtSub() {
+    public void super_FilterSuperAttributesAtSub() {
 
         tester.ie1().insertColumns("id", "type", "a0", "a1", "a2")
                 .values(10, 1, "v01", "v11", null)

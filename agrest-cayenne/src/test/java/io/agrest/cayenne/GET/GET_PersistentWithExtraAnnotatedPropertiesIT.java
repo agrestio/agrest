@@ -30,7 +30,7 @@ public class GET_PersistentWithExtraAnnotatedPropertiesIT extends MainDbTest {
     //  the test data in constructor
 
     @Test
-    public void testGET_Root() {
+    public void root() {
 
         tester.e15().insertColumns("long_id", "name").values(1L, "xxx").exec();
         tester.e14().insertColumns("e15_id", "long_id", "name").values(1L, 8L, "yyy").exec();
@@ -41,7 +41,7 @@ public class GET_PersistentWithExtraAnnotatedPropertiesIT extends MainDbTest {
     }
 
     @Test
-    public void testIncludeRelationship() {
+    public void includeRelationship() {
 
         tester.e15().insertColumns("long_id", "name").values(1L, "xxx").exec();
         tester.e14().insertColumns("e15_id", "long_id", "name").values(1L, 8L, "yyy").exec();
@@ -53,7 +53,7 @@ public class GET_PersistentWithExtraAnnotatedPropertiesIT extends MainDbTest {
     }
 
     @Test
-    public void testGET_Related() {
+    public void related() {
 
         tester.e15().insertColumns("long_id", "name").values(1L, "xxx").exec();
         tester.e14().insertColumns("e15_id", "long_id", "name").values(1L, 8L, "yyy").exec();

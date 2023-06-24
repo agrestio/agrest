@@ -42,7 +42,7 @@ public class DefaultRequestBuilder_IncludeObjectTest {
     }
 
     @Test
-    public void testExecute_IncludeObject_Path() {
+    public void execute_IncludeObject_Path() {
 
         Map<String, List<String>> params = Map.of("include", List.of("{\"path\":\"rtt\"}"));
         AgRequest request = builder
@@ -54,7 +54,7 @@ public class DefaultRequestBuilder_IncludeObjectTest {
     }
 
     @Test
-    public void testExecute_IncludeObject_MapBy() {
+    public void execute_IncludeObject_MapBy() {
 
         Map<String, List<String>> params = Map.of("include", List.of("{\"path\":\"rtt\",\"mapBy\":\"rtu\"}"));
         AgRequest request = builder

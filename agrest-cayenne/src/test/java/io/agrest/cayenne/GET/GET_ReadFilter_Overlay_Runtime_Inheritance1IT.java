@@ -28,7 +28,7 @@ public class GET_ReadFilter_Overlay_Runtime_Inheritance1IT extends InheritanceDb
             .build();
 
     @Test
-    public void testSuper_FilterSuperAttributes() {
+    public void super_FilterSuperAttributes() {
 
         tester.ie1().insertColumns("id", "type", "a0", "a1", "a2")
                 .values(10, 1, "allowed_v01", "v11", null)

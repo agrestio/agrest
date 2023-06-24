@@ -28,7 +28,7 @@ import static org.mockito.Mockito.mock;
 public class AgEntityOverlayTest {
 
     @Test
-    public void testResolve_attribute() {
+    public void resolve_attribute() {
         RootDataResolver<P1> r1 = mock(RootDataResolver.class);
 
         AgEntity<P1> e = new DefaultEntity<>(
@@ -52,7 +52,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_attribute_throwingFunction() {
+    public void resolve_attribute_throwingFunction() {
         RootDataResolver<P1> r1 = mock(RootDataResolver.class);
 
         AgEntity<P1> e = new DefaultEntity<>(
@@ -79,7 +79,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_RootResolver() {
+    public void resolve_RootResolver() {
         RootDataResolver<P1> r1 = mock(RootDataResolver.class);
         RootDataResolver<P1> r2 = mock(RootDataResolver.class);
 
@@ -103,7 +103,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_RootResolverFunction() {
+    public void resolve_RootResolverFunction() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -134,7 +134,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_readFilter() {
+    public void resolve_readFilter() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -160,7 +160,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_readFilter_Additivity() {
+    public void resolve_readFilter_Additivity() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -191,7 +191,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_readFilter_IgnoreOverlaid() {
+    public void resolve_readFilter_IgnoreOverlaid() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -224,7 +224,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_readFilter_IgnoreOverlaid_NoOverlayFilter() {
+    public void resolve_readFilter_IgnoreOverlaid_NoOverlayFilter() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -255,7 +255,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_createAuthorizer() {
+    public void resolve_createAuthorizer() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -282,7 +282,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_createAuthorizer_Additivity() {
+    public void resolve_createAuthorizer_Additivity() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -313,7 +313,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_createAuthorizer_IgnoreOverlaid() {
+    public void resolve_createAuthorizer_IgnoreOverlaid() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -346,7 +346,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_updateAuthorizer() {
+    public void resolve_updateAuthorizer() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -373,7 +373,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_updateAuthorizer_Additivity() {
+    public void resolve_updateAuthorizer_Additivity() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -404,7 +404,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_updateAuthorizer_IgnoreOverlaid() {
+    public void resolve_updateAuthorizer_IgnoreOverlaid() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -437,7 +437,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testMergeResolve_updateAuthorizer_IgnoreOverlaid() {
+    public void mergeResolve_updateAuthorizer_IgnoreOverlaid() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -472,7 +472,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_deleteAuthorizer() {
+    public void resolve_deleteAuthorizer() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -498,7 +498,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_deleteAuthorizer_Additivity() {
+    public void resolve_deleteAuthorizer_Additivity() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -529,7 +529,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_deleteAuthorizer_IgnoreOverlaid() {
+    public void resolve_deleteAuthorizer_IgnoreOverlaid() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -562,7 +562,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_propFilter_MakeInaccessible() {
+    public void resolve_propFilter_MakeInaccessible() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -586,7 +586,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_propFilter_MakeAccessible() {
+    public void resolve_propFilter_MakeAccessible() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",
@@ -610,7 +610,7 @@ public class AgEntityOverlayTest {
     }
 
     @Test
-    public void testResolve_propFilter_MakeIdInAccessible() {
+    public void resolve_propFilter_MakeIdInAccessible() {
 
         AgEntity<P1> e = new DefaultEntity<>(
                 "p1",

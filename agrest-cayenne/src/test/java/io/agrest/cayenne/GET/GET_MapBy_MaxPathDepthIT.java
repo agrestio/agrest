@@ -34,7 +34,7 @@ public class GET_MapBy_MaxPathDepthIT extends MainDbTest {
     }
 
     @Test
-    public void testDepth100_Default() {
+    public void depth100_Default() {
         tester.target("/e3")
                 .queryParam("include", "id")
                 .queryParam("mapBy", "e2.id")
@@ -44,7 +44,7 @@ public class GET_MapBy_MaxPathDepthIT extends MainDbTest {
     }
 
     @Test
-    public void testDepth0() {
+    public void depth0() {
         tester.target("/e3")
                 .queryParam("depth", 0)
                 .queryParam("include", "id")

@@ -23,7 +23,7 @@ public class GET_ReadFilter_AnnotationsIT extends MainDbTest {
             .build();
 
     @Test
-    public void testAnnotationReadableFlag_Attributes() {
+    public void annotationReadableFlag_Attributes() {
 
         tester.e10().insertColumns("id", "c_varchar", "c_int", "c_boolean", "c_date")
                 .values(1, "xxx", 5, true, "2014-01-02").exec();
@@ -35,7 +35,7 @@ public class GET_ReadFilter_AnnotationsIT extends MainDbTest {
     }
 
     @Test
-    public void testAnnotationReadableFlag_Relationship() {
+    public void annotationReadableFlag_Relationship() {
 
         tester.e10().insertColumns("id", "c_varchar", "c_int", "c_boolean", "c_date")
                 .values(1, "xxx", 5, true, "2014-01-02").exec();
@@ -50,7 +50,7 @@ public class GET_ReadFilter_AnnotationsIT extends MainDbTest {
     }
 
     @Test
-    public void testReadWithInclude_ToManyToOne_MiddleIdNotReadable() {
+    public void readWithInclude_ToManyToOne_MiddleIdNotReadable() {
 
         tester.e10().insertColumns("id", "c_boolean")
                 .values(1, true).exec();

@@ -46,7 +46,7 @@ public class IncludeMergerTest {
     }
 
     @Test
-    public void testMergeNothing() {
+    public void mergeNothing() {
 
         AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
@@ -58,7 +58,7 @@ public class IncludeMergerTest {
     }
 
     @Test
-    public void testMergeAttributes() {
+    public void mergeAttributes() {
 
         AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
@@ -70,7 +70,7 @@ public class IncludeMergerTest {
     }
 
     @Test
-    public void testMergeAttributesAndRelationships() {
+    public void mergeAttributesAndRelationships() {
 
         AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
@@ -82,7 +82,7 @@ public class IncludeMergerTest {
     }
 
     @Test
-    public void testMerge_AttributesAndRelationships_OverlappedPath() {
+    public void merge_AttributesAndRelationships_OverlappedPath() {
 
         AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
@@ -110,7 +110,7 @@ public class IncludeMergerTest {
     }
 
     @Test
-    public void testMerge_AttributesAndRelationships_OverlappedPath_Overlays() {
+    public void merge_AttributesAndRelationships_OverlappedPath_Overlays() {
 
         Map<Class<?>, AgEntityOverlay<?>> overlays = new HashMap<>();
         overlays.put(X.class, AgEntity

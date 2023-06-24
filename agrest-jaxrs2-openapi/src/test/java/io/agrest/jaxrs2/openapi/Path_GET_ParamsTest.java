@@ -33,7 +33,7 @@ public class Path_GET_ParamsTest {
             .build();
 
     @Test
-    public void testUriInfoParameters() {
+    public void uriInfoParameters() {
         PathItem pi = oapi.getPaths().get("/r/uri-info");
         Operation get = pi.getGet();
 
@@ -45,7 +45,7 @@ public class Path_GET_ParamsTest {
     }
 
     @Test
-    public void testExplicitParameters() {
+    public void explicitParameters() {
         PathItem pi = oapi.getPaths().get("/r/explicit-params");
         Operation get = pi.getGet();
 
@@ -61,7 +61,7 @@ public class Path_GET_ParamsTest {
     }
 
     @Test
-    public void testMixedParameters() {
+    public void mixedParameters() {
         PathItem pi = oapi.getPaths().get("/r/mixed-params");
         Operation get = pi.getGet();
 
@@ -73,7 +73,7 @@ public class Path_GET_ParamsTest {
     }
 
     @Test
-    public void testMixedParametersAgrest() {
+    public void mixedParametersAgrest() {
         PathItem pi = oapi.getPaths().get("/r/mixed-params-agrest");
         Operation get = pi.getGet();
 
@@ -85,7 +85,7 @@ public class Path_GET_ParamsTest {
     }
 
     @Test
-    public void testMixedParametersUriInfoHidden() {
+    public void mixedParametersUriInfoHidden() {
         PathItem pi = oapi.getPaths().get("/r/mixed-params-uri-info-hidden");
         Operation get = pi.getGet();
 
@@ -97,7 +97,7 @@ public class Path_GET_ParamsTest {
     }
 
     @Test
-    public void testUriInfo_NotParameter() {
+    public void uriInfo_NotParameter() {
         PathItem pi = oapi.getPaths().get("/r/uri-info-not-parameter");
         Operation get = pi.getGet();
         assertNull(get.getParameters());

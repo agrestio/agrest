@@ -35,7 +35,7 @@ public class GET_ConvertersIT extends MainDbTest  {
             .build();
 
     @Test
-    public void testTimestampAsUtilDate() {
+    public void timestampAsUtilDate() {
 
         LocalDateTime dateTime = LocalDateTime.of(2012, 2, 3, 11, 1, 2);
         tester.e4().insertColumns("c_timestamp").values(dateTime).exec();
@@ -45,7 +45,7 @@ public class GET_ConvertersIT extends MainDbTest  {
     }
 
     @Test
-    public void testDateAsUtilDate() {
+    public void dateAsUtilDate() {
 
         LocalDate date = LocalDate.of(2012, 2, 3);
         tester.e4().insertColumns("c_date").values(date).exec();
@@ -57,7 +57,7 @@ public class GET_ConvertersIT extends MainDbTest  {
     }
 
     @Test
-    public void testTimeAsUtilDate() {
+    public void timeAsUtilDate() {
         LocalTime lt = LocalTime.of(14, 0, 1);
         tester.e4().insertColumns("c_time").values(lt).exec();
         tester.target("/e4").queryParam("include", E4.C_TIME.getName())
@@ -67,7 +67,7 @@ public class GET_ConvertersIT extends MainDbTest  {
     }
 
     @Test
-    public void testSqlTimestamp() {
+    public void sqlTimestamp() {
 
         LocalDateTime ts = LocalDateTime.of(2012, 2, 3, 11, 1, 2);
         tester.e19().insertColumns("id", "c_timestamp")
@@ -80,7 +80,7 @@ public class GET_ConvertersIT extends MainDbTest  {
     }
 
     @Test
-    public void testSqlDate() {
+    public void sqlDate() {
 
         LocalDate date = LocalDate.of(2012, 2, 3);
         tester.e19().insertColumns("id", "c_date")
@@ -93,7 +93,7 @@ public class GET_ConvertersIT extends MainDbTest  {
     }
 
     @Test
-    public void testSqlTime() {
+    public void sqlTime() {
         LocalTime t = LocalTime.of(14, 0, 1);
         tester.e19().insertColumns("id", "c_time")
                 .values(35, t).exec();
@@ -105,7 +105,7 @@ public class GET_ConvertersIT extends MainDbTest  {
     }
 
     @Test
-    public void testByteArray() {
+    public void byteArray() {
 
         tester.e19().insertColumns("id", "guid").values(35, "someValue123".getBytes(StandardCharsets.UTF_8)).exec();
 
@@ -115,7 +115,7 @@ public class GET_ConvertersIT extends MainDbTest  {
     }
 
     @Test
-    public void testBoolean() {
+    public void _boolean() {
 
         tester.e19().insertColumns("id", "boolean_object", "boolean_primitive")
                 .values(35, true, true).exec();
@@ -126,7 +126,7 @@ public class GET_ConvertersIT extends MainDbTest  {
     }
 
     @Test
-    public void testByte() {
+    public void _byte() {
 
         tester.e19().insertColumns("id", "byte_object", "byte_primitive")
                 .values(35, 1, 2).exec();
@@ -138,7 +138,7 @@ public class GET_ConvertersIT extends MainDbTest  {
 
 
     @Test
-    public void testShort() {
+    public void _short() {
 
         tester.e19().insertColumns("id", "short_object", "short_primitive")
                 .values(35, 1, 2).exec();
@@ -150,7 +150,7 @@ public class GET_ConvertersIT extends MainDbTest  {
 
 
     @Test
-    public void testLong() {
+    public void _long() {
 
         tester.e19().insertColumns("id", "long_object", "long_primitive")
                 .values(35, 13434234234L, 13434234235L).exec();
@@ -161,7 +161,7 @@ public class GET_ConvertersIT extends MainDbTest  {
     }
 
     @Test
-    public void testBigInteger() {
+    public void bigInteger() {
 
         tester.e19().insertColumns("id", "big_integer")
                 .values(35, new BigInteger("1234567890")).exec();
@@ -172,7 +172,7 @@ public class GET_ConvertersIT extends MainDbTest  {
     }
 
     @Test
-    public void testBigDecimal() {
+    public void bigDecimal() {
 
         tester.e19().insertColumns("id", "big_decimal")
                 .values(35, new BigDecimal("123456789.12")).exec();
@@ -183,7 +183,7 @@ public class GET_ConvertersIT extends MainDbTest  {
     }
 
     @Test
-    public void testJson() {
+    public void json() {
 
         tester.e28().insertColumns("id", "json")
                 .values(35, "[1,2]")
@@ -202,7 +202,7 @@ public class GET_ConvertersIT extends MainDbTest  {
     }
 
     @Test
-    public void testJson_WithOtherProps() {
+    public void json_WithOtherProps() {
 
         tester.e28().insertColumns("id", "json")
                 .values(35, "[1,2]")

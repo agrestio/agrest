@@ -35,7 +35,7 @@ public class GET_Resolvers_MixedIT extends MainDbTest {
             .build();
 
     @Test
-    public void test_alt_resolver__parentids_joint_prefetch() {
+    public void alt_resolver__parentids_joint_prefetch() {
 
         tester.e5().insertColumns("id", "name")
                 .values(1, "e5_1")
@@ -68,7 +68,7 @@ public class GET_Resolvers_MixedIT extends MainDbTest {
     }
 
     @Test
-    public void test_alt_mix_up_relations() {
+    public void alt_mix_up_relations() {
 
         tester.e5().insertColumns("id", "name")
                 .values(1, "e5_1")

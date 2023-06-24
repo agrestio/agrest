@@ -24,7 +24,7 @@ public class GET_ExposedIdIT extends MainDbTest {
             .build();
 
     @Test
-    public void testById() {
+    public void byId() {
 
         tester.e23().insertColumns("id", "name")
                 .values(1, "abc")
@@ -36,7 +36,7 @@ public class GET_ExposedIdIT extends MainDbTest {
     }
 
     @Test
-    public void testIncludeFrom() {
+    public void includeFrom() {
 
         tester.e23().insertColumns("id", "name").values(1, "abc").exec();
         tester.e26().insertColumns("id", "e23_id").values(41, 1).exec();
@@ -49,7 +49,7 @@ public class GET_ExposedIdIT extends MainDbTest {
     }
 
     @Test
-    public void testIncludeTo() {
+    public void includeTo() {
 
         tester.e23().insertColumns("id", "name").values(1, "abc").exec();
         tester.e26().insertColumns("id", "e23_id").values(41, 1).exec();

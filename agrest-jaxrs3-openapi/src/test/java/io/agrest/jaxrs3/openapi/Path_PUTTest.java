@@ -32,7 +32,7 @@ public class Path_PUTTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"/r/single-untyped/{id}", "/r/single-wildcard/{id}"})
-    public void testSingleUntyped(String uri) {
+    public void singleUntyped(String uri) {
         PathItem pi = oapi.getPaths().get(uri);
         RequestBody rb = pi.getPut().getRequestBody();
         assertNotNull(rb);
@@ -49,7 +49,7 @@ public class Path_PUTTest {
     }
 
     @Test
-    public void testSingleUpdate() {
+    public void singleUpdate() {
         PathItem pi = oapi.getPaths().get("/r/single/{id}");
         RequestBody rb = pi.getPut().getRequestBody();
         assertNotNull(rb);
@@ -66,7 +66,7 @@ public class Path_PUTTest {
     }
 
     @Test
-    public void testUpdateCollection() {
+    public void updateCollection() {
         PathItem pi = oapi.getPaths().get("/r/collection");
         RequestBody rb = pi.getPut().getRequestBody();
         assertNotNull(rb);

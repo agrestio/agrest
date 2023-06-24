@@ -26,7 +26,7 @@ public class GET_MapByIT extends MainDbTest {
             .build();
 
     @Test
-    public void testMapByRootEntity() {
+    public void mapByRootEntity() {
 
         tester.e4().insertColumns("c_varchar", "c_int").values("xxx", 1)
                 .values("yyy", 2)
@@ -42,7 +42,7 @@ public class GET_MapByIT extends MainDbTest {
     }
 
     @Test
-    public void testMapBy_RelatedId() {
+    public void mapBy_RelatedId() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "zzz")
@@ -63,7 +63,7 @@ public class GET_MapByIT extends MainDbTest {
     }
 
     @Test
-    public void testMapBy_OverRelationship() {
+    public void mapBy_OverRelationship() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "zzz")

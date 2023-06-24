@@ -33,7 +33,7 @@ public class PUT_NaturalIdIT extends MainDbTest {
             .build();
 
     @Test
-    public void testSingleId() {
+    public void singleId() {
 
         tester.e20().insertColumns("name_col")
                 .values("John")
@@ -49,7 +49,7 @@ public class PUT_NaturalIdIT extends MainDbTest {
     }
 
     @Test
-    public void testSingle_Id_SeveralExistingObjects() {
+    public void single_Id_SeveralExistingObjects() {
         tester.e20().insertColumns("name_col")
                 .values("John")
                 .values("John").exec();
@@ -60,7 +60,7 @@ public class PUT_NaturalIdIT extends MainDbTest {
     }
 
     @Test
-    public void testMultiId() {
+    public void multiId() {
 
         tester.e21().insertColumns("age", "name")
                 .values(18, "John")
@@ -77,7 +77,7 @@ public class PUT_NaturalIdIT extends MainDbTest {
     }
 
     @Test
-    public void testSeveralExistingObjects_MultiId() {
+    public void severalExistingObjects_MultiId() {
         tester.e21().insertColumns("age", "name")
                 .values(18, "John")
                 .values(18, "John").exec();
@@ -91,7 +91,7 @@ public class PUT_NaturalIdIT extends MainDbTest {
     }
 
     @Test
-    public void testNaturalIdInPayload() {
+    public void naturalIdInPayload() {
 
         tester.e23().insertColumns("id", "name").values(12, "John").exec();
 
@@ -103,7 +103,7 @@ public class PUT_NaturalIdIT extends MainDbTest {
     }
 
     @Test
-    public void testNaturalIdInPayload_MasqueradingAsId() {
+    public void naturalIdInPayload_MasqueradingAsId() {
 
         tester.e23().insertColumns("id", "name").values(12, "John").exec();
 
@@ -115,7 +115,7 @@ public class PUT_NaturalIdIT extends MainDbTest {
     }
 
     @Test
-    public void testMultiId_MixedDbObj() {
+    public void multiId_MixedDbObj() {
 
         tester.target("/mixed-multi-id")
                 .put("{\"id\":{\"db:id1\":18,\"id2Prop\":345}}")

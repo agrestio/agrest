@@ -25,7 +25,7 @@ public class GET_SortIT extends MainDbTest {
 
 
     @Test
-    public void testSort_ById() {
+    public void sort_ById() {
 
         tester.e4().insertColumns("id")
                 .values(2)
@@ -41,7 +41,7 @@ public class GET_SortIT extends MainDbTest {
     }
 
     @Test
-    public void testSort_Invalid() {
+    public void sort_Invalid() {
 
         tester.target("/e4")
                 .queryParam("sort", "[{\"property\":\"xyz\",\"direction\":\"DESC\"}]")

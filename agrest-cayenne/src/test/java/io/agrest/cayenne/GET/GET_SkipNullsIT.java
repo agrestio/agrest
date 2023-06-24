@@ -25,7 +25,7 @@ public class GET_SkipNullsIT extends MainDbTest {
             .build();
 
     @Test
-    public void testAttributes() {
+    public void attributes() {
 
         tester.e3().insertColumns("id_", "name")
                 .values(6, null)
@@ -43,7 +43,7 @@ public class GET_SkipNullsIT extends MainDbTest {
     }
 
     @Test
-    public void testRelationships() {
+    public void relationships() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx").exec();
@@ -64,7 +64,7 @@ public class GET_SkipNullsIT extends MainDbTest {
     }
 
     @Test
-    public void testRelatedAttributes() {
+    public void relatedAttributes() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")

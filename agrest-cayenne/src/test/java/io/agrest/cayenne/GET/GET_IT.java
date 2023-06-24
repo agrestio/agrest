@@ -35,7 +35,7 @@ public class GET_IT extends MainDbTest {
             .build();
 
     @Test
-    public void testResponse() {
+    public void response() {
 
         tester.e4().insertColumns("id", "c_varchar", "c_int").values(1, "xxx", 5).exec();
 
@@ -48,7 +48,7 @@ public class GET_IT extends MainDbTest {
     }
 
     @Test
-    public void testIdCalledId() {
+    public void idCalledId() {
 
         tester.e31().insertColumns("id", "name").values(5, "30").values(4, "31").exec();
 
@@ -60,7 +60,7 @@ public class GET_IT extends MainDbTest {
     }
 
     @Test
-    public void testById() {
+    public void byId() {
 
         tester.e4().insertColumns("id")
                 .values(2)
@@ -76,7 +76,7 @@ public class GET_IT extends MainDbTest {
     }
 
     @Test
-    public void testById_Params() {
+    public void byId_Params() {
 
         tester.e4().insertColumns("id")
                 .values(2)
@@ -93,14 +93,14 @@ public class GET_IT extends MainDbTest {
     }
 
     @Test
-    public void testById_NotFound() {
+    public void byId_NotFound() {
         tester.target("/e4/2").get()
                 .wasNotFound()
                 .bodyEquals("{\"message\":\"No object for ID '2' and entity 'E4'\"}");
     }
 
     @Test
-    public void testById_IncludeRelationship() {
+    public void byId_IncludeRelationship() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
         tester.e3().insertColumns("id_", "name", "e2_id")
@@ -121,7 +121,7 @@ public class GET_IT extends MainDbTest {
     }
 
     @Test
-    public void testRelationshipSort() {
+    public void relationshipSort() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "zzz")
@@ -145,7 +145,7 @@ public class GET_IT extends MainDbTest {
     }
 
     @Test
-    public void testRelationshipStartLimit() {
+    public void relationshipStartLimit() {
 
         // TODO: run this test with different combinations of Resolvers.
         //  Suspect that not all resolvers would support limits filtering of the result
@@ -171,7 +171,7 @@ public class GET_IT extends MainDbTest {
     }
 
     @Test
-    public void testToOne_Null() {
+    public void toOne_Null() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
 
@@ -188,7 +188,7 @@ public class GET_IT extends MainDbTest {
     }
 
     @Test
-    public void testCharPK() {
+    public void charPK() {
 
         tester.e6().insertColumns("char_id", "char_column").values("a", "aaa").exec();
 
@@ -196,7 +196,7 @@ public class GET_IT extends MainDbTest {
     }
 
     @Test
-    public void testByCompoundId() {
+    public void byCompoundId() {
 
         tester.e17().insertColumns("id1", "id2", "name").values(1, 1, "aaa").exec();
 
@@ -209,7 +209,7 @@ public class GET_IT extends MainDbTest {
 
     @Test
     // Reproduces https://github.com/agrestio/agrest/issues/478
-    public void testCompoundId_PartiallyMapped_DiffPropNames() {
+    public void compoundId_PartiallyMapped_DiffPropNames() {
 
         tester.e29().insertColumns("id1", "id2").values(1, 15).exec();
         tester.target("/e29")
@@ -220,7 +220,7 @@ public class GET_IT extends MainDbTest {
     }
 
     @Test
-    public void testByCompoundDbId() {
+    public void byCompoundDbId() {
 
         tester.e29().insertColumns("id1", "id2")
                 .values(1, 15)
@@ -234,7 +234,7 @@ public class GET_IT extends MainDbTest {
     }
 
     @Test
-    public void testById_EscapeLineSeparators() {
+    public void byId_EscapeLineSeparators() {
 
         tester.e4().insertColumns("id", "c_varchar").values(1, "First line\u2028Second line...\u2029").exec();
 

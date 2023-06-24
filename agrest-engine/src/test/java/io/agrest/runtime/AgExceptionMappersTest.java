@@ -13,13 +13,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AgExceptionMappersTest {
 
     @Test
-    public void testToAgException_Default() {
+    public void toAgException_Default() {
         AgException e = new AgExceptionMappers(Collections.emptyMap()).toAgException(new Throwable());
         assertException(500, "Exception processing Agrest request", e);
     }
 
     @Test
-    public void testToAgException() {
+    public void toAgException() {
 
         Map<String, AgExceptionMapper<?>> map = new HashMap<>();
         map.put(IllegalStateException.class.getName(), new IllegalStateMapper());
@@ -35,7 +35,7 @@ public class AgExceptionMappersTest {
     }
 
     @Test
-    public void testLocateMapper_ExplicitlyMapped() {
+    public void locateMapper_ExplicitlyMapped() {
         Map<String, AgExceptionMapper<?>> map = new HashMap<>();
         map.put(RuntimeException.class.getName(), new RuntimeMapper());
         map.put(IllegalArgumentException.class.getName(), new IllegalArgumentMapper());
@@ -48,7 +48,7 @@ public class AgExceptionMappersTest {
     }
 
     @Test
-    public void testLocateMapper_SuperException() {
+    public void locateMapper_SuperException() {
         Map<String, AgExceptionMapper<?>> map = new HashMap<>();
         map.put(RuntimeException.class.getName(), new RuntimeMapper());
         map.put(IllegalArgumentException.class.getName(), new IllegalArgumentMapper());
@@ -62,7 +62,7 @@ public class AgExceptionMappersTest {
     }
 
     @Test
-    public void testLocateMapper_DefaultMapper() {
+    public void locateMapper_DefaultMapper() {
         Map<String, AgExceptionMapper<?>> map = new HashMap<>();
         map.put(RuntimeException.class.getName(), new RuntimeMapper());
         map.put(IllegalArgumentException.class.getName(), new IllegalArgumentMapper());

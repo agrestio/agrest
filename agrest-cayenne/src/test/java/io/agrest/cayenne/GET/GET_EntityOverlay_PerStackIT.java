@@ -51,7 +51,7 @@ public class GET_EntityOverlay_PerStackIT extends MainDbTest {
     }
 
     @Test
-    public void testRedefineToOne() {
+    public void redefineToOne() {
 
         tester.e22().insertColumns("id")
                 .values(1)
@@ -74,7 +74,7 @@ public class GET_EntityOverlay_PerStackIT extends MainDbTest {
     }
 
     @Test
-    public void test_Overlay_HidingId() {
+    public void overlay_HidingId() {
 
         tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
         tester.e3().insertColumns("id_", "name", "phone_number", "e2_id")

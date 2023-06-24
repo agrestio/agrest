@@ -30,7 +30,7 @@ public class PUT_CreateAuthorizerIT extends MainDbTest {
             ).build();
 
     @Test
-    public void testInStack_Allowed() {
+    public void inStack_Allowed() {
 
         tester.target("/e2_stack_authorizer")
                 .put("[{\"name\":\"Bb\"},{\"name\":\"Aa\"}]")
@@ -42,7 +42,7 @@ public class PUT_CreateAuthorizerIT extends MainDbTest {
     }
 
     @Test
-    public void testInStack_Blocked() {
+    public void inStack_Blocked() {
 
         tester.target("/e2_stack_authorizer")
                 .put("[{\"name\":\"Bb\"},{\"name\":\"blocked\"}]")
@@ -52,7 +52,7 @@ public class PUT_CreateAuthorizerIT extends MainDbTest {
     }
 
     @Test
-    public void testInRequestAndStack_Allowed() {
+    public void inRequestAndStack_Allowed() {
 
         tester.target("/e2_request_and_stack_authorizer/not_this")
                 .put("[{\"name\":\"Bb\"},{\"name\":\"Aa\"}]")
@@ -64,7 +64,7 @@ public class PUT_CreateAuthorizerIT extends MainDbTest {
     }
 
     @Test
-    public void testInRequestAndStack_Blocked() {
+    public void inRequestAndStack_Blocked() {
 
         tester.target("/e2_request_and_stack_authorizer/not_this")
                 .put("[{\"name\":\"Bb\"},{\"name\":\"blocked\"}]")

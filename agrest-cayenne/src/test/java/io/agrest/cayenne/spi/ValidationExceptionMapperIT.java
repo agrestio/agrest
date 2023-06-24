@@ -28,7 +28,7 @@ public class ValidationExceptionMapperIT extends MainDbTest {
     static final MainModelTester tester = tester(Resource.class).build();
 
     @Test
-    public void testException() {
+    public void exception() {
         tester.target("/g1/1").get()
                 .wasBadRequest()
                 .bodyEquals("{\"message\":\"Object validation failed\"}");

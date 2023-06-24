@@ -45,7 +45,7 @@ public class DefaultRequestBuilderTest {
     }
 
     @Test
-    public void testBuild_Defaults() {
+    public void build_Defaults() {
 
         AgRequest request = builder.build();
 
@@ -60,7 +60,7 @@ public class DefaultRequestBuilderTest {
     }
 
     @Test
-    public void testBuild_Include() {
+    public void build_Include() {
 
         Map<String, List<String>> params = Map.of("include", List.of("a", "b"));
 
@@ -74,7 +74,7 @@ public class DefaultRequestBuilderTest {
     }
 
     @Test
-    public void testBuild_Include_Array() {
+    public void build_Include_Array() {
 
         Map<String, List<String>> params = Map.of("include", List.of("[\"a\", \"b\"]"));
         AgRequest request = builder.mergeClientParams(params).build();
@@ -85,7 +85,7 @@ public class DefaultRequestBuilderTest {
     }
 
     @Test
-    public void testBuild_Exclude() {
+    public void build_Exclude() {
 
         Map<String, List<String>> params = Map.of("exclude", List.of("a", "b"));
         AgRequest request = builder.mergeClientParams(params).build();
@@ -96,7 +96,7 @@ public class DefaultRequestBuilderTest {
     }
 
     @Test
-    public void testBuild_Exclude_Array() {
+    public void build_Exclude_Array() {
 
         Map<String, List<String>> params = Map.of("exclude", List.of("[\"a\", \"b\"]"));
         AgRequest request = builder.mergeClientParams(params).build();
@@ -107,7 +107,7 @@ public class DefaultRequestBuilderTest {
     }
 
     @Test
-    public void testBuild_IncludeExclude() {
+    public void build_IncludeExclude() {
 
         Map<String, List<String>> params = Map.of(
                 "include", List.of("a", "b", "id"),
@@ -125,7 +125,7 @@ public class DefaultRequestBuilderTest {
     }
 
     @Test
-    public void testBuild_IncludeRels() {
+    public void build_IncludeRels() {
 
         Map<String, List<String>> params = Map.of("include", List.of("rtss"));
         AgRequest request = builder.mergeClientParams(params).build();
@@ -135,7 +135,7 @@ public class DefaultRequestBuilderTest {
     }
 
     @Test
-    public void testBuild_SortSimple_NoDir() {
+    public void build_SortSimple_NoDir() {
 
         Map<String, List<String>> params = Map.of("sort", List.of("rtss"));
         AgRequest request = builder.mergeClientParams(params).build();
@@ -146,7 +146,7 @@ public class DefaultRequestBuilderTest {
     }
 
     @Test
-    public void testBuild_SortSimple_ASC() {
+    public void build_SortSimple_ASC() {
 
         Map<String, List<String>> params = Map.of(
                 "sort", List.of("rtss"),
@@ -162,7 +162,7 @@ public class DefaultRequestBuilderTest {
     }
 
     @Test
-    public void testBuild_SortSimple_DESC() {
+    public void build_SortSimple_DESC() {
 
         Map<String, List<String>> params = Map.of(
                 "sort", List.of("rtss"),
@@ -178,7 +178,7 @@ public class DefaultRequestBuilderTest {
     }
 
     @Test
-    public void testBuild_SortSimple_Garbage() {
+    public void build_SortSimple_Garbage() {
 
         Map<String, List<String>> params = Map.of(
                 "sort", List.of("xx"),
@@ -188,7 +188,7 @@ public class DefaultRequestBuilderTest {
     }
 
     @Test
-    public void testBuild_Sort() {
+    public void build_Sort() {
 
         Map<String, List<String>> params = Map.of(
                 "sort", List.of("[{\"path\":\"a\",\"direction\":\"DESC\"},{\"path\":\"b\",\"direction\":\"ASC\"}]"));
@@ -208,7 +208,7 @@ public class DefaultRequestBuilderTest {
     }
 
     @Test
-    public void testBuild_Sort_Dupes() {
+    public void build_Sort_Dupes() {
 
         Map<String, List<String>> params = Map.of(
                 "sort", List.of("[{\"path\":\"a\",\"direction\":\"DESC\"},{\"path\":\"a\",\"direction\":\"ASC\"}]"));
@@ -228,13 +228,13 @@ public class DefaultRequestBuilderTest {
     }
 
     @Test
-    public void testBuild_Sort_BadSpec() {
+    public void build_Sort_BadSpec() {
         Map<String, List<String>> params = Map.of("sort", List.of("[{\"path\":\"p1\",\"direction\":\"DESC\"},{\"path\":\"p2\",\"direction\":\"XXX\"}]"));
         assertThrows(AgException.class, () -> builder.mergeClientParams(params).build());
     }
 
     @Test
-    public void testBuild_Exp_BadSpec() {
+    public void build_Exp_BadSpec() {
         Map<String, List<String>> params = Map.of(
                 "exp", List.of("{exp : \"numericProp = 12345 and stringProp = 'John Smith' and booleanProp = true\"}"));
 
@@ -242,7 +242,7 @@ public class DefaultRequestBuilderTest {
     }
 
     @Test
-    public void testBuild_Exp() {
+    public void build_Exp() {
 
         Map<String, List<String>> params = Map.of("exp", List.of("{\"exp\" : \"a = 'John Smith'\"}"));
         AgRequest request = builder.mergeClientParams(params).build();

@@ -32,7 +32,7 @@ public class ConstraintsHandlerTest {
     }
 
     @Test
-    public void testConstrainResponseSize_FetchOffset() {
+    public void constrainResponseSize_FetchOffset() {
 
         AgEntity<Tr> entity = schema.getEntity(Tr.class);
 
@@ -65,7 +65,7 @@ public class ConstraintsHandlerTest {
     }
 
     @Test
-    public void testConstrainResponseSize_FetchLimit() {
+    public void constrainResponseSize_FetchLimit() {
 
         AgEntity<Tr> entity = schema.getEntity(Tr.class);
 

@@ -34,7 +34,7 @@ public class POST_Parent_IT extends MainDbTest {
             .build();
 
     @Test
-    public void testRelate_ToMany_New() {
+    public void relate_ToMany_New() {
 
         tester.e2().insertColumns("id_", "name").values(24, "xxx").exec();
 
@@ -49,7 +49,7 @@ public class POST_Parent_IT extends MainDbTest {
     }
 
     @Test
-    public void testRelate_ToMany_New_CompoundId() {
+    public void relate_ToMany_New_CompoundId() {
 
         tester.e17().insertColumns("id1", "id2", "name")
                 .values(1, 1, "aaa").exec();
@@ -68,7 +68,7 @@ public class POST_Parent_IT extends MainDbTest {
     }
 
     @Test
-    public void testRelate_ToMany_MixedCollection() {
+    public void relate_ToMany_MixedCollection() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(15, "xxx")
@@ -102,7 +102,7 @@ public class POST_Parent_IT extends MainDbTest {
     }
 
     @Test
-    public void testToManyJoin() {
+    public void toManyJoin() {
 
         tester.e12().insertColumns("id")
                 .values(11)

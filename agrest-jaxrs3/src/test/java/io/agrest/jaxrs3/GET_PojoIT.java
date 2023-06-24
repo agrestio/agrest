@@ -32,7 +32,7 @@ public class GET_PojoIT extends PojoTest {
     static final AgPojoTester tester = PojoTest.tester(Resource.class).build();
 
     @Test
-    public void testById() {
+    public void byId() {
 
         P6 o1 = new P6();
         o1.setIntProp(15);
@@ -49,7 +49,7 @@ public class GET_PojoIT extends PojoTest {
     }
 
     @Test
-    public void testById_MultiKey() {
+    public void byId_MultiKey() {
 
         P10 o1 = new P10();
         o1.setId1(5);
@@ -71,7 +71,7 @@ public class GET_PojoIT extends PojoTest {
 
 
     @Test
-    public void test() {
+    public void basic() {
 
         P6 o1 = new P6();
         o1.setIntProp(15);
@@ -89,7 +89,7 @@ public class GET_PojoIT extends PojoTest {
     }
 
     @Test
-    public void testIncludeToOne() {
+    public void includeToOne() {
 
         P3 o0 = new P3();
         o0.setName("xx3");
@@ -105,7 +105,7 @@ public class GET_PojoIT extends PojoTest {
     }
 
     @Test
-    public void testNoId() {
+    public void noId() {
 
         P1 o1 = new P1();
         o1.setName("n2");
@@ -120,7 +120,7 @@ public class GET_PojoIT extends PojoTest {
     }
 
     @Test
-    public void testWithTime() {
+    public void withTime() {
 
         P9 o9 = new P9();
         o9.setName("p9name1");
@@ -135,7 +135,7 @@ public class GET_PojoIT extends PojoTest {
     }
 
     @Test
-    public void testMapBy() {
+    public void mapBy() {
 
         P1 o1 = new P1();
         o1.setName("n2");
@@ -150,7 +150,7 @@ public class GET_PojoIT extends PojoTest {
     }
 
     @Test
-    public void testCollectionAttributes() {
+    public void collectionAttributes() {
 
         P8 o1 = new P8();
         o1.setId(1);
@@ -178,7 +178,7 @@ public class GET_PojoIT extends PojoTest {
     }
 
     @Test
-    public void testGetEmpty() {
+    public void getEmpty() {
 
         P1 o1 = new P1();
         o1.setName("n2");

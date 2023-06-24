@@ -24,7 +24,7 @@ public class GET_Request_EntityAttributeIT extends MainDbTest {
             .build();
 
     @Test
-    public void testRequest_Property() {
+    public void request_Property() {
 
         tester.e4().insertColumns("id").values(1).values(2).exec();
 
@@ -37,7 +37,7 @@ public class GET_Request_EntityAttributeIT extends MainDbTest {
     }
 
     @Test
-    public void testRequest_Property_Exclude() {
+    public void request_Property_Exclude() {
 
         tester.e4().insertColumns("id").values(1).values(2).exec();
 
@@ -49,7 +49,7 @@ public class GET_Request_EntityAttributeIT extends MainDbTest {
     }
 
     @Test
-    public void testRequest_ShadowProperty() {
+    public void request_ShadowProperty() {
 
         tester.e3().insertColumns("id_", "name")
                 .values(1, "x")
@@ -63,7 +63,7 @@ public class GET_Request_EntityAttributeIT extends MainDbTest {
     }
 
     @Test
-    public void testRequest_ShadowProperty_Exclude() {
+    public void request_ShadowProperty_Exclude() {
 
         tester.e3().insertColumns("id_", "name")
                 .values(1, "x")

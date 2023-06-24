@@ -44,7 +44,7 @@ public class EncoderFactory_Pojo_Test {
     }
 
     @Test
-    public void testEncode_SimplePojo_noId() {
+    public void encode_SimplePojo_noId() {
         AgEntity<P1> p1e = schema.getEntity(P1.class);
         RootResourceEntity<P1> re = new RootResourceEntity<>(p1e);
         re.ensureAttribute("name", false);
@@ -55,7 +55,7 @@ public class EncoderFactory_Pojo_Test {
     }
 
     @Test
-    public void testEncode_SimplePojo_Id() {
+    public void encode_SimplePojo_Id() {
 
         AgEntity<P6> p6e = schema.getEntity(P6.class);
 

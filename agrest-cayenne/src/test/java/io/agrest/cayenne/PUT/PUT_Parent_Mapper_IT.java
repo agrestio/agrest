@@ -27,7 +27,7 @@ public class PUT_Parent_Mapper_IT extends MainDbTest {
             .build();
 
     @Test
-    public void testRelate_ToMany_MixedCollection() {
+    public void relate_ToMany_MixedCollection() {
 
         tester.e8().insertColumns("id", "name")
                 .values(15, "xxx")
@@ -59,7 +59,7 @@ public class PUT_Parent_Mapper_IT extends MainDbTest {
     }
 
     @Test
-    public void testRelate_ToMany_PropertyMapper() {
+    public void relate_ToMany_PropertyMapper() {
 
         tester.e8().insertColumns("id", "name")
                 .values(15, "xxx")
@@ -79,7 +79,7 @@ public class PUT_Parent_Mapper_IT extends MainDbTest {
     }
 
     @Test
-    public void testToMany_LongId() {
+    public void toMany_LongId() {
 
         tester.e15().insertColumns("long_id", "name")
                 .values(5L, "aaa")

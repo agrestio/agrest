@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class Base64ConverterTest {
 
 	@Test
-	public void testValueNonNull() {
+	public void valueNonNull() {
 		Base64Converter converter = new Base64Converter();
 		JsonNode node = new TextNode("bXl0ZXN0");
 		byte[] bytes = (byte[]) converter.valueNonNull(node);

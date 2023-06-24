@@ -30,7 +30,7 @@ public class AgRuntimeBuilder_ExceptionMappersIT {
     }
 
     @Test
-    public void testExceptionMapper_OverrideStandardMapper() {
+    public void exceptionMapper_OverrideStandardMapper() {
 
         try {
             tester.runtime()
@@ -45,7 +45,7 @@ public class AgRuntimeBuilder_ExceptionMappersIT {
     }
 
     @Test
-    public void testExceptionMapper_CustomExceptionMapper() {
+    public void exceptionMapper_CustomExceptionMapper() {
 
         try {
             tester.runtime()

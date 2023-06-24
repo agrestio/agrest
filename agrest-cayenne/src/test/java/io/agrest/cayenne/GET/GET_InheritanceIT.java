@@ -27,7 +27,7 @@ public class GET_InheritanceIT extends InheritanceDbTest {
             .build();
 
     @Test
-    public void testSuperclass() {
+    public void superclass() {
 
         tester.ie1().insertColumns("id", "type", "a0", "a1", "a2", "a3")
                 .values(10, 1, "v01", "v11", null, null)
@@ -45,7 +45,7 @@ public class GET_InheritanceIT extends InheritanceDbTest {
     }
 
     @Test
-    public void testSuperclass_Includes() {
+    public void superclass_Includes() {
 
         tester.ie1().insertColumns("id", "type", "a0", "a1", "a2", "a3")
                 .values(10, 1, "v01", "v11", null, null)
@@ -65,7 +65,7 @@ public class GET_InheritanceIT extends InheritanceDbTest {
     }
 
     @Test
-    public void testSuperclass_Includes_Relationships() {
+    public void superclass_Includes_Relationships() {
 
         tester.ie2().insertColumns("id")
                 .values(1)
@@ -94,7 +94,7 @@ public class GET_InheritanceIT extends InheritanceDbTest {
     }
 
     @Test
-    public void testSuperclass_Excludes() {
+    public void superclass_Excludes() {
 
         tester.ie1().insertColumns("id", "type", "a0", "a1", "a2", "a3")
                 .values(10, 1, "v01", "v11", null, null)
@@ -114,7 +114,7 @@ public class GET_InheritanceIT extends InheritanceDbTest {
     }
 
     @Test
-    public void testSubclass() {
+    public void subclass() {
 
         tester.ie1().insertColumns("id", "type", "a0", "a1", "a2")
                 .values(10, 1, "v01", "v11", null)
@@ -128,7 +128,7 @@ public class GET_InheritanceIT extends InheritanceDbTest {
     }
 
     @Test
-    public void testRelatedSuperclass() {
+    public void relatedSuperclass() {
 
         tester.ie1().insertColumns("id", "type", "a0", "a1", "a2", "a3")
                 .values(10, 1, "v01", "v11", null, null)
@@ -153,7 +153,7 @@ public class GET_InheritanceIT extends InheritanceDbTest {
     }
 
     @Test
-    public void testRelatedSuperclass_IncludeRelationships() {
+    public void relatedSuperclass_IncludeRelationships() {
 
         tester.ie2().insertColumns("id")
                 .values(1)
@@ -185,7 +185,7 @@ public class GET_InheritanceIT extends InheritanceDbTest {
     }
 
     @Test
-    public void testRelatedSubclass() {
+    public void relatedSubclass() {
 
         tester.ie2().insertColumns("id")
                 .values(1)

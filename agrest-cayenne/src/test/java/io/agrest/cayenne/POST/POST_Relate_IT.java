@@ -26,7 +26,7 @@ public class POST_Relate_IT extends MainDbTest {
             .build();
 
     @Test
-    public void testToOne() {
+    public void toOne() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -43,7 +43,7 @@ public class POST_Relate_IT extends MainDbTest {
     }
 
     @Test
-    public void testToOne_Null() {
+    public void toOne_Null() {
 
         tester.target("/e3")
                 .post("{\"e2\":null,\"name\":\"MM\"}")
@@ -56,7 +56,7 @@ public class POST_Relate_IT extends MainDbTest {
     }
 
     @Test
-    public void testToOne_BadFK() {
+    public void toOne_BadFK() {
 
         tester.target("/e3")
                 .post("{\"e2\":15,\"name\":\"MM\"}")
@@ -67,7 +67,7 @@ public class POST_Relate_IT extends MainDbTest {
     }
 
     @Test
-    public void testToMany() {
+    public void toMany() {
 
         tester.e3().insertColumns("id_", "name")
                 .values(1, "xxx")

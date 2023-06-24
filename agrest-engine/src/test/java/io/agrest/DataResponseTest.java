@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 public class DataResponseTest {
 
     @Test
-    public void testOf() {
+    public void of() {
 
         List<Tr> objects = asList(new Tr(), new Tr());
         Encoder encoder = mock(Encoder.class);

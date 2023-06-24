@@ -81,7 +81,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_Default() {
+    public void execute_Default() {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
                 requestBuilderFactory.builder(),
@@ -101,7 +101,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_Include() {
+    public void execute_Include() {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
                 requestBuilderFactory.builder(),
@@ -127,7 +127,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_Exclude() {
+    public void execute_Exclude() {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
                 requestBuilderFactory.builder(),
@@ -151,7 +151,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_IncludeExcludeAttrs() {
+    public void execute_IncludeExcludeAttrs() {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
                 requestBuilderFactory.builder(),
@@ -185,7 +185,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_IncludeRels() {
+    public void execute_IncludeRels() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
@@ -217,7 +217,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_IncludeBothAttrs() {
+    public void execute_IncludeBothAttrs() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
@@ -249,7 +249,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_IncludeExcludeBothAttrs() {
+    public void execute_IncludeExcludeBothAttrs() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
@@ -284,7 +284,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_IncludeExcludeBothAttrs2() {
+    public void execute_IncludeExcludeBothAttrs2() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
@@ -319,7 +319,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_IncludeRelationshipIds() {
+    public void execute_IncludeRelationshipIds() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
@@ -349,7 +349,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_SortSimple_NoDir() {
+    public void execute_SortSimple_NoDir() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
@@ -369,7 +369,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_SortSimple_ASC() {
+    public void execute_SortSimple_ASC() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
@@ -390,7 +390,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_SortSimple_DESC() {
+    public void execute_SortSimple_DESC() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
@@ -411,7 +411,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_Sort() {
+    public void execute_Sort() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
@@ -432,7 +432,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_Exp_BadSpec() {
+    public void execute_Exp_BadSpec() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),
@@ -446,7 +446,7 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_Exp() {
+    public void execute_Exp() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
                 requestBuilderFactory.builder(),

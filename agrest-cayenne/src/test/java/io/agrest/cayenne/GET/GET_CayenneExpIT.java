@@ -24,7 +24,7 @@ public class GET_CayenneExpIT extends MainDbTest {
             .build();
 
     @Test
-    public void testMap() {
+    public void map() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -38,7 +38,7 @@ public class GET_CayenneExpIT extends MainDbTest {
     }
 
     @Test
-    public void testMap_Params() {
+    public void map_Params() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -53,7 +53,7 @@ public class GET_CayenneExpIT extends MainDbTest {
     }
 
     @Test
-    public void testBare() {
+    public void bare() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -69,7 +69,7 @@ public class GET_CayenneExpIT extends MainDbTest {
     }
 
     @Test
-    public void testList() {
+    public void list() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -84,7 +84,7 @@ public class GET_CayenneExpIT extends MainDbTest {
     }
 
     @Test
-    public void testList_Params() {
+    public void list_Params() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -99,7 +99,7 @@ public class GET_CayenneExpIT extends MainDbTest {
     }
 
     @Test
-    public void testIn_Array() {
+    public void in_Array() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -118,7 +118,7 @@ public class GET_CayenneExpIT extends MainDbTest {
     }
 
     @Test
-    public void testNotIn_Array() {
+    public void notIn_Array() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -136,7 +136,7 @@ public class GET_CayenneExpIT extends MainDbTest {
     }
 
     @Test
-    public void testOuter() {
+    public void outer() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -154,7 +154,7 @@ public class GET_CayenneExpIT extends MainDbTest {
     }
 
     @Test
-    public void testOuter_Relationship() {
+    public void outer_Relationship() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -172,7 +172,7 @@ public class GET_CayenneExpIT extends MainDbTest {
     }
 
     @Test
-    public void testOuter_To_Many_Relationship() {
+    public void outer_To_Many_Relationship() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -190,7 +190,7 @@ public class GET_CayenneExpIT extends MainDbTest {
     }
 
     @Test
-    public void testIn_TwoObjects() {
+    public void in_TwoObjects() {
 
         tester.e3().insertColumns("id_", "name")
                 .values(8, "yyy")
@@ -204,7 +204,7 @@ public class GET_CayenneExpIT extends MainDbTest {
     }
 
     @Test
-    public void testIn_TwoRelatedObjects() {
+    public void in_TwoRelatedObjects() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -222,7 +222,7 @@ public class GET_CayenneExpIT extends MainDbTest {
     }
 
     @Test
-    public void testNotIn_ById() {
+    public void notIn_ById() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -239,7 +239,7 @@ public class GET_CayenneExpIT extends MainDbTest {
     }
 
     @Test
-    public void testNotIn_By2Ids() {
+    public void notIn_By2Ids() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")

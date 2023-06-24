@@ -27,7 +27,7 @@ public class PUT_EntityUpdateBindingIT extends MainDbTest {
             .build();
 
     @Test
-    public void testSingle() {
+    public void single() {
 
         tester.e3().insertColumns("id_", "name").values(3, "zzz").exec();
 
@@ -39,7 +39,7 @@ public class PUT_EntityUpdateBindingIT extends MainDbTest {
     }
 
     @Test
-    public void testCollection() {
+    public void collection() {
 
         tester.e3().insertColumns("id_", "name")
                 .values(3, "zzz")

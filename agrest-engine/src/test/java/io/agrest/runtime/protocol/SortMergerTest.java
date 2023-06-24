@@ -42,7 +42,7 @@ public class SortMergerTest {
     }
 
     @Test
-    public void testMerge_Array() {
+    public void merge_Array() {
 
         merger.merge(entity, asList(new Sort("a"), new Sort("b")), PathChecker.ofDefault());
 
@@ -52,7 +52,7 @@ public class SortMergerTest {
     }
 
     @Test
-    public void testMerge_Simple() {
+    public void merge_Simple() {
 
         merger.merge(entity, List.of(new Sort("a")), PathChecker.ofDefault());
 

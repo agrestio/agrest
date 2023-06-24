@@ -29,7 +29,7 @@ public class Entity_NoPropertyConflictsTest {
     @ParameterizedTest
     @ValueSource(strings = {"P7", "P8"})
     @DisplayName("No conflicts in value Schemas of the same type and same name")
-    public void testSameProperty(String entity) {
+    public void sameProperty(String entity) {
 
         Map<String, Schema> props = oapi.getComponents().getSchemas().get(entity).getProperties();
 
@@ -41,7 +41,7 @@ public class Entity_NoPropertyConflictsTest {
 
     @Test
     @DisplayName("No conflicts in value Schemas of the same type, but different name")
-    public void testSimilarProperty() {
+    public void similarProperty() {
 
         Map<String, Schema> p7Props = oapi.getComponents().getSchemas().get("P7").getProperties();
         Schema otherP7 = p7Props.get("otherP7");

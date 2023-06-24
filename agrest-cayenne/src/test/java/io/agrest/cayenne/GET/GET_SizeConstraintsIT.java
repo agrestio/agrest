@@ -24,7 +24,7 @@ public class GET_SizeConstraintsIT extends MainDbTest {
     // TODO: unclear what server-side fetch offset protects? so not testing it here.
 
     @Test
-    public void testNoClientLimit() {
+    public void noClientLimit() {
 
         tester.e4().insertColumns("id")
                 .values(1)
@@ -39,7 +39,7 @@ public class GET_SizeConstraintsIT extends MainDbTest {
     }
 
     @Test
-    public void testClientLimitBelowServerLimit() {
+    public void clientLimitBelowServerLimit() {
 
         tester.e4().insertColumns("id")
                 .values(1)
@@ -55,7 +55,7 @@ public class GET_SizeConstraintsIT extends MainDbTest {
     }
 
     @Test
-    public void testClientLimitExceedsServerLimit() {
+    public void clientLimitExceedsServerLimit() {
 
         tester.e4().insertColumns("id")
                 .values(1)

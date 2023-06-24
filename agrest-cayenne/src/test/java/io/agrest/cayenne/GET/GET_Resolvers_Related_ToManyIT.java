@@ -28,7 +28,7 @@ public class GET_Resolvers_Related_ToManyIT extends MainDbTest {
             .build();
 
     @Test
-    public void test_JointPrefetchResolver() {
+    public void jointPrefetchResolver() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -54,7 +54,7 @@ public class GET_Resolvers_Related_ToManyIT extends MainDbTest {
     }
 
     @Test
-    public void test_QueryWithParentIdsResolver() {
+    public void queryWithParentIdsResolver() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")

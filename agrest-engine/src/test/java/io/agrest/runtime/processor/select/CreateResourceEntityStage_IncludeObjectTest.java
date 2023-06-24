@@ -77,7 +77,7 @@ public class CreateResourceEntityStage_IncludeObjectTest {
     }
 
     @Test
-    public void testExecute_IncludeObject_Path() {
+    public void execute_IncludeObject_Path() {
 
         SelectContext<Tr> context = new SelectContext<>(
                 Tr.class,
@@ -97,7 +97,7 @@ public class CreateResourceEntityStage_IncludeObjectTest {
     }
 
     @Test
-    public void testExecute_IncludeObject_MapBy() {
+    public void execute_IncludeObject_MapBy() {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
                 requestBuilderFactory.builder(),

@@ -40,7 +40,7 @@ public class PUT_IT extends MainDbTest {
             .build();
 
     @Test
-    public void testCreateOrUpdate_ById() {
+    public void createOrUpdate_ById() {
 
         tester.target("/e23_create_or_update/8").put("{\"name\":\"zzz\"}")
                 .wasCreated()
@@ -54,7 +54,7 @@ public class PUT_IT extends MainDbTest {
     }
 
     @Test
-    public void testUpdate() {
+    public void update() {
 
         tester.e4().insertColumns("id", "c_varchar", "c_decimal")
                 .values(1, "xxx", new BigDecimal("11.23"))
@@ -83,7 +83,7 @@ public class PUT_IT extends MainDbTest {
     }
 
     @Test
-    public void testUpdateIdCalledId() {
+    public void updateIdCalledId() {
 
         tester.e31().insertColumns("id", "name").values(5, "30").exec();
 
@@ -96,7 +96,7 @@ public class PUT_IT extends MainDbTest {
     }
 
     @Test
-    public void testExplicitCompoundId() {
+    public void explicitCompoundId() {
 
         tester.e17().insertColumns("id1", "id2", "name")
                 .values(1, 1, "aaa")
@@ -112,7 +112,7 @@ public class PUT_IT extends MainDbTest {
     }
 
     @Test
-    public void testBulk() {
+    public void bulk() {
 
         tester.e3().insertColumns("id_", "name")
                 .values(5, "aaa")
@@ -135,7 +135,7 @@ public class PUT_IT extends MainDbTest {
     }
 
     @Test
-    public void testSingle_LongId_Small() {
+    public void single_LongId_Small() {
 
         tester.e14().insertColumns("long_id", "name").values(5L, "aaa").exec();
 
@@ -150,7 +150,7 @@ public class PUT_IT extends MainDbTest {
     }
 
     @Test
-    public void testBulk_LongId_Small() {
+    public void bulk_LongId_Small() {
 
         tester.e14().insertColumns("long_id", "name")
                 .values(5L, "aaa")
@@ -185,7 +185,7 @@ public class PUT_IT extends MainDbTest {
     }
 
     @Test
-    public void testBulk_LongId() {
+    public void bulk_LongId() {
 
         tester.e14().insertColumns("long_id", "name")
                 .values(8147483647L, "aaa")
@@ -215,7 +215,7 @@ public class PUT_IT extends MainDbTest {
     }
 
     @Test
-    public void testCustomEncoder() {
+    public void customEncoder() {
 
         tester.target("/e7_custom_encoder")
                 .put("[{\"id\":4,\"name\":\"zzz\"}]")
@@ -224,7 +224,7 @@ public class PUT_IT extends MainDbTest {
     }
 
     @Test
-    public void testBulk_ResponseAttributesFilter() {
+    public void bulk_ResponseAttributesFilter() {
 
         tester.target("/e7")
                 .queryParam("exclude", "id")
@@ -244,7 +244,7 @@ public class PUT_IT extends MainDbTest {
     }
 
     @Test
-    public void testBulk_ResponseToOneRelationshipFilter() {
+    public void bulk_ResponseToOneRelationshipFilter() {
 
         tester.e8().insertColumns("id", "name").values(5, "aaa").values(6, "ert").exec();
         tester.e9().insertColumns("e8_id").values(5).values(6).exec();
@@ -287,7 +287,7 @@ public class PUT_IT extends MainDbTest {
     }
 
     @Test
-    public void testBulk_ResponseToManyRelationshipFilter() {
+    public void bulk_ResponseToManyRelationshipFilter() {
 
         tester.e8().insertColumns("id", "name")
                 .values(5, "aaa")

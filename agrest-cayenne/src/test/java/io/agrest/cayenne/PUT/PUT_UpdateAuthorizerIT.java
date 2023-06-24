@@ -29,7 +29,7 @@ public class PUT_UpdateAuthorizerIT extends MainDbTest {
             ).build();
 
     @Test
-    public void testInStack_Allowed() {
+    public void inStack_Allowed() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "a")
@@ -46,7 +46,7 @@ public class PUT_UpdateAuthorizerIT extends MainDbTest {
     }
 
     @Test
-    public void testInStack_Blocked() {
+    public void inStack_Blocked() {
         tester.e2().insertColumns("id_", "name")
                 .values(1, "a")
                 .values(2, "b")
@@ -62,7 +62,7 @@ public class PUT_UpdateAuthorizerIT extends MainDbTest {
     }
 
     @Test
-    public void testInRequestAndStack_Allowed() {
+    public void inRequestAndStack_Allowed() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "a")
@@ -79,7 +79,7 @@ public class PUT_UpdateAuthorizerIT extends MainDbTest {
     }
 
     @Test
-    public void testInRequestAndStack_Blocked() {
+    public void inRequestAndStack_Blocked() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "a")

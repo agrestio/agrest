@@ -16,7 +16,7 @@ public class GET_Pojo_DataResponseIT extends PojoTest {
     static final AgPojoTester tester = PojoTest.tester(Resource.class).build();
 
     @Test
-    public void test() {
+    public void basic() {
         tester.target("/data-response")
                 .get()
                 .wasOk()

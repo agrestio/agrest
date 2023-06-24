@@ -11,17 +11,17 @@ public class LocalTimeConverterTest {
     private final LocalTimeConverter converter = LocalTimeConverter.converter();
 
     @Test
-    public void test() {
+    public void asString() {
         assertEquals("13:27:27", converter.asString(LocalTime.of(13, 27, 27)));
     }
 
     @Test
-    public void test1ms() {
+    public void asString_1ms() {
         assertEquals("13:27:27.001", converter.asString(LocalTime.of(13, 27, 27, 1_000_000)));
     }
 
     @Test
-    public void test100ms() {
+    public void asString_100ms() {
         assertEquals("13:27:27.1", converter.asString(LocalTime.of(13, 27, 27, 100_000_000)));
     }
 }

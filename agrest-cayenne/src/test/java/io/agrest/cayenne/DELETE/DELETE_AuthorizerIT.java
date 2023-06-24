@@ -27,7 +27,7 @@ public class DELETE_AuthorizerIT extends MainDbTest {
             ).build();
 
     @Test
-    public void testInStack_Allowed() {
+    public void inStack_Allowed() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "a")
@@ -41,7 +41,7 @@ public class DELETE_AuthorizerIT extends MainDbTest {
     }
 
     @Test
-    public void testInStack_Blocked() {
+    public void inStack_Blocked() {
         tester.e2().insertColumns("id_", "name")
                 .values(1, "dont_delete")
                 .values(2, "b")
@@ -57,7 +57,7 @@ public class DELETE_AuthorizerIT extends MainDbTest {
     }
 
     @Test
-    public void testInRequestAndStack_Allowed() {
+    public void inRequestAndStack_Allowed() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "a")
@@ -73,7 +73,7 @@ public class DELETE_AuthorizerIT extends MainDbTest {
     }
 
     @Test
-    public void testInRequestAndStack_Blocked() {
+    public void inRequestAndStack_Blocked() {
         tester.e2().insertColumns("id_", "name")
                 .values(1, "dont_delete_this_either")
                 .values(2, "b")

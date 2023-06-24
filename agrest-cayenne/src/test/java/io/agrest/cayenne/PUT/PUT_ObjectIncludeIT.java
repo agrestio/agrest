@@ -26,7 +26,7 @@ public class PUT_ObjectIncludeIT extends MainDbTest {
             .build();
 
     @Test
-    public void testOverlap() {
+    public void overlap() {
         tester.e5().insertColumns("id", "name", "date").values(45, "T", "2013-01-03").exec();
         tester.e2().insertColumns("id_", "name").values(8, "yyy").exec();
         tester.e3().insertColumns("id_", "name", "e2_id", "e5_id").values(3, "zzz", 8, 45).exec();
@@ -41,7 +41,7 @@ public class PUT_ObjectIncludeIT extends MainDbTest {
     }
 
     @Test
-    public void testToOne() {
+    public void toOne() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -58,7 +58,7 @@ public class PUT_ObjectIncludeIT extends MainDbTest {
     }
 
     @Test
-    public void testToMany() {
+    public void toMany() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")

@@ -36,7 +36,7 @@ public class GET_Include_MaxPathDepthIT extends MainDbTest {
     }
 
     @Test
-    public void testDepth100_Default() {
+    public void depth100_Default() {
 
         tester.target("/e2")
                 .queryParam("include", "id", "e3s.id", "e3s.e5.id")
@@ -46,7 +46,7 @@ public class GET_Include_MaxPathDepthIT extends MainDbTest {
     }
 
     @Test
-    public void testDepth0_DefaultIncludes() {
+    public void depth0_DefaultIncludes() {
 
         tester.target("/e2")
                 .queryParam("depth", 0)
@@ -56,7 +56,7 @@ public class GET_Include_MaxPathDepthIT extends MainDbTest {
     }
 
     @Test
-    public void testDepth0() {
+    public void depth0() {
 
         tester.target("/e2")
                 .queryParam("depth", 0)
@@ -67,7 +67,7 @@ public class GET_Include_MaxPathDepthIT extends MainDbTest {
     }
 
     @Test
-    public void testDepth1() {
+    public void depth1() {
 
         tester.target("/e2")
                 .queryParam("depth", 1)
@@ -78,7 +78,7 @@ public class GET_Include_MaxPathDepthIT extends MainDbTest {
     }
 
     @Test
-    public void testDepth2() {
+    public void depth2() {
 
         tester.target("/e2")
                 .queryParam("depth", 2)

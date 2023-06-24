@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CayenneCompiler_Inheritance_AnnotatedIT extends InheritanceNoDbTest {
 
     @Test
-    public void testSuper() {
+    public void aie1Super() {
         AgEntity<Aie1Super> e = getAgEntity(Aie1Super.class);
         String attributes = e.getAttributes().stream()
                 .sorted(Comparator.comparing(AgAttribute::getName))
@@ -36,7 +36,7 @@ public class CayenneCompiler_Inheritance_AnnotatedIT extends InheritanceNoDbTest
     }
 
     @Test
-    public void testSub2() {
+    public void aie1Sub2() {
         AgEntity<Aie1Sub2> sub2 = getAgEntity(Aie1Sub2.class);
         String attributes = sub2.getAttributes().stream()
                 .sorted(Comparator.comparing(AgAttribute::getName))
@@ -54,7 +54,7 @@ public class CayenneCompiler_Inheritance_AnnotatedIT extends InheritanceNoDbTest
     }
 
     @Test
-    public void testSub1() {
+    public void aie1Sub1() {
         AgEntity<Aie1Sub1> sub1 = getAgEntity(Aie1Sub1.class);
 
         String attributes = sub1.getAttributes().stream()
@@ -80,7 +80,7 @@ public class CayenneCompiler_Inheritance_AnnotatedIT extends InheritanceNoDbTest
     }
 
     @Test
-    public void testSub1Sub1() {
+    public void aie1Sub1Sub1() {
         AgEntity<Aie1Sub1Sub1> sub1Sub1 = getAgEntity(Aie1Sub1Sub1.class);
 
         String attributes = sub1Sub1.getAttributes().stream()

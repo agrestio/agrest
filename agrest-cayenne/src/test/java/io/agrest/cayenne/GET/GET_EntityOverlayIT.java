@@ -61,7 +61,7 @@ public class GET_EntityOverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testExclude() {
+    public void exclude() {
 
         tester.e2().insertColumns("id_", "name", "address").values(1, "N", "A").exec();
 
@@ -72,7 +72,7 @@ public class GET_EntityOverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testRedefineAttribute_Transient() {
+    public void redefineAttribute_Transient() {
 
         tester.e4().insertColumns("id", "c_varchar")
                 .values(1, "x")
@@ -85,7 +85,7 @@ public class GET_EntityOverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testRedefineAttribute_AdHocRelated() {
+    public void redefineAttribute_AdHocRelated() {
 
         tester.e2().insertColumns("id_", "name").values(1, "xxx").exec();
         tester.e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", 1).exec();
@@ -98,7 +98,7 @@ public class GET_EntityOverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testRedefineAttribute_AdHoc() {
+    public void redefineAttribute_AdHoc() {
 
         tester.e4().insertColumns("id", "c_varchar")
                 .values(1, "x")
@@ -111,7 +111,7 @@ public class GET_EntityOverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testRedefineToOne_AdHoc() {
+    public void redefineToOne_AdHoc() {
 
         tester.e4().insertColumns("id", "c_varchar")
                 .values(1, "x")
@@ -127,7 +127,7 @@ public class GET_EntityOverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testRedefineToMany_AdHoc() {
+    public void redefineToMany_AdHoc() {
 
         tester.e4().insertColumns("id", "c_varchar")
                 .values(1, "x")
@@ -143,7 +143,7 @@ public class GET_EntityOverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testRedefineToOne_Replaced() {
+    public void redefineToOne_Replaced() {
 
         tester.e7().insertColumns("id", "name")
                 .values(1, "x1")
@@ -159,7 +159,7 @@ public class GET_EntityOverlayIT extends MainDbTest {
     }
 
     @Test
-    public void testRedefineAttribute_Replaced() {
+    public void redefineAttribute_Replaced() {
 
         tester.e7().insertColumns("id", "name")
                 .values(1, "01")
