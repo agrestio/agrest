@@ -7,7 +7,7 @@ _This document contains upgrade notes for Agrest 5.x and newer. Older versions a
 A number of changes were implemented to improve consistency and functionality of the update pipeline. As a result
 the array-based syntax for updating to-one relationships is no longer supported as it is semantically invalid. E.g. the 
 following won't work anymore: `{"toOne":[1]}`, and should be changed to `{"toOne":1}`. Similarly, a single-value
-syntax for updating to-many relationships 
+syntax for updating to-many relationships should be replaced with arrays: `{"toMany":[1]}` -> `{"toMany":[1]}`
 
 ## Upgrading to 5.0.M16
 
