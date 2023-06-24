@@ -3,8 +3,11 @@ package io.agrest;
 import io.agrest.meta.AgEntity;
 import io.agrest.protocol.UpdateRequest;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -19,6 +22,7 @@ public class EntityUpdate<T> implements UpdateRequest<T> {
     private final AgEntity<T> entity;
     private final Map<String, Object> values;
     private final Map<String, Set<Object>> relatedIds;
+    private final Map<String, List<EntityUpdate<?>>> relatedUpdates;
 
     private Map<String, Object> id;
     private boolean explicitId;
@@ -28,6 +32,7 @@ public class EntityUpdate<T> implements UpdateRequest<T> {
         this.entity = Objects.requireNonNull(entity);
         this.values = new HashMap<>();
         this.relatedIds = new HashMap<>();
+        this.relatedUpdates = new HashMap<>();
     }
 
     /**
@@ -72,6 +77,40 @@ public class EntityUpdate<T> implements UpdateRequest<T> {
 
     public void addRelatedId(String relationshipName, Object value) {
         relatedIds.computeIfAbsent(relationshipName, n -> new HashSet<>()).add(value);
+    }
+
+    /**
+     * Returns a map of EntityUpdates for related entities. This is an experimental feature. As of now, Agrest does not
+     * support processing nested updates, but this map allows the users to manually extract the values and process them
+     * by hand.
+     *
+     * @since 5.0
+     */
+    public Map<String, List<EntityUpdate<?>>> getRelatedUpdates() {
+        return relatedUpdates;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public void addRelatedUpdate(String relationshipName, EntityUpdate<?> update) {
+        relatedUpdates.computeIfAbsent(relationshipName, n -> new ArrayList<>()).add(update);
+    }
+
+    /**
+     * @since 5.0
+     */
+    public <T> EntityUpdate<T> getRelatedUpdate(String relationshipName) {
+        List<EntityUpdate<T>> updatesList = getRelatedUpdates(relationshipName);
+        return updatesList.size() == 1 ? updatesList.get(0) : null;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public <T> List<EntityUpdate<T>> getRelatedUpdates(String relationshipName) {
+        List updates = relatedUpdates.get(relationshipName);
+        return updates != null ? updates : Collections.emptyList();
     }
 
     /**

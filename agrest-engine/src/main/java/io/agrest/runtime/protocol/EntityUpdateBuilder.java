@@ -4,17 +4,19 @@ import io.agrest.EntityUpdate;
 import io.agrest.meta.AgEntity;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 class EntityUpdateBuilder<T> {
 
     private final AgEntity<T> entity;
-    private final Collection<EntityUpdate<T>> updates;
+    private final int remainingDepth;
+    private final List<EntityUpdate<T>> updates;
 
     private EntityUpdate<T> currentUpdate;
 
-    EntityUpdateBuilder(AgEntity<T> entity) {
+    EntityUpdateBuilder(AgEntity<T> entity, int remainingDepth) {
         this.entity = entity;
+        this.remainingDepth = remainingDepth;
         this.updates = new ArrayList<>();
     }
 
@@ -22,16 +24,20 @@ class EntityUpdateBuilder<T> {
         currentUpdate = new EntityUpdate<>(entity);
     }
 
-    void idPart(String name, Object value) {
-        currentUpdate.getOrCreateId().put(name, value);
+    void idPart(String idPartName, Object value) {
+        currentUpdate.getOrCreateId().put(idPartName, value);
     }
 
-    void attribute(String name, Object value) {
-        currentUpdate.getValues().put(name, value);
+    void attribute(String attribute, Object value) {
+        currentUpdate.getValues().put(attribute, value);
     }
 
-    void relationship(String name, Object relatedId) {
-        currentUpdate.addRelatedId(name, relatedId);
+    void relatedId(String relationship, Object relatedId) {
+        currentUpdate.addRelatedId(relationship, relatedId);
+    }
+
+    void relatedUpdate(String relationship, EntityUpdate<?> update) {
+        currentUpdate.addRelatedUpdate(relationship, update);
     }
 
     void endObject() {
@@ -39,7 +45,11 @@ class EntityUpdateBuilder<T> {
         currentUpdate = null;
     }
 
-    Collection<EntityUpdate<T>> getUpdates() {
+    int getRemainingDepth() {
+        return remainingDepth;
+    }
+
+    List<EntityUpdate<T>> getUpdates() {
         return updates;
     }
 }

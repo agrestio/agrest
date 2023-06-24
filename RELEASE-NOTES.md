@@ -4,6 +4,7 @@
 * #631 POST/PUT - can't update multi-key relationships
 * #632 POST/PUT gets confused when relationship is passed as object
 * #633 Optimize and clean up update parser
+* #634 Recursive EntityUpdate parser
 
 ## Release 5.0.M16
 

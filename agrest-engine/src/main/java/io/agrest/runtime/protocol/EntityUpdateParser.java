@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,23 +33,25 @@ class EntityUpdateParser<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(EntityUpdateParser.class);
 
     private final AgEntity<T> entity;
+    private final UpdateRequestParser parent;
     private final JsonValueConverters converters;
     private final BiConsumer<EntityUpdateBuilder<T>, JsonNode> idsExtractor;
     private final Map<String, BiConsumer<EntityUpdateBuilder<T>, JsonNode>> attributeExtractors;
     private final Map<String, BiConsumer<EntityUpdateBuilder<T>, JsonNode>> relationshipExtractors;
-    private final Map<String, Predicate<JsonNode>> relationshipAsObjectCheckers;
+    private final Map<String, Predicate<JsonNode>> relationshipIsObjectCheckers;
 
-    public EntityUpdateParser(AgEntity<T> entity, JsonValueConverters converters) {
+    public EntityUpdateParser(AgEntity<T> entity, UpdateRequestParser parent, JsonValueConverters converters) {
         this.entity = entity;
+        this.parent = parent;
         this.converters = converters;
         this.idsExtractor = createIdsExtractor();
         this.attributeExtractors = new ConcurrentHashMap<>();
         this.relationshipExtractors = new ConcurrentHashMap<>();
-        this.relationshipAsObjectCheckers = new ConcurrentHashMap<>();
+        this.relationshipIsObjectCheckers = new ConcurrentHashMap<>();
     }
 
-    public Collection<EntityUpdate<T>> parse(JsonNode json) {
-        EntityUpdateBuilder<T> builder = new EntityUpdateBuilder<>(entity);
+    public List<EntityUpdate<T>> parse(JsonNode json, int remainingDepth) {
+        EntityUpdateBuilder<T> builder = new EntityUpdateBuilder<>(entity, remainingDepth);
         if (json != null) {
             if (json.isArray()) {
                 processArray(builder, json);
@@ -164,14 +167,17 @@ class EntityUpdateParser<T> {
     private BiConsumer<EntityUpdateBuilder<T>, JsonNode> createToOneRelationshipExtractor(AgRelationship relationship) {
         JsonValueConverter<?> converter = relatedIdConverter(relationship);
         String name = relationship.getName();
-        Predicate<JsonNode> relationshipAsObjectChecker = relationshipAsObjectCheckers
+        Predicate<JsonNode> isObject = relationshipIsObjectCheckers
                 .computeIfAbsent(name, n -> createRelationshipAsObjectChecker(relationship));
 
         return (b, j) -> {
-            if (relationshipAsObjectChecker.test(j)) {
-                // TODO: process nested objects
+            if (isObject.test(j)) {
+                List<EntityUpdate<Object>> childUpdates = parent.parse(relationship, j, b.getRemainingDepth() - 1);
+                if (!childUpdates.isEmpty()) {
+                    b.relatedUpdate(name, childUpdates.get(0));
+                }
             } else {
-                b.relationship(name, converter.value(j));
+                b.relatedId(name, converter.value(j));
             }
         };
     }
@@ -180,7 +186,7 @@ class EntityUpdateParser<T> {
 
         JsonValueConverter<?> converter = relatedIdConverter(relationship);
         String name = relationship.getName();
-        Predicate<JsonNode> relationshipAsObjectChecker = relationshipAsObjectCheckers
+        Predicate<JsonNode> isObject = relationshipIsObjectCheckers
                 .computeIfAbsent(name, n -> createRelationshipAsObjectChecker(relationship));
 
         return (b, j) -> {
@@ -188,13 +194,16 @@ class EntityUpdateParser<T> {
 
                 if (j.isEmpty()) {
                     // this is a hackish way to tell the visitor, that it should unrelate all objects
-                    b.relationship(name, null);
+                    b.relatedId(name, null);
                 } else {
                     for (JsonNode child : j) {
-                        if (relationshipAsObjectChecker.test(child)) {
-                            // TODO: process nested objects
+                        if (isObject.test(child)) {
+                            List<EntityUpdate<Object>> childUpdates = parent.parse(relationship, child, b.getRemainingDepth() - 1);
+                            if (!childUpdates.isEmpty()) {
+                                b.relatedUpdate(name, childUpdates.get(0));
+                            }
                         } else {
-                            b.relationship(name, converter.value(child));
+                            b.relatedId(name, converter.value(child));
                         }
                     }
                 }
