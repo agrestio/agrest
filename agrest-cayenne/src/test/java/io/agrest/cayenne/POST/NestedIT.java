@@ -2,7 +2,6 @@ package io.agrest.cayenne.POST;
 
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
-import io.agrest.SimpleResponse;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.unit.main.MainDbTest;
@@ -58,7 +57,7 @@ public class NestedIT extends MainDbTest {
 
             EntityUpdate<E2> e2Update = update.getRelatedUpdate(E3.E2.getName());
             if (e2Update != null) {
-                SimpleResponse e2Response = AgJaxrs
+                AgJaxrs
                         .create(E2.class, config)
                         .parent(E3.class, e2Id, E3.E2.getName())
                         .sync(e2Update);
