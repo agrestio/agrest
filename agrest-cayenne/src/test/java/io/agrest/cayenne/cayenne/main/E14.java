@@ -3,7 +3,7 @@ package io.agrest.cayenne.cayenne.main;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgRelationship;
 import io.agrest.cayenne.cayenne.main.auto._E14;
-import io.agrest.jaxrs2.junit.pojo.P7;
+import io.agrest.jaxrs3.junit.pojo.P7;
 
 public class E14 extends _E14 {
 

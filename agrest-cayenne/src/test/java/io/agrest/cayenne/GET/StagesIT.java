@@ -11,17 +11,17 @@ import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.Encoder;
 import io.agrest.encoder.GenericEncoder;
 import io.agrest.encoder.ListEncoder;
-import io.agrest.jaxrs2.AgJaxrs;
+import io.agrest.jaxrs3.AgJaxrs;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.query.ObjectSelect;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Configuration;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Configuration;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.util.List;
 

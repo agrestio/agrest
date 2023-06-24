@@ -6,17 +6,17 @@ import io.agrest.UpdateStage;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
-import io.agrest.jaxrs2.AgJaxrs;
+import io.agrest.jaxrs3.AgJaxrs;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Configuration;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Configuration;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.UriInfo;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
