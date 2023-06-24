@@ -19,7 +19,7 @@ import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
 
-public class WritablePropFilter_OverlayIT extends MainDbTest {
+public class WritablePropFilterIT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
@@ -31,7 +31,7 @@ public class WritablePropFilter_OverlayIT extends MainDbTest {
 
         // endpoint constraint allows "name" and "id"
 
-        tester.target("/e8/w/constrainedid/578")
+        tester.target("/e8/constrained-id/578")
                 .post("{\"name\":\"zzz\"}")
                 .wasCreated()
                 .bodyEquals("{}");
@@ -45,7 +45,7 @@ public class WritablePropFilter_OverlayIT extends MainDbTest {
 
         // endpoint constraint allows "name", but not "id"
 
-        tester.target("/e8/w/constrainedidblocked/578")
+        tester.target("/e8/constrained-id-blocked/578")
                 .post("{\"name\":\"zzz\"}")
                 .wasBadRequest()
                 .bodyEquals("{\"message\":\"Setting ID explicitly is not allowed: {db:id=578}\"}");
@@ -56,7 +56,7 @@ public class WritablePropFilter_OverlayIT extends MainDbTest {
     @Test
     public void writeConstraints1() {
 
-        tester.target("/e3/w/constrained")
+        tester.target("/e3/constrained")
                 .post("{\"name\":\"zzz\"}")
                 .wasCreated()
                 .replaceId("RID")
@@ -66,7 +66,7 @@ public class WritablePropFilter_OverlayIT extends MainDbTest {
     @Test
     public void writeConstraints2() {
 
-        tester.target("/e3/w/constrained")
+        tester.target("/e3/constrained")
                 .post("{\"name\":\"zzz\",\"phoneNumber\":\"12345\"}")
                 .wasCreated()
                 .replaceId("RID")
@@ -77,43 +77,6 @@ public class WritablePropFilter_OverlayIT extends MainDbTest {
         tester.e3().matcher().eq("phone_number", null).assertOneMatch();
     }
 
-    @Test
-    public void readConstraints1() {
-
-        tester.target("/e3/constrained")
-                .post("{\"name\":\"zzz\"}")
-                .wasCreated()
-                .replaceId("RID")
-                .bodyEquals(1, "{\"id\":RID,\"name\":\"zzz\"}");
-    }
-
-    @Test
-    public void include_ReadConstraints() {
-
-        // writing "phoneNumber" is allowed, but reading is not ... must be in DB, but not in response
-
-        tester.target("/e3/constrained")
-                .queryParam("include", "name")
-                .queryParam("include", "phoneNumber")
-                .post("{\"name\":\"zzz\",\"phoneNumber\":\"123456\"}")
-                .wasCreated()
-                .bodyEquals(1, "{\"name\":\"zzz\"}");
-
-        tester.e3().matcher().assertOneMatch();
-        tester.e3().matcher().eq("name", "zzz").eq("phone_number", "123456").assertOneMatch();
-    }
-
-    @Test
-    public void readConstraints_DisallowRelated() {
-
-        tester.target("/e3/constrained")
-                .queryParam("include", E3.E2.getName())
-                .post("{\"name\":\"zzz\"}")
-                .wasCreated()
-                .replaceId("RID")
-                .bodyEquals(1, "{\"id\":RID,\"name\":\"zzz\"}");
-    }
-
     @Path("")
     public static class Resource {
 
@@ -122,23 +85,15 @@ public class WritablePropFilter_OverlayIT extends MainDbTest {
 
         @POST
         @Path("e3/constrained")
-        public DataResponse<E3> insertE3ReadConstrained(@Context UriInfo uriInfo, String requestBody) {
-            return AgJaxrs.create(E3.class, config).clientParams(uriInfo.getQueryParameters())
-                    .readablePropFilter(E3.class, b -> b.idOnly().property("name", true))
-                    .syncAndSelect(requestBody);
-        }
-
-        @POST
-        @Path("e3/w/constrained")
-        public DataResponse<E3> insertE3WriteConstrained(@Context UriInfo uriInfo, String requestBody) {
+        public DataResponse<E3> constrained(@Context UriInfo uriInfo, String requestBody) {
             return AgJaxrs.create(E3.class, config).clientParams(uriInfo.getQueryParameters())
                     .writablePropFilter(E3.class, b -> b.idOnly().property("name", true))
                     .syncAndSelect(requestBody);
         }
 
         @POST
-        @Path("e8/w/constrainedid/{id}")
-        public SimpleResponse create_WriteConstrainedId(
+        @Path("e8/constrained-id/{id}")
+        public SimpleResponse constrainedId(
                 @PathParam("id") int id,
                 @Context UriInfo uriInfo,
                 String requestBody) {
@@ -149,8 +104,8 @@ public class WritablePropFilter_OverlayIT extends MainDbTest {
         }
 
         @POST
-        @Path("e8/w/constrainedidblocked/{id}")
-        public SimpleResponse create_WriteConstrainedIdBlocked(
+        @Path("e8/constrained-id-blocked/{id}")
+        public SimpleResponse constrainedIdBlocked(
                 @PathParam("id") int id,
                 @Context UriInfo uriInfo,
                 String requestBody) {
