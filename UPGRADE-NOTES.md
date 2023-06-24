@@ -1,6 +1,13 @@
 _This document contains upgrade notes for Agrest 5.x and newer. Older versions are documented in 
 [UPGRADE-NOTES-1-4](./UPGRADE-NOTES-1-to-4.md)._
 
+## Upgrading to 5.0.M17
+
+### No more array syntax for updating to-one relationships [#633](https://github.com/agrestio/agrest/issues/633)
+A number of changes were implemented to improve consistency and functionality of the update pipeline. As a result
+the array-based syntax for updating to-one relationships is no longer supported as it is semantically invalid. E.g. the 
+following won't work anymore: `{"toOne":[1]}`, and should be changed to `{"toOne":1}`.
+
 ## Upgrading to 5.0.M16
 
 ### Got rid of custom date/time formatters [#621](https://github.com/agrestio/agrest/issues/621)

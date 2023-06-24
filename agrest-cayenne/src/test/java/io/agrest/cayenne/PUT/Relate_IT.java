@@ -62,22 +62,6 @@ public class Relate_IT extends MainDbTest {
     }
 
     @Test
-    public void toOne_ArraySyntax() {
-
-        tester.e2().insertColumns("id_", "name")
-                .values(1, "xxx")
-                .values(8, "yyy").exec();
-        tester.e3().insertColumns("id_", "name", "e2_id").values(3, "zzz", 8).exec();
-
-        tester.target("/e3/3")
-                .put("{\"id\":3,\"e2\":[1]}")
-                .wasOk()
-                .bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
-
-        tester.e3().matcher().eq("id_", 3).eq("e2_id", 1).assertOneMatch();
-    }
-
-    @Test
     public void toOne_ToNull() {
 
         tester.e2().insertColumns("id_", "name")
@@ -157,7 +141,8 @@ public class Relate_IT extends MainDbTest {
                 .queryParam("include", E2.E3S.getName())
                 .queryParam("exclude", E2.ADDRESS.getName(), E2.NAME.getName(), E2.E3S.dot(E3.NAME).getName(), E2.E3S.dot(E3.PHONE_NUMBER).getName())
                 .put("{\"e3s\":[]}")
-                .wasOk().bodyEquals(1, "{\"id\":8,\"e3s\":[]}");
+                .wasOk()
+                .bodyEquals(1, "{\"id\":8,\"e3s\":[]}");
 
         tester.e3().matcher().eq("e2_id", null).assertMatches(3);
     }

@@ -2,6 +2,7 @@
 
 * #630 POST/PUT breaks for Short and BigInteger types
 * #631 POST/PUT - can't update multi-key relationships
+* #633 Optimize and clean up update parser
 
 ## Release 5.0.M16
 

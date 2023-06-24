@@ -100,10 +100,10 @@ import io.agrest.runtime.processor.update.stage.UpdateMapChangesStage;
 import io.agrest.runtime.processor.update.stage.UpdateMergeChangesStage;
 import io.agrest.runtime.processor.update.stage.UpdateParseRequestStage;
 import io.agrest.runtime.processor.update.stage.UpdateStartStage;
-import io.agrest.runtime.protocol.EntityUpdateParser;
+import io.agrest.runtime.protocol.UpdateRequestParser;
 import io.agrest.runtime.protocol.ExcludeParser;
 import io.agrest.runtime.protocol.ExpParser;
-import io.agrest.runtime.protocol.IEntityUpdateParser;
+import io.agrest.runtime.protocol.IUpdateRequestParser;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IExpParser;
 import io.agrest.runtime.protocol.IIncludeParser;
@@ -290,6 +290,6 @@ public class AgCoreModule implements Module {
         binder.bind(IResultFilter.class).to(ResultFilter.class);
         binder.bind(IChangeAuthorizer.class).to(ChangeAuthorizer.class);
 
-        binder.bind(IEntityUpdateParser.class).to(EntityUpdateParser.class);
+        binder.bind(IUpdateRequestParser.class).to(UpdateRequestParser.class);
     }
 }
