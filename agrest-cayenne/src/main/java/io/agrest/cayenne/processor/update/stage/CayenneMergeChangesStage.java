@@ -1,15 +1,15 @@
 package io.agrest.cayenne.processor.update.stage;
 
 import io.agrest.AgException;
-import io.agrest.id.MultiValueId;
-import io.agrest.runtime.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneUtil;
+import io.agrest.id.MultiValueId;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.ProcessorOutcome;
+import io.agrest.runtime.EntityParent;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * A processor invoked for {@link io.agrest.UpdateStage#MERGE_CHANGES} stage.
@@ -87,8 +88,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
 
         ObjectContext objectContext = CayenneUpdateStartStage.cayenneContext(context);
         DataObject o = objectContext.newObject(context.getType());
-
-
+        
         Map<String, Object> idByAgAttribute = update.getId();
 
         // set explicit ID
@@ -321,43 +321,33 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
     }
 
     protected <T extends DataObject> ObjectRelator createRelator(UpdateContext<T> context) {
-
-        final EntityParent<?> parent = context.getParent();
-
+        EntityParent<?> parent = context.getParent();
         if (parent == null) {
             return new ObjectRelator();
         }
 
-        ObjectContext objectContext = CayenneUpdateStartStage.cayenneContext(context);
+        DataObject parentObject = findParent(context);
+        Consumer<DataObject> relateToParent = parent.getEntity().getRelationship(parent.getRelationship()).isToMany()
+                ? o -> parentObject.addToManyTarget(parent.getRelationship(), o, true)
+                : o -> parentObject.setToOneTarget(parent.getRelationship(), o, true);
 
-        ObjEntity parentEntity = objectContext.getEntityResolver().getObjEntity(parent.getEntity().getType());
-        AgEntity<?> parentAgEntity = parent.getEntity();
-        final DataObject parentObject = (DataObject) CayenneUtil.findById(
+        return new ObjectRelator(relateToParent);
+    }
+
+    private DataObject findParent(UpdateContext<?> context) {
+        DataObject parentObject = (DataObject) CayenneUtil.findById(
                 pathResolver,
-                objectContext,
-                parentAgEntity,
-                parent.getId());
+                CayenneUpdateStartStage.cayenneContext(context),
+                context.getParent().getEntity(),
+                context.getParent().getId());
 
         if (parentObject == null) {
-            throw AgException.notFound("No parent object for ID '%s' and entity '%s'", parent.getId(), parentEntity.getName());
+            throw AgException.notFound("No parent object for ID '%s' and entity '%s'",
+                    context.getParent().getId(),
+                    context.getParent().getEntity().getName());
         }
 
-        // TODO: check that relationship target is the same as <T> ??
-        if (parentEntity.getRelationship(parent.getRelationship()).isToMany()) {
-            return new ObjectRelator() {
-                @Override
-                public void relateToParent(DataObject object) {
-                    parentObject.addToManyTarget(parent.getRelationship(), object, true);
-                }
-            };
-        } else {
-            return new ObjectRelator() {
-                @Override
-                public void relateToParent(DataObject object) {
-                    parentObject.setToOneTarget(parent.getRelationship(), object, true);
-                }
-            };
-        }
+        return parentObject;
     }
 
     protected DbAttribute dbAttributeForAgAttribute(AgEntity<?> agEntity, String attributeName) {
@@ -374,8 +364,19 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
 
     static class ObjectRelator {
 
+        final Consumer<DataObject> relateToParent;
+
+        ObjectRelator() {
+            this.relateToParent = o -> {
+            };
+        }
+
+        ObjectRelator(Consumer<DataObject> relateToParent) {
+            this.relateToParent = relateToParent;
+        }
+
         void relateToParent(DataObject object) {
-            // do nothing
+            relateToParent.accept(object);
         }
 
         void relate(AgRelationship agRelationship, DataObject object, DataObject relatedObject) {
