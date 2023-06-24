@@ -22,7 +22,7 @@ public class ObjectIncludeIT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E5.class)
+            .entitiesAndDependencies(E2.class, E3.class, E5.class)
             .build();
 
     @Test
