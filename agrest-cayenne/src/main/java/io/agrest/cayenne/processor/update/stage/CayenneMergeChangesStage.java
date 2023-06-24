@@ -326,7 +326,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
             return new ObjectRelator();
         }
 
-        DataObject parentObject = findParent(context);
+        DataObject parentObject = findParent(context, parent);
         Consumer<DataObject> relateToParent = parent.getEntity().getRelationship(parent.getRelationship()).isToMany()
                 ? o -> parentObject.addToManyTarget(parent.getRelationship(), o, true)
                 : o -> parentObject.setToOneTarget(parent.getRelationship(), o, true);
@@ -334,17 +334,17 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
         return new ObjectRelator(relateToParent);
     }
 
-    private DataObject findParent(UpdateContext<?> context) {
+    private DataObject findParent(UpdateContext<?> context, EntityParent<?> parent) {
         DataObject parentObject = (DataObject) CayenneUtil.findById(
                 pathResolver,
                 CayenneUpdateStartStage.cayenneContext(context),
-                context.getParent().getEntity(),
-                context.getParent().getId());
+                parent.getEntity(),
+                parent.getId());
 
         if (parentObject == null) {
             throw AgException.notFound("No parent object for ID '%s' and entity '%s'",
-                    context.getParent().getId(),
-                    context.getParent().getEntity().getName());
+                    parent.getId(),
+                    parent.getEntity().getName());
         }
 
         return parentObject;
