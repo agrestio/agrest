@@ -66,6 +66,10 @@ public class EntityUpdate<T> implements UpdateRequest<T> {
         return entity;
     }
 
+    /**
+     * @deprecated unused in Agrest
+     */
+    @Deprecated(since = "5.0")
     public boolean hasChanges() {
         return !values.isEmpty() || !relatedIds.isEmpty();
     }

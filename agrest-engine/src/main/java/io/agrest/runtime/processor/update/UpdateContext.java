@@ -75,7 +75,9 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 
     /**
      * @since 1.19
+     * @deprecated unused in Agrest.
      */
+    @Deprecated(since = "5.0")
     public boolean hasChanges() {
 
         for (EntityUpdate<T> u : updates) {
