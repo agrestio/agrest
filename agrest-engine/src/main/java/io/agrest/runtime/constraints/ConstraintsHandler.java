@@ -1,5 +1,6 @@
 package io.agrest.runtime.constraints;
 
+import io.agrest.AgException;
 import io.agrest.EntityUpdate;
 import io.agrest.ResourceEntity;
 import io.agrest.ResourceEntityProjection;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An {@link IConstraintsHandler} that ensures that no target attributes exceed
@@ -31,14 +33,27 @@ public class ConstraintsHandler implements IConstraintsHandler {
 
         AgEntity<?> entity = context.getEntity().getAgEntity();
 
+        boolean disallowIdUpdates = false;
         for (AgIdPart idPart : entity.getIdParts()) {
             if (!idPart.isWritable()) {
-                context.setIdUpdatesDisallowed(true);
+                disallowIdUpdates = true;
                 break;
             }
         }
 
         for (EntityUpdate<?> u : context.getUpdates()) {
+
+            // unlike attributes and relationships, when ID is not writable, it feels like we can't just quietly
+            // exclude it from update, we must throw. Especially true for IDs coming from URLs (vs those coming
+            // from JSON), but let's handle both consistently
+
+            if (disallowIdUpdates) {
+                Map<String, Object> id = u.getId();
+                if (id != null && !id.isEmpty()) {
+                    throw AgException.badRequest("Setting ID explicitly is not allowed: %s", id);
+                }
+            }
+
             Iterator<String> valuesIt = u.getValues().keySet().iterator();
             while (valuesIt.hasNext()) {
                 String name = valuesIt.next();

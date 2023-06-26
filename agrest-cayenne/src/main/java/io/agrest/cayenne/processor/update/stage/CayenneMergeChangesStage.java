@@ -93,10 +93,6 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
         // set explicit ID
         if (idByAgAttribute != null) {
 
-            if (context.isIdUpdatesDisallowed() && update.isExplicitId()) {
-                throw AgException.badRequest("Setting ID explicitly is not allowed: %s", idByAgAttribute);
-            }
-
             ObjEntity objEntity = objectContext.getEntityResolver().getObjEntity(context.getType());
             DbEntity dbEntity = objEntity.getDbEntity();
             AgEntity agEntity = context.getEntity().getAgEntity();

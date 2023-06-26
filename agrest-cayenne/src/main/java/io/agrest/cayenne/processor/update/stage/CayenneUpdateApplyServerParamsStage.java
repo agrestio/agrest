@@ -227,7 +227,6 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
             AgEntity<T> entity = context.getEntity().getAgEntity();
             EntityUpdate<T> u = context.getFirst();
             u.getOrCreateId().putAll(context.getId().asMap(entity));
-            u.setExplicitId();
         }
     }
 

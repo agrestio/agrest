@@ -5,6 +5,7 @@
 * #632 POST/PUT gets confused when relationship is passed as object
 * #633 Optimize and clean up update parser
 * #634 Recursive EntityUpdate parser
+* #635 Write constraint only applied to "id" in the path, but not in the body
 
 ## Release 5.0.M16
 

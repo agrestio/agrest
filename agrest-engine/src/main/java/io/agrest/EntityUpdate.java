@@ -25,7 +25,10 @@ public class EntityUpdate<T> implements UpdateRequest<T> {
     private final Map<String, List<EntityUpdate<?>>> relatedUpdates;
 
     private Map<String, Object> id;
+
+    @Deprecated
     private boolean explicitId;
+    
     private Object mergedTo;
 
     public EntityUpdate(AgEntity<T> entity) {
@@ -133,14 +136,18 @@ public class EntityUpdate<T> implements UpdateRequest<T> {
 
     /**
      * @since 1.8
+     * @deprecated no longer used by Agrest to track permissions
      */
+    @Deprecated(since = "5.0")
     public void setExplicitId() {
         this.explicitId = true;
     }
 
     /**
      * @since 1.5
+     * @deprecated no longer used by Agrest to track permissions
      */
+    @Deprecated(since = "5.0")
     public boolean isExplicitId() {
         return explicitId;
     }

@@ -27,11 +27,11 @@ public class WritablePropFilterIT extends MainDbTest {
             .build();
 
     @Test
-    public void writeConstraints_Id_Allowed() {
+    public void writeConstraints_Id() {
 
         // endpoint constraint allows "name" and "id"
 
-        tester.target("/e8/constrained-id/578")
+        tester.target("/e8/578")
                 .post("{\"name\":\"zzz\"}")
                 .wasCreated()
                 .bodyEquals("{}");
@@ -41,11 +41,24 @@ public class WritablePropFilterIT extends MainDbTest {
     }
 
     @Test
-    public void writeConstraints_Id_Blocked() {
+    public void writeConstraints_IdInBody_Blocked() {
 
         // endpoint constraint allows "name", but not "id"
 
-        tester.target("/e8/constrained-id-blocked/578")
+        tester.target("/e8/no-id")
+                .post("{\"id\":578,\"name\":\"zzz\"}")
+                .wasBadRequest()
+                .bodyEquals("{\"message\":\"Setting ID explicitly is not allowed: {db:id=578}\"}");
+
+        tester.e8().matcher().assertNoMatches();
+    }
+
+    @Test
+    public void writeConstraints_IdInPath_Blocked() {
+
+        // endpoint constraint allows "name", but not "id"
+
+        tester.target("/e8/no-id/578")
                 .post("{\"name\":\"zzz\"}")
                 .wasBadRequest()
                 .bodyEquals("{\"message\":\"Setting ID explicitly is not allowed: {db:id=578}\"}");
@@ -56,7 +69,7 @@ public class WritablePropFilterIT extends MainDbTest {
     @Test
     public void writeConstraints1() {
 
-        tester.target("/e3/constrained")
+        tester.target("/e3")
                 .post("{\"name\":\"zzz\"}")
                 .wasCreated()
                 .replaceId("RID")
@@ -66,7 +79,7 @@ public class WritablePropFilterIT extends MainDbTest {
     @Test
     public void writeConstraints2() {
 
-        tester.target("/e3/constrained")
+        tester.target("/e3")
                 .post("{\"name\":\"zzz\",\"phoneNumber\":\"12345\"}")
                 .wasCreated()
                 .replaceId("RID")
@@ -84,32 +97,49 @@ public class WritablePropFilterIT extends MainDbTest {
         private Configuration config;
 
         @POST
-        @Path("e3/constrained")
+        @Path("e3")
         public DataResponse<E3> constrained(@Context UriInfo uriInfo, String requestBody) {
-            return AgJaxrs.create(E3.class, config).clientParams(uriInfo.getQueryParameters())
+            return AgJaxrs.create(E3.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
                     .writablePropFilter(E3.class, b -> b.idOnly().property("name", true))
                     .syncAndSelect(requestBody);
         }
 
         @POST
-        @Path("e8/constrained-id/{id}")
+        @Path("e8/{id}")
         public SimpleResponse constrainedId(
                 @PathParam("id") int id,
                 @Context UriInfo uriInfo,
                 String requestBody) {
 
-            return AgJaxrs.create(E8.class, config).clientParams(uriInfo.getQueryParameters()).byId(id)
+            return AgJaxrs.create(E8.class, config)
+                    .clientParams(uriInfo.getQueryParameters()).byId(id)
                     .writablePropFilter(E8.class, b -> b.idOnly().property("name", true))
                     .sync(requestBody);
         }
 
         @POST
-        @Path("e8/constrained-id-blocked/{id}")
-        public SimpleResponse constrainedIdBlocked(
+        @Path("e8/no-id")
+        public SimpleResponse constrainedIdInBodyBlocked(
+                @Context UriInfo uriInfo,
+                String requestBody) {
+
+            return AgJaxrs.create(E8.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
+                    .writablePropFilter(E8.class, b -> b.empty().property("name", true))
+                    .sync(requestBody);
+        }
+
+        @POST
+        @Path("e8/no-id/{id}")
+        public SimpleResponse constrainedIdInParamsBlocked(
                 @PathParam("id") int id,
                 @Context UriInfo uriInfo,
                 String requestBody) {
-            return AgJaxrs.create(E8.class, config).clientParams(uriInfo.getQueryParameters()).byId(id)
+
+            return AgJaxrs.create(E8.class, config)
+                    .clientParams(uriInfo.getQueryParameters())
+                    .byId(id)
                     .writablePropFilter(E8.class, b -> b.empty().property("name", true))
                     .sync(requestBody);
         }

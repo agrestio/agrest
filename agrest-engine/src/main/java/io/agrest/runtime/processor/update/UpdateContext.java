@@ -36,7 +36,10 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     private boolean includingDataInResponse;
     private ObjectMapperFactory mapper;
     private String entityData;
+
+    @Deprecated
     private boolean idUpdatesDisallowed;
+
     private Collection<EntityUpdate<T>> updates;
     private Encoder encoder;
     private Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
@@ -187,14 +190,20 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 
     /**
      * @since 1.19
+     * @deprecated not initialized and unused since 5.0, as ID permissions checking happens elsewhere, and doesn't need
+     * to be in the context
      */
+    @Deprecated(since = "5.0")
     public boolean isIdUpdatesDisallowed() {
         return idUpdatesDisallowed;
     }
 
     /**
      * @since 1.19
+     * @deprecated not initialized and unused since 5.0, as ID permissions checking happens elsewhere, and doesn't need
+     * to be in the context
      */
+    @Deprecated(since = "5.0")
     public void setIdUpdatesDisallowed(boolean idUpdatesDisallowed) {
         this.idUpdatesDisallowed = idUpdatesDisallowed;
     }
