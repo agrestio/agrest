@@ -242,8 +242,6 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
         // relationships
         ObjectContext context = o.getObjectContext();
 
-        ObjEntity entity = context.getEntityResolver().getObjEntity(o);
-
         for (Map.Entry<String, Set<Object>> e : entityUpdate.getRelatedIds().entrySet()) {
 
             AgRelationship relationship = entityUpdate.getEntity().getRelationship(e.getKey());
