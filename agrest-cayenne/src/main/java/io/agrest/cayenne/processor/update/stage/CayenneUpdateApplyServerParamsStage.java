@@ -167,10 +167,10 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
     private void fillIdsFromMappedPk(UpdateContext<?> context, String propertyName) {
 
         for (EntityUpdate<?> u : context.getUpdates()) {
-            Object pk = u.getValues().get(propertyName);
+            Object pk = u.getAttributes().get(propertyName);
 
             // Unlike id parts mapped from the DB layer, this one is tracked by its normal property name
-            u.getOrCreateId().putIfAbsent(propertyName, pk);
+            u.addIdPartIfAbsent(propertyName, pk);
         }
     }
 
@@ -183,7 +183,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
 
             // if size != 1 : throw?
             if (pk != null && pk.size() == 1) {
-                u.getOrCreateId().putIfAbsent(ASTDbPath.DB_PREFIX + outgoingJoin.getSourceName(), pk.iterator().next());
+                u.addIdPartIfAbsent(ASTDbPath.DB_PREFIX + outgoingJoin.getSourceName(), pk.iterator().next());
             }
         }
     }
@@ -205,7 +205,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
                 Map<String, Object> pkMap = (Map<String, Object>) pk.iterator().next();
                 for (DbJoin join : outgoingJoins) {
                     // 'getSourceName' and 'getTargetName' assumes AgEntity's id attribute name is based on DbAttribute name
-                    u.getOrCreateId().putIfAbsent(ASTDbPath.DB_PREFIX + join.getSourceName(), pkMap.get(join.getTargetName()));
+                    u.addIdPartIfAbsent(ASTDbPath.DB_PREFIX + join.getSourceName(), pkMap.get(join.getTargetName()));
                 }
             }
         }
@@ -226,7 +226,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
 
             AgEntity<T> entity = context.getEntity().getAgEntity();
             EntityUpdate<T> u = context.getFirst();
-            u.getOrCreateId().putAll(context.getId().asMap(entity));
+            u.setIdParts(context.getId().asMap(entity));
         }
     }
 
@@ -249,8 +249,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
                 }
 
                 for (EntityUpdate<T> u : context.getUpdates()) {
-                    Map<String, Object> updateId = u.getOrCreateId();
-                    idTranslated.forEach(updateId::putIfAbsent);
+                    idTranslated.forEach(u::addIdPartIfAbsent);
                 }
             }
         }

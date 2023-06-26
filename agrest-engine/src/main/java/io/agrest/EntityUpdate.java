@@ -20,22 +20,23 @@ import java.util.Set;
 public class EntityUpdate<T> implements UpdateRequest<T> {
 
     private final AgEntity<T> entity;
-    private final Map<String, Object> values;
+
+    private final Map<String, Object> idParts;
+    private final Map<String, Object> attributes;
+    private final Map<String, EntityUpdate<?>> toOnes;
+    private final Map<String, List<EntityUpdate<?>>> toManys;
     private final Map<String, Set<Object>> relatedIds;
-    private final Map<String, List<EntityUpdate<?>>> relatedUpdates;
 
-    private Map<String, Object> id;
-
-    @Deprecated
-    private boolean explicitId;
-    
-    private Object mergedTo;
+    private T targetObject;
 
     public EntityUpdate(AgEntity<T> entity) {
         this.entity = Objects.requireNonNull(entity);
-        this.values = new HashMap<>();
+
+        this.idParts = new HashMap<>();
+        this.attributes = new HashMap<>();
         this.relatedIds = new HashMap<>();
-        this.relatedUpdates = new HashMap<>();
+        this.toManys = new HashMap<>();
+        this.toOnes = new HashMap<>();
     }
 
     /**
@@ -46,14 +47,16 @@ public class EntityUpdate<T> implements UpdateRequest<T> {
      */
     public EntityUpdate<T> merge(EntityUpdate<T> anotherUpdate) {
 
-        this.values.putAll(anotherUpdate.values);
+        this.attributes.putAll(anotherUpdate.attributes);
+        this.toOnes.putAll(anotherUpdate.toOnes);
+        this.toManys.putAll(anotherUpdate.toManys);
         this.relatedIds.putAll(anotherUpdate.relatedIds);
 
-        if (anotherUpdate.id != null && !anotherUpdate.id.isEmpty()) {
-            getOrCreateId().putAll(anotherUpdate.id);
+        if (!anotherUpdate.idParts.isEmpty()) {
+            idParts.putAll(anotherUpdate.idParts);
         }
 
-        // If we are merging a compatible update, "explicitId", "entity", "mergedTo" should all be identical already.
+        // If we are merging a compatible update, "entity", "mergedTo" should all be identical already.
         // Do not override them.
 
         return this;
@@ -67,15 +70,42 @@ public class EntityUpdate<T> implements UpdateRequest<T> {
     }
 
     /**
-     * @deprecated unused in Agrest
+     * @since 5.0
      */
-    @Deprecated(since = "5.0")
-    public boolean hasChanges() {
-        return !values.isEmpty() || !relatedIds.isEmpty();
+    public void setIdParts(Map<String, Object> id) {
+        idParts.putAll(id);
     }
 
-    public Map<String, Object> getValues() {
-        return values;
+    /**
+     * @since 5.0
+     */
+    public void addIdPart(String idPart, Object value) {
+        idParts.put(idPart, value);
+    }
+
+    /**
+     * @since 5.0
+     */
+    public void addIdPartIfAbsent(String idPart, Object value) {
+        idParts.putIfAbsent(idPart, value);
+    }
+
+    /**
+     * @since 5.0
+     */
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    public Object getAttribute(String attribute) {
+        return attributes.get(attribute);
+    }
+
+    /**
+     * @since 5.0
+     */
+    public void setAttribute(String attribute, Object value) {
+        attributes.put(attribute, value);
     }
 
     public Map<String, Set<Object>> getRelatedIds() {
@@ -93,84 +123,69 @@ public class EntityUpdate<T> implements UpdateRequest<T> {
      *
      * @since 5.0
      */
-    public Map<String, List<EntityUpdate<?>>> getRelatedUpdates() {
-        return relatedUpdates;
+    public Map<String, List<EntityUpdate<?>>> getToManys() {
+        return toManys;
     }
 
     /**
      * @since 5.0
      */
-    public void addRelatedUpdate(String relationshipName, EntityUpdate<?> update) {
-        relatedUpdates.computeIfAbsent(relationshipName, n -> new ArrayList<>()).add(update);
+    public void addToMany(String relationshipName, EntityUpdate<?> update) {
+        toManys.computeIfAbsent(relationshipName, n -> new ArrayList<>()).add(update);
     }
 
     /**
      * @since 5.0
      */
-    public <R> EntityUpdate<R> getRelatedUpdate(String relationshipName) {
-        List<EntityUpdate<R>> updatesList = getRelatedUpdates(relationshipName);
-        return updatesList.size() == 1 ? updatesList.get(0) : null;
+    public void setToOne(String relationshipName, EntityUpdate<?> update) {
+        toOnes.put(relationshipName, update);
     }
 
     /**
      * @since 5.0
      */
-    public <R> List<EntityUpdate<R>> getRelatedUpdates(String relationshipName) {
-        List updates = relatedUpdates.get(relationshipName);
+    public <R> EntityUpdate<R> getToOne(String relationship) {
+        return (EntityUpdate<R>) toOnes.get(relationship);
+    }
+
+    /**
+     * @since 5.0
+     */
+    public Map<String, EntityUpdate<?>> getToOnes() {
+        return toOnes;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public <R> List<EntityUpdate<R>> getToMany(String relationship) {
+        List updates = toManys.get(relationship);
         return updates != null ? updates : Collections.emptyList();
     }
 
     /**
-     * @since 1.8
+     * @since 5.0
      */
-    public Map<String, Object> getId() {
-        return id;
+    public Map<String, Object> getIdParts() {
+        return idParts;
     }
 
     /**
-     * @since 1.8
-     */
-    public Map<String, Object> getOrCreateId() {
-        if (id == null) {
-            id = new HashMap<>();
-        }
-
-        return id;
-    }
-
-    /**
-     * @since 1.8
-     * @deprecated no longer used by Agrest to track permissions
-     */
-    @Deprecated(since = "5.0")
-    public void setExplicitId() {
-        this.explicitId = true;
-    }
-
-    /**
-     * @since 1.5
-     * @deprecated no longer used by Agrest to track permissions
-     */
-    @Deprecated(since = "5.0")
-    public boolean isExplicitId() {
-        return explicitId;
-    }
-
-    /**
-     * Returns an object that was used to merge this update to.
+     * Returns an object targeted by this update. The object is null until it is initialized by Agrest, usually during
+     * {@link UpdateStage#MERGE_CHANGES} step of the pipeline.
      *
-     * @since 1.8
+     * @since 5.0
      */
-    public Object getMergedTo() {
-        return mergedTo;
+    public T getTargetObject() {
+        return targetObject;
     }
 
     /**
-     * Sets an object that was used to merge this update to.
+     * Sets an object targeted by this update.
      *
-     * @since 1.8
+     * @since 5.0
      */
-    public void setMergedTo(Object mergedTo) {
-        this.mergedTo = mergedTo;
+    public void setTargetObject(T targetObject) {
+        this.targetObject = targetObject;
     }
 }

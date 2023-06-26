@@ -86,26 +86,26 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
     protected <T extends DataObject> void create(UpdateContext<T> context, ObjectRelator relator, EntityUpdate<T> update) {
 
         ObjectContext objectContext = CayenneUpdateStartStage.cayenneContext(context);
-        DataObject o = objectContext.newObject(context.getType());
+        T o = objectContext.newObject(context.getType());
         
-        Map<String, Object> idByAgAttribute = update.getId();
+        Map<String, Object> idParts = update.getIdParts();
 
         // set explicit ID
-        if (idByAgAttribute != null) {
+        if (!idParts.isEmpty()) {
 
             ObjEntity objEntity = objectContext.getEntityResolver().getObjEntity(context.getType());
             DbEntity dbEntity = objEntity.getDbEntity();
             AgEntity agEntity = context.getEntity().getAgEntity();
 
-            Map<DbAttribute, Object> idByDbAttribute = mapToDbAttributes(agEntity, idByAgAttribute);
+            Map<DbAttribute, Object> idByDbAttribute = mapToDbAttributes(agEntity, idParts);
 
             // need to make an additional check that the AgId is unique
-            checkExisting(objectContext, agEntity, idByDbAttribute, idByAgAttribute);
+            checkExisting(objectContext, agEntity, idByDbAttribute, idParts);
 
             if (isPrimaryKey(dbEntity, idByDbAttribute.keySet())) {
                 createSingleFromPk(objEntity, idByDbAttribute, o);
             } else {
-                createSingleFromIdValues(objEntity, idByDbAttribute, idByAgAttribute, o);
+                createSingleFromIdValues(objEntity, idByDbAttribute, idParts, o);
             }
         }
 
@@ -232,10 +232,10 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
         return countPk >= pkSize;
     }
 
-    private <T extends DataObject> void mergeChanges(EntityUpdate<T> entityUpdate, DataObject o, ObjectRelator relator) {
+    private <T extends DataObject> void mergeChanges(EntityUpdate<T> entityUpdate, T o, ObjectRelator relator) {
 
         // attributes
-        for (Map.Entry<String, Object> e : entityUpdate.getValues().entrySet()) {
+        for (Map.Entry<String, Object> e : entityUpdate.getAttributes().entrySet()) {
             o.writeProperty(e.getKey(), e.getValue());
         }
 
@@ -302,7 +302,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
             }
         }
 
-        entityUpdate.setMergedTo(o);
+        entityUpdate.setTargetObject(o);
     }
 
     private boolean allElementsNull(Collection<?> elements) {

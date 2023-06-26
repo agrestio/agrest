@@ -55,7 +55,7 @@ public class NestedIT extends MainDbTest {
 
             int e2Id = Cayenne.intPKForObject(e3Response.getData().get(0));
 
-            EntityUpdate<E2> e2Update = update.getRelatedUpdate(E3.E2.getName());
+            EntityUpdate<E2> e2Update = update.getToOne(E3.E2.getName());
             if (e2Update != null) {
                 AgJaxrs
                         .create(E2.class, config)

@@ -24,20 +24,24 @@ class EntityUpdateBuilder<T> {
         currentUpdate = new EntityUpdate<>(entity);
     }
 
-    void idPart(String idPartName, Object value) {
-        currentUpdate.getOrCreateId().put(idPartName, value);
+    void addIdPart(String idPartName, Object value) {
+        currentUpdate.addIdPart(idPartName, value);
     }
 
-    void attribute(String attribute, Object value) {
-        currentUpdate.getValues().put(attribute, value);
+    void setAttribute(String attribute, Object value) {
+        currentUpdate.setAttribute(attribute, value);
     }
 
     void relatedId(String relationship, Object relatedId) {
         currentUpdate.addRelatedId(relationship, relatedId);
     }
 
-    void relatedUpdate(String relationship, EntityUpdate<?> update) {
-        currentUpdate.addRelatedUpdate(relationship, update);
+    void setToOne(String relationship, EntityUpdate<?> update) {
+        currentUpdate.setToOne(relationship, update);
+    }
+
+    void addToMany(String relationship, EntityUpdate<?> update) {
+        currentUpdate.addToMany(relationship, update);
     }
 
     void endObject() {

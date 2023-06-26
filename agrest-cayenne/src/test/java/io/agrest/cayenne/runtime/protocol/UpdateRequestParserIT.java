@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 
 public class UpdateRequestParserIT extends MainDbTest {
@@ -35,18 +34,20 @@ public class UpdateRequestParserIT extends MainDbTest {
         assertEquals(1, updates.size());
 
         EntityUpdate<E2> e2 = updates.get(0);
-        assertNull(e2.getId());
-        assertEquals(Map.of("name", "a"), e2.getValues());
+        assertEquals(0, e2.getIdParts().size());
+        assertEquals(Map.of("name", "a"), e2.getAttributes());
         assertEquals(Map.of(), e2.getRelatedIds());
-        assertEquals(1, e2.getRelatedUpdates().size());
-        assertEquals(2, e2.getRelatedUpdates().get("e3s").size());
+        assertEquals(0, e2.getToOnes().size());
+        assertEquals(1, e2.getToManys().size());
+        assertEquals(2, e2.getToMany("e3s").size());
 
-        EntityUpdate<E3> e31 = (EntityUpdate<E3>) e2.getRelatedUpdates().get("e3s").get(0);
-        assertEquals(Map.of("db:id_", 2), e31.getId());
-        assertEquals(Map.of("name", "n2"), e31.getValues());
+        List<EntityUpdate<E3>> e3s1 = e2.getToMany("e3s");
+        EntityUpdate<E3> e31 = e3s1.get(0);
+        assertEquals(Map.of("db:id_", 2), e31.getIdParts());
+        assertEquals(Map.of("name", "n2"), e31.getAttributes());
 
-        EntityUpdate<E3> e32 = (EntityUpdate<E3>) e2.getRelatedUpdates().get("e3s").get(1);
-        assertEquals(Map.of("db:id_", 1), e32.getId());
-        assertEquals(Map.of("name", "n1"), e32.getValues());
+        EntityUpdate<E3> e32 = e3s1.get(1);
+        assertEquals(Map.of("db:id_", 1), e32.getIdParts());
+        assertEquals(Map.of("name", "n1"), e32.getAttributes());
     }
 }

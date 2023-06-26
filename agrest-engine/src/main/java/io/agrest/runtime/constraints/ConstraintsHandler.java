@@ -48,20 +48,20 @@ public class ConstraintsHandler implements IConstraintsHandler {
             // from JSON), but let's handle both consistently
 
             if (disallowIdUpdates) {
-                Map<String, Object> id = u.getId();
-                if (id != null && !id.isEmpty()) {
+                Map<String, Object> id = u.getIdParts();
+                if (!id.isEmpty()) {
                     throw AgException.badRequest("Setting ID explicitly is not allowed: %s", id);
                 }
             }
 
-            Iterator<String> valuesIt = u.getValues().keySet().iterator();
-            while (valuesIt.hasNext()) {
-                String name = valuesIt.next();
+            Iterator<String> attributesIt = u.getAttributes().keySet().iterator();
+            while (attributesIt.hasNext()) {
+                String name = attributesIt.next();
 
                 AgAttribute a = entity.getAttribute(name);
                 if (a == null) {
-                    LOGGER.debug("Attribute not recognized, removing: '{}' for id {}", name, u.getId());
-                    valuesIt.remove();
+                    LOGGER.debug("Attribute not recognized, removing: '{}' for id {}", name, u.getIdParts());
+                    attributesIt.remove();
                     continue;
                 }
 
@@ -70,14 +70,15 @@ public class ConstraintsHandler implements IConstraintsHandler {
                     // do not report default properties, as this wasn't a client's fault it got on the list, but
                     // still remove it
                     if (!context.getEntity().getBaseProjection().isDefaultAttribute(name)) {
-                        LOGGER.debug("Attribute not allowed, removing: '{}' for id {}", name, u.getId());
+                        LOGGER.debug("Attribute not allowed, removing: '{}' for id {}", name, u.getIdParts());
                     }
 
-                    valuesIt.remove();
+                    attributesIt.remove();
                 }
             }
 
-            // updates are not hierarchical yet, so only process one level of relationships. No need for recursive checks
+            // TODO: recursive checks on relationships
+
             Iterator<String> relatedIdsIt = u.getRelatedIds().keySet().iterator();
             while (relatedIdsIt.hasNext()) {
                 String name = relatedIdsIt.next();
@@ -85,13 +86,13 @@ public class ConstraintsHandler implements IConstraintsHandler {
                 AgRelationship r = entity.getRelationship(name);
 
                 if (r == null) {
-                    LOGGER.debug("Relationship not recognized, removing: '{}' for id {}", name, u.getId());
+                    LOGGER.debug("Relationship not recognized, removing: '{}' for id {}", name, u.getIdParts());
                     relatedIdsIt.remove();
                     continue;
                 }
 
                 if (!r.isWritable()) {
-                    LOGGER.debug("Relationship not allowed, removing: '{}' for id {}", name, u.getId());
+                    LOGGER.debug("Relationship not allowed, removing: '{}' for id {}", name, u.getIdParts());
                     relatedIdsIt.remove();
                 }
             }

@@ -25,7 +25,7 @@ public class UpdateAuthorizerIT extends MainDbTest {
     static final MainModelTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E4.class)
             .agCustomizer(ab -> ab
-                    .entityOverlay(AgEntity.overlay(E2.class).updateAuthorizer((o, u) -> o.getName().equals(u.getValues().get("name"))))
+                    .entityOverlay(AgEntity.overlay(E2.class).updateAuthorizer((o, u) -> o.getName().equals(u.getAttributes().get("name"))))
             ).build();
 
     @Test
@@ -116,7 +116,7 @@ public class UpdateAuthorizerIT extends MainDbTest {
 
             return AgJaxrs
                     .createOrUpdate(E2.class, config)
-                    .updateAuthorizer(E2.class, (o, u) -> !name.equals(u.getValues().get("name")))
+                    .updateAuthorizer(E2.class, (o, u) -> !name.equals(u.getAttributes().get("name")))
                     .sync(updates);
         }
     }

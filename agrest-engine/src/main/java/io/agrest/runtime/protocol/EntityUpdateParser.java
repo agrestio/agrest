@@ -133,7 +133,7 @@ class EntityUpdateParser<T> {
             AgIdPart id = ids.iterator().next();
             JsonValueConverter<?> converter = converters.converter(id.getType());
             String name = id.getName();
-            return (b, j) -> b.idPart(name, converter.value(j));
+            return (b, j) -> b.addIdPart(name, converter.value(j));
         } else {
 
             Map<String, JsonValueConverter<?>> idPartsConverters = new HashMap<>(ids.size() * 2);
@@ -147,7 +147,7 @@ class EntityUpdateParser<T> {
                     throw AgException.badRequest("Failed to parse update payload. Id part is missing: " + n);
                 }
 
-                b.idPart(n, c.value(idNode));
+                b.addIdPart(n, c.value(idNode));
             });
         }
     }
@@ -155,7 +155,7 @@ class EntityUpdateParser<T> {
     private BiConsumer<EntityUpdateBuilder<T>, JsonNode> createAttributeExtractor(AgAttribute attribute) {
         JsonValueConverter<?> converter = converters.converter(attribute.getType());
         String name = attribute.getName();
-        return (b, j) -> b.attribute(name, converter.value(j));
+        return (b, j) -> b.setAttribute(name, converter.value(j));
     }
 
     private BiConsumer<EntityUpdateBuilder<T>, JsonNode> createRelationshipExtractor(AgRelationship relationship) {
@@ -174,7 +174,7 @@ class EntityUpdateParser<T> {
             if (isObject.test(j)) {
                 List<EntityUpdate<Object>> childUpdates = parent.parse(relationship, j, b.getRemainingDepth() - 1);
                 if (!childUpdates.isEmpty()) {
-                    b.relatedUpdate(name, childUpdates.get(0));
+                    b.setToOne(name, childUpdates.get(0));
                 }
             } else {
                 b.relatedId(name, converter.value(j));
@@ -200,7 +200,7 @@ class EntityUpdateParser<T> {
                         if (isObject.test(child)) {
                             List<EntityUpdate<Object>> childUpdates = parent.parse(relationship, child, b.getRemainingDepth() - 1);
                             if (!childUpdates.isEmpty()) {
-                                b.relatedUpdate(name, childUpdates.get(0));
+                                b.addToMany(name, childUpdates.get(0));
                             }
                         } else {
                             b.relatedId(name, converter.value(child));

@@ -26,7 +26,7 @@ public class CreateAuthorizerIT extends MainDbTest {
     static final MainModelTester tester = tester(Resource.class)
             .entities(E2.class, E3.class, E4.class)
             .agCustomizer(ab -> ab
-                    .entityOverlay(AgEntity.overlay(E2.class).createAuthorizer(u -> !"blocked".equals(u.getValues().get("name"))))
+                    .entityOverlay(AgEntity.overlay(E2.class).createAuthorizer(u -> !"blocked".equals(u.getAttributes().get("name"))))
             ).build();
 
     @Test
@@ -100,7 +100,7 @@ public class CreateAuthorizerIT extends MainDbTest {
 
             return AgJaxrs.createOrUpdate(E2.class, config)
                     .clientParams(uriInfo.getQueryParameters())
-                    .createAuthorizer(E2.class, u -> !name.equals(u.getValues().get("name")))
+                    .createAuthorizer(E2.class, u -> !name.equals(u.getAttributes().get("name")))
                     .sync(updates);
         }
     }
