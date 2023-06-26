@@ -100,15 +100,15 @@ public class EntityUpdate<T> implements UpdateRequest<T> {
     /**
      * @since 5.0
      */
-    public <T> EntityUpdate<T> getRelatedUpdate(String relationshipName) {
-        List<EntityUpdate<T>> updatesList = getRelatedUpdates(relationshipName);
+    public <R> EntityUpdate<R> getRelatedUpdate(String relationshipName) {
+        List<EntityUpdate<R>> updatesList = getRelatedUpdates(relationshipName);
         return updatesList.size() == 1 ? updatesList.get(0) : null;
     }
 
     /**
      * @since 5.0
      */
-    public <T> List<EntityUpdate<T>> getRelatedUpdates(String relationshipName) {
+    public <R> List<EntityUpdate<R>> getRelatedUpdates(String relationshipName) {
         List updates = relatedUpdates.get(relationshipName);
         return updates != null ? updates : Collections.emptyList();
     }
