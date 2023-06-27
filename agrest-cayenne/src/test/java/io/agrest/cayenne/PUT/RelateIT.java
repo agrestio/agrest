@@ -19,7 +19,7 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
 import org.junit.jupiter.api.Test;
 
-public class Relate_IT extends MainDbTest {
+public class RelateIT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
