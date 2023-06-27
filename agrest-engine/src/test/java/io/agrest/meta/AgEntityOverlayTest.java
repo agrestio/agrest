@@ -272,10 +272,10 @@ public class AgEntityOverlayTest {
         CreateAuthorizer<P1> f = o.resolve(mock(AgSchema.class), e, e.getSubEntities()).getCreateAuthorizer();
 
         EntityUpdate<P1> p11 = new EntityUpdate<>(mock(AgEntity.class));
-        p11.getAttributes().put("name", "x");
+        p11.setAttribute("name", "x");
 
         EntityUpdate<P1> p12 = new EntityUpdate<>(mock(AgEntity.class));
-        p12.getAttributes().put("name", "a");
+        p12.setAttribute("name", "a");
 
         assertFalse(f.isAllowed(p11));
         assertTrue(f.isAllowed(p12));
@@ -299,13 +299,13 @@ public class AgEntityOverlayTest {
         CreateAuthorizer<P1> f = o.resolve(mock(AgSchema.class), e, e.getSubEntities()).getCreateAuthorizer();
 
         EntityUpdate<P1> p11 = new EntityUpdate<>(mock(AgEntity.class));
-        p11.getAttributes().put("name", "ax");
+        p11.setAttribute("name", "ax");
 
         EntityUpdate<P1> p12 = new EntityUpdate<>(mock(AgEntity.class));
-        p12.getAttributes().put("name", "xa");
+        p12.setAttribute("name", "xa");
 
         EntityUpdate<P1> p13 = new EntityUpdate<>(mock(AgEntity.class));
-        p13.getAttributes().put("name", "axa");
+        p13.setAttribute("name", "axa");
 
         assertFalse(f.isAllowed(p11));
         assertFalse(f.isAllowed(p12));
@@ -332,13 +332,13 @@ public class AgEntityOverlayTest {
         CreateAuthorizer<P1> f = o.resolve(mock(AgSchema.class), e, e.getSubEntities()).getCreateAuthorizer();
 
         EntityUpdate<P1> p11 = new EntityUpdate<>(mock(AgEntity.class));
-        p11.getAttributes().put("name", "ax");
+        p11.setAttribute("name", "ax");
 
         EntityUpdate<P1> p12 = new EntityUpdate<>(mock(AgEntity.class));
-        p12.getAttributes().put("name", "xa");
+        p12.setAttribute("name", "xa");
 
         EntityUpdate<P1> p13 = new EntityUpdate<>(mock(AgEntity.class));
-        p13.getAttributes().put("name", "axa");
+        p13.setAttribute("name", "axa");
 
         assertFalse(f.isAllowed(p11));
         assertTrue(f.isAllowed(p12));
@@ -363,10 +363,10 @@ public class AgEntityOverlayTest {
         UpdateAuthorizer<P1> f = o.resolve(mock(AgSchema.class), e, e.getSubEntities()).getUpdateAuthorizer();
 
         EntityUpdate<P1> p11 = new EntityUpdate<>(mock(AgEntity.class));
-        p11.getAttributes().put("name", "x");
+        p11.setAttribute("name", "x");
 
         EntityUpdate<P1> p12 = new EntityUpdate<>(mock(AgEntity.class));
-        p12.getAttributes().put("name", "a");
+        p12.setAttribute("name", "a");
 
         assertFalse(f.isAllowed(mock(P1.class), p11));
         assertTrue(f.isAllowed(mock(P1.class), p12));
@@ -390,13 +390,13 @@ public class AgEntityOverlayTest {
         UpdateAuthorizer<P1> f = o.resolve(mock(AgSchema.class), e, e.getSubEntities()).getUpdateAuthorizer();
 
         EntityUpdate<P1> p11 = new EntityUpdate<>(mock(AgEntity.class));
-        p11.getAttributes().put("name", "ax");
+        p11.setAttribute("name", "ax");
 
         EntityUpdate<P1> p12 = new EntityUpdate<>(mock(AgEntity.class));
-        p12.getAttributes().put("name", "xa");
+        p12.setAttribute("name", "xa");
 
         EntityUpdate<P1> p13 = new EntityUpdate<>(mock(AgEntity.class));
-        p13.getAttributes().put("name", "axa");
+        p13.setAttribute("name", "axa");
 
         assertFalse(f.isAllowed(mock(P1.class), p11));
         assertFalse(f.isAllowed(mock(P1.class), p12));
@@ -423,13 +423,13 @@ public class AgEntityOverlayTest {
         UpdateAuthorizer<P1> f = o.resolve(mock(AgSchema.class), e, e.getSubEntities()).getUpdateAuthorizer();
 
         EntityUpdate<P1> p11 = new EntityUpdate<>(mock(AgEntity.class));
-        p11.getAttributes().put("name", "ax");
+        p11.setAttribute("name", "ax");
 
         EntityUpdate<P1> p12 = new EntityUpdate<>(mock(AgEntity.class));
-        p12.getAttributes().put("name", "xa");
+        p12.setAttribute("name", "xa");
 
         EntityUpdate<P1> p13 = new EntityUpdate<>(mock(AgEntity.class));
-        p13.getAttributes().put("name", "axa");
+        p13.setAttribute("name", "axa");
 
         assertFalse(f.isAllowed(mock(P1.class), p11));
         assertTrue(f.isAllowed(mock(P1.class), p12));
@@ -458,13 +458,13 @@ public class AgEntityOverlayTest {
         UpdateAuthorizer<P1> f = oMerged.resolve(mock(AgSchema.class), e, e.getSubEntities()).getUpdateAuthorizer();
 
         EntityUpdate<P1> p11 = new EntityUpdate<>(mock(AgEntity.class));
-        p11.getAttributes().put("name", "ax");
+        p11.setAttribute("name", "ax");
 
         EntityUpdate<P1> p12 = new EntityUpdate<>(mock(AgEntity.class));
-        p12.getAttributes().put("name", "xa");
+        p12.setAttribute("name", "xa");
 
         EntityUpdate<P1> p13 = new EntityUpdate<>(mock(AgEntity.class));
-        p13.getAttributes().put("name", "axa");
+        p13.setAttribute("name", "axa");
 
         assertFalse(f.isAllowed(mock(P1.class), p11));
         assertTrue(f.isAllowed(mock(P1.class), p12));

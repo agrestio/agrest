@@ -6,6 +6,7 @@
 * #633 Optimize and clean up update parser
 * #634 Recursive EntityUpdate parser
 * #635 Write constraint only applied to "id" in the path, but not in the body
+* #636 Clean up the API of EntityUpdate
 
 ## Release 5.0.M16
 
