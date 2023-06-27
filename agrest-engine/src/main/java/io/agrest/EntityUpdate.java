@@ -25,7 +25,8 @@ public class EntityUpdate<T> implements UpdateRequest<T> {
     private final Map<String, Object> attributes;
     private final Map<String, EntityUpdate<?>> toOnes;
     private final Map<String, List<EntityUpdate<?>>> toManys;
-    private final Map<String, Set<Object>> relatedIds;
+    private final Map<String, Object> toOneIds;
+    private final Map<String, Set<Object>> toManyIds;
 
     private T targetObject;
 
@@ -34,9 +35,10 @@ public class EntityUpdate<T> implements UpdateRequest<T> {
 
         this.idParts = new HashMap<>();
         this.attributes = new HashMap<>();
-        this.relatedIds = new HashMap<>();
         this.toManys = new HashMap<>();
         this.toOnes = new HashMap<>();
+        this.toOneIds = new HashMap<>();
+        this.toManyIds = new HashMap<>();
     }
 
     /**
@@ -47,14 +49,12 @@ public class EntityUpdate<T> implements UpdateRequest<T> {
      */
     public EntityUpdate<T> merge(EntityUpdate<T> anotherUpdate) {
 
+        this.idParts.putAll(anotherUpdate.idParts);
         this.attributes.putAll(anotherUpdate.attributes);
         this.toOnes.putAll(anotherUpdate.toOnes);
         this.toManys.putAll(anotherUpdate.toManys);
-        this.relatedIds.putAll(anotherUpdate.relatedIds);
-
-        if (!anotherUpdate.idParts.isEmpty()) {
-            idParts.putAll(anotherUpdate.idParts);
-        }
+        this.toOneIds.putAll(anotherUpdate.toOneIds);
+        this.toManyIds.putAll(anotherUpdate.toManyIds);
 
         // If we are merging a compatible update, "entity", "mergedTo" should all be identical already.
         // Do not override them.
@@ -108,12 +108,39 @@ public class EntityUpdate<T> implements UpdateRequest<T> {
         attributes.put(attribute, value);
     }
 
-    public Map<String, Set<Object>> getRelatedIds() {
-        return relatedIds;
+    /**
+     * @since 5.0
+     */
+    public Map<String, Set<Object>> getToManyIds() {
+        return toManyIds;
     }
 
-    public void addRelatedId(String relationshipName, Object value) {
-        relatedIds.computeIfAbsent(relationshipName, n -> new HashSet<>()).add(value);
+    /**
+     * @since 5.0
+     */
+    public void addToManyId(String relationship, Object value) {
+        toManyIds.computeIfAbsent(relationship, n -> new HashSet<>()).add(value);
+    }
+
+    /**
+     * @since 5.0
+     */
+    public void setToOneId(String relationship, Object value) {
+        toOneIds.put(relationship, value);
+    }
+
+    /**
+     * @since 5.0
+     */
+    public Object getToOneId(String relationship) {
+        return toOneIds.get(relationship);
+    }
+
+    /**
+     * @since 5.0
+     */
+    public Map<String, Object> getToOneIds() {
+        return toOneIds;
     }
 
     /**

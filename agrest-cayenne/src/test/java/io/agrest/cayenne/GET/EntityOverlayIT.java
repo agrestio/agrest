@@ -31,7 +31,7 @@ public class EntityOverlayIT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E7.class, E8.class)
+            .entitiesAndDependencies(E2.class, E3.class, E4.class, E7.class, E8.class)
             .agCustomizer(EntityOverlayIT::addOverlay)
             .build();
 

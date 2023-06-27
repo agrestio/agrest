@@ -177,13 +177,11 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
     private void fillIdsFromRelatedId(UpdateContext<?> context, String agRelationshipName, DbJoin outgoingJoin) {
 
         for (EntityUpdate<?> u : context.getUpdates()) {
-            // 'getSourceName' assumes AgEntity's id attribute name is based on DbAttribute name
-            // TODO: check if PK is a map?
-            Set<Object> pk = u.getRelatedIds().get(agRelationshipName);
 
-            // if size != 1 : throw?
-            if (pk != null && pk.size() == 1) {
-                u.addIdPartIfAbsent(ASTDbPath.DB_PREFIX + outgoingJoin.getSourceName(), pk.iterator().next());
+            // 'getSourceName' assumes AgEntity's id attribute name is based on DbAttribute name
+            Object id = u.getToOneIds().get(agRelationshipName);
+            if (id != null) {
+                u.addIdPartIfAbsent(ASTDbPath.DB_PREFIX + outgoingJoin.getSourceName(), id);
             }
         }
     }
@@ -192,17 +190,16 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
 
         for (EntityUpdate<?> u : context.getUpdates()) {
 
-            Set<Object> pk = u.getRelatedIds().get(agRelationshipName);
+            Object pk = u.getToOneIds().get(agRelationshipName);
 
-            // if size != 1 : throw?
-            if (pk != null && pk.size() == 1) {
+            if (pk != null) {
                 // TODO: should we allow null Map though?
                 if (!(pk instanceof Map)) {
                     throw new IllegalStateException("Expected more than one value in related 'id' for " + agRelationshipName);
                 }
 
                 // TODO: pretty sure this case has no unit tests
-                Map<String, Object> pkMap = (Map<String, Object>) pk.iterator().next();
+                Map<String, Object> pkMap = (Map<String, Object>) pk;
                 for (DbJoin join : outgoingJoins) {
                     // 'getSourceName' and 'getTargetName' assumes AgEntity's id attribute name is based on DbAttribute name
                     u.addIdPartIfAbsent(ASTDbPath.DB_PREFIX + join.getSourceName(), pkMap.get(join.getTargetName()));

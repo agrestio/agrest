@@ -36,7 +36,8 @@ public class UpdateRequestParserIT extends MainDbTest {
         EntityUpdate<E2> e2 = updates.get(0);
         assertEquals(0, e2.getIdParts().size());
         assertEquals(Map.of("name", "a"), e2.getAttributes());
-        assertEquals(Map.of(), e2.getRelatedIds());
+        assertEquals(Map.of(), e2.getToManyIds());
+        assertEquals(Map.of(), e2.getToOneIds());
         assertEquals(0, e2.getToOnes().size());
         assertEquals(1, e2.getToManys().size());
         assertEquals(2, e2.getToMany("e3s").size());

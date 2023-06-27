@@ -32,8 +32,12 @@ class EntityUpdateBuilder<T> {
         currentUpdate.setAttribute(attribute, value);
     }
 
-    void relatedId(String relationship, Object relatedId) {
-        currentUpdate.addRelatedId(relationship, relatedId);
+    void setToOneId(String relationship, Object relatedId) {
+        currentUpdate.setToOneId(relationship, relatedId);
+    }
+
+    void addToManyId(String relationship, Object relatedId) {
+        currentUpdate.addToManyId(relationship, relatedId);
     }
 
     void setToOne(String relationship, EntityUpdate<?> update) {

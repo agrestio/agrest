@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * An {@link IConstraintsHandler} that ensures that no target attributes exceed
@@ -79,23 +81,28 @@ public class ConstraintsHandler implements IConstraintsHandler {
 
             // TODO: recursive checks on relationships
 
-            Iterator<String> relatedIdsIt = u.getRelatedIds().keySet().iterator();
-            while (relatedIdsIt.hasNext()) {
-                String name = relatedIdsIt.next();
+            Consumer<Set<String>> checkIds = s -> {
+                Iterator<String> toOnesIt = s.iterator();
+                while (toOnesIt.hasNext()) {
+                    String name = toOnesIt.next();
 
-                AgRelationship r = entity.getRelationship(name);
+                    AgRelationship r = entity.getRelationship(name);
 
-                if (r == null) {
-                    LOGGER.debug("Relationship not recognized, removing: '{}' for id {}", name, u.getIdParts());
-                    relatedIdsIt.remove();
-                    continue;
+                    if (r == null) {
+                        LOGGER.debug("Relationship not recognized, removing: '{}' for id {}", name, u.getIdParts());
+                        toOnesIt.remove();
+                        continue;
+                    }
+
+                    if (!r.isWritable()) {
+                        LOGGER.debug("Relationship not allowed, removing: '{}' for id {}", name, u.getIdParts());
+                        toOnesIt.remove();
+                    }
                 }
+            };
 
-                if (!r.isWritable()) {
-                    LOGGER.debug("Relationship not allowed, removing: '{}' for id {}", name, u.getIdParts());
-                    relatedIdsIt.remove();
-                }
-            }
+            checkIds.accept(u.getToOneIds().keySet());
+            checkIds.accept(u.getToManyIds().keySet());
         }
     }
 

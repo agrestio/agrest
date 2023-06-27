@@ -79,7 +79,7 @@ public class RelateIT extends MainDbTest {
         tester.target("/e3")
                 .post("{\"e2\":15,\"name\":\"MM\"}")
                 .wasNotFound()
-                .bodyEquals("{\"message\":\"Related object 'E2' with ID '[15]' is not found\"}");
+                .bodyEquals("{\"message\":\"Related object 'E2' with id of '15' is not found\"}");
 
         tester.e3().matcher().assertNoMatches();
     }

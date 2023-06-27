@@ -177,7 +177,7 @@ class EntityUpdateParser<T> {
                     b.setToOne(name, childUpdates.get(0));
                 }
             } else {
-                b.relatedId(name, converter.value(j));
+                b.setToOneId(name, converter.value(j));
             }
         };
     }
@@ -194,7 +194,7 @@ class EntityUpdateParser<T> {
 
                 if (j.isEmpty()) {
                     // this is a hackish way to tell the visitor, that it should unrelate all objects
-                    b.relatedId(name, null);
+                    b.addToManyId(name, null);
                 } else {
                     for (JsonNode child : j) {
                         if (isObject.test(child)) {
@@ -203,7 +203,7 @@ class EntityUpdateParser<T> {
                                 b.addToMany(name, childUpdates.get(0));
                             }
                         } else {
-                            b.relatedId(name, converter.value(child));
+                            b.addToManyId(name, converter.value(child));
                         }
                     }
                 }
