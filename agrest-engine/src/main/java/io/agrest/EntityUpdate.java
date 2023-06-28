@@ -13,7 +13,8 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Contains update data of a single object.
+ * A mutable object with update data of a single model object. For to-many relationships makes a distinction between
+ * "no update present" (null collection) and "all related objects should be removed" (empty collection).
  *
  * @since 1.3
  */
@@ -170,15 +171,26 @@ public class EntityUpdate<T> implements UpdateRequest<T> {
      * @since 5.0
      */
     public <R> List<EntityUpdate<R>> getToMany(String relationship) {
-        List updates = toManys != null ? toManys.get(relationship) : Collections.emptyList();
-        return updates != null ? updates : Collections.emptyList();
+        // Do not return empty list of the key is not there. We must distinguish between no update and empty list.
+        // Empty list may mean "remove all target objects".
+        return toManys != null ? (List) toManys.get(relationship) : null;
     }
 
     /**
      * @since 5.0
      */
-    public void addToMany(String relationshipName, EntityUpdate<?> update) {
-        mutableToManys().computeIfAbsent(relationshipName, n -> new ArrayList<>()).add(update);
+    public void addToMany(String relationship, EntityUpdate<?> update) {
+        mutableToManys().computeIfAbsent(relationship, n -> new ArrayList<>()).add(update);
+    }
+
+    /**
+     * A mutator that resets the update to a state indicating an explicit need to remove all related objects.
+     * This will result in an empty array for related objects, which is different from a null array.
+     *
+     * @since 5.0
+     */
+    public void emptyToMany(String relationship) {
+        mutableToManys().computeIfAbsent(relationship, n -> new ArrayList<>()).clear();
     }
 
     /**
@@ -221,6 +233,16 @@ public class EntityUpdate<T> implements UpdateRequest<T> {
      */
     public void addToManyId(String relationship, Object value) {
         mutableToManyIds().computeIfAbsent(relationship, n -> new HashSet<>()).add(value);
+    }
+
+    /**
+     * A mutator that resets the update to a state indicating an explicit need to remove all related ids.
+     * This will result in an empty array for ids, which is different from a null array.
+     *
+     * @since 5.0
+     */
+    public void emptyToManyIds(String relationship) {
+        mutableToManyIds().computeIfAbsent(relationship, n -> new HashSet<>()).clear();
     }
 
     private <M> Map<String, M> mergeMaps(Map<String, M> to, Map<String, M> from) {
