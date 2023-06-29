@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-class ReadConstraints {
+class ReadPropertyFilter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReadConstraints.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReadPropertyFilter.class);
 
     static <T> void apply(ResourceEntity<T> entity) {
 

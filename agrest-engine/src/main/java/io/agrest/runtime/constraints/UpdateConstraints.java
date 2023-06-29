@@ -8,7 +8,7 @@ import io.agrest.runtime.processor.update.UpdateContext;
 public class UpdateConstraints {
 
     public <T> void apply(UpdateContext<T> context) {
-        WriteConstraints.apply(context.getEntity(), context.getUpdates());
-        ReadConstraints.apply(context.getEntity());
+        WritePropertyFilter.apply(context.getEntity(), context.getUpdates());
+        ReadPropertyFilter.apply(context.getEntity());
     }
 }

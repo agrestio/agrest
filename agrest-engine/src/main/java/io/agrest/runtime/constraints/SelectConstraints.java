@@ -8,7 +8,7 @@ import io.agrest.runtime.processor.select.SelectContext;
 public class SelectConstraints {
 
     public <T> void apply(SelectContext<T> context) {
-        ReadConstraints.apply(context.getEntity());
-        SizeConstraints.apply(context.getEntity(), context.getSizeConstraints());
+        ReadPropertyFilter.apply(context.getEntity());
+        SizeFilter.apply(context.getEntity(), context.getSizeConstraints());
     }
 }

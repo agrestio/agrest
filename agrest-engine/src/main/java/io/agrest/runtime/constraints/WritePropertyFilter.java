@@ -16,9 +16,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-class WriteConstraints {
+class WritePropertyFilter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WriteConstraints.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WritePropertyFilter.class);
 
     public static <T> void apply(ResourceEntity<T> entity, Collection<EntityUpdate<T>> updates) {
 

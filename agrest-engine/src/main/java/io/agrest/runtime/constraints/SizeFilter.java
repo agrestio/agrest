@@ -1,14 +1,15 @@
 package io.agrest.runtime.constraints;
 
 import io.agrest.ResourceEntity;
+import io.agrest.SizeConstraints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class SizeConstraints {
+class SizeFilter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SizeConstraints.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SizeFilter.class);
 
-    public static <T> void apply(ResourceEntity<T> entity, io.agrest.SizeConstraints constraints) {
+    public static <T> void apply(ResourceEntity<T> entity, SizeConstraints constraints) {
         if (constraints != null) {
 
             // fetchOffset - do not exceed source offset

@@ -15,7 +15,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ReadConstraintsTest {
+public class ReadPropertyFilterTest {
 
     static final AgSchema schema = new LazySchema(List.of(new AnnotationsAgEntityCompiler(Map.of())));
 
@@ -28,7 +28,7 @@ public class ReadConstraintsTest {
         te1.ensureAttribute("a", false);
         te1.ensureAttribute("b", false);
 
-        ReadConstraints.apply(te1);
+        ReadPropertyFilter.apply(te1);
         assertEquals(1, te1.getBaseProjection().getAttributes().size());
         assertNotNull(te1.getBaseProjection().getAttribute("a"));
         assertTrue(te1.getChildren().isEmpty());
@@ -43,7 +43,7 @@ public class ReadConstraintsTest {
         te1.ensureAttribute("m", false);
         te1.ensureAttribute("n", false);
 
-        ReadConstraints.apply(te1);
+        ReadPropertyFilter.apply(te1);
         assertEquals(2, te1.getBaseProjection().getAttributes().size());
         assertNotNull(te1.getBaseProjection().getAttribute("m"));
         assertNotNull(te1.getBaseProjection().getAttribute("n"));
