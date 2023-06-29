@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -64,6 +65,20 @@ class EntityUpdateParser<T> {
         // else: empty requests are fine. we just do nothing...
 
         return builder.getUpdates();
+    }
+
+    private <R> List<EntityUpdate<R>> parseRelated(AgRelationship relationship, JsonNode json, int remainingDepth) {
+
+        if (remainingDepth == 0) {
+            LOGGER.info("Truncated updates for relationship '{}' pointing to '{}', as it exceeds the max allowed depth",
+                    relationship.getName(),
+                    relationship.getTargetEntity().getName());
+
+            return Collections.emptyList();
+        }
+
+        AgEntity<R> target = (AgEntity<R>) relationship.getTargetEntity();
+        return parent.getParser(target).parse(json, remainingDepth);
     }
 
     private void processArray(EntityUpdateBuilder<T> builder, JsonNode arrayNode) {
@@ -173,7 +188,7 @@ class EntityUpdateParser<T> {
         return (b, j) -> {
             if (isObject.test(j)) {
 
-                List<EntityUpdate<Object>> childUpdates = parent.parse(relationship, j, b.getRemainingDepth() - 1);
+                List<EntityUpdate<Object>> childUpdates = parseRelated(relationship, j, b.getRemainingDepth() - 1);
 
                 // may be empty if we reached the depth limit
                 if (!childUpdates.isEmpty()) {
@@ -202,7 +217,7 @@ class EntityUpdateParser<T> {
                 } else {
                     for (JsonNode child : j) {
                         if (isObject.test(child)) {
-                            List<EntityUpdate<Object>> childUpdates = parent.parse(relationship, child, b.getRemainingDepth() - 1);
+                            List<EntityUpdate<Object>> childUpdates = parseRelated(relationship, child, b.getRemainingDepth() - 1);
 
                             // children may be empty if we reached the depth limit
                             if (!childUpdates.isEmpty()) {

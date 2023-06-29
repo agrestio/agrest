@@ -7,6 +7,7 @@
 * #634 Recursive EntityUpdate parser
 * #635 Write constraint only applied to "id" in the path, but not in the body
 * #636 Clean up the API of EntityUpdate
+* #638 EntityUpdate.getToMany(String) should return null if the key is not a part of update
 
 ## Release 5.0.M16
 
