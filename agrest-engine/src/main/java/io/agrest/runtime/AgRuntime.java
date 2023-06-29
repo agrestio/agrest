@@ -180,7 +180,7 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> DeleteBuilder<T> delete(Class<T> type) {
-        DeleteContext<T> context = new DeleteContext<>(type, injector);
+        DeleteContext<T> context = new DeleteContext<>(type, new RequestSchema(schema), injector);
         return new DefaultDeleteBuilder<>(context, deleteProcessorFactory);
     }
 

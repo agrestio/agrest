@@ -58,7 +58,7 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 
     @Override
     public DeleteBuilder<T> entityOverlay(AgEntityOverlay<T> overlay) {
-        context.addEntityOverlay(overlay);
+        context.getSchema().addOverlay(overlay);
         return this;
     }
 
