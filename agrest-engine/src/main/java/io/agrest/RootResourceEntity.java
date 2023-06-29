@@ -38,9 +38,9 @@ public class RootResourceEntity<T> extends ResourceEntity<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #getData()}
+     * @deprecated in favor of {@link #getData()}
      */
-    @Deprecated
+    @Deprecated(since = "5.0")
     public List<T> getResult() {
         return data;
     }
@@ -53,27 +53,27 @@ public class RootResourceEntity<T> extends ResourceEntity<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #setData(List)}
+     * @deprecated in favor of {@link #setData(List)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0")
     public void setResult(List<T> data) {
         this.data = data;
     }
 
     /**
      * @since 1.20
-     * @deprecated since 5.0 as metadata encoding that uses this will soon be removed from Agrest
+     * @deprecated as metadata encoding that used this was removed from Agrest
      */
-    @Deprecated
+    @Deprecated(since = "5.0")
     public String getApplicationBase() {
         return applicationBase;
     }
 
     /**
      * @since 1.20
-     * @deprecated since 5.0 as metadata encoding that uses this will soon be removed from Agrest
+     * @deprecated as metadata encoding that used this was removed from Agrest
      */
-    @Deprecated
+    @Deprecated(since = "5.0")
     public void setApplicationBase(String applicationBase) {
         this.applicationBase = applicationBase;
     }
