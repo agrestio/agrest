@@ -41,13 +41,15 @@ public class UpdateCreateResourceEntityStage implements Processor<UpdateContext<
         AgEntity<T> overlaid = entity.resolveOverlayHierarchy(schema, context.getEntityOverlays());
         RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(overlaid);
 
-        AgRequest request = context.getRequest();
-        includeMerger.merge(resourceEntity,
-                request.getIncludes(),
-                context.getEntityOverlays(),
-                context.getMaxPathDepth());
+        if (context.isIncludingDataInResponse()) {
+            AgRequest request = context.getRequest();
+            includeMerger.merge(resourceEntity,
+                    request.getIncludes(),
+                    context.getEntityOverlays(),
+                    context.getMaxPathDepth());
 
-        excludeMerger.merge(resourceEntity, request.getExcludes());
+            excludeMerger.merge(resourceEntity, request.getExcludes());
+        }
 
         context.setEntity(resourceEntity);
     }
