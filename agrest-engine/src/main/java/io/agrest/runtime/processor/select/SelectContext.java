@@ -1,20 +1,20 @@
 package io.agrest.runtime.processor.select;
 
-import io.agrest.access.PathChecker;
-import io.agrest.id.AgObjectId;
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
 import io.agrest.DataResponse;
-import io.agrest.runtime.EntityParent;
 import io.agrest.RootResourceEntity;
 import io.agrest.SizeConstraints;
+import io.agrest.access.PathChecker;
 import io.agrest.encoder.Encoder;
+import io.agrest.id.AgObjectId;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.BaseProcessingContext;
+import io.agrest.runtime.EntityParent;
+import io.agrest.runtime.meta.RequestSchema;
 import org.apache.cayenne.di.Injector;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +25,7 @@ import java.util.Map;
  */
 public class SelectContext<T> extends BaseProcessingContext<T> {
 
+    private final RequestSchema schema;
     private AgObjectId id;
     private EntityParent<?> parent;
     private RootResourceEntity<T> entity;
@@ -32,11 +33,17 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     private boolean atMostOneObject;
     private Encoder encoder;
     private AgRequestBuilder requestBuilder;
-    private Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
     private PathChecker pathChecker;
 
-    public SelectContext(Class<T> type, AgRequestBuilder requestBuilder, PathChecker pathChecker, Injector injector) {
+    public SelectContext(
+            Class<T> type,
+            RequestSchema schema,
+            AgRequestBuilder requestBuilder,
+            PathChecker pathChecker,
+            Injector injector) {
+
         super(type, injector);
+        this.schema = schema;
         this.requestBuilder = requestBuilder;
         this.pathChecker = pathChecker;
     }
@@ -74,33 +81,12 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
         this.parent = parent;
     }
 
-    /**
-     * @since 3.4
-     */
-    public Map<Class<?>, AgEntityOverlay<?>> getEntityOverlays() {
-        return entityOverlays != null ? entityOverlays : Collections.emptyMap();
-    }
-
-    /**
-     * @since 3.4
-     */
-    public <A> AgEntityOverlay<A> getEntityOverlay(Class<A> type) {
-        return entityOverlays != null ? (AgEntityOverlay<A>) entityOverlays.get(type) : null;
-    }
 
     /**
      * @since 3.4
      */
     public <A> void addEntityOverlay(AgEntityOverlay<A> overlay) {
-        getOrCreateOverlay(overlay.getType()).merge(overlay);
-    }
-
-    private <A> AgEntityOverlay<A> getOrCreateOverlay(Class<A> type) {
-        if (entityOverlays == null) {
-            entityOverlays = new HashMap<>();
-        }
-
-        return (AgEntityOverlay<A>) entityOverlays.computeIfAbsent(type, AgEntityOverlay::new);
+        schema.addOverlay(overlay);
     }
 
     public SizeConstraints getSizeConstraints() {
@@ -174,5 +160,12 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
      */
     public void mergeClientParameters(Map<String, List<String>> params) {
         requestBuilder.mergeClientParams(params);
+    }
+
+    /**
+     * @since 5.0
+     */
+    public RequestSchema getSchema() {
+        return schema;
     }
 }

@@ -74,7 +74,7 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
     @Override
     public <A> UpdateBuilder<T> entityOverlay(AgEntityOverlay<A> overlay) {
-        context.addEntityOverlay(overlay);
+        context.getSchema().addOverlay(overlay);
         return this;
     }
 

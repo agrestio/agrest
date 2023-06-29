@@ -26,6 +26,7 @@ import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.entity.MapByMerger;
 import io.agrest.runtime.entity.SizeMerger;
 import io.agrest.runtime.entity.SortMerger;
+import io.agrest.runtime.meta.RequestSchema;
 import io.agrest.runtime.processor.select.stage.SelectCreateResourceEntityStage;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IExpParser;
@@ -46,25 +47,25 @@ import static org.mockito.Mockito.mock;
 
 public class CreateResourceEntityStageTest {
 
-    private static SelectCreateResourceEntityStage stage;
-    private static IAgRequestBuilderFactory requestBuilderFactory;
+    static SelectCreateResourceEntityStage stage;
+    static IAgRequestBuilderFactory requestBuilderFactory;
+    static AgSchema schema;
 
     @BeforeAll
     public static void beforeAll() {
 
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Map.of());
-        AgSchema schema = new LazySchema(List.of(compiler));
+        schema = new LazySchema(List.of(compiler));
 
         // prepare create entity stage
         IExpMerger expMerger = new ExpMerger();
         ISortMerger sortMerger = new SortMerger();
-        IMapByMerger mapByMerger = new MapByMerger(schema);
+        IMapByMerger mapByMerger = new MapByMerger();
         ISizeMerger sizeMerger = new SizeMerger();
-        IIncludeMerger includeMerger = new IncludeMerger(schema, expMerger, sortMerger, mapByMerger, sizeMerger);
+        IIncludeMerger includeMerger = new IncludeMerger(expMerger, sortMerger, mapByMerger, sizeMerger);
         IExcludeMerger excludeMerger = new ExcludeMerger();
 
         stage = new SelectCreateResourceEntityStage(
-                schema,
                 expMerger,
                 sortMerger,
                 mapByMerger,
@@ -84,6 +85,7 @@ public class CreateResourceEntityStageTest {
     public void execute_Default() {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -104,6 +106,7 @@ public class CreateResourceEntityStageTest {
     public void execute_Include() {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -130,6 +133,7 @@ public class CreateResourceEntityStageTest {
     public void execute_Exclude() {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -154,6 +158,7 @@ public class CreateResourceEntityStageTest {
     public void execute_IncludeExcludeAttrs() {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -188,6 +193,7 @@ public class CreateResourceEntityStageTest {
     public void execute_IncludeRels() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -220,6 +226,7 @@ public class CreateResourceEntityStageTest {
     public void execute_IncludeBothAttrs() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -252,6 +259,7 @@ public class CreateResourceEntityStageTest {
     public void execute_IncludeExcludeBothAttrs() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -287,6 +295,7 @@ public class CreateResourceEntityStageTest {
     public void execute_IncludeExcludeBothAttrs2() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -322,6 +331,7 @@ public class CreateResourceEntityStageTest {
     public void execute_IncludeRelationshipIds() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -352,6 +362,7 @@ public class CreateResourceEntityStageTest {
     public void execute_SortSimple_NoDir() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -372,6 +383,7 @@ public class CreateResourceEntityStageTest {
     public void execute_SortSimple_ASC() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -393,6 +405,7 @@ public class CreateResourceEntityStageTest {
     public void execute_SortSimple_DESC() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -414,6 +427,7 @@ public class CreateResourceEntityStageTest {
     public void execute_Sort() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -435,6 +449,7 @@ public class CreateResourceEntityStageTest {
     public void execute_Exp_BadSpec() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -449,6 +464,7 @@ public class CreateResourceEntityStageTest {
     public void execute_Exp() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));

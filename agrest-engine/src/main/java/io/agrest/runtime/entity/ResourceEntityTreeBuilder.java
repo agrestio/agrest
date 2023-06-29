@@ -9,14 +9,11 @@ import io.agrest.ToManyResourceEntity;
 import io.agrest.ToOneResourceEntity;
 import io.agrest.access.PathChecker;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgRelationship;
-import io.agrest.meta.AgSchema;
+import io.agrest.runtime.meta.RequestSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -29,21 +26,18 @@ public class ResourceEntityTreeBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceEntityTreeBuilder.class);
 
     private final ResourceEntity<?> rootEntity;
-    private final AgSchema schema;
-    private final Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
+    private final RequestSchema schema;
     private final int maxTreeDepth;
     private final boolean quietTruncateLongPaths;
 
     public ResourceEntityTreeBuilder(
             ResourceEntity<?> rootEntity,
-            AgSchema schema,
-            Map<Class<?>, AgEntityOverlay<?>> entityOverlays,
+            RequestSchema schema,
             int maxTreeDepth,
             boolean quietTruncateLongPaths) {
 
         this.schema = Objects.requireNonNull(schema);
         this.rootEntity = Objects.requireNonNull(rootEntity);
-        this.entityOverlays = entityOverlays != null ? entityOverlays : Collections.emptyMap();
         this.maxTreeDepth = maxTreeDepth;
         this.quietTruncateLongPaths = quietTruncateLongPaths;
     }
@@ -126,17 +120,14 @@ public class ResourceEntityTreeBuilder {
         // TODO: there may be more than one incoming relationship. RelatedResourceEntity should know about all of them,
         //   not just the topmost in the inheritance hierarchy
 
-        // TODO: If the target is overlaid, we need to overlay the "incoming" relationship as well for model consistency...
-        //  Currently, we optimistically assume that no request processing code would rely on "incoming.target"
-
         AgRelationship incoming = findFirstRelationship(parent, incomingName);
-        AgEntity<?> target = incoming.getTargetEntity();
-        AgEntityOverlay targetOverlay = entityOverlays.get(target.getType());
-        AgEntity<?> overlaidTarget = target.resolveOverlay(schema, targetOverlay);
+
+        // "incoming" may point to a non-overlaid entity, so resolve it against the RequestSchema
+        AgEntity<?> target = schema.getEntity(incoming.getTargetEntity().getType());
 
         return incoming.isToMany()
-                ? new ToManyResourceEntity<>(overlaidTarget, parent, incoming)
-                : new ToOneResourceEntity<>(overlaidTarget, parent, incoming);
+                ? new ToManyResourceEntity<>(target, parent, incoming)
+                : new ToOneResourceEntity<>(target, parent, incoming);
     }
 
     // This could have been an AgEntity method, but per notes above, we should not really be doing it this way.

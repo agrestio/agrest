@@ -22,6 +22,7 @@ import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.entity.MapByMerger;
 import io.agrest.runtime.entity.SizeMerger;
 import io.agrest.runtime.entity.SortMerger;
+import io.agrest.runtime.meta.RequestSchema;
 import io.agrest.runtime.processor.select.stage.SelectCreateResourceEntityStage;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IExpParser;
@@ -42,25 +43,25 @@ import static org.mockito.Mockito.mock;
 
 public class CreateResourceEntityStage_IncludeObjectTest {
 
-    private static SelectCreateResourceEntityStage stage;
-    private static IAgRequestBuilderFactory requestBuilderFactory;
+    static SelectCreateResourceEntityStage stage;
+    static IAgRequestBuilderFactory requestBuilderFactory;
+    static AgSchema schema;
 
     @BeforeAll
     public static void beforeAll() {
 
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Map.of());
-        AgSchema schema = new LazySchema(List.of(compiler));
+        schema = new LazySchema(List.of(compiler));
 
         // prepare create entity stage
         IExpMerger expConstructor = new ExpMerger();
         ISortMerger sortConstructor = new SortMerger();
-        IMapByMerger mapByConstructor = new MapByMerger(schema);
+        IMapByMerger mapByConstructor = new MapByMerger();
         ISizeMerger sizeConstructor = new SizeMerger();
-        IIncludeMerger includeConstructor = new IncludeMerger(schema, expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
+        IIncludeMerger includeConstructor = new IncludeMerger(expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
         IExcludeMerger excludeConstructor = new ExcludeMerger();
 
         stage = new SelectCreateResourceEntityStage(
-                schema,
                 expConstructor,
                 sortConstructor,
                 mapByConstructor,
@@ -81,6 +82,7 @@ public class CreateResourceEntityStage_IncludeObjectTest {
 
         SelectContext<Tr> context = new SelectContext<>(
                 Tr.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -100,6 +102,7 @@ public class CreateResourceEntityStage_IncludeObjectTest {
     public void execute_IncludeObject_MapBy() {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
                 PathChecker.ofDefault(),
                 mock(Injector.class));

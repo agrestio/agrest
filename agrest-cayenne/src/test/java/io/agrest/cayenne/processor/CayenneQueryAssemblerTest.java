@@ -6,9 +6,11 @@ import io.agrest.AgRequestBuilder;
 import io.agrest.RootResourceEntity;
 import io.agrest.cayenne.cayenne.main.E1;
 import io.agrest.cayenne.unit.main.MainNoDbTest;
+import io.agrest.meta.AgSchema;
 import io.agrest.protocol.Direction;
 import io.agrest.protocol.Exp;
 import io.agrest.protocol.Sort;
+import io.agrest.runtime.meta.RequestSchema;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.query.ObjectSelect;
@@ -26,6 +28,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
         RootResourceEntity<E1> entity = getResourceEntity(E1.class);
         entity.getOrderings().add(new Sort("name", Direction.asc));
         SelectContext<E1> c = new SelectContext<>(E1.class,
+                new RequestSchema(mock(AgSchema.class)),
                 mock(AgRequestBuilder.class),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -48,6 +51,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
 
         SelectContext<E1> c = new SelectContext<>(
                 E1.class,
+                new RequestSchema(mock(AgSchema.class)),
                 mock(AgRequestBuilder.class),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -83,6 +87,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
 
         SelectContext<E1> c = new SelectContext<>(
                 E1.class,
+                new RequestSchema(mock(AgSchema.class)),
                 mock(AgRequestBuilder.class),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -103,6 +108,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
 
         SelectContext<E1> c = new SelectContext<>(
                 E1.class,
+                new RequestSchema(mock(AgSchema.class)),
                 mock(AgRequestBuilder.class),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -120,6 +126,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
 
         SelectContext<E1> c = new SelectContext<>(
                 E1.class,
+                new RequestSchema(mock(AgSchema.class)),
                 mock(AgRequestBuilder.class),
                 PathChecker.ofDefault(),
                 mock(Injector.class));

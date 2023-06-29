@@ -11,6 +11,7 @@ import io.agrest.access.UpdateAuthorizer;
 import io.agrest.junit.pojo.P1;
 import io.agrest.reader.DataReader;
 import io.agrest.resolver.RootDataResolver;
+import io.agrest.runtime.meta.RequestSchema;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Injector;
 import org.junit.jupiter.api.Test;
@@ -123,6 +124,7 @@ public class AgEntityOverlayTest {
 
         SelectContext<P1> context = new SelectContext<>(
                 P1.class,
+                new RequestSchema(mock(AgSchema.class)),
                 mock(AgRequestBuilder.class),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
