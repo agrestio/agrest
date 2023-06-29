@@ -2,7 +2,6 @@ package io.agrest.runtime.constraints;
 
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
-import io.agrest.SizeConstraints;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
@@ -19,91 +18,89 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ConstraintsHandlerTest {
+public class SizeConstraintsTest {
 
-    private static ConstraintsHandler constraintsHandler;
     private static AgSchema schema;
 
     @BeforeAll
     public static void before() {
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Map.of());
         schema = new LazySchema(List.of(compiler));
-        constraintsHandler = new ConstraintsHandler();
     }
 
     @Test
-    public void constrainResponseSize_FetchOffset() {
+    public void fetchOffset() {
 
         AgEntity<Tr> entity = schema.getEntity(Tr.class);
 
-        SizeConstraints s1 = new SizeConstraints().fetchOffset(5);
-        SizeConstraints s2 = new SizeConstraints().fetchOffset(0);
+        io.agrest.SizeConstraints s1 = new io.agrest.SizeConstraints().fetchOffset(5);
+        io.agrest.SizeConstraints s2 = new io.agrest.SizeConstraints().fetchOffset(0);
 
         ResourceEntity<Tr> t1 = new RootResourceEntity<>(entity);
         t1.setStart(0);
-        constraintsHandler.constrainResponseSize(t1, s1);
+        SizeConstraints.apply(t1, s1);
         assertEquals(0, t1.getStart());
         assertEquals(5, s1.getFetchOffset());
 
         ResourceEntity<Tr> t2 = new RootResourceEntity<>(entity);
         t2.setStart(3);
-        constraintsHandler.constrainResponseSize(t2, s1);
+        SizeConstraints.apply(t2, s1);
         assertEquals(3, t2.getStart());
         assertEquals(5, s1.getFetchOffset());
 
         ResourceEntity<Tr> t3 = new RootResourceEntity<>(entity);
         t3.setStart(6);
-        constraintsHandler.constrainResponseSize(t3, s1);
+        SizeConstraints.apply(t3, s1);
         assertEquals(5, t3.getStart());
         assertEquals(5, s1.getFetchOffset());
 
         ResourceEntity<Tr> t4 = new RootResourceEntity<>(entity);
         t4.setStart(6);
-        constraintsHandler.constrainResponseSize(t4, s2);
+        SizeConstraints.apply(t4, s2);
         assertEquals(6, t4.getStart());
         assertEquals(0, s2.getFetchOffset());
     }
 
     @Test
-    public void constrainResponseSize_FetchLimit() {
+    public void fetchLimit() {
 
         AgEntity<Tr> entity = schema.getEntity(Tr.class);
 
-        SizeConstraints s1 = new SizeConstraints().fetchLimit(5);
-        SizeConstraints s2 = new SizeConstraints().fetchLimit(0);
+        io.agrest.SizeConstraints s1 = new io.agrest.SizeConstraints().fetchLimit(5);
+        io.agrest.SizeConstraints s2 = new io.agrest.SizeConstraints().fetchLimit(0);
 
         ResourceEntity<Tr> t1 = new RootResourceEntity<>(entity);
-        constraintsHandler.constrainResponseSize(t1, s1);
+        SizeConstraints.apply(t1, s1);
         assertEquals(5, t1.getLimit());
         assertEquals(5, s1.getFetchLimit());
 
         ResourceEntity<Tr> t1_1 = new RootResourceEntity<>(entity);
         t1_1.setLimit(0);
-        constraintsHandler.constrainResponseSize(t1_1, s1);
+        SizeConstraints.apply(t1_1, s1);
         assertEquals(5, t1_1.getLimit());
         assertEquals(5, s1.getFetchLimit());
 
         ResourceEntity<Tr> t1_2 = new RootResourceEntity<>(entity);
         t1_2.setLimit(-1);
-        constraintsHandler.constrainResponseSize(t1_2, s1);
+        SizeConstraints.apply(t1_2, s1);
         assertEquals(5, t1_2.getLimit());
         assertEquals(5, s1.getFetchLimit());
 
         ResourceEntity<Tr> t2 = new RootResourceEntity<>(entity);
         t2.setLimit(3);
-        constraintsHandler.constrainResponseSize(t2, s1);
+        SizeConstraints.apply(t2, s1);
         assertEquals(3, t2.getLimit());
         assertEquals(5, s1.getFetchLimit());
 
         ResourceEntity<Tr> t3 = new RootResourceEntity<>(entity);
         t3.setLimit(6);
-        constraintsHandler.constrainResponseSize(t3, s1);
+        SizeConstraints.apply(t3, s1);
         assertEquals(5, t3.getLimit());
         assertEquals(5, s1.getFetchLimit());
 
         ResourceEntity<Tr> t4 = new RootResourceEntity<>(entity);
         t4.setLimit(6);
-        constraintsHandler.constrainResponseSize(t4, s2);
+        SizeConstraints.apply(t4, s2);
         assertEquals(6, t4.getLimit());
         assertEquals(0, s2.getFetchLimit());
     }

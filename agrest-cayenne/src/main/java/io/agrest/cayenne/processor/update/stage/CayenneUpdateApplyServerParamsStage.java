@@ -1,10 +1,8 @@
 package io.agrest.cayenne.processor.update.stage;
 
 import io.agrest.AgException;
-import io.agrest.runtime.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.RelatedResourceEntity;
-import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.path.PathOps;
@@ -15,7 +13,8 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.runtime.constraints.IConstraintsHandler;
+import io.agrest.runtime.EntityParent;
+import io.agrest.runtime.constraints.UpdateConstraints;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.stage.UpdateApplyServerParamsStage;
 import org.apache.cayenne.di.Inject;
@@ -39,17 +38,17 @@ import java.util.Set;
  */
 public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParamsStage {
 
-    private final IConstraintsHandler constraintsHandler;
+    private final UpdateConstraints constraints;
     private final EntityResolver entityResolver;
     private final IPathResolver pathResolver;
 
     public CayenneUpdateApplyServerParamsStage(
             @Inject IPathResolver pathResolver,
-            @Inject IConstraintsHandler constraintsHandler,
+            @Inject UpdateConstraints constraints,
             @Inject ICayennePersister persister) {
 
         this.pathResolver = pathResolver;
-        this.constraintsHandler = constraintsHandler;
+        this.constraints = constraints;
         this.entityResolver = persister.entityResolver();
     }
 
@@ -61,8 +60,6 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
 
     protected <T> void doExecute(UpdateContext<T> context) {
 
-        ResourceEntity<T> entity = context.getEntity();
-
         // this creates a new EntityUpdate if there's no request payload, but the context ID is present,
         // so execute it unconditionally
         fillIdsFromExplicitContextId(context);
@@ -73,11 +70,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
             fillIdsFromParentId(context);
         }
 
-        constraintsHandler.constrainUpdate(context);
-
-        // apply read constraints
-        // TODO: should we only care about response constraints after the commit?
-        constraintsHandler.constrainResponse(entity);
+        constraints.apply(context);
 
         tagRootEntity(context.getEntity());
     }

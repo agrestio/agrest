@@ -13,12 +13,10 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ConstraintsHandlerWithDefaultsTest {
+public class ReadConstraintsTest {
 
-    static final ConstraintsHandler constraintsHandler = new ConstraintsHandler();
     static final AgSchema schema = new LazySchema(List.of(new AnnotationsAgEntityCompiler(Map.of())));
 
     @Test
@@ -30,9 +28,9 @@ public class ConstraintsHandlerWithDefaultsTest {
         te1.ensureAttribute("a", false);
         te1.ensureAttribute("b", false);
 
-        constraintsHandler.constrainResponse(te1);
+        ReadConstraints.apply(te1);
         assertEquals(1, te1.getBaseProjection().getAttributes().size());
-        assertTrue(te1.getBaseProjection().getAttribute("a") != null);
+        assertNotNull(te1.getBaseProjection().getAttribute("a"));
         assertTrue(te1.getChildren().isEmpty());
     }
 
@@ -45,10 +43,10 @@ public class ConstraintsHandlerWithDefaultsTest {
         te1.ensureAttribute("m", false);
         te1.ensureAttribute("n", false);
 
-        constraintsHandler.constrainResponse(te1);
+        ReadConstraints.apply(te1);
         assertEquals(2, te1.getBaseProjection().getAttributes().size());
-        assertTrue(te1.getBaseProjection().getAttribute("m") != null);
-        assertTrue(te1.getBaseProjection().getAttribute("n") != null);
+        assertNotNull(te1.getBaseProjection().getAttribute("m"));
+        assertNotNull(te1.getBaseProjection().getAttribute("n"));
 
         assertTrue(te1.getChildren().isEmpty());
     }
