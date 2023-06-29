@@ -25,15 +25,15 @@ public class ConvertersIT extends MainDbTest {
         String e1 = "[{\"id\":5,\"json\":[1,2]},{\"id\":6,\"json\":{\"a\":1}},{\"id\":7,\"json\":5}]";
         tester.target("/e28/").put(e1).wasCreated();
         tester.e28().matcher().assertMatches(3);
-        tester.e28().matcher().eq("id", 5).eq("json", "[1,2]").assertOneMatch();
-        tester.e28().matcher().eq("id", 6).eq("json", "{\"a\":1}").assertOneMatch();
-        tester.e28().matcher().eq("id", 7).eq("json", "5").assertOneMatch();
+        tester.e28().matcher().eq("id", 5).andEq("json", "[1,2]").assertOneMatch();
+        tester.e28().matcher().eq("id", 6).andEq("json", "{\"a\":1}").assertOneMatch();
+        tester.e28().matcher().eq("id", 7).andEq("json", "5").assertOneMatch();
 
         // try updating
         String e2 = "[{\"id\":5,\"json\":[1,3]}]";
         tester.target("/e28/").put(e2).wasOk();
         tester.e28().matcher().assertMatches(3);
-        tester.e28().matcher().eq("id", 5).eq("json", "[1,3]").assertOneMatch();
+        tester.e28().matcher().eq("id", 5).andEq("json", "[1,3]").assertOneMatch();
     }
 
 

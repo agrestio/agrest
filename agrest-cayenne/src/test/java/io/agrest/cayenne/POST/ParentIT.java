@@ -45,7 +45,7 @@ public class ParentIT extends MainDbTest {
                 .bodyEquals(1, "{\"id\":RID,\"name\":\"zzz\",\"phoneNumber\":null}");
 
         tester.e3().matcher().assertOneMatch();
-        tester.e3().matcher().eq("e2_id", 24).eq("name", "zzz").assertOneMatch();
+        tester.e3().matcher().eq("e2_id", 24).andEq("name", "zzz").assertOneMatch();
     }
 
     @Test
@@ -64,7 +64,7 @@ public class ParentIT extends MainDbTest {
 
 
         tester.e18().matcher().assertOneMatch();
-        tester.e18().matcher().eq("e17_id1", 1).eq("e17_id2", 1).eq("name", "xxx").assertOneMatch();
+        tester.e18().matcher().eq("e17_id1", 1).andEq("e17_id2", 1).andEq("name", "xxx").assertOneMatch();
     }
 
     @Test
@@ -120,8 +120,8 @@ public class ParentIT extends MainDbTest {
                 .bodyEquals(2, "{},{}");
 
         tester.e12_13().matcher().assertMatches(2);
-        tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 14).assertOneMatch();
-        tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 15).assertOneMatch();
+        tester.e12_13().matcher().eq("e12_id", 12).andEq("e13_id", 14).assertOneMatch();
+        tester.e12_13().matcher().eq("e12_id", 12).andEq("e13_id", 15).assertOneMatch();
     }
 
     @Path("")

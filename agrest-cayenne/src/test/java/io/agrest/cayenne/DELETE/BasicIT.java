@@ -80,7 +80,7 @@ public class BasicIT extends MainDbTest {
                 .bodyEquals("{}");
 
         tester.e17().matcher().assertOneMatch();
-        tester.e17().matcher().eq("id2", 2).eq("id2", 2).eq("name", "bbb").assertOneMatch();
+        tester.e17().matcher().eq("id2", 2).andEq("id2", 2).andEq("name", "bbb").assertOneMatch();
     }
 
     @Test

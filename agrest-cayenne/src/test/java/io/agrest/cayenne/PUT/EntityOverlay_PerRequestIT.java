@@ -80,7 +80,7 @@ public class EntityOverlay_PerRequestIT extends MainDbTest {
                 .wasOk()
                 .bodyEquals(1, "{\"id\":1,\"e3s\":[{\"id\":1,\"name\":\"N\"}],\"name\":\"Nn\"}");
 
-        tester.e2().matcher().eq("id_", 1).eq("name", "Nn").eq("address", "A").assertOneMatch();
+        tester.e2().matcher().eq("id_", 1).andEq("name", "Nn").andEq("address", "A").assertOneMatch();
     }
 
     @Test
@@ -93,7 +93,7 @@ public class EntityOverlay_PerRequestIT extends MainDbTest {
                 .wasOk()
                 .bodyEquals(1, "{\"id\":1,\"name\":\"Nn\"}");
 
-        tester.e2().matcher().eq("id_", 1).eq("name", "Nn").eq("address", "A").assertOneMatch();
+        tester.e2().matcher().eq("id_", 1).andEq("name", "Nn").andEq("address", "A").assertOneMatch();
     }
 
     @Test
@@ -110,8 +110,8 @@ public class EntityOverlay_PerRequestIT extends MainDbTest {
                 .wasOk()
                 .bodyEquals(1, "{\"id\":11,\"e3s\":[{\"id\":35}],\"name\":\"Nn\"}");
 
-        tester.e2().matcher().eq("id_", 11).eq("name", "Nn").assertOneMatch();
-        tester.e3().matcher().eq("e2_id", 11).eq("name", "N").assertOneMatch();
+        tester.e2().matcher().eq("id_", 11).andEq("name", "Nn").assertOneMatch();
+        tester.e3().matcher().eq("e2_id", 11).andEq("name", "N").assertOneMatch();
     }
 
     @Test
@@ -128,7 +128,7 @@ public class EntityOverlay_PerRequestIT extends MainDbTest {
                 .wasOk()
                 .bodyEquals(1, "{\"id\":35,\"e2\":{\"id\":11},\"name\":\"Nn\"}");
 
-        tester.e3().matcher().eq("id_", 35).eq("name", "Nn").eq("e2_id", 11).assertOneMatch();
+        tester.e3().matcher().eq("id_", 35).andEq("name", "Nn").andEq("e2_id", 11).assertOneMatch();
     }
 
     @Path("")

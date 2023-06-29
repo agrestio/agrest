@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,7 +29,7 @@ public class DefaultSelectBuilderTest {
         SelectProcessorFactory processorFactory = mock(SelectProcessorFactory.class);
         when(processorFactory.createProcessor(any())).thenReturn(mock(Processor.class));
 
-        return new DefaultSelectBuilder<T>(context, processorFactory);
+        return new DefaultSelectBuilder<>(context, processorFactory);
     }
 
     @Test
@@ -124,7 +124,7 @@ public class DefaultSelectBuilderTest {
 
     private ProcessorOutcome doSomethingAndReturn4(SelectContext<P1> c) {
         c.getEntity().setData(new ArrayList<>());
-        c.getEntity().setData(new ArrayList<P1>());
+        c.getEntity().setData(new ArrayList<>());
         return ProcessorOutcome.CONTINUE;
     }
 

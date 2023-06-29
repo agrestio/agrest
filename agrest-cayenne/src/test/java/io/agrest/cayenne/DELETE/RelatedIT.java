@@ -63,7 +63,7 @@ public class RelatedIT extends MainDbTest {
 
         tester.target("/e2/1/e3s/9").delete().wasOk().bodyEquals("{}");
 
-        tester.e3().matcher().eq("id_", 9).eq("e2_id", null).assertOneMatch();
+        tester.e3().matcher().eq("id_", 9).andEq("e2_id", null).assertOneMatch();
     }
 
     @Test
@@ -83,7 +83,7 @@ public class RelatedIT extends MainDbTest {
 
         tester.target("/e3/9/e2/1").delete().wasOk().bodyEquals("{}");
 
-        tester.e3().matcher().eq("id_", 9).eq("e2_id", null).assertOneMatch();
+        tester.e3().matcher().eq("id_", 9).andEq("e2_id", null).assertOneMatch();
     }
 
     @Test
@@ -102,7 +102,7 @@ public class RelatedIT extends MainDbTest {
                 .values(9, "zzz", 1).exec();
 
         tester.target("/e3/9/e2").delete().wasOk().bodyEquals("{}");
-        tester.e3().matcher().eq("id_", 9).eq("e2_id", null).assertOneMatch();
+        tester.e3().matcher().eq("id_", 9).andEq("e2_id", null).assertOneMatch();
     }
 
     @Test

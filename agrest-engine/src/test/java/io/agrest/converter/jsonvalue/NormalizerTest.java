@@ -21,19 +21,19 @@ public class NormalizerTest {
 
 	@Test
 	public void normalize_Long() {
-		Long smallLong = new Long(5);
+		Long smallLong = 5L;
 		assertSame(smallLong, Normalizer.normalize(smallLong, Integer.class));
 		assertSame(smallLong, Normalizer.normalize(smallLong, Long.class));
 
-		Long bigLong = new Long(Integer.MAX_VALUE + 1000);
+		Long bigLong = Long.valueOf(Integer.MAX_VALUE + 1000);
 		assertSame(bigLong, Normalizer.normalize(bigLong, Integer.class));
 		assertSame(bigLong, Normalizer.normalize(bigLong, Long.class));
 	}
 
 	@Test
 	public void normalize_Int() {
-		Integer integer = new Integer(5);
-		Long smallLong = new Long(5);
+		Integer integer = 5;
+		Long smallLong = 5L;
 		assertSame(integer, Normalizer.normalize(integer, Integer.class));
 		assertEquals(smallLong, Normalizer.normalize(integer, Long.class));
 	}

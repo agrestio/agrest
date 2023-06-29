@@ -41,8 +41,8 @@ public class UpdateAuthorizerIT extends MainDbTest {
                 .wasOk();
 
         tester.e2().matcher().assertMatches(2);
-        tester.e2().matcher().eq("name", "a").eq("address", "Aa").assertOneMatch();
-        tester.e2().matcher().eq("name", "b").eq("address", "Bb").assertOneMatch();
+        tester.e2().matcher().eq("name", "a").andEq("address", "Aa").assertOneMatch();
+        tester.e2().matcher().eq("name", "b").andEq("address", "Bb").assertOneMatch();
     }
 
     @Test
@@ -57,8 +57,8 @@ public class UpdateAuthorizerIT extends MainDbTest {
                 .wasForbidden();
 
         tester.e2().matcher().assertMatches(2);
-        tester.e2().matcher().eq("name", "a").eq("address", null).assertOneMatch();
-        tester.e2().matcher().eq("name", "b").eq("address", null).assertOneMatch();
+        tester.e2().matcher().eq("name", "a").andEq("address", null).assertOneMatch();
+        tester.e2().matcher().eq("name", "b").andEq("address", null).assertOneMatch();
     }
 
     @Test
@@ -74,8 +74,8 @@ public class UpdateAuthorizerIT extends MainDbTest {
                 .wasOk();
 
         tester.e2().matcher().assertMatches(2);
-        tester.e2().matcher().eq("name", "a").eq("address", "Aa").assertOneMatch();
-        tester.e2().matcher().eq("name", "b").eq("address", "Bb").assertOneMatch();
+        tester.e2().matcher().eq("name", "a").andEq("address", "Aa").assertOneMatch();
+        tester.e2().matcher().eq("name", "b").andEq("address", "Bb").assertOneMatch();
     }
 
     @Test
@@ -91,8 +91,8 @@ public class UpdateAuthorizerIT extends MainDbTest {
                 .wasForbidden();
 
         tester.e2().matcher().assertMatches(2);
-        tester.e2().matcher().eq("name", "a").eq("address", null).assertOneMatch();
-        tester.e2().matcher().eq("name", "b").eq("address", null).assertOneMatch();
+        tester.e2().matcher().eq("name", "a").andEq("address", null).assertOneMatch();
+        tester.e2().matcher().eq("name", "b").andEq("address", null).assertOneMatch();
     }
 
 

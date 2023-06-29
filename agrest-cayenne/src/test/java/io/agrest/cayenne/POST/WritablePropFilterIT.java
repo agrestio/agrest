@@ -37,7 +37,7 @@ public class WritablePropFilterIT extends MainDbTest {
                 .bodyEquals("{}");
 
         tester.e8().matcher().assertOneMatch();
-        tester.e8().matcher().eq("id", 578).eq("name", "zzz").assertOneMatch();
+        tester.e8().matcher().eq("id", 578).andEq("name", "zzz").assertOneMatch();
     }
 
     @Test

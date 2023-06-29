@@ -44,7 +44,7 @@ public class ReadablePropFilterIT extends MainDbTest {
                 .bodyEquals(1, "{\"name\":\"zzz\"}");
 
         tester.e3().matcher().assertOneMatch();
-        tester.e3().matcher().eq("name", "zzz").eq("phone_number", "123456").assertOneMatch();
+        tester.e3().matcher().eq("name", "zzz").andEq("phone_number", "123456").assertOneMatch();
     }
 
     @Test

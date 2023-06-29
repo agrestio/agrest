@@ -11,8 +11,8 @@ import java.util.Collection;
 
 class EntityUpdateReaderProcessor {
 
-	private IUpdateRequestParser parser;
-	private AgSchema schema;
+	private final IUpdateRequestParser parser;
+	private final AgSchema schema;
 
 	EntityUpdateReaderProcessor(IUpdateRequestParser parser, AgSchema schema) {
 		this.parser = parser;

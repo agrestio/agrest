@@ -45,7 +45,7 @@ public class NaturalIdIT extends MainDbTest {
                 .wasOk()
                 .bodyEquals(1, "{\"id\":\"John\",\"age\":28,\"description\":\"zzz\",\"name\":\"John\"}");
 
-        tester.e20().matcher().eq("age", 28).eq("description", "zzz").assertOneMatch();
+        tester.e20().matcher().eq("age", 28).andEq("description", "zzz").assertOneMatch();
     }
 
     @Test
@@ -73,7 +73,7 @@ public class NaturalIdIT extends MainDbTest {
                 .bodyEquals(1,
                         "{\"id\":{\"age\":28,\"name\":\"John\"},\"age\":28,\"description\":\"zzz\",\"name\":\"John\"}");
 
-        tester.e21().matcher().eq("age", 28).eq("description", "zzz").assertOneMatch();
+        tester.e21().matcher().eq("age", 28).andEq("description", "zzz").assertOneMatch();
     }
 
     @Test
@@ -122,7 +122,7 @@ public class NaturalIdIT extends MainDbTest {
                 .wasCreated()
                 .bodyEquals(1, "{\"id\":{\"db:id1\":18,\"id2Prop\":345},\"id2Prop\":345}");
 
-        tester.e29().matcher().eq("id1", 18).eq("id2", 345).assertOneMatch();
+        tester.e29().matcher().eq("id1", 18).andEq("id2", 345).assertOneMatch();
 
         tester.target("/mixed-multi-id")
                 .put("{\"id\":{\"db:id1\":18,\"id2Prop\":345}}")

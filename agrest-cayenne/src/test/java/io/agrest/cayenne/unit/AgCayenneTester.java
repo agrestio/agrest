@@ -35,8 +35,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.UnaryOperator;
-import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -103,7 +103,7 @@ public abstract class AgCayenneTester implements BQBeforeScopeCallback, BQAfterS
     }
 
     @Override
-    public void beforeScope(BQTestScope scope, ExtensionContext context) throws Exception {
+    public void beforeScope(BQTestScope scope, ExtensionContext context) {
 
         this.jettyInScope = JettyTester.create();
         this.cayenneInScope = createCayenneInScope();
@@ -172,11 +172,6 @@ public abstract class AgCayenneTester implements BQBeforeScopeCallback, BQAfterS
             return this;
         }
 
-        public Builder<T> doNotCleanData() {
-            tester.doNotCleanData = true;
-            return this;
-        }
-
         @SafeVarargs
         public final Builder<T> entities(Class<? extends Persistent>... entities) {
             tester.entities = Objects.requireNonNull(entities);
@@ -190,7 +185,7 @@ public abstract class AgCayenneTester implements BQBeforeScopeCallback, BQAfterS
         }
 
         public Builder<T> resources(Class<?>... resources) {
-            Stream.of(resources).forEach(tester.resources::add);
+            tester.resources.addAll(asList(resources));
             return this;
         }
 

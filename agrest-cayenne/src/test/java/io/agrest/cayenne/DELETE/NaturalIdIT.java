@@ -56,7 +56,7 @@ public class NaturalIdIT extends MainDbTest {
                 .bodyEquals("{}");
 
         tester.e21().matcher().assertOneMatch();
-        tester.e21().matcher().eq("name", "Brian").eq("age", 27).assertOneMatch();
+        tester.e21().matcher().eq("name", "Brian").andEq("age", 27).assertOneMatch();
     }
 
     @Path("")

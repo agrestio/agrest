@@ -50,7 +50,7 @@ public class ParentIT extends MainDbTest {
                 .wasOk()
                 .bodyEquals(1, "{\"id\":24,\"address\":null,\"name\":\"xxx\"}");
 
-        tester.e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
+        tester.e3().matcher().eq("e2_id", 24).andEq("name", "yyy").assertOneMatch();
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ParentIT extends MainDbTest {
                 .wasOk()
                 .bodyEquals(1, "{\"id\":24,\"address\":null,\"name\":\"xxx\"}");
 
-        tester.e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
+        tester.e3().matcher().eq("e2_id", 24).andEq("name", "yyy").assertOneMatch();
     }
 
     @Test
@@ -85,7 +85,7 @@ public class ParentIT extends MainDbTest {
                 .bodyEquals(1, "{\"id\":24,\"address\":null,\"name\":\"123\"}");
 
         tester.e2().matcher().assertOneMatch();
-        tester.e3().matcher().eq("e2_id", 24).eq("name", "yyy").assertOneMatch();
+        tester.e3().matcher().eq("e2_id", 24).andEq("name", "yyy").assertOneMatch();
     }
 
     @Test
@@ -178,8 +178,8 @@ public class ParentIT extends MainDbTest {
         tester.e8().matcher().eq("name", "aaa").assertOneMatch();
         tester.e8().matcher().eq("id", 24).assertOneMatch();
 
-        tester.e7().matcher().eq("id", 8).eq("e8_id", 24).assertOneMatch();
-        tester.e7().matcher().eq("id", 7).eq("e8_id", null).assertOneMatch();
+        tester.e7().matcher().eq("id", 8).andEq("e8_id", 24).assertOneMatch();
+        tester.e7().matcher().eq("id", 7).andEq("e8_id", null).assertOneMatch();
 
         // PUT is idempotent... doing another update should not change the picture
         tester.target("/e7/8/e8/24")
@@ -190,8 +190,8 @@ public class ParentIT extends MainDbTest {
         tester.e8().matcher().assertOneMatch();
         tester.e8().matcher().eq("name", "aaa").assertOneMatch();
         tester.e8().matcher().eq("id", 24).assertOneMatch();
-        tester.e7().matcher().eq("id", 8).eq("e8_id", 24).assertOneMatch();
-        tester.e7().matcher().eq("id", 7).eq("e8_id", null).assertOneMatch();
+        tester.e7().matcher().eq("id", 8).andEq("e8_id", 24).assertOneMatch();
+        tester.e7().matcher().eq("id", 7).andEq("e8_id", null).assertOneMatch();
     }
 
     @Test
@@ -251,8 +251,8 @@ public class ParentIT extends MainDbTest {
 
 
         tester.e12_13().matcher().assertMatches(2);
-        tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 14).assertOneMatch();
-        tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 15).assertOneMatch();
+        tester.e12_13().matcher().eq("e12_id", 12).andEq("e13_id", 14).assertOneMatch();
+        tester.e12_13().matcher().eq("e12_id", 12).andEq("e13_id", 15).assertOneMatch();
 
         // testing idempotency
         tester.target("/e12/12/e1213")
@@ -262,8 +262,8 @@ public class ParentIT extends MainDbTest {
 
 
         tester.e12_13().matcher().assertMatches(2);
-        tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 14).assertOneMatch();
-        tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 15).assertOneMatch();
+        tester.e12_13().matcher().eq("e12_id", 12).andEq("e13_id", 14).assertOneMatch();
+        tester.e12_13().matcher().eq("e12_id", 12).andEq("e13_id", 15).assertOneMatch();
 
         // add one and delete another record
         tester.target("/e12/12/e1213")
@@ -272,8 +272,8 @@ public class ParentIT extends MainDbTest {
                 .wasOk().bodyEquals(2, "{},{}");
 
         tester.e12_13().matcher().assertMatches(2);
-        tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 14).assertOneMatch();
-        tester.e12_13().matcher().eq("e12_id", 12).eq("e13_id", 16).assertOneMatch();
+        tester.e12_13().matcher().eq("e12_id", 12).andEq("e13_id", 14).assertOneMatch();
+        tester.e12_13().matcher().eq("e12_id", 12).andEq("e13_id", 16).assertOneMatch();
     }
 
     @Test
@@ -297,7 +297,7 @@ public class ParentIT extends MainDbTest {
                 .put("[{\"e1\":1}]").wasOk();
 
         tester.e15_1().matcher().assertOneMatch();
-        tester.e15_1().matcher().eq("e15_id", 14).eq("e1_id", 1).assertOneMatch();
+        tester.e15_1().matcher().eq("e15_id", 14).andEq("e1_id", 1).assertOneMatch();
 
         tester.e1().matcher().assertMatches(2);
         tester.e15().matcher().assertMatches(3);
@@ -322,7 +322,7 @@ public class ParentIT extends MainDbTest {
         tester.e15_5().matcher().assertOneMatch();
         tester.e5().matcher().assertMatches(2);
         tester.e15().matcher().assertMatches(3);
-        tester.e15_5().matcher().eq("e15_id", 14).eq("e5_id", 1).assertOneMatch();
+        tester.e15_5().matcher().eq("e15_id", 14).andEq("e5_id", 1).assertOneMatch();
     }
 
     @Path("")

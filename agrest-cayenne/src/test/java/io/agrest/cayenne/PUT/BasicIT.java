@@ -45,12 +45,12 @@ public class BasicIT extends MainDbTest {
         tester.target("/e23_create_or_update/8").put("{\"name\":\"zzz\"}")
                 .wasCreated()
                 .bodyEquals(1, "{\"id\":8,\"exposedId\":8,\"name\":\"zzz\"}");
-        tester.e23().matcher().eq("id", 8).eq("name", "zzz").assertOneMatch();
+        tester.e23().matcher().eq("id", 8).andEq("name", "zzz").assertOneMatch();
 
         tester.target("/e23_create_or_update/8").put("{\"name\":\"aaa\"}")
                 .wasOk()
                 .bodyEquals(1, "{\"id\":8,\"exposedId\":8,\"name\":\"aaa\"}");
-        tester.e23().matcher().eq("id", 8).eq("name", "aaa").assertOneMatch();
+        tester.e23().matcher().eq("id", 8).andEq("name", "aaa").assertOneMatch();
     }
 
     @Test
@@ -92,7 +92,7 @@ public class BasicIT extends MainDbTest {
                 .bodyEquals(1, "{\"id\":5,\"name\":\"31\"}");
 
         tester.e31().matcher().assertOneMatch();
-        tester.e31().matcher().eq("id", 5L).eq("name", "31").assertOneMatch();
+        tester.e31().matcher().eq("id", 5L).andEq("name", "31").assertOneMatch();
     }
 
     @Test
@@ -108,7 +108,7 @@ public class BasicIT extends MainDbTest {
                 .put("{\"name\":\"xxx\"}")
                 .wasOk().bodyEquals(1, "{\"id\":{\"id1\":1,\"id2\":1},\"id1\":1,\"id2\":1,\"name\":\"xxx\"}");
 
-        tester.e17().matcher().eq("id1", 1).eq("id2", 1).eq("name", "xxx").assertOneMatch();
+        tester.e17().matcher().eq("id1", 1).andEq("id2", 1).andEq("name", "xxx").assertOneMatch();
     }
 
     @Test
@@ -146,7 +146,7 @@ public class BasicIT extends MainDbTest {
                 .wasOk().bodyEquals(1, "{\"id\":5,\"name\":\"bbb\",\"prettyName\":\"bbb_pretty\"}");
 
         tester.e14().matcher().assertOneMatch();
-        tester.e14().matcher().eq("long_id", 5).eq("name", "bbb").assertOneMatch();
+        tester.e14().matcher().eq("long_id", 5).andEq("name", "bbb").assertOneMatch();
     }
 
     @Test

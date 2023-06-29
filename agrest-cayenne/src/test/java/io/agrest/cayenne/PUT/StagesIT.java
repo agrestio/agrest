@@ -52,7 +52,7 @@ public class StagesIT extends MainDbTest {
                 .wasOk()
                 .bodyEquals(1, "{\"id\":3,\"name\":\"x\",\"phoneNumber\":null}");
 
-        tester.e3().matcher().eq("id_", 3).eq("name", "x").assertOneMatch();
+        tester.e3().matcher().eq("id_", 3).andEq("name", "x").assertOneMatch();
         tester.e3().matcher().eq("id_", 4).assertNoMatches();
 
         assertTrue(Resource.START_CALLED);

@@ -100,11 +100,7 @@ public class Parent_MapperIT extends MainDbTest {
                         "{\"id\":11,\"name\":\"new\",\"prettyName\":\"new_pretty\"}");
 
         tester.e14().matcher().eq("e15_id", 44).assertMatches(2);
-
-        // TODO: checking individual records one by one until "in()" becomes available in BQ 1.1 per
-        //  https://github.com/bootique/bootique-jdbc/issues/92
-        tester.e14().matcher().eq("e15_id", 44).eq("long_id", 4L).assertOneMatch();
-        tester.e14().matcher().eq("e15_id", 44).eq("long_id", 11L).assertOneMatch();
+        tester.e14().matcher().eq("e15_id", 44).andIn("long_id", 4L, 11L).assertMatches(2);
     }
 
     @Path("")

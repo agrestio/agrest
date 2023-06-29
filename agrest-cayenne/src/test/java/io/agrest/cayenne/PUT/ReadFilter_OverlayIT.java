@@ -61,9 +61,9 @@ public class ReadFilter_OverlayIT extends MainDbTest {
                 .wasOk().bodyEquals(2, "{\"id\":2,\"name\":\"Bb\"}", "{\"id\":4,\"name\":\"Cc\"}");
 
         tester.e2().matcher().assertMatches(3);
-        tester.e2().matcher().eq("id_", 1).eq("name", "Aa").assertOneMatch();
-        tester.e2().matcher().eq("id_", 2).eq("name", "Bb").assertOneMatch();
-        tester.e2().matcher().eq("id_", 4).eq("name", "Cc").assertOneMatch();
+        tester.e2().matcher().eq("id_", 1).andEq("name", "Aa").assertOneMatch();
+        tester.e2().matcher().eq("id_", 2).andEq("name", "Bb").assertOneMatch();
+        tester.e2().matcher().eq("id_", 4).andEq("name", "Cc").assertOneMatch();
     }
 
     @Test
@@ -105,9 +105,9 @@ public class ReadFilter_OverlayIT extends MainDbTest {
                 .wasOk().bodyEquals(1, "{\"id\":2,\"name\":\"Bb\"}");
 
         tester.e2().matcher().assertMatches(3);
-        tester.e2().matcher().eq("id_", 1).eq("name", "Aa").assertOneMatch();
-        tester.e2().matcher().eq("id_", 2).eq("name", "Bb").assertOneMatch();
-        tester.e2().matcher().eq("id_", 4).eq("name", "Cc").assertOneMatch();
+        tester.e2().matcher().eq("id_", 1).andEq("name", "Aa").assertOneMatch();
+        tester.e2().matcher().eq("id_", 2).andEq("name", "Bb").assertOneMatch();
+        tester.e2().matcher().eq("id_", 4).andEq("name", "Cc").assertOneMatch();
     }
 
     @Path("")

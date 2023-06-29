@@ -35,7 +35,7 @@ public class EntityUpdateBindingIT extends MainDbTest {
                 .put("{\"id\":3,\"name\":\"yyy\"}")
                 .wasOk().bodyEquals("{}");
 
-        tester.e3().matcher().eq("id_", 3).eq("name", "yyy").assertOneMatch();
+        tester.e3().matcher().eq("id_", 3).andEq("name", "yyy").assertOneMatch();
     }
 
     @Test
@@ -51,8 +51,8 @@ public class EntityUpdateBindingIT extends MainDbTest {
                 .wasOk().bodyEquals("{}");
 
         tester.e3().matcher().assertMatches(2);
-        tester.e3().matcher().eq("id_", 3).eq("name", "yyy").assertOneMatch();
-        tester.e3().matcher().eq("id_", 5).eq("name", "nnn").assertOneMatch();
+        tester.e3().matcher().eq("id_", 3).andEq("name", "yyy").assertOneMatch();
+        tester.e3().matcher().eq("id_", 5).andEq("name", "nnn").assertOneMatch();
     }
 
     @Path("")

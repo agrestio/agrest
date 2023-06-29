@@ -52,7 +52,7 @@ public class NaturalIdIT extends MainDbTest {
                 .wasCreated()
                 .bodyEquals(1, "{\"id\":{\"age\":18,\"name\":\"John\"},\"age\":18,\"name\":\"John\"}");
 
-        tester.e21().matcher().eq("name", "John").eq("age", 18).assertOneMatch();
+        tester.e21().matcher().eq("name", "John").andEq("age", 18).assertOneMatch();
 
         tester.target("/multi-id").queryParam("exclude", "description")
                 .post("{\"id\":{\"age\":18,\"name\":\"John\"}}")
@@ -68,7 +68,7 @@ public class NaturalIdIT extends MainDbTest {
                 .wasCreated()
                 .bodyEquals(1, "{\"id\":{\"db:id1\":18,\"id2Prop\":345},\"id2Prop\":345}");
 
-        tester.e29().matcher().eq("id1", 18).eq("id2", 345).assertOneMatch();
+        tester.e29().matcher().eq("id1", 18).andEq("id2", 345).assertOneMatch();
 
         tester.target("/mixed-multi-id")
                 .post("{\"id\":{\"db:id1\":18,\"id2Prop\":345}}")

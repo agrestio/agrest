@@ -126,7 +126,7 @@ public class ConvertersIT extends MainDbTest {
                 .post("{\"byteObject\":1,\"bytePrimitive\":2}")
                 .wasCreated()
                 .bodyEquals(1, "{\"byteObject\":1,\"bytePrimitive\":2}");
-        tester.e19().matcher().eq("byte_object", 1).eq("byte_primitive", 2).assertOneMatch();
+        tester.e19().matcher().eq("byte_object", 1).andEq("byte_primitive", 2).assertOneMatch();
     }
 
     @Test
@@ -137,7 +137,7 @@ public class ConvertersIT extends MainDbTest {
                 .post("{\"shortObject\":1,\"shortPrimitive\":2}")
                 .wasCreated()
                 .bodyEquals(1, "{\"shortObject\":1,\"shortPrimitive\":2}");
-        tester.e19().matcher().eq("short_object", 1).eq("short_primitive", 2).assertOneMatch();
+        tester.e19().matcher().eq("short_object", 1).andEq("short_primitive", 2).assertOneMatch();
     }
 
     @Test
@@ -147,7 +147,7 @@ public class ConvertersIT extends MainDbTest {
                 .post("{\"floatObject\":1.0,\"floatPrimitive\":2.0}")
                 .wasCreated()
                 .bodyEquals(1, "{\"floatObject\":1.0,\"floatPrimitive\":2.0}");
-        tester.e19().matcher().eq("float_object", 1.0).eq("float_primitive", 2.0).assertOneMatch();
+        tester.e19().matcher().eq("float_object", 1.0).andEq("float_primitive", 2.0).assertOneMatch();
     }
 
     @Test
@@ -157,19 +157,19 @@ public class ConvertersIT extends MainDbTest {
                 .post("{\"floatObject\":1,\"floatPrimitive\":2}")
                 .wasCreated()
                 .bodyEquals(1, "{\"floatObject\":1.0,\"floatPrimitive\":2.0}");
-        tester.e19().matcher().eq("float_object", 1.0).eq("float_primitive", 2.0).assertOneMatch();
+        tester.e19().matcher().eq("float_object", 1.0).andEq("float_primitive", 2.0).assertOneMatch();
     }
 
     @Test
     public void _double() {
         tester.target("/e19/double").post("{\"doubleObject\":1.0,\"doublePrimitive\":2.0}").wasCreated();
-        tester.e19().matcher().eq("double_object", 1.0).eq("double_primitive", 2.0).assertOneMatch();
+        tester.e19().matcher().eq("double_object", 1.0).andEq("double_primitive", 2.0).assertOneMatch();
     }
 
     @Test
     public void double_FromInt() {
         tester.target("/e19/double").post("{\"doubleObject\":1,\"doublePrimitive\":2}").wasCreated();
-        tester.e19().matcher().eq("double_object", 1.0).eq("double_primitive", 2.0).assertOneMatch();
+        tester.e19().matcher().eq("double_object", 1.0).andEq("double_primitive", 2.0).assertOneMatch();
     }
 
     @Path("")

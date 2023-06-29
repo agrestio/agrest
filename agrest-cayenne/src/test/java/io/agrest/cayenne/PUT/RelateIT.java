@@ -39,7 +39,7 @@ public class RelateIT extends MainDbTest {
                 .wasOk()
                 .bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
-        tester.e3().matcher().eq("id_", 3).eq("e2_id", 1).assertOneMatch();
+        tester.e3().matcher().eq("id_", 3).andEq("e2_id", 1).assertOneMatch();
     }
 
     @Test
@@ -74,7 +74,7 @@ public class RelateIT extends MainDbTest {
                 .wasOk().bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
         tester.e3().matcher().assertOneMatch();
-        tester.e3().matcher().eq("id_", 3).eq("e2_id", null).assertOneMatch();
+        tester.e3().matcher().eq("id_", 3).andEq("e2_id", null).assertOneMatch();
     }
 
     @Test
@@ -89,7 +89,7 @@ public class RelateIT extends MainDbTest {
                 .wasOk()
                 .bodyEquals(1, "{\"id\":3,\"name\":\"zzz\",\"phoneNumber\":null}");
 
-        tester.e3().matcher().eq("id_", 3).eq("e2_id", 8).assertOneMatch();
+        tester.e3().matcher().eq("id_", 3).andEq("e2_id", 8).assertOneMatch();
     }
 
     @Test
@@ -164,8 +164,8 @@ public class RelateIT extends MainDbTest {
                 .put("{\"e3s\":[4]}")
                 .wasOk().bodyEquals(1, "{\"id\":1,\"e3s\":[{\"id\":4}]}");
 
-        tester.e3().matcher().eq("e2_id", 1).eq("id_", 4).assertOneMatch();
-        tester.e3().matcher().eq("e2_id", 8).eq("id_", 5).assertOneMatch();
+        tester.e3().matcher().eq("e2_id", 1).andEq("id_", 4).assertOneMatch();
+        tester.e3().matcher().eq("e2_id", 8).andEq("id_", 5).assertOneMatch();
     }
 
 
