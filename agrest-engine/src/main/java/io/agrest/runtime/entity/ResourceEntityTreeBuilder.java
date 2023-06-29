@@ -127,7 +127,7 @@ public class ResourceEntityTreeBuilder {
         //   not just the topmost in the inheritance hierarchy
 
         // TODO: If the target is overlaid, we need to overlay the "incoming" relationship as well for model consistency...
-        //  Currently we optimistically assume that no request processing code would rely on "incoming.target"
+        //  Currently, we optimistically assume that no request processing code would rely on "incoming.target"
 
         AgRelationship incoming = findFirstRelationship(parent, incomingName);
         AgEntity<?> target = incoming.getTargetEntity();

@@ -82,21 +82,21 @@ public class ConstraintsHandler implements IConstraintsHandler {
             // TODO: recursive checks on relationships
 
             Consumer<Set<String>> checkIds = s -> {
-                Iterator<String> toOnesIt = s.iterator();
-                while (toOnesIt.hasNext()) {
-                    String name = toOnesIt.next();
+                Iterator<String> relationshipsIt = s.iterator();
+                while (relationshipsIt.hasNext()) {
+                    String name = relationshipsIt.next();
 
                     AgRelationship r = entity.getRelationship(name);
 
                     if (r == null) {
                         LOGGER.debug("Relationship not recognized, removing: '{}' for id {}", name, u.getIdParts());
-                        toOnesIt.remove();
+                        relationshipsIt.remove();
                         continue;
                     }
 
                     if (!r.isWritable()) {
                         LOGGER.debug("Relationship not allowed, removing: '{}' for id {}", name, u.getIdParts());
-                        toOnesIt.remove();
+                        relationshipsIt.remove();
                     }
                 }
             };
