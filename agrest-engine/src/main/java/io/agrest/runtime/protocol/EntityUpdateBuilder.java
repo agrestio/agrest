@@ -24,33 +24,13 @@ class EntityUpdateBuilder<T> {
         currentUpdate = new EntityUpdate<>(entity);
     }
 
-    void addIdPart(String idPartName, Object value) {
-        currentUpdate.addIdPart(idPartName, value);
-    }
-
-    void setAttribute(String attribute, Object value) {
-        currentUpdate.setAttribute(attribute, value);
-    }
-
-    void setToOneId(String relationship, Object relatedId) {
-        currentUpdate.setToOneId(relationship, relatedId);
-    }
-
-    void addToManyId(String relationship, Object relatedId) {
-        currentUpdate.addToManyId(relationship, relatedId);
-    }
-
-    void setToOne(String relationship, EntityUpdate<?> update) {
-        currentUpdate.setToOne(relationship, update);
-    }
-
-    void addToMany(String relationship, EntityUpdate<?> update) {
-        currentUpdate.addToMany(relationship, update);
-    }
-
     void endObject() {
         updates.add(currentUpdate);
         currentUpdate = null;
+    }
+
+    EntityUpdate<T> getCurrentUpdate() {
+        return currentUpdate;
     }
 
     int getRemainingDepth() {

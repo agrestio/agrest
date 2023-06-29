@@ -66,10 +66,10 @@ class EntityUpdateParser<T> {
         return builder.getUpdates();
     }
 
-    private void processArray(EntityUpdateBuilder<T> visitor, JsonNode arrayNode) {
+    private void processArray(EntityUpdateBuilder<T> builder, JsonNode arrayNode) {
         for (JsonNode node : arrayNode) {
             if (node.isObject()) {
-                processObject(visitor, node);
+                processObject(builder, node);
             } else {
                 throw AgException.badRequest("Expected Object, got: %s", node.asText());
             }
@@ -133,7 +133,7 @@ class EntityUpdateParser<T> {
             AgIdPart id = ids.iterator().next();
             JsonValueConverter<?> converter = converters.converter(id.getType());
             String name = id.getName();
-            return (b, j) -> b.addIdPart(name, converter.value(j));
+            return (b, j) -> b.getCurrentUpdate().addIdPart(name, converter.value(j));
         } else {
 
             Map<String, JsonValueConverter<?>> idPartsConverters = new HashMap<>(ids.size() * 2);
@@ -147,7 +147,7 @@ class EntityUpdateParser<T> {
                     throw AgException.badRequest("Failed to parse update payload. Id part is missing: " + n);
                 }
 
-                b.addIdPart(n, c.value(idNode));
+                b.getCurrentUpdate().addIdPart(n, c.value(idNode));
             });
         }
     }
@@ -155,7 +155,7 @@ class EntityUpdateParser<T> {
     private BiConsumer<EntityUpdateBuilder<T>, JsonNode> createAttributeExtractor(AgAttribute attribute) {
         JsonValueConverter<?> converter = converters.converter(attribute.getType());
         String name = attribute.getName();
-        return (b, j) -> b.setAttribute(name, converter.value(j));
+        return (b, j) -> b.getCurrentUpdate().setAttribute(name, converter.value(j));
     }
 
     private BiConsumer<EntityUpdateBuilder<T>, JsonNode> createRelationshipExtractor(AgRelationship relationship) {
@@ -172,12 +172,16 @@ class EntityUpdateParser<T> {
 
         return (b, j) -> {
             if (isObject.test(j)) {
+
                 List<EntityUpdate<Object>> childUpdates = parent.parse(relationship, j, b.getRemainingDepth() - 1);
+
+                // may be empty if we reached the depth limit
                 if (!childUpdates.isEmpty()) {
-                    b.setToOne(name, childUpdates.get(0));
+                    b.getCurrentUpdate().setToOne(name, childUpdates.get(0));
                 }
+
             } else {
-                b.setToOneId(name, converter.value(j));
+                b.getCurrentUpdate().setToOneId(name, converter.value(j));
             }
         };
     }
@@ -193,17 +197,20 @@ class EntityUpdateParser<T> {
             if (j.isArray()) {
 
                 if (j.isEmpty()) {
-                    // this is a hackish way to tell the visitor, that it should unrelate all objects
-                    b.addToManyId(name, null);
+                    b.getCurrentUpdate().emptyToManyIds(name);
+                    b.getCurrentUpdate().emptyToMany(name);
                 } else {
                     for (JsonNode child : j) {
                         if (isObject.test(child)) {
                             List<EntityUpdate<Object>> childUpdates = parent.parse(relationship, child, b.getRemainingDepth() - 1);
+
+                            // children may be empty if we reached the depth limit
                             if (!childUpdates.isEmpty()) {
-                                b.addToMany(name, childUpdates.get(0));
+                                b.getCurrentUpdate().addToMany(name, childUpdates.get(0));
                             }
+
                         } else {
-                            b.addToManyId(name, converter.value(child));
+                            b.getCurrentUpdate().addToManyId(name, converter.value(child));
                         }
                     }
                 }
