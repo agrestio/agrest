@@ -3,7 +3,6 @@ package io.agrest.runtime.processor.update.stage;
 import io.agrest.AgRequest;
 import io.agrest.RootResourceEntity;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgSchema;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
@@ -38,10 +37,9 @@ public class UpdateCreateResourceEntityStage implements Processor<UpdateContext<
     }
 
     protected <T> void doExecute(UpdateContext<T> context) {
-        AgEntityOverlay<T> overlay = context.getEntityOverlay(context.getType());
         AgEntity<T> entity = schema.getEntity(context.getType());
-
-        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(entity.resolveOverlay(schema, overlay));
+        AgEntity<T> overlaid = entity.resolveOverlayHierarchy(schema, context.getEntityOverlays());
+        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(overlaid);
 
         AgRequest request = context.getRequest();
         includeMerger.merge(resourceEntity,
