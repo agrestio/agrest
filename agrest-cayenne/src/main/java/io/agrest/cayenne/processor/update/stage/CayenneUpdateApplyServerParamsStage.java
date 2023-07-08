@@ -226,7 +226,9 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
 
         if (parent != null && parent.getId() != null) {
 
-            Map<String, String> parentAgKeysToChildDbPaths = parentAgKeysToChildDbPaths(parent);
+            Map<String, String> parentAgKeysToChildDbPaths = parentAgKeysToChildDbPaths(
+                    context.getSchema().getEntity(parent.getType()),
+                    parent);
             if (!parentAgKeysToChildDbPaths.isEmpty()) {
 
                 Map<String, Object> idTranslated = new HashMap<>(5);
@@ -245,12 +247,12 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
         }
     }
 
-    private Map<String, String> parentAgKeysToChildDbPaths(EntityParent<?> parent) {
+    private Map<String, String> parentAgKeysToChildDbPaths(AgEntity<?> parentAgEntity, EntityParent<?> parent) {
 
         // TODO: too much Ag to Cayenne metadata translation happens here.
         //  We should cache and reuse the returned map
 
-        ObjEntity parentCayenneEntity = entityResolver.getObjEntity(parent.getEntity().getType());
+        ObjEntity parentCayenneEntity = entityResolver.getObjEntity(parent.getType());
         ObjRelationship fromParent = parentCayenneEntity.getRelationship(parent.getRelationship());
 
         if (fromParent == null) {
@@ -268,12 +270,10 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
             sourceToTargetJoins.put(join.getSourceName(), join.getTargetName());
         }
 
-        AgEntity<?> parentEntity = parent.getEntity();
-
         Map<String, String> parentAgKeysToChildDbPaths = new HashMap<>();
-        for (AgIdPart idPart : parentEntity.getIdParts()) {
+        for (AgIdPart idPart : parentAgEntity.getIdParts()) {
 
-            ASTPath idPath = pathResolver.resolve(parentEntity.getName(), idPart.getName()).getPathExp();
+            ASTPath idPath = pathResolver.resolve(parentCayenneEntity.getName(), idPart.getName()).getPathExp();
             ASTDbPath dbPath = PathOps.resolveAsDbPath(parentCayenneEntity, idPath);
             String targetPath = sourceToTargetJoins.remove(dbPath.getPath());
             if (targetPath == null) {

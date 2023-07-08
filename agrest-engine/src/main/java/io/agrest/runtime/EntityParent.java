@@ -1,7 +1,6 @@
 package io.agrest.runtime;
 
 import io.agrest.id.AgObjectId;
-import io.agrest.meta.AgEntity;
 
 import java.util.Objects;
 
@@ -12,18 +11,18 @@ import java.util.Objects;
  */
 public class EntityParent<P> {
 
-    private final AgEntity<P> entity;
+    private final Class<P> type;
     private final String relationship;
     private final AgObjectId id;
 
-    public EntityParent(AgEntity<P> entity, AgObjectId id, String relationshipFromParent) {
-        this.entity = Objects.requireNonNull(entity);
+    public EntityParent(Class<P> type, AgObjectId id, String relationshipFromParent) {
+        this.type = Objects.requireNonNull(type);
         this.relationship = Objects.requireNonNull(relationshipFromParent);
         this.id = Objects.requireNonNull(id);
     }
 
-    public AgEntity<P> getEntity() {
-        return entity;
+    public Class<P> getType() {
+        return type;
     }
 
     public AgObjectId getId() {

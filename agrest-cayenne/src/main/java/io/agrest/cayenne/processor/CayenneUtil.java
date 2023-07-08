@@ -109,12 +109,11 @@ public final class CayenneUtil {
 
     public static Expression parentQualifier(
             IPathResolver pathResolver,
+            AgEntity<?> parentAgEntity,
             EntityParent<?> parent,
             EntityResolver resolver) {
 
-        AgEntity<?> parentEntity = parent.getEntity();
-
-        ObjEntity parentObjEntity = resolver.getObjEntity(parentEntity.getName());
+        ObjEntity parentObjEntity = resolver.getObjEntity(parent.getType());
 
         ObjRelationship objRelationship = parentObjEntity.getRelationship(parent.getRelationship());
         if (objRelationship == null) {
@@ -127,7 +126,7 @@ public final class CayenneUtil {
 
         AgObjectId id = parent.getId();
         Function<AgIdPart, Expression> expBuilder = p -> {
-            ASTPath idPartPath = pathResolver.resolve(parentEntity.getName(), p.getName()).getPathExp();
+            ASTPath idPartPath = pathResolver.resolve(parentObjEntity.getName(), p.getName()).getPathExp();
             Expression pathExp = PathOps.concatWithDbPath(parentObjEntity, reversePath, idPartPath);
 
             Object val = id.get(p.getName());
@@ -143,11 +142,11 @@ public final class CayenneUtil {
         };
 
         if (id.size() == 1) {
-            return expBuilder.apply(parentEntity.getIdParts().iterator().next());
+            return expBuilder.apply(parentAgEntity.getIdParts().iterator().next());
         }
 
         List<Expression> expressions = new ArrayList<>(id.size());
-        for (AgIdPart idPart : parentEntity.getIdParts()) {
+        for (AgIdPart idPart : parentAgEntity.getIdParts()) {
             expressions.add(expBuilder.apply(idPart));
         }
 

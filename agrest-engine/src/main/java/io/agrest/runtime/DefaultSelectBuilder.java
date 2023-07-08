@@ -13,7 +13,6 @@ import io.agrest.encoder.Encoder;
 import io.agrest.id.AgObjectId;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.AgSchema;
 import io.agrest.processor.Processor;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
@@ -45,15 +44,13 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
     @Override
     public SelectBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
-        AgEntity<?> parentEntity = context.service(AgSchema.class).getEntity(parentType);
-        context.setParent(new EntityParent<>(parentEntity, AgObjectId.of(parentId), relationshipFromParent));
+        context.setParent(new EntityParent<>(parentType, AgObjectId.of(parentId), relationshipFromParent));
         return this;
     }
 
     @Override
     public SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
-        AgEntity<?> parentEntity = context.service(AgSchema.class).getEntity(parentType);
-        context.setParent(new EntityParent<>(parentEntity, AgObjectId.ofMap(parentIds), relationshipFromParent));
+        context.setParent(new EntityParent<>(parentType, AgObjectId.ofMap(parentIds), relationshipFromParent));
         return this;
     }
 

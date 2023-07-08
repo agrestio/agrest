@@ -69,7 +69,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
         EntityParent<?> parent = context.getParent();
         if (parent != null) {
-            query.and(CayenneUtil.parentQualifier(pathResolver, parent, entityResolver));
+            query.and(CayenneUtil.parentQualifier(pathResolver, context.getSchema().getEntity(parent.getType()), parent, entityResolver));
         }
 
         return query;
