@@ -172,7 +172,7 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     private SimpleResponse doSync() {
         context.setIncludingDataInResponse(false);
         processorFactory.createProcessor(processors).execute(context);
-        return context.createSimpleResponse();
+        return SimpleResponse.of(context.getStatus());
     }
 
     private DataResponse<T> doSyncAndSelect() {

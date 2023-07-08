@@ -53,9 +53,12 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
      *
      * @return a new response object reflecting the context state.
      * @since 1.24
+     * @deprecated unused anymore, as the context should not be creating a response. It is the responsibility of a
+     * pipeline
      */
+    @Deprecated(since = "5.0")
     public DataResponse<T> createDataResponse() {
-        // support null ResourceEntity for cases with custom terminal stages
+        // support null ResourceEntity for cases with terminal stages invoked prior to SelectStage.CREATE_ENTITY
         return entity != null
                 ? DataResponse.of(entity.getDataWindow()).status(getStatus()).total(entity.getData().size()).encoder(encoder).build()
                 : DataResponse.of(Collections.<T>emptyList()).status(getStatus()).build();

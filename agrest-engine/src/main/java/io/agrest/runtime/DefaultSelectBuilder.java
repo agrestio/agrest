@@ -2,11 +2,15 @@ package io.agrest.runtime;
 
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
+import io.agrest.RootResourceEntity;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
 import io.agrest.SizeConstraints;
 import io.agrest.access.PathChecker;
+import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.Encoder;
+import io.agrest.encoder.GenericEncoder;
+import io.agrest.encoder.ListEncoder;
 import io.agrest.id.AgObjectId;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
@@ -145,14 +149,14 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         // should deprecate eventually
         context.setAtMostOneObject(context.isById());
         processorFactory.createProcessor(processors).execute(context);
-        return context.createDataResponse();
+        return createDataResponse();
     }
 
     @Override
     public DataResponse<T> getOne() {
         context.setAtMostOneObject(true);
         processorFactory.createProcessor(processors).execute(context);
-        return context.createDataResponse();
+        return createDataResponse();
     }
 
     @Override
@@ -160,8 +164,29 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         return terminalStage(SelectStage.APPLY_SERVER_PARAMS, this::processEmpty).get();
     }
 
+    private DataResponse<T> createDataResponse() {
+
+        // support null ResourceEntity and null encode for cases with terminal stages invoked prior
+        // to those objects being created
+
+        RootResourceEntity<T> entity = context.getEntity();
+        List<T> data = entity != null ? entity.getDataWindow() : Collections.emptyList();
+        int total = entity != null ? entity.getData().size() : 0;
+        Encoder encoder = context.getEncoder() != null ? context.getEncoder() : defaultEncoder();
+
+        return DataResponse.of(data).status(context.getStatus()).total(total).encoder(encoder).build();
+    }
+
     private void processEmpty(SelectContext<T> context) {
         context.getEntity().setData(Collections.emptyList());
         processorFactory.getStageProcessor(SelectStage.ENCODE).execute(context);
+    }
+
+    private Encoder defaultEncoder() {
+        return new DataResponseEncoder(
+                "data",
+                new ListEncoder(GenericEncoder.encoder()),
+                "total",
+                GenericEncoder.encoder());
     }
 }

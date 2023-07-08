@@ -57,6 +57,6 @@ public class DefaultUnrelateBuilder<T> implements UnrelateBuilder<T> {
     @Override
     public SimpleResponse sync() {
         processorFactory.createProcessor().execute(context);
-        return context.createSimpleResponse();
+        return SimpleResponse.of(context.getStatus());
     }
 }

@@ -47,7 +47,10 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
      *
      * @return a new SimpleResponse with status of this context.
      * @since 1.24
+     * @deprecated unused anymore, as the context should not be creating a response. It is the responsibility of a
+     * pipeline
      */
+    @Deprecated(since = "5.0")
     public SimpleResponse createSimpleResponse() {
         return SimpleResponse.of(getStatus());
     }
