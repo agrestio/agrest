@@ -44,7 +44,12 @@ public class SimpleResponseWriter implements MessageBodyWriter<SimpleResponse> {
             MultivaluedMap<String, Object> httpHeaders,
             OutputStream entityStream) throws IOException {
 
-        getJacksonService().outputJson(out -> writeData(t, out), entityStream);
+        switch (t.getStatus()) {
+            case 304:
+                return;
+            default:
+                getJacksonService().outputJson(out -> writeData(t, out), entityStream);
+        }
     }
 
     private IJacksonService getJacksonService() {

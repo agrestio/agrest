@@ -63,8 +63,8 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
 
         // support null ResourceEntity for cases with terminal stages invoked prior to SelectStage.CREATE_ENTITY
         return entity != null
-                ? DataResponse.of(status, entity.getDataWindow()).total(entity.getData().size()).encoder(encoder).build()
-                : DataResponse.of(status, Collections.<T>emptyList()).build();
+                ? DataResponse.of(status, entity.getDataWindow()).headers(getResponseHeaders()).total(entity.getData().size()).encoder(encoder).build()
+                : DataResponse.of(status, Collections.<T>emptyList()).headers(getResponseHeaders()).build();
     }
 
     public boolean isById() {

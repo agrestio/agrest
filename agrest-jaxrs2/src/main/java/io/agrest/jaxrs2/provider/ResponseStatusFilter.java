@@ -21,6 +21,7 @@ public class ResponseStatusFilter implements ContainerResponseFilter {
         if (entity instanceof AgResponse) {
             AgResponse response = (AgResponse) entity;
             responseContext.setStatus(response.getStatus());
+            response.getHeaders().forEach((n, h) -> responseContext.getHeaders().put(n, h));
         }
     }
 }

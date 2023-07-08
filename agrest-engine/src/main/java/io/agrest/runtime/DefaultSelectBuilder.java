@@ -172,11 +172,12 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
         RootResourceEntity<T> entity = context.getEntity();
         List<T> data = entity != null ? entity.getDataWindow() : Collections.emptyList();
-        int total = entity != null ? entity.getData().size() : 0;
 
-        Encoder encoder = context.getEncoder() != null ? context.getEncoder() : DataResponseEncoder.defaultEncoder();
-
-        return DataResponse.of(status, data).total(total).encoder(encoder).build();
+        return DataResponse.of(status, data)
+                .headers(context.getResponseHeaders())
+                .total(entity != null ? entity.getData().size() : 0)
+                .encoder(context.getEncoder() != null ? context.getEncoder() : DataResponseEncoder.defaultEncoder())
+                .build();
     }
 
     private void processEmpty(SelectContext<T> context) {

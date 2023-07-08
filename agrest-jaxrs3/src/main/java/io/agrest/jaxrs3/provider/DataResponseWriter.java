@@ -25,7 +25,7 @@ public class DataResponseWriter implements MessageBodyWriter<DataResponse<?>> {
 
     private IJacksonService jacksonService;
     private EncodingPolicy encodingPolicy;
-    
+
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return DataResponse.class.isAssignableFrom(type);
@@ -52,8 +52,13 @@ public class DataResponseWriter implements MessageBodyWriter<DataResponse<?>> {
             OutputStream entityStream)
             throws IOException {
 
-        boolean skipNullProperties = getEncodingPolicy().skipNullProperties();
-        getJacksonService().outputJson(out -> writeData(t, skipNullProperties, out), entityStream);
+        switch (t.getStatus()) {
+            case 304:
+                return;
+            default:
+                boolean skipNullProperties = getEncodingPolicy().skipNullProperties();
+                getJacksonService().outputJson(out -> writeData(t, skipNullProperties, out), entityStream);
+        }
     }
 
     private IJacksonService getJacksonService() {

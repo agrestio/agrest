@@ -6,6 +6,7 @@ import io.agrest.protocol.CollectionResponse;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -16,6 +17,13 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
     private final List<? extends T> data;
     private final int total;
     private final Encoder encoder;
+
+    /**
+     * @since 5.0
+     */
+    public static <T> Builder<T> of(int status) {
+        return of(status, Collections.emptyList());
+    }
 
     /**
      * @since 5.0
@@ -41,8 +49,14 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
         return of(HttpStatus.OK, data).build();
     }
 
-    protected DataResponse(int status, List<? extends T> data, int total, Encoder encoder) {
-        super(status);
+    protected DataResponse(
+            int status,
+            Map<String, List<Object>> headers,
+            List<? extends T> data,
+            int total,
+            Encoder encoder) {
+
+        super(status, headers);
         this.total = total;
         this.data = data;
         this.encoder = encoder;
@@ -86,10 +100,19 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
         private Integer status;
         private Integer total;
         private Encoder encoder;
+        private Map<String, List<Object>> headers;
 
         private Builder(int status, List<? extends T> data) {
             this.status = status;
             this.data = data;
+        }
+
+        /**
+         * @since 5.0
+         */
+        public Builder headers(Map<String, List<Object>> headers) {
+            this.headers = headers;
+            return this;
         }
 
         @Deprecated(since = "5.0")
@@ -119,9 +142,12 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
         }
 
         public DataResponse<T> build() {
+
             List<? extends T> data = this.data != null ? this.data : Collections.emptyList();
+
             return new DataResponse<>(
                     status != null ? status : HttpStatus.OK,
+                    headers != null ? headers : Collections.emptyMap(),
                     data,
                     total != null ? total : data.size(),
                     encoder != null ? encoder : DataResponseEncoder.defaultEncoder()

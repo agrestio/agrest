@@ -1,5 +1,8 @@
 package io.agrest;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * A base response object in Agrest.
  *
@@ -8,13 +11,15 @@ package io.agrest;
 public abstract class AgResponse {
 
     protected final int status;
+    protected final Map<String, List<Object>> headers;
 
-    public AgResponse(int status) {
+    protected AgResponse(int status, Map<String, List<Object>> headers) {
         if (!HttpStatus.isValid(status)) {
             throw new IllegalArgumentException("Invalid HTTP status: " + status);
         }
 
         this.status = status;
+        this.headers = headers;
     }
 
     /**
@@ -22,5 +27,12 @@ public abstract class AgResponse {
      */
     public int getStatus() {
         return status;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public Map<String, List<Object>> getHeaders() {
+        return headers;
     }
 }
