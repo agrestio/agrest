@@ -44,10 +44,6 @@ public class RequestSchema {
         return schema.getEntity(type).resolveOverlayHierarchy(schema, immutableOverlays());
     }
 
-    private <A> AgEntityOverlay<A> getOverlay(Class<A> type) {
-        return overlays != null ? (AgEntityOverlay<A>) overlays.get(type) : null;
-    }
-
     private Map<Class<?>, AgEntity<?>> mutableEntities() {
         return entities == null ? (entities = new HashMap<>()) : entities;
     }
