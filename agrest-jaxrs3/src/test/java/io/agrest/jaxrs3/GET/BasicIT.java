@@ -1,6 +1,7 @@
-package io.agrest.jaxrs3;
+package io.agrest.jaxrs3.GET;
 
 import io.agrest.DataResponse;
+import io.agrest.jaxrs3.AgJaxrs;
 import io.agrest.jaxrs3.junit.AgPojoTester;
 import io.agrest.jaxrs3.junit.PojoTest;
 import io.agrest.jaxrs3.junit.pojo.P1;
@@ -26,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-public class GET_PojoIT extends PojoTest {
+public class BasicIT extends PojoTest {
 
     @BQTestTool
     static final AgPojoTester tester = PojoTest.tester(Resource.class).build();

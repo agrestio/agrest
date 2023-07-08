@@ -1,15 +1,15 @@
-package io.agrest.jaxrs2;
+package io.agrest.jaxrs3.GET;
 
 import io.agrest.SimpleResponse;
-import io.agrest.jaxrs2.junit.AgPojoTester;
-import io.agrest.jaxrs2.junit.PojoTest;
+import io.agrest.jaxrs3.junit.AgPojoTester;
+import io.agrest.jaxrs3.junit.PojoTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
-public class GET_SimpleResponseIT extends PojoTest {
+public class SimpleResponseIT extends PojoTest {
 
     @BQTestTool
     static final AgPojoTester tester = PojoTest.tester(Resource.class).build();

@@ -1,22 +1,24 @@
-package io.agrest.jaxrs3;
+package io.agrest.jaxrs2.GET;
 
 import io.agrest.AgException;
 import io.agrest.DataResponse;
 import io.agrest.SelectStage;
-import io.agrest.jaxrs3.junit.AgPojoTester;
-import io.agrest.jaxrs3.junit.PojoTest;
-import io.agrest.jaxrs3.junit.pojo.P1;
+import io.agrest.jaxrs2.AgJaxrs;
+import io.agrest.jaxrs2.junit.AgPojoTester;
+import io.agrest.jaxrs2.junit.PojoTest;
+import io.agrest.jaxrs2.junit.pojo.P1;
 import io.bootique.junit5.BQTestTool;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.core.Configuration;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.Test;
 
-public class GET_ExceptionIT extends PojoTest {
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+public class ExceptionIT extends PojoTest {
 
     @BQTestTool
     static final AgPojoTester tester = PojoTest.tester(Resource.class).build();
@@ -51,7 +53,6 @@ public class GET_ExceptionIT extends PojoTest {
                 .wasForbidden()
                 .mediaTypeEquals(MediaType.TEXT_HTML_TYPE.withCharset("iso-8859-1"));
     }
-
 
     @Path("nodata")
     public static class Resource {
