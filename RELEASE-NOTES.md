@@ -2,6 +2,7 @@
 
 * #638 EntityUpdate.getToMany(String) should return null if the key is not a part of update
 * #640 DataResponse<T> to support "304 Not Modified"
+* #641 Cayenne IPathResolver may get "poisoned" by per-request overlayed AgEntities
 * #642 TokenMgrException is not handled by Agrest
  
 ## Release 5.0.M17
