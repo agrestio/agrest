@@ -74,7 +74,10 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
      *
      * @return a newly created DataResponse object reflecting the context state.
      * @since 1.24
+     * @deprecated unused anymore, as the context should not be creating a response. It is the responsibility of a
+     * pipeline
      */
+    @Deprecated(since = "5.0")
     public DataResponse<T> createDataResponse() {
         int status = getResponseStatus() != null ? getResponseStatus() : HttpStatus.OK;
 

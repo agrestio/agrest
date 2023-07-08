@@ -10,13 +10,49 @@ import java.io.IOException;
  */
 public class DataResponseEncoder implements Encoder {
 
+    private final static DataResponseEncoder instance = withElementEncoder(GenericEncoder.encoder());
+
     private final String dataProperty;
     private final Encoder dataEncoder;
 
     private final String totalProperty;
     private final Encoder totalEncoder;
 
-    public DataResponseEncoder(
+    /**
+     * @since 5.0
+     */
+    public static DataResponseEncoder defaultEncoder() {
+        return instance;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public static DataResponseEncoder withElementEncoder(Encoder elementEncoder) {
+        return new DataResponseEncoder(
+                "data",
+                new ListEncoder(elementEncoder),
+                "total",
+                GenericEncoder.encoder());
+    }
+
+    /**
+     * @since 5.0
+     */
+    public static DataResponseEncoder encoder(
+            String dataProperty,
+            Encoder dataEncoder,
+            String totalProperty,
+            Encoder totalEncoder) {
+
+        return new DataResponseEncoder(
+                dataProperty,
+                dataEncoder,
+                totalProperty,
+                totalEncoder);
+    }
+
+    protected DataResponseEncoder(
             String dataProperty,
             Encoder dataEncoder,
             String totalProperty,

@@ -10,8 +10,6 @@ import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.GenericEncoder;
-import io.agrest.encoder.ListEncoder;
 import io.agrest.jaxrs3.AgJaxrs;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.bootique.junit5.BQTestTool;
@@ -90,9 +88,7 @@ public class StagesIT extends MainDbTest {
 
             context.getEntity().setData(names);
 
-            Encoder rowEncoder = new NoIdEncoder();
-            ListEncoder listEncoder = new ListEncoder(rowEncoder);
-            Encoder encoder = new DataResponseEncoder("data", listEncoder, "total", GenericEncoder.encoder());
+            Encoder encoder = DataResponseEncoder.withElementEncoder(new NoIdEncoder());
             context.setEncoder(encoder);
         }
     }

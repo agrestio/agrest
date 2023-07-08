@@ -5,10 +5,13 @@ import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
 import io.agrest.HttpStatus;
 import io.agrest.ObjectMapperFactory;
+import io.agrest.RootResourceEntity;
 import io.agrest.SimpleResponse;
 import io.agrest.UpdateBuilder;
 import io.agrest.UpdateStage;
 import io.agrest.access.PathChecker;
+import io.agrest.encoder.DataResponseEncoder;
+import io.agrest.encoder.Encoder;
 import io.agrest.id.AgObjectId;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
@@ -181,6 +184,22 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     private DataResponse<T> doSyncAndSelect() {
         context.setIncludingDataInResponse(true);
         processorFactory.createProcessor(processors).execute(context);
-        return context.createDataResponse();
+        return createDataResponse();
+    }
+
+    private DataResponse<T> createDataResponse() {
+
+        // account for partial context stats for cases with terminal stages invoked prior
+        // to those objects being created
+
+        int status = context.getResponseStatus() != null ? context.getResponseStatus() : HttpStatus.OK;
+
+        RootResourceEntity<T> entity = context.getEntity();
+        List<T> data = entity != null ? entity.getDataWindow() : Collections.emptyList();
+        int total = entity != null ? entity.getData().size() : 0;
+
+        Encoder encoder = context.getEncoder() != null ? context.getEncoder() : DataResponseEncoder.defaultEncoder();
+
+        return DataResponse.of(status, data).total(total).encoder(encoder).build();
     }
 }

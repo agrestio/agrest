@@ -2,8 +2,6 @@ package io.agrest;
 
 import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.GenericEncoder;
-import io.agrest.encoder.ListEncoder;
 import io.agrest.protocol.CollectionResponse;
 
 import java.util.Collections;
@@ -112,7 +110,7 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
         }
 
         public Builder<T> elementEncoder(Encoder elementEncoder) {
-            return encoder(defaultEncoder(elementEncoder));
+            return encoder(DataResponseEncoder.withElementEncoder(elementEncoder));
         }
 
         public Builder<T> encoder(Encoder encoder) {
@@ -126,12 +124,8 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
                     status != null ? status : HttpStatus.OK,
                     data,
                     total != null ? total : data.size(),
-                    encoder != null ? encoder : defaultEncoder(GenericEncoder.encoder())
+                    encoder != null ? encoder : DataResponseEncoder.defaultEncoder()
             );
-        }
-
-        private Encoder defaultEncoder(Encoder elementEncoder) {
-            return new DataResponseEncoder("data", new ListEncoder(elementEncoder), "total", GenericEncoder.encoder());
         }
     }
 }

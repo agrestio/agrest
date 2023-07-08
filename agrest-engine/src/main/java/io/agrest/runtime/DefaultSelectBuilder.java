@@ -10,8 +10,6 @@ import io.agrest.SizeConstraints;
 import io.agrest.access.PathChecker;
 import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.GenericEncoder;
-import io.agrest.encoder.ListEncoder;
 import io.agrest.id.AgObjectId;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
@@ -176,7 +174,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         List<T> data = entity != null ? entity.getDataWindow() : Collections.emptyList();
         int total = entity != null ? entity.getData().size() : 0;
 
-        Encoder encoder = context.getEncoder() != null ? context.getEncoder() : defaultEncoder();
+        Encoder encoder = context.getEncoder() != null ? context.getEncoder() : DataResponseEncoder.defaultEncoder();
 
         return DataResponse.of(status, data).total(total).encoder(encoder).build();
     }
@@ -184,13 +182,5 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     private void processEmpty(SelectContext<T> context) {
         context.getEntity().setData(Collections.emptyList());
         processorFactory.getStageProcessor(SelectStage.ENCODE).execute(context);
-    }
-
-    private Encoder defaultEncoder() {
-        return new DataResponseEncoder(
-                "data",
-                new ListEncoder(GenericEncoder.encoder()),
-                "total",
-                GenericEncoder.encoder());
     }
 }
