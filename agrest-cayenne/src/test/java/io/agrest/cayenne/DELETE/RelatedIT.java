@@ -24,7 +24,7 @@ public class RelatedIT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(E2Resource.class, E3Resource.class, E8Resource.class)
-            .entities(E2.class, E3.class, E7.class, E8.class)
+            .entitiesAndDependencies(E2.class, E3.class, E7.class, E8.class)
             .build();
 
     @Test

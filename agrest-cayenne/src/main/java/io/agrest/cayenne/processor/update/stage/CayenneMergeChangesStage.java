@@ -361,7 +361,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
     }
 
     protected DbAttribute dbAttributeForAgAttribute(AgEntity<?> agEntity, String attributeName) {
-        ASTPath path = pathResolver.resolve(agEntity, attributeName).getPathExp();
+        ASTPath path = pathResolver.resolve(agEntity.getName(), attributeName).getPathExp();
         Object attribute = path.evaluate(entityResolver.getObjEntity(agEntity.getName()));
         return attribute instanceof ObjAttribute ? ((ObjAttribute) attribute).getDbAttribute() : (DbAttribute) attribute;
     }

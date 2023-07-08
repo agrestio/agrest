@@ -9,9 +9,9 @@ public class PathDescriptor {
 
     private final boolean attributeOrId;
     private final ASTPath path;
-    private final Class<?> type;
+    private final String type;
 
-    public PathDescriptor(Class<?> type, ASTPath path, boolean attributeOrId) {
+    public PathDescriptor(String type, ASTPath path, boolean attributeOrId) {
         this.path = path;
         this.type = type;
         this.attributeOrId = attributeOrId;
@@ -24,7 +24,7 @@ public class PathDescriptor {
         return attributeOrId;
     }
 
-    public Class<?> getType() {
+    public String getType() {
         return type;
     }
 

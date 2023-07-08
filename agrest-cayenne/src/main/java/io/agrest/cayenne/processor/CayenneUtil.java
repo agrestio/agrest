@@ -63,7 +63,7 @@ public final class CayenneUtil {
             Map<String, Object> normalizedIdMap = new HashMap<>(pks.size() * 2);
             idMap.forEach((k, v) -> {
 
-                ASTPath kp = pathResolver.resolve(agEntity, k).getPathExp();
+                ASTPath kp = pathResolver.resolve(agEntity.getName(), k).getPathExp();
                 if (kp instanceof ASTDbPath) {
                     normalizedIdMap.put(kp.getPath(), v);
                 } else {
@@ -100,7 +100,7 @@ public final class CayenneUtil {
 
         ObjectSelect<A> query = ObjectSelect.query(agEntity.getType());
         for (AgIdPart idPart : agEntity.getIdParts()) {
-            ASTPath idPath = pathResolver.resolve(agEntity, idPart.getName()).getPathExp();
+            ASTPath idPath = pathResolver.resolve(agEntity.getName(), idPart.getName()).getPathExp();
             query.and(ExpressionFactory.matchExp(idPath, id.get(idPart.getName())));
         }
 
@@ -127,7 +127,7 @@ public final class CayenneUtil {
 
         AgObjectId id = parent.getId();
         Function<AgIdPart, Expression> expBuilder = p -> {
-            ASTPath idPartPath = pathResolver.resolve(parentEntity, p.getName()).getPathExp();
+            ASTPath idPartPath = pathResolver.resolve(parentEntity.getName(), p.getName()).getPathExp();
             Expression pathExp = PathOps.concatWithDbPath(parentObjEntity, reversePath, idPartPath);
 
             Object val = id.get(p.getName());

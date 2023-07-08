@@ -273,7 +273,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
         Map<String, String> parentAgKeysToChildDbPaths = new HashMap<>();
         for (AgIdPart idPart : parentEntity.getIdParts()) {
 
-            ASTPath idPath = pathResolver.resolve(parentEntity, idPart.getName()).getPathExp();
+            ASTPath idPath = pathResolver.resolve(parentEntity.getName(), idPart.getName()).getPathExp();
             ASTDbPath dbPath = PathOps.resolveAsDbPath(parentCayenneEntity, idPath);
             String targetPath = sourceToTargetJoins.remove(dbPath.getPath());
             if (targetPath == null) {

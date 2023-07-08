@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import io.agrest.AgException;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.path.PathDescriptor;
+import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.converter.jsonvalue.JsonValueConverter;
 import io.agrest.converter.jsonvalue.SqlDateConverter;
 import io.agrest.converter.jsonvalue.SqlTimeConverter;
 import io.agrest.converter.jsonvalue.SqlTimestampConverter;
 import io.agrest.converter.jsonvalue.UtilDateConverter;
-import io.agrest.meta.AgEntity;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.TraversalHelper;
@@ -19,6 +19,8 @@ import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.exp.parser.ConditionNode;
 import org.apache.cayenne.exp.parser.SimpleNode;
+import org.apache.cayenne.map.EntityResolver;
+import org.apache.cayenne.map.ObjEntity;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -27,33 +29,37 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
 
-    private IPathResolver pathCache;
-    private Map<Class<?>, JsonValueConverter<?>> converters;
-    private Map<AgEntity<?>, ExpressionProcessor> postProcessors;
+    private final EntityResolver entityResolver;
+    private final IPathResolver pathCache;
+    private final Map<String, JsonValueConverter<?>> converters;
+    private final Map<String, ExpressionProcessor> postProcessors;
 
-    public CayenneExpPostProcessor(@Inject IPathResolver pathCache) {
+    public CayenneExpPostProcessor(
+            @Inject IPathResolver pathCache,
+            @Inject ICayennePersister persister) {
+
         this.pathCache = pathCache;
+        this.entityResolver = persister.entityResolver();
 
         // TODO: instead of manually assembling converters we must switch to
         //  IJsonValueConverterFactory already used by DataObjectProcessor.
         //  The tricky part is the "id" attribute that is converted to DbPath
         //  , so its type can not be mapped with existing tools
-        Map<Class<?>, JsonValueConverter<?>> converters = new HashMap<>();
-        converters.put(Date.class, UtilDateConverter.converter());
-        converters.put(java.sql.Date.class, SqlDateConverter.converter());
-        converters.put(java.sql.Time.class, SqlTimeConverter.converter());
-        converters.put(java.sql.Timestamp.class, SqlTimestampConverter.converter());
-        this.converters = converters;
+        this.converters = new HashMap<>();
+        converters.put(Date.class.getName(), UtilDateConverter.converter());
+        converters.put(java.sql.Date.class.getName(), SqlDateConverter.converter());
+        converters.put(java.sql.Time.class.getName(), SqlTimeConverter.converter());
+        converters.put(java.sql.Timestamp.class.getName(), SqlTimestampConverter.converter());
 
         postProcessors = new ConcurrentHashMap<>();
     }
 
     @Override
-    public Expression process(AgEntity<?> entity, Expression exp) {
-        return (exp == null) ? null : validateAndCleanup(entity, exp);
+    public Expression process(String entityName, Expression exp) {
+        return exp == null ? null : validateAndCleanup(entityResolver.getObjEntity(entityName), exp);
     }
 
-    private Expression validateAndCleanup(AgEntity<?> entity, Expression exp) {
+    private Expression validateAndCleanup(ObjEntity entity, Expression exp) {
 
         // change expression in-place
         // note - this will not fully handle an expression whose root is
@@ -64,21 +70,21 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
         // 'expressionPostProcessor'. If it happens to be "id", it will be
         // converted to "db:id".
         if (exp instanceof ASTObjPath) {
-            exp = pathCache.resolve(entity, ((ASTObjPath) exp).getPath()).getPathExp();
+            exp = pathCache.resolve(entity.getName(), ((ASTObjPath) exp).getPath()).getPathExp();
         }
 
         return exp;
     }
 
-    private ExpressionProcessor getOrCreateExpressionProcessor(AgEntity<?> entity) {
-        return postProcessors.computeIfAbsent(entity, e -> new ExpressionProcessor(e));
+    private ExpressionProcessor getOrCreateExpressionProcessor(ObjEntity entity) {
+        return postProcessors.computeIfAbsent(entity.getName(), e -> new ExpressionProcessor(entity));
     }
 
     private class ExpressionProcessor extends TraversalHelper {
 
-        private AgEntity<?> entity;
+        private final ObjEntity entity;
 
-        ExpressionProcessor(AgEntity<?> entity) {
+        ExpressionProcessor(ObjEntity entity) {
             this.entity = entity;
         }
 
@@ -102,7 +108,7 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
                 // validate and replace if needed ... note that we can only
                 // replace non-root nodes during the traversal. Root node is
                 // validated and replaced explicitly by the caller.
-                ASTPath replacement = pathCache.resolve(entity, ((ASTObjPath) childNode).getPath()).getPathExp();
+                ASTPath replacement = pathCache.resolve(entity.getName(), ((ASTObjPath) childNode).getPath()).getPathExp();
                 if (replacement != childNode) {
                     parentNode.setOperand(childIndex, replacement);
                 }
@@ -143,7 +149,7 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
 
             if (peerPath != null) {
 
-                PathDescriptor pd = pathCache.resolve(entity, peerPath);
+                PathDescriptor pd = pathCache.resolve(entity.getName(), peerPath);
                 if (pd.isAttributeOrId()) {
                     JsonValueConverter<?> converter = converters.get(pd.getType());
                     if (converter != null) {
