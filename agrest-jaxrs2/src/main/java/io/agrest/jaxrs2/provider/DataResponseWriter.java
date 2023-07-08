@@ -20,16 +20,16 @@ import java.lang.reflect.Type;
 @Provider
 public class DataResponseWriter implements MessageBodyWriter<DataResponse<?>> {
 
-    @Override
-    public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return DataResponse.class.isAssignableFrom(type);
-    }
+    @Context
+    private Configuration config;
 
     private IJacksonService jacksonService;
     private EncodingPolicy encodingPolicy;
 
-    @Context
-    private Configuration config;
+    @Override
+    public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        return DataResponse.class.isAssignableFrom(type);
+    }
 
     @Override
     public long getSize(
