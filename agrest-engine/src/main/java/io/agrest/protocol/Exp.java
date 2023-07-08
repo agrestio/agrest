@@ -1,13 +1,15 @@
 package io.agrest.protocol;
 
+import io.agrest.AgException;
 import io.agrest.exp.ExpVisitor;
 import io.agrest.exp.parser.AgExpressionParser;
 import io.agrest.exp.parser.AgExpressionParserVisitor;
-import io.agrest.exp.parser.ExpUtils;
+import io.agrest.exp.parser.ExpGenericScalar;
 import io.agrest.exp.parser.ExpObjPath;
 import io.agrest.exp.parser.ExpRoot;
-import io.agrest.exp.parser.ExpGenericScalar;
+import io.agrest.exp.parser.ExpUtils;
 import io.agrest.exp.parser.Node;
+import io.agrest.exp.parser.TokenMgrException;
 
 import java.util.Map;
 import java.util.Objects;
@@ -77,10 +79,9 @@ public interface Exp {
      * need to implement this logic on its own.
      *
      * @param visitor to accept
-     * @param data that passed down to the expression node
+     * @param data    that passed down to the expression node
+     * @param <T>     type of the data to pass down the expression tree
      * @return transformed data
-     * @param <T> type of the data to pass down the expression tree
-     *
      * @since 5.0
      */
     default <T> T accept(AgExpressionParserVisitor<T> visitor, T data) {
@@ -88,14 +89,18 @@ public interface Exp {
     }
 
     default Exp and(Exp exp) {
-        return exp != null ? ExpUtils.and((Node)this, (Node)exp) : this;
+        return exp != null ? ExpUtils.and((Node) this, (Node) exp) : this;
     }
 
     default Exp or(Exp exp) {
-        return exp != null ? ExpUtils.or((Node)this, (Node)exp) : this;
+        return exp != null ? ExpUtils.or((Node) this, (Node) exp) : this;
     }
 
     private static ExpRoot parseTemplate(String template) {
-        return AgExpressionParser.parse(Objects.requireNonNull(template));
+        try {
+            return AgExpressionParser.parse(Objects.requireNonNull(template));
+        } catch (TokenMgrException e) {
+            throw AgException.badRequest(e, "Unparsable expression: %s", template);
+        }
     }
 }

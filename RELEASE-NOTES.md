@@ -2,6 +2,7 @@
 
 * #638 EntityUpdate.getToMany(String) should return null if the key is not a part of update
 * #640 DataResponse<T> to support "304 Not Modified"
+* #642 TokenMgrException is not handled by Agrest
  
 ## Release 5.0.M17
 
