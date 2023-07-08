@@ -36,7 +36,7 @@ public abstract class CayenneFillResponseStage extends UpdateFillResponseStage {
     @SuppressWarnings("unchecked")
     protected <T extends DataObject> void doExecute(UpdateContext<T> context) {
 
-        context.setStatus(getHttpStatus(context));
+        context.setResponseStatus(getHttpStatus(context));
 
         if (context.isIncludingDataInResponse()) {
 

@@ -5,6 +5,7 @@ import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
+import io.agrest.HttpStatus;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.RootResourceEntity;
 import io.agrest.access.PathChecker;
@@ -75,10 +76,12 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
      * @since 1.24
      */
     public DataResponse<T> createDataResponse() {
+        int status = getResponseStatus() != null ? getResponseStatus() : HttpStatus.OK;
+
         // support null ResourceEntity for cases with custom terminal stages
         return entity != null
-                ? DataResponse.of(entity.getDataWindow()).status(getStatus()).total(entity.getData().size()).encoder(encoder).build()
-                : DataResponse.of(Collections.<T>emptyList()).status(getStatus()).build();
+                ? DataResponse.of(status, entity.getDataWindow()).total(entity.getData().size()).encoder(encoder).build()
+                : DataResponse.of(status, Collections.<T>emptyList()).build();
     }
 
     /**

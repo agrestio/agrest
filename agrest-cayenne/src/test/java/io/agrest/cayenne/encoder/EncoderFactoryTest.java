@@ -129,7 +129,7 @@ public class EncoderFactoryTest extends MainNoDbTest {
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
         Encoder encoder = encoderFactory.encoder(resourceEntity, mock(ProcessingContext.class));
-        return toJson(encoder, DataResponse.of(List.of(object)).build());
+        return toJson(encoder, DataResponse.of(200, List.of(object)).build());
     }
 
     private String toJson(Encoder encoder, Object value) {

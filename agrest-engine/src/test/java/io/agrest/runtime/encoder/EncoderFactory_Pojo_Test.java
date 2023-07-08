@@ -72,6 +72,6 @@ public class EncoderFactory_Pojo_Test {
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
         Encoder encoder = encoderFactory.encoder(resourceEntity, mock(ProcessingContext.class));
-        return Encoders.toJson(DataResponse.of(List.of(object)).encoder(encoder).build());
+        return Encoders.toJson(DataResponse.of(200, List.of(object)).encoder(encoder).build());
     }
 }

@@ -2,6 +2,7 @@ package io.agrest.runtime;
 
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
+import io.agrest.HttpStatus;
 import io.agrest.RootResourceEntity;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
@@ -166,15 +167,18 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
     private DataResponse<T> createDataResponse() {
 
-        // support null ResourceEntity and null encode for cases with terminal stages invoked prior
+        // account for partial context stats for cases with terminal stages invoked prior
         // to those objects being created
+
+        int status = context.getResponseStatus() != null ? context.getResponseStatus() : HttpStatus.OK;
 
         RootResourceEntity<T> entity = context.getEntity();
         List<T> data = entity != null ? entity.getDataWindow() : Collections.emptyList();
         int total = entity != null ? entity.getData().size() : 0;
+
         Encoder encoder = context.getEncoder() != null ? context.getEncoder() : defaultEncoder();
 
-        return DataResponse.of(data).status(context.getStatus()).total(total).encoder(encoder).build();
+        return DataResponse.of(status, data).total(total).encoder(encoder).build();
     }
 
     private void processEmpty(SelectContext<T> context) {

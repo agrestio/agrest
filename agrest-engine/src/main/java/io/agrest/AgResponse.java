@@ -10,6 +10,10 @@ public abstract class AgResponse {
     protected final int status;
 
     public AgResponse(int status) {
+        if (!HttpStatus.isValid(status)) {
+            throw new IllegalArgumentException("Invalid HTTP status: " + status);
+        }
+
         this.status = status;
     }
 

@@ -31,7 +31,7 @@ public class DataResponseIT extends PojoTest {
         @GET
         public DataResponse<X> xs() {
             // generate response bypassing Agrest stack
-            return DataResponse.of(List.of(
+            return DataResponse.of(200, List.of(
                     new X(1, "two", new Y(5), List.of(new Y(6))),
                     new X(100, "two hundred", new Y(50), List.of(new Y(60))))).build();
         }

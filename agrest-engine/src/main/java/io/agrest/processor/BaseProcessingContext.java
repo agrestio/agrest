@@ -12,12 +12,12 @@ import java.util.Map;
  */
 public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
 
+    private Integer responseStatus;
     private final Class<T> type;
     private final Injector injector;
     private Map<String, Object> attributes;
-    private int status;
 
-    public BaseProcessingContext(Class<T> type, Injector injector) {
+    protected BaseProcessingContext(Class<T> type, Injector injector) {
         this.type = type;
         this.injector = injector;
     }
@@ -52,7 +52,7 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
      */
     @Deprecated(since = "5.0")
     public SimpleResponse createSimpleResponse() {
-        return SimpleResponse.of(getStatus());
+        return SimpleResponse.of(getResponseStatus());
     }
 
     @Override
@@ -77,16 +77,32 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
     }
 
     /**
-     * @since 4.7
+     * @deprecated in favor of {@link #getResponseStatus()}
      */
+    @Deprecated(since = "5.0")
     public int getStatus() {
-        return status;
+        return getResponseStatus() != null ? getResponseStatus() : 0;
     }
 
     /**
-     * @since 4.7
+     * @deprecated in favor of {@link #setResponseStatus(Integer)}
      */
-    public void setStatus(int status) {
-        this.status = status;
+    @Deprecated(since = "5.0")
+    public void setStatus(int responseStatus) {
+        setResponseStatus(responseStatus);
+    }
+
+    /**
+     * @since 5.0
+     */
+    public Integer getResponseStatus() {
+        return responseStatus;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public void setResponseStatus(Integer responseStatus) {
+        this.responseStatus = responseStatus;
     }
 }

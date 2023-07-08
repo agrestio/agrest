@@ -3,6 +3,7 @@ package io.agrest.runtime;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
+import io.agrest.HttpStatus;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.SimpleResponse;
 import io.agrest.UpdateBuilder;
@@ -172,7 +173,9 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     private SimpleResponse doSync() {
         context.setIncludingDataInResponse(false);
         processorFactory.createProcessor(processors).execute(context);
-        return SimpleResponse.of(context.getStatus());
+
+        int status = context.getResponseStatus() != null ? context.getResponseStatus() : HttpStatus.OK;
+        return SimpleResponse.of(status);
     }
 
     private DataResponse<T> doSyncAndSelect() {

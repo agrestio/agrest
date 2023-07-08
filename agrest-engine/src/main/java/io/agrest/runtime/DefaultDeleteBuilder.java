@@ -1,5 +1,6 @@
 package io.agrest.runtime;
 
+import io.agrest.HttpStatus;
 import io.agrest.id.AgObjectId;
 import io.agrest.DeleteBuilder;
 import io.agrest.DeleteStage;
@@ -80,6 +81,7 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
     @Override
     public SimpleResponse sync() {
         processorFactory.createProcessor(processors).execute(context);
-        return SimpleResponse.of(context.getStatus());
+        int status = context.getResponseStatus() != null ? context.getResponseStatus() : HttpStatus.OK;
+        return SimpleResponse.of(status);
     }
 }

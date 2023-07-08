@@ -3,6 +3,7 @@ package io.agrest.runtime.processor.select;
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
 import io.agrest.DataResponse;
+import io.agrest.HttpStatus;
 import io.agrest.RootResourceEntity;
 import io.agrest.SizeConstraints;
 import io.agrest.access.PathChecker;
@@ -58,10 +59,12 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
      */
     @Deprecated(since = "5.0")
     public DataResponse<T> createDataResponse() {
+        int status = getResponseStatus() != null ? getResponseStatus() : HttpStatus.OK;
+
         // support null ResourceEntity for cases with terminal stages invoked prior to SelectStage.CREATE_ENTITY
         return entity != null
-                ? DataResponse.of(entity.getDataWindow()).status(getStatus()).total(entity.getData().size()).encoder(encoder).build()
-                : DataResponse.of(Collections.<T>emptyList()).status(getStatus()).build();
+                ? DataResponse.of(status, entity.getDataWindow()).total(entity.getData().size()).encoder(encoder).build()
+                : DataResponse.of(status, Collections.<T>emptyList()).build();
     }
 
     public boolean isById() {
