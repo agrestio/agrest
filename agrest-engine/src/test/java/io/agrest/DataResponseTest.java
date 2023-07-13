@@ -12,12 +12,12 @@ import static org.mockito.Mockito.mock;
 public class DataResponseTest {
 
     @Test
-    public void testOf() {
+    public void of() {
 
         List<Tr> objects = asList(new Tr(), new Tr());
         Encoder encoder = mock(Encoder.class);
 
-        DataResponse<Tr> response = DataResponse.of(objects).status(201).total(1).encoder(encoder).build();
+        DataResponse<Tr> response = DataResponse.of(201, objects).total(1).encoder(encoder).build();
         assertNotNull(response);
         assertEquals(201, response.getStatus());
         assertSame(objects, response.getData());

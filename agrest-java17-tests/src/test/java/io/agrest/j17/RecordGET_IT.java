@@ -31,7 +31,7 @@ public class RecordGET_IT {
             .build();
 
     @Test
-    public void testEmpty() {
+    public void empty() {
         Response r = tester.target().path("/r11").request().get();
         JettyTester.assertOk(r)
                 .assertContent("""
@@ -39,7 +39,7 @@ public class RecordGET_IT {
     }
 
     @Test
-    public void test() {
+    public void basic() {
         Response r = tester.target().path("/r12").request().get();
         JettyTester.assertOk(r)
                 .assertContent("""
@@ -47,7 +47,7 @@ public class RecordGET_IT {
     }
 
     @Test
-    public void testIncludes() {
+    public void includes() {
         Response r = tester.target().path("/r12")
                 .queryParam("include", "id", "agRel1", "agRel2")
                 .request().get();

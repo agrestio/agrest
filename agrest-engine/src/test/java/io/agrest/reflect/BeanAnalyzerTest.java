@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BeanAnalyzerTest {
 
     @Test
-    public void testFindGetters() {
+    public void findGetters() {
         Map<String, PropertyGetter> getters = new HashMap<>();
         BeanAnalyzer.findGetters(C1.class).forEach(g -> getters.put(g.getName(), g));
         assertEquals("abC,get,get1,getabc,is,is1,isMe,xyZ",
@@ -22,7 +22,7 @@ public class BeanAnalyzerTest {
     }
 
     @Test
-    public void testFindGetters_Inheritance() {
+    public void findGetters_Inheritance() {
         Map<String, PropertyGetter> getters = new HashMap<>();
         BeanAnalyzer.findGetters(C2.class).forEach(g -> getters.put(g.getName(), g));
         assertEquals("abC,get,get1,getabc,is,is1,isMe,me,xyZ",
@@ -30,7 +30,7 @@ public class BeanAnalyzerTest {
     }
 
     @Test
-    public void testFindSetters() {
+    public void findSetters() {
         Map<String, PropertySetter> setters = new HashMap<>();
         BeanAnalyzer.findSetters(C1.class).forEach(s -> setters.put(s.getName(), s));
         assertEquals("x,yZ",
@@ -38,7 +38,7 @@ public class BeanAnalyzerTest {
     }
 
     @Test
-    public void testFindSetters_Inheritance() {
+    public void findSetters_Inheritance() {
         Map<String, PropertySetter> setters = new HashMap<>();
         BeanAnalyzer.findSetters(C2.class).forEach(s -> setters.put(s.getName(), s));
         assertEquals("x,yZ,yza",

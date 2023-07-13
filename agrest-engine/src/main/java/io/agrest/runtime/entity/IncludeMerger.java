@@ -9,6 +9,7 @@ import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgSchema;
 import io.agrest.protocol.Include;
+import io.agrest.runtime.meta.RequestSchema;
 import org.apache.cayenne.di.Inject;
 
 import java.util.List;
@@ -17,20 +18,17 @@ import java.util.Map;
 
 public class IncludeMerger implements IIncludeMerger {
 
-    protected AgSchema schema;
     protected ISortMerger sortMerger;
     protected IExpMerger expMerger;
     protected IMapByMerger mapByMerger;
     protected ISizeMerger sizeMerger;
 
     public IncludeMerger(
-            @Inject AgSchema schema,
             @Inject IExpMerger expMerger,
             @Inject ISortMerger sortMerger,
             @Inject IMapByMerger mapByMerger,
             @Inject ISizeMerger sizeMerger) {
 
-        this.schema = schema;
         this.sortMerger = sortMerger;
         this.expMerger = expMerger;
         this.mapByMerger = mapByMerger;
@@ -52,17 +50,17 @@ public class IncludeMerger implements IIncludeMerger {
      * @since 3.4
      */
     @Override
-    public void merge(ResourceEntity<?> entity, List<Include> includes, Map<Class<?>, AgEntityOverlay<?>> overlays, PathChecker pathChecker) {
+    public void merge(ResourceEntity<?> entity, List<Include> includes, RequestSchema schema, PathChecker pathChecker) {
 
         // included attribute sets of the root entity and entities that are included explicitly via relationship includes
         // may need to get expanded if they don't have any explicit includes otherwise. Will track them here... Entities
         // that are NOT expanded are those that are "phantom" entities included as a part of the longer path.
 
         PhantomTrackingResourceEntityTreeBuilder treeBuilder
-                = new PhantomTrackingResourceEntityTreeBuilder(entity, schema, overlays, pathChecker.getDepth(), true);
+                = new PhantomTrackingResourceEntityTreeBuilder(entity, schema, pathChecker.getDepth(), true);
 
         for (Include include : includes) {
-            mergeInclude(entity, include, treeBuilder, overlays, pathChecker);
+            mergeInclude(entity, include, treeBuilder, schema, pathChecker);
         }
 
         for (ResourceEntity<?> e : treeBuilder.nonPhantomEntities()) {
@@ -74,13 +72,13 @@ public class IncludeMerger implements IIncludeMerger {
             ResourceEntity<?> entity,
             Include include,
             ResourceEntityTreeBuilder treeBuilder,
-            Map<Class<?>, AgEntityOverlay<?>> overlays,
+            RequestSchema schema,
             PathChecker pathChecker) {
 
         String path = include.getPath();
         ResourceEntity<?> includeEntity = (path == null || path.isEmpty()) ? entity : treeBuilder.inflatePath(path);
 
-        mapByMerger.merge(includeEntity, include.getMapBy(), overlays, pathChecker);
+        mapByMerger.merge(includeEntity, include.getMapBy(), schema, pathChecker);
         sortMerger.merge(includeEntity, include.getSorts(), pathChecker);
         expMerger.merge(includeEntity, include.getExp());
         sizeMerger.merge(includeEntity, include.getStart(), include.getLimit());

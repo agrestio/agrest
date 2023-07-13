@@ -6,9 +6,11 @@ import io.agrest.AgRequestBuilder;
 import io.agrest.RootResourceEntity;
 import io.agrest.cayenne.cayenne.main.E1;
 import io.agrest.cayenne.unit.main.MainNoDbTest;
+import io.agrest.meta.AgSchema;
 import io.agrest.protocol.Direction;
 import io.agrest.protocol.Exp;
 import io.agrest.protocol.Sort;
+import io.agrest.runtime.meta.RequestSchema;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.query.ObjectSelect;
@@ -21,11 +23,12 @@ import static org.mockito.Mockito.mock;
 public class CayenneQueryAssemblerTest extends MainNoDbTest {
 
     @Test
-    public void testCreateRootQuery_Ordering() {
+    public void createRootQuery_Ordering() {
 
         RootResourceEntity<E1> entity = getResourceEntity(E1.class);
         entity.getOrderings().add(new Sort("name", Direction.asc));
         SelectContext<E1> c = new SelectContext<>(E1.class,
+                new RequestSchema(mock(AgSchema.class)),
                 mock(AgRequestBuilder.class),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -40,7 +43,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
     }
 
     @Test
-    public void testCreateRootQuery_Pagination() {
+    public void createRootQuery_Pagination() {
 
         RootResourceEntity<E1> entity = new RootResourceEntity<>(getAgEntity(E1.class));
         entity.setLimit(10);
@@ -48,6 +51,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
 
         SelectContext<E1> c = new SelectContext<>(
                 E1.class,
+                new RequestSchema(mock(AgSchema.class)),
                 mock(AgRequestBuilder.class),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -78,11 +82,12 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
     }
 
     @Test
-    public void testCreateRootQuery_Qualifier() {
+    public void createRootQuery_Qualifier() {
         RootResourceEntity<E1> entity = getResourceEntity(E1.class);
 
         SelectContext<E1> c = new SelectContext<>(
                 E1.class,
+                new RequestSchema(mock(AgSchema.class)),
                 mock(AgRequestBuilder.class),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -99,10 +104,11 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
     }
 
     @Test
-    public void testCreateRootQuery_ById() {
+    public void createRootQuery_ById() {
 
         SelectContext<E1> c = new SelectContext<>(
                 E1.class,
+                new RequestSchema(mock(AgSchema.class)),
                 mock(AgRequestBuilder.class),
                 PathChecker.ofDefault(),
                 mock(Injector.class));
@@ -115,11 +121,12 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
     }
 
     @Test
-    public void testCreateRootQuery_ById_WithQuery() {
+    public void createRootQuery_ById_WithQuery() {
         ObjectSelect<E1> select = ObjectSelect.query(E1.class);
 
         SelectContext<E1> c = new SelectContext<>(
                 E1.class,
+                new RequestSchema(mock(AgSchema.class)),
                 mock(AgRequestBuilder.class),
                 PathChecker.ofDefault(),
                 mock(Injector.class));

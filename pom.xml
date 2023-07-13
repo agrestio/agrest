@@ -4,7 +4,7 @@
 
     <groupId>io.agrest</groupId>
     <artifactId>agrest-parent</artifactId>
-    <version>5.0.M16-SNAPSHOT</version>
+    <version>5.0.M18-SNAPSHOT</version>
 
     <name>agrest: parent POM of all modules</name>
     <description>Agrest is a Model-driven RESTful data services framework. This is the parent POM of all Agrest
@@ -32,14 +32,14 @@
 
         <!-- Custom properties (mostly framework versions) -->
         <slf4j.version>1.7.25</slf4j.version>
-        <cayenne.version>4.2.RC2</cayenne.version>
+        <cayenne.version>4.2</cayenne.version>
         <jaxrs2.version>2.1.6</jaxrs2.version>
         <jaxrs3.version>3.0.0</jaxrs3.version>
         <jackson.version>2.14.2</jackson.version>
         <jackson.databind.version>2.14.2</jackson.databind.version>
 
         <!-- TODO: replace with release version as soon as possible -->
-        <bootique.version>3.0.M2-SNAPSHOT</bootique.version>
+        <bq.version>3.0.M2-SNAPSHOT</bq.version>
 
         <junit5.version>5.9.1</junit5.version>
         <swagger.version>2.1.12</swagger.version>
@@ -78,7 +78,7 @@
 
 
     <repositories>
-        <!-- TODO: remove this repo declaration once Bootuque 3.0.M1 is released and we can reference it in tests -->
+        <!-- TODO: remove this repo declaration once Bootuque 3.0.M2 is released and we can reference it in tests -->
         <repository>
             <id>bootique-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -169,42 +169,43 @@
             <dependency>
                 <groupId>io.bootique.jdbc</groupId>
                 <artifactId>bootique-jdbc-junit5-derby</artifactId>
-                <version>${bootique.version}</version>
+                <version>${bq.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.cayenne</groupId>
                 <artifactId>bootique-cayenne42-junit5</artifactId>
-                <version>${bootique.version}</version>
+                <version>${bq.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.cayenne</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.bootique</groupId>
                 <artifactId>bootique-junit5</artifactId>
-                <version>${bootique.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.bootique.jdbc</groupId>
-                <artifactId>bootique-jdbc-junit5-derby</artifactId>
-                <version>${bootique.version}</version>
+                <version>${bq.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.jersey</groupId>
                 <artifactId>bootique-jersey</artifactId>
-                <version>${bootique.version}</version>
+                <version>${bq.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.jetty</groupId>
                 <artifactId>bootique-jetty-junit5</artifactId>
-                <version>${bootique.version}</version>
+                <version>${bq.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.jersey</groupId>
                 <artifactId>bootique-jersey-jakarta</artifactId>
-                <version>${bootique.version}</version>
+                <version>${bq.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.jetty</groupId>
                 <artifactId>bootique-jetty-jakarta-junit5</artifactId>
-                <version>${bootique.version}</version>
+                <version>${bq.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

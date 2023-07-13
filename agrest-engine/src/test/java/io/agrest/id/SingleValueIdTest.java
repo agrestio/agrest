@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class SingleValueIdTest {
 
     @Test
-    public void testEquals() {
+    public void equals() {
         SingleValueId id1 = new SingleValueId(1);
         assertEquals(id1, id1);
         assertEquals(id1, new SingleValueId(1));
@@ -17,7 +17,7 @@ public class SingleValueIdTest {
     }
 
     @Test
-    public void testHashCode() {
+    public void _hashCode() {
         SingleValueId id1 = new SingleValueId(1);
         assertEquals(id1.hashCode(), id1.hashCode());
         assertEquals(id1.hashCode(), new SingleValueId(1).hashCode());

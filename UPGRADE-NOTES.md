@@ -1,6 +1,19 @@
 _This document contains upgrade notes for Agrest 5.x and newer. Older versions are documented in 
 [UPGRADE-NOTES-1-4](./UPGRADE-NOTES-1-to-4.md)._
 
+## Upgrading to 5.0.M17
+
+### No more single-value syntax for updating to-many relationships [#633](https://github.com/agrestio/agrest/issues/633)
+A number of changes were implemented to improve consistency and functionality of the update pipeline. As a result
+single value syntax for updating to-many relationships is no longer supported as it is semantically invalid. E.g. the 
+following won't work anymore: `{"toMany":1}` -> `{"toMany":[1]}`, and the value should be replaced with an array.
+
+### New EntityUpdate API, no direct update's Maps modification [#636](https://github.com/agrestio/agrest/issues/636)
+EntityUpdate object API was almost completely redone to better track different update components. If you used that API
+directly, you will need to update your code. An important part of the change is that property maps are no longer 
+directly editable. Instead, you should be using the new mutator methods. So instead of `update.getAttributes().put("a", 1)` 
+your would need to call `update.setAttribute("a", 1)`, etc.
+
 ## Upgrading to 5.0.M16
 
 ### Got rid of custom date/time formatters [#621](https://github.com/agrestio/agrest/issues/621)

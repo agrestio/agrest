@@ -36,7 +36,7 @@ public abstract class CayenneFillResponseStage extends UpdateFillResponseStage {
     @SuppressWarnings("unchecked")
     protected <T extends DataObject> void doExecute(UpdateContext<T> context) {
 
-        context.setStatus(getHttpStatus(context));
+        context.setResponseStatus(getHttpStatus(context));
 
         if (context.isIncludingDataInResponse()) {
 
@@ -51,7 +51,7 @@ public abstract class CayenneFillResponseStage extends UpdateFillResponseStage {
 
             for (EntityUpdate<T> u : context.getUpdates()) {
 
-                T o = (T) u.getMergedTo();
+                T o = (T) u.getTargetObject();
                 if (o != null && seen.add(o.getObjectId())) {
                     objects.add(o);
 

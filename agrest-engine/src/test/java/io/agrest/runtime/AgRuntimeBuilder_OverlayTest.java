@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AgRuntimeBuilder_OverlayTest {
 
     @Test
-    public void testOverlay_RedefineAttribute_New() {
+    public void overlay_RedefineAttribute_New() {
         AgRuntime runtime = AgRuntime
                 .builder()
                 .entityOverlay(AgEntity.overlay(X.class).attribute("adHoc", Integer.class, true, true, e -> 2))
@@ -42,7 +42,7 @@ public class AgRuntimeBuilder_OverlayTest {
     }
 
     @Test
-    public void testOverlay_RedefineAttribute_Replace() {
+    public void overlay_RedefineAttribute_Replace() {
         AgRuntime runtime = AgRuntime
                 .builder()
                 .entityOverlay(AgEntity.overlay(X.class).attribute("phoneNumber", Long.class, x -> Long.valueOf(x.getPhoneNumber())))
@@ -67,7 +67,7 @@ public class AgRuntimeBuilder_OverlayTest {
     }
 
     @Test
-    public void testOverlay_RedefineRelationshipResolver_Replace() {
+    public void overlay_RedefineRelationshipResolver_Replace() {
 
         RelatedDataResolver<?> resolver = new TestRelatedDataResolver<>();
 
@@ -96,7 +96,7 @@ public class AgRuntimeBuilder_OverlayTest {
     }
 
     @Test
-    public void testOverlay_RedefineRelationshipResolver_New() {
+    public void overlay_RedefineRelationshipResolver_New() {
 
         RelatedDataResolver<?> resolver = new TestRelatedDataResolver<>();
 
@@ -112,7 +112,7 @@ public class AgRuntimeBuilder_OverlayTest {
     }
 
     @Test
-    public void testOverlay_RedefineToMany_Replace() {
+    public void overlay_RedefineToMany_Replace() {
 
         RelatedDataResolver<Object> resolver = new TestRelatedDataResolver<>();
 
@@ -142,7 +142,7 @@ public class AgRuntimeBuilder_OverlayTest {
     }
 
     @Test
-    public void testOverlay_RedefineToOne_New() {
+    public void overlay_RedefineToOne_New() {
 
         RelatedDataResolver<P1> resolver = new TestRelatedDataResolver<>();
 
@@ -171,7 +171,7 @@ public class AgRuntimeBuilder_OverlayTest {
     }
 
     @Test
-    public void testOverlay_Exclude() {
+    public void overlay_Exclude() {
         AgRuntime runtime = AgRuntime
                 .builder()
                 .entityOverlay(AgEntity.overlay(X.class).readablePropFilter(b -> b.property("phoneNumber", false)))

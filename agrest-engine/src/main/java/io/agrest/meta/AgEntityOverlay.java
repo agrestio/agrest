@@ -451,8 +451,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toOne(String, Class, RelatedDataResolverFactory)}
+     * @deprecated in favor of {@link #toOne(String, Class, RelatedDataResolverFactory)}
      */
+    @Deprecated(since = "5.0")
     public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, RelatedDataResolverFactory resolverFactory) {
         return toOne(name, targetType, resolverFactory);
     }

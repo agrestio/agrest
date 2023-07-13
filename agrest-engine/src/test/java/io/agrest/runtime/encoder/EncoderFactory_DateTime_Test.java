@@ -70,7 +70,7 @@ public class EncoderFactory_DateTime_Test {
     }
 
     @Test
-    public void testLocalDate() {
+    public void localDate() {
         ResourceEntity<PDate> re = new RootResourceEntity<>(dateEntity);
         re.ensureAttribute("date", false);
 
@@ -84,7 +84,7 @@ public class EncoderFactory_DateTime_Test {
     }
 
     @Test
-    public void testLocalTime() {
+    public void localTime() {
         // fractional part is not printed, when less than a millisecond
         testLocalTime(LocalTime.of(10, 0, 0), "HH:mm:ss");
         testLocalTime(LocalTime.of(10, 0, 0, 1), "HH:mm:ss.nnnnnnnnn");
@@ -105,7 +105,7 @@ public class EncoderFactory_DateTime_Test {
     }
 
     @Test
-    public void testLocalDateTime() {
+    public void localDateTime() {
         // fractional part is not printed, when less than a millisecond
         testLocalDateTime(LocalDateTime.of(2017, 1, 1, 10, 0, 0), "yyyy-MM-dd'T'HH:mm:ss");
         testLocalDateTime(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1), "yyyy-MM-dd'T'HH:mm:ss.nnnnnnnnn");
@@ -126,7 +126,7 @@ public class EncoderFactory_DateTime_Test {
     }
 
     @Test
-    public void testOffsetDateTime() {
+    public void offsetDateTime() {
         // fractional part is not printed, when less than a millisecond
         testOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0), ZoneOffset.ofHours(3)));
         testOffsetDateTime(OffsetDateTime.of(LocalDateTime.of(2017, 1, 1, 10, 0, 0, 1), ZoneOffset.ofHours(3)));
@@ -149,7 +149,7 @@ public class EncoderFactory_DateTime_Test {
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
         Encoder encoder = encoderFactory.encoder(resourceEntity, mock(ProcessingContext.class));
-        return Encoders.toJson(DataResponse.of(List.of(object)).encoder(encoder).build());
+        return Encoders.toJson(DataResponse.of(200, List.of(object)).encoder(encoder).build());
     }
 
     public class PDate {

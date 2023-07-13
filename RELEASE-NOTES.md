@@ -1,9 +1,27 @@
+## Release 5.0.M18
+
+* #638 EntityUpdate.getToMany(String) should return null if the key is not a part of update
+* #640 DataResponse<T> to support "304 Not Modified"
+* #641 Cayenne IPathResolver may get "poisoned" by per-request overlayed AgEntities
+* #642 TokenMgrException is not handled by Agrest
+ 
+## Release 5.0.M17
+
+* #630 POST/PUT breaks for Short and BigInteger types
+* #631 POST/PUT - can't update multi-key relationships
+* #632 POST/PUT gets confused when relationship is passed as object
+* #633 Optimize and clean up update parser
+* #634 Recursive EntityUpdate parser
+* #635 Write constraint only applied to "id" in the path, but not in the body
+* #636 Clean up the API of EntityUpdate
+
 ## Release 5.0.M16
 
 * #601 Exp.keyValue() only works with a narrow range of value types
 * #621 Problem with timestamp formatting
 * #622 Upgrade Jackson to 2.14.2 
 * #624 Optimization: "relatedViaQueryWithParentIds" strategy when limit is involved
+* #629 Upgrade to Cayenne 4.2 GA
 
 ## Release 5.0.M15
 

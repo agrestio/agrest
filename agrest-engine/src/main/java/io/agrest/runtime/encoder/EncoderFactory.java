@@ -53,8 +53,11 @@ public class EncoderFactory {
      * Builds a hierarchical data encoder for a given resource entity.
      */
     public <T> Encoder encoder(ResourceEntity<T> entity, ProcessingContext<T> context) {
-        Encoder dataEncoder = dataEncoder(entity, context);
-        return new DataResponseEncoder("data", dataEncoder, "total", GenericEncoder.encoder());
+        return DataResponseEncoder.encoder(
+                "data",
+                dataEncoder(entity, context),
+                "total",
+                GenericEncoder.encoder());
     }
 
     protected Encoder dataEncoder(ResourceEntity<?> entity, ProcessingContext<?> context) {

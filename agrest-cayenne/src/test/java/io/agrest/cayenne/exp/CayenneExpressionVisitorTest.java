@@ -27,14 +27,14 @@ class CayenneExpressionVisitorTest {
 
     @ParameterizedTest(name = "{1}")
     @MethodSource
-    void visit_checkReturnedType(Exp agrestExp, Class<? extends Expression> cayenneExpExpectedType) {
+    public void visit_checkReturnedType(Exp agrestExp, Class<? extends Expression> cayenneExpExpectedType) {
         Expression cayenneExp = agrestExp.accept(visitor, null);
         assertEquals(cayenneExpExpectedType, cayenneExp.getClass());
     }
 
     @ParameterizedTest(name = "case {index}")
     @MethodSource
-    void setEscapeChar(Exp agrestExp) {
+    public void setEscapeChar(Exp agrestExp) {
         Expression cayenneExp = agrestExp.accept(visitor, null);
         assertTrue(cayenneExp instanceof PatternMatchNode);
         PatternMatchNode matchNode = (PatternMatchNode) cayenneExp;

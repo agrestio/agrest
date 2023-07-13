@@ -14,74 +14,74 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class FloatConverterTest {
 
     @Test
-    public void testConverter_Zero() {
+    public void converter_Zero() {
         Float value = 0f;
         assertEquals(value, convert(value));
     }
 
     @Test
-    public void testConverter_Integer_Zero() {
+    public void converter_Integer_Zero() {
         Float value = 0f;
         assertEquals(value, convert(0));
     }
 
     @Test
-    public void testConverter_MinValue() {
+    public void converter_MinValue() {
         Float value = Float.MIN_VALUE;
         assertEquals(value, convert(value));
     }
 
     @Test
-    public void testConverter_NegativeMinValue() {
+    public void converter_NegativeMinValue() {
         Float value = -Float.MIN_VALUE;
         assertEquals(value, convert(value));
     }
 
     @Test
-    public void testConverter_MaxValue() {
+    public void converter_MaxValue() {
         Float value = Float.MAX_VALUE;
         assertEquals(value, convert(value));
     }
 
     @Test
-    public void testConverter_NegativeMaxValue() {
+    public void converter_NegativeMaxValue() {
         Float value = -Float.MAX_VALUE;
         assertEquals(value, convert(value));
     }
 
     @Test
-    public void testConverter_NaN() {
+    public void converter_NaN() {
         assertEquals(Float.valueOf(Float.NaN), convert("NaN"));
     }
 
     @Test
-    public void testConverter_PositiveInfinity() {
+    public void converter_PositiveInfinity() {
         assertEquals(Float.valueOf(Float.POSITIVE_INFINITY), convert("Infinity"));
         assertEquals(Float.valueOf(Float.POSITIVE_INFINITY), convert("+Infinity"));
     }
 
     @Test
-    public void testConverter_NegativeInfinity() {
+    public void converter_NegativeInfinity() {
         assertEquals(Float.valueOf(Float.NEGATIVE_INFINITY), convert("-Infinity"));
     }
 
     @Test
-    public void testConverter_TooLarge_Positive() {
+    public void converter_TooLarge_Positive() {
         assertThrows(AgException.class, () -> FloatConverter.converter().value(new DoubleNode(Float.MAX_VALUE * 1.1d)));
     }
 
     @Test
-    public void testConverter_TooSmall_Positive() {
+    public void converter_TooSmall_Positive() {
         assertThrows(AgException.class, () -> FloatConverter.converter().value(new DoubleNode(Float.MIN_VALUE * 0.9d)));
     }
 
     @Test
-    public void testConverter_TooLarge_Negative() {
+    public void converter_TooLarge_Negative() {
         assertThrows(AgException.class, () -> FloatConverter.converter().value(new DoubleNode(Float.MAX_VALUE * -1.1d)));
     }
 
     @Test
-    public void testConverter_TooSmall_Negative() {
+    public void converter_TooSmall_Negative() {
         assertThrows(AgException.class, () -> FloatConverter.converter().value(new DoubleNode(Float.MIN_VALUE * -0.9d)));
     }
 

@@ -1,7 +1,6 @@
 package io.agrest.cayenne.exp;
 
 import io.agrest.AgException;
-import io.agrest.meta.AgEntity;
 import org.apache.cayenne.exp.Expression;
 
 /**
@@ -15,5 +14,5 @@ public interface ICayenneExpPostProcessor {
      * @return Expression that is ready for execution
      * @throws AgException if expression is malformed or violates validation constraints
      */
-    Expression process(AgEntity<?> entity, Expression exp);
+    Expression process(String entityName, Expression exp);
 }

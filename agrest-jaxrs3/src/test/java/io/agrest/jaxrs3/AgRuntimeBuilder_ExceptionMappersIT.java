@@ -35,7 +35,7 @@ public class AgRuntimeBuilder_ExceptionMappersIT extends PojoTest {
     }
 
     @Test
-    public void testExceptionMapper() {
+    public void exceptionMapper() {
 
         // override standard mapper
         tester.target("/agexception").get()

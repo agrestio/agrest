@@ -69,6 +69,6 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
 
     @Override
     public Object keyForUpdate(EntityUpdate<T> update) {
-        return update.getId();
+        return update.getIdParts().isEmpty() ? null : update.getIdParts();
     }
 }

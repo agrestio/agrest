@@ -31,7 +31,7 @@ public class AgException extends RuntimeException {
      * @since 4.7
      */
     public static AgException badRequest() {
-        return new AgException(HttpStatus.BAD_REQUEST, null, null, null);
+        return new AgException(HttpStatus.BAD_REQUEST, null, null);
     }
 
     /**
@@ -52,7 +52,7 @@ public class AgException extends RuntimeException {
      * @since 4.7
      */
     public static AgException forbidden() {
-        return new AgException(HttpStatus.FORBIDDEN, null, null, null);
+        return new AgException(HttpStatus.FORBIDDEN, null, null);
     }
 
     /**
@@ -75,7 +75,7 @@ public class AgException extends RuntimeException {
      * @since 4.7
      */
     public static AgException notFound() {
-        return new AgException(HttpStatus.NOT_FOUND, null, null, null);
+        return new AgException(HttpStatus.NOT_FOUND, null, null);
     }
 
     /**
@@ -96,7 +96,7 @@ public class AgException extends RuntimeException {
      * @since 4.7
      */
     public static AgException internalServerError() {
-        return new AgException(HttpStatus.INTERNAL_SERVER_ERROR, null, null, null);
+        return new AgException(HttpStatus.INTERNAL_SERVER_ERROR, null, null);
     }
 
     /**

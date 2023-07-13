@@ -33,7 +33,7 @@ public class EntityTest {
             .build();
 
     @Test
-    public void testPropertiesPresentAndOrdered() {
+    public void propertiesPresentAndOrdered() {
         Schema p4 = oapi.getComponents().getSchemas().get("P4");
         assertNotNull(p4);
 
@@ -76,7 +76,7 @@ public class EntityTest {
     }
 
     @Test
-    public void testProperties_FilterByAccess() {
+    public void properties_FilterByAccess() {
         Schema p8Update = oapi.getComponents().getSchemas().get("P8");
         assertNotNull(p8Update);
 
@@ -92,7 +92,7 @@ public class EntityTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"a", "b"})
-    public void testIntegerTypes(String propertyName) {
+    public void integerTypes(String propertyName) {
 
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
 
@@ -104,7 +104,7 @@ public class EntityTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"c", "d"})
-    public void testLongTypes(String propertyName) {
+    public void longTypes(String propertyName) {
 
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
 
@@ -116,7 +116,7 @@ public class EntityTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"e", "f"})
-    public void testFloatTypes(String propertyName) {
+    public void floatTypes(String propertyName) {
 
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
 
@@ -128,7 +128,7 @@ public class EntityTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"g", "h"})
-    public void testDoubleTypes(String propertyName) {
+    public void doubleTypes(String propertyName) {
 
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
 
@@ -139,7 +139,7 @@ public class EntityTest {
     }
 
     @Test
-    public void testStringTypes() {
+    public void stringTypes() {
 
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
 
@@ -150,7 +150,7 @@ public class EntityTest {
     }
 
     @Test
-    public void testBinaryStringTypes() {
+    public void binaryStringTypes() {
 
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
 
@@ -161,7 +161,7 @@ public class EntityTest {
     }
 
     @Test
-    public void testDateTimeStringTypes() {
+    public void dateTimeStringTypes() {
 
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
 
@@ -183,7 +183,7 @@ public class EntityTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"n", "o"})
-    public void testBooleanTypes(String propertyName) {
+    public void booleanTypes(String propertyName) {
 
         Map<String, Schema> props = oapi.getComponents().getSchemas().get("P3").getProperties();
 

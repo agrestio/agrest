@@ -12,7 +12,7 @@ public class SqlDateConverterTest {
     private final SqlDateConverter converter = SqlDateConverter.converter();
 
     @Test
-    public void test() {
+    public void asString() {
         assertEquals("2016-03-26", converter.asString(Date.valueOf(LocalDate.of(2016, 3, 26))));
     }
 }

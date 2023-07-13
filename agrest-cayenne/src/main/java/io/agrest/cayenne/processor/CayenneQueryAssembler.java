@@ -69,7 +69,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
         EntityParent<?> parent = context.getParent();
         if (parent != null) {
-            query.and(CayenneUtil.parentQualifier(pathResolver, parent, entityResolver));
+            query.and(CayenneUtil.parentQualifier(pathResolver, context.getSchema().getEntity(parent.getType()), parent, entityResolver));
         }
 
         return query;
@@ -111,7 +111,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         // columns must be added in the order of id parts iteration, as this is how they will be read from result
         int i = 1;
         for (AgIdPart idPart : parentEntity.getIdParts()) {
-            ASTPath idPartPath = pathResolver.resolve(parentEntity, idPart.getName()).getPathExp();
+            ASTPath idPartPath = pathResolver.resolve(parentEntity.getName(), idPart.getName()).getPathExp();
             Expression propertyExp = PathOps.concatWithDbPath(parentObjEntity, reversePath, idPartPath);
             columns[i++] = PropertyFactory.createBase(propertyExp, idPart.getType());
         }
@@ -305,7 +305,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         }
 
         Expression parsedExp = qualifierParser.parse(entity.getExp());
-        Expression finalExp = qualifierPostProcessor.process(entity.getAgEntity(), parsedExp);
+        Expression finalExp = qualifierPostProcessor.process(entity.getAgEntity().getName(), parsedExp);
         query.where(finalExp);
 
         for (Sort o : entity.getOrderings()) {
@@ -332,7 +332,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
                         idAttribute.getName());
             }
 
-            ASTPath path = pathResolver.resolve(entity, idAttribute.getName()).getPathExp();
+            ASTPath path = pathResolver.resolve(entity.getName(), idAttribute.getName()).getPathExp();
             qualifiers.add(ExpressionFactory.matchExp(path, idValue));
         }
         return ExpressionFactory.and(qualifiers);
@@ -340,7 +340,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
     protected Ordering toOrdering(ResourceEntity<?> entity, Sort sort) {
         return new Ordering(
-                pathResolver.resolve(entity.getAgEntity(), sort.getPath()).getPathExp(),
+                pathResolver.resolve(entity.getAgEntity().getName(), sort.getPath()).getPathExp(),
                 toSortOrder(sort.getDirection()));
     }
 

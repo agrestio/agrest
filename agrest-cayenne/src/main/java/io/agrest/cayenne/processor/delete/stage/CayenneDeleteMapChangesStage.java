@@ -59,7 +59,7 @@ public class CayenneDeleteMapChangesStage extends DeleteMapChangesStage {
         if (context.isById()) {
             return findById(context);
         } else if (context.getParent() != null) {
-            return findByParent(context, context.getParent().getEntity());
+            return findByParent(context, context.getParent());
         }
         // delete all !!
         else {
@@ -89,20 +89,20 @@ public class CayenneDeleteMapChangesStage extends DeleteMapChangesStage {
         return objects;
     }
 
-    protected <T extends DataObject> List<T> findByParent(DeleteContext<T> context, AgEntity<?> agParentEntity) {
+    protected <T extends DataObject> List<T> findByParent(DeleteContext<T> context, EntityParent<?> parent) {
 
-        EntityParent<?> parent = context.getParent();
+        AgEntity<?> parentAgEntity = context.getSchema().getEntity(parent.getType());
         ObjectContext cayenneContext = CayenneDeleteStartStage.cayenneContext(context);
-        Object parentObject = CayenneUtil.findById(pathResolver, cayenneContext, agParentEntity, parent.getId());
+        Object parentObject = CayenneUtil.findById(pathResolver, cayenneContext, parentAgEntity, parent.getId());
 
         if (parentObject == null) {
             // TODO: resolve  entity by name, not type?
-            ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(parent.getEntity().getType());
+            ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(parent.getType());
             throw AgException.notFound("No parent object for ID '%s' and entity '%s'", parent.getId(), entity.getName());
         }
 
         return ObjectSelect.query(context.getType())
-                .where(CayenneUtil.parentQualifier(pathResolver, parent, cayenneContext.getEntityResolver()))
+                .where(CayenneUtil.parentQualifier(pathResolver, context.getSchema().getEntity(parent.getType()), parent, cayenneContext.getEntityResolver()))
                 .select(CayenneDeleteStartStage.cayenneContext(context));
     }
 

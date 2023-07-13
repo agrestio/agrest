@@ -9,9 +9,7 @@ import io.agrest.jaxrs2.junit.pojo.P6;
 import io.agrest.jaxrs2.junit.pojo.P7;
 import io.agrest.jaxrs2.junit.pojo.P8;
 import io.agrest.jaxrs2.junit.pojo.P9;
-import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.AgSchema;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.AgRuntimeBuilder;
 import io.bootique.BQRuntime;
@@ -75,14 +73,6 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         return getJettyInScope().getTarget();
     }
 
-    public AgRuntime runtime() {
-        return getAppInScope().getInstance(AgRuntime.class);
-    }
-
-    public <T> AgEntity<T> entity(Class<T> type) {
-        return runtime().service(AgSchema.class).getEntity(type);
-    }
-
     public <T> Map<Object, T> bucket(Class<T> type) {
         return getPojoStoreInScope().bucket(type);
     }
@@ -119,10 +109,6 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         return Objects.requireNonNull(jettyInScope, "Not in test scope");
     }
 
-    protected BQRuntime getAppInScope() {
-        return Objects.requireNonNull(appInScope, "Not in test scope");
-    }
-
     protected PojoStore getPojoStoreInScope() {
         return Objects.requireNonNull(pojoStoreInScope, "Not in test scope");
     }
@@ -135,7 +121,7 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         this.appInScope = createAppInScope(this.jettyInScope, this.pojoStoreInScope);
 
         CommandOutcome result = appInScope.run();
-        Assertions.assertTrue(result.isSuccess(), () -> result.toString());
+        Assertions.assertTrue(result.isSuccess(), result::toString);
         Assertions.assertTrue(result.forkedToBackground());
     }
 
@@ -178,11 +164,6 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
             return this;
         }
 
-        public Builder bqModule(BQModule module) {
-            tester.bqModules.add(module);
-            return this;
-        }
-
         public AgPojoTester build() {
             return tester;
         }
@@ -220,15 +201,15 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         private void configureAg(org.apache.cayenne.di.Binder agBinder) {
             agBinder.bind(PojoStore.class).toInstance(pojoStore);
             agBinder.bindMap(AgEntityOverlay.class)
-                    .put(P1.class.getName(), new PojoOverlay(P1.class, pojoStore))
-                    .put(P2.class.getName(), new PojoOverlay(P2.class, pojoStore))
-                    .put(P3.class.getName(), new PojoOverlay(P3.class, pojoStore))
-                    .put(P4.class.getName(), new PojoOverlay(P4.class, pojoStore))
-                    .put(P6.class.getName(), new PojoOverlay(P6.class, pojoStore))
-                    .put(P7.class.getName(), new PojoOverlay(P7.class, pojoStore))
-                    .put(P8.class.getName(), new PojoOverlay(P8.class, pojoStore))
-                    .put(P9.class.getName(), new PojoOverlay(P9.class, pojoStore))
-                    .put(P10.class.getName(), new PojoOverlay(P10.class, pojoStore));
+                    .put(P1.class.getName(), new PojoOverlay<>(P1.class, pojoStore))
+                    .put(P2.class.getName(), new PojoOverlay<>(P2.class, pojoStore))
+                    .put(P3.class.getName(), new PojoOverlay<>(P3.class, pojoStore))
+                    .put(P4.class.getName(), new PojoOverlay<>(P4.class, pojoStore))
+                    .put(P6.class.getName(), new PojoOverlay<>(P6.class, pojoStore))
+                    .put(P7.class.getName(), new PojoOverlay<>(P7.class, pojoStore))
+                    .put(P8.class.getName(), new PojoOverlay<>(P8.class, pojoStore))
+                    .put(P9.class.getName(), new PojoOverlay<>(P9.class, pojoStore))
+                    .put(P10.class.getName(), new PojoOverlay<>(P10.class, pojoStore));
         }
     }
 }

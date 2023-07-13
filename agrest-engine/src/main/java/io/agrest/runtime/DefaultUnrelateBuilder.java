@@ -1,5 +1,6 @@
 package io.agrest.runtime;
 
+import io.agrest.HttpStatus;
 import io.agrest.id.AgObjectId;
 import io.agrest.SimpleResponse;
 import io.agrest.UnrelateBuilder;
@@ -57,6 +58,7 @@ public class DefaultUnrelateBuilder<T> implements UnrelateBuilder<T> {
     @Override
     public SimpleResponse sync() {
         processorFactory.createProcessor().execute(context);
-        return context.createSimpleResponse();
+        int status = context.getResponseStatus() != null ? context.getResponseStatus() : HttpStatus.OK;
+        return SimpleResponse.of(status);
     }
 }

@@ -3,7 +3,6 @@ package io.agrest.runtime.processor.select.stage;
 import io.agrest.AgRequest;
 import io.agrest.RootResourceEntity;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgSchema;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.entity.IExcludeMerger;
@@ -20,7 +19,6 @@ import org.apache.cayenne.di.Inject;
  */
 public class SelectCreateResourceEntityStage implements Processor<SelectContext<?>> {
 
-    private AgSchema schema;
     private IExpMerger expMerger;
     private ISortMerger sortMerger;
     private IMapByMerger mapByMerger;
@@ -29,7 +27,6 @@ public class SelectCreateResourceEntityStage implements Processor<SelectContext<
     private IExcludeMerger excludeMerger;
 
     public SelectCreateResourceEntityStage(
-            @Inject AgSchema schema,
             @Inject IExpMerger expMerger,
             @Inject ISortMerger sortMerger,
             @Inject IMapByMerger mapByMerger,
@@ -37,7 +34,6 @@ public class SelectCreateResourceEntityStage implements Processor<SelectContext<
             @Inject IIncludeMerger includeMerger,
             @Inject IExcludeMerger excludeMerger) {
 
-        this.schema = schema;
         this.sortMerger = sortMerger;
         this.expMerger = expMerger;
         this.mapByMerger = mapByMerger;
@@ -53,17 +49,16 @@ public class SelectCreateResourceEntityStage implements Processor<SelectContext<
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
-        AgEntity<T> entity = schema.getEntity(context.getType());
-        AgEntity<T> overlaid = entity.resolveOverlayHierarchy(schema, context.getEntityOverlays());
-        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(overlaid);
+        AgEntity<T> entity = context.getSchema().getEntity(context.getType());
+        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(entity);
 
         AgRequest request = context.getRequest();
 
         sizeMerger.merge(resourceEntity, request.getStart(), request.getLimit());
-        includeMerger.merge(resourceEntity, request.getIncludes(), context.getEntityOverlays(), context.getMaxPathDepth());
+        includeMerger.merge(resourceEntity, request.getIncludes(), context.getSchema(), context.getMaxPathDepth());
         excludeMerger.merge(resourceEntity, request.getExcludes());
         sortMerger.merge(resourceEntity, request.getSorts(), context.getMaxPathDepth());
-        mapByMerger.merge(resourceEntity, request.getMapBy(), context.getEntityOverlays(), context.getMaxPathDepth());
+        mapByMerger.merge(resourceEntity, request.getMapBy(), context.getSchema(), context.getMaxPathDepth());
         expMerger.merge(resourceEntity, request.getExp());
 
         context.setEntity(resourceEntity);

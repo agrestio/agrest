@@ -75,7 +75,7 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
 
         EntityParent<?> parent = context.getParent();
         Expression rootQualifier = parent != null
-                ? CayenneUtil.parentQualifier(pathResolver, parent, entityResolver)
+                ? CayenneUtil.parentQualifier(pathResolver, context.getSchema().getEntity(parent.getType()), parent, entityResolver)
                 : null;
 
         buildRootQuery(context.getEntity(), rootQualifier);

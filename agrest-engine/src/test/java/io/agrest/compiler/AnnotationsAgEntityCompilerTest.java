@@ -23,7 +23,7 @@ public class AnnotationsAgEntityCompilerTest {
     }
 
     @Test
-    public void testCompile() {
+    public void compile() {
         AgEntity<Entity> entity = new AnnotationsAgEntityCompiler(Collections.emptyMap())
                 .compile(Entity.class, new LazySchema(compilers));
         assertNotNull(entity);
@@ -33,7 +33,7 @@ public class AnnotationsAgEntityCompilerTest {
     }
 
     @Test
-    public void testCompile_CollectionAttributes() {
+    public void compile_CollectionAttributes() {
         AgEntity<P8> entity = new AnnotationsAgEntityCompiler(Collections.emptyMap())
                 .compile(P8.class, new LazySchema(compilers));
         assertNotNull(entity);
@@ -50,7 +50,7 @@ public class AnnotationsAgEntityCompilerTest {
     }
 
     @Test
-    public void testCompile_EntityWithNoAnnotations() {
+    public void compile_EntityWithNoAnnotations() {
         AgEntity<EntityNoAnnotations> entity = new AnnotationsAgEntityCompiler(Collections.emptyMap())
                 .compile(EntityNoAnnotations.class, new LazySchema(compilers));
         assertNotNull(entity);

@@ -68,7 +68,7 @@ public class EncoderFactory_UtilDate_Test {
      * See https://github.com/nhl/link-rest/issues/275
      */
     @Test
-    public void testUtilDate() {
+    public void utilDate() {
         testUtilDate(new java.util.Date(EPOCH_MILLIS), "yyyy-MM-dd'T'HH:mm:ss");
         testUtilDate(new java.util.Date(EPOCH_MILLIS_WITH_FRACTION), "yyyy-MM-dd'T'HH:mm:ss.SSS");
     }
@@ -91,7 +91,7 @@ public class EncoderFactory_UtilDate_Test {
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
         Encoder encoder = encoderFactory.encoder(resourceEntity, mock(ProcessingContext.class));
-        return Encoders.toJson(DataResponse.of(List.of(object)).encoder(encoder).build());
+        return Encoders.toJson(DataResponse.of(200, List.of(object)).encoder(encoder).build());
     }
 
     public static class PUtilDate {

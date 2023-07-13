@@ -1,13 +1,13 @@
 package io.agrest.runtime;
 
-import io.agrest.id.AgObjectId;
 import io.agrest.DeleteBuilder;
 import io.agrest.DeleteStage;
+import io.agrest.HttpStatus;
 import io.agrest.SimpleResponse;
 import io.agrest.access.DeleteAuthorizer;
+import io.agrest.id.AgObjectId;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.AgSchema;
 import io.agrest.processor.Processor;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
@@ -44,21 +44,19 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
 
     @Override
     public DeleteBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
-        AgEntity<?> parentEntity = context.service(AgSchema.class).getEntity(parentType);
-        context.setParent(new EntityParent<>(parentEntity, AgObjectId.of(parentId), relationshipFromParent));
+        context.setParent(new EntityParent<>(parentType, AgObjectId.of(parentId), relationshipFromParent));
         return this;
     }
 
     @Override
     public DeleteBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
-        AgEntity<?> parentEntity = context.service(AgSchema.class).getEntity(parentType);
-        context.setParent(new EntityParent<>(parentEntity, AgObjectId.ofMap(parentIds), relationshipFromParent));
+        context.setParent(new EntityParent<>(parentType, AgObjectId.ofMap(parentIds), relationshipFromParent));
         return this;
     }
 
     @Override
     public DeleteBuilder<T> entityOverlay(AgEntityOverlay<T> overlay) {
-        context.addEntityOverlay(overlay);
+        context.getSchema().addOverlay(overlay);
         return this;
     }
 
@@ -80,6 +78,7 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
     @Override
     public SimpleResponse sync() {
         processorFactory.createProcessor(processors).execute(context);
-        return context.createSimpleResponse();
+        int status = context.getResponseStatus() != null ? context.getResponseStatus() : HttpStatus.OK;
+        return SimpleResponse.of(status);
     }
 }

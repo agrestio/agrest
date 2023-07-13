@@ -464,12 +464,22 @@
 	<obj-relationship name="e7s" source="E8" target="E7" deleteRule="Deny" db-relationship-path="e7s"/>
 	<obj-relationship name="e9" source="E8" target="E9" deleteRule="Nullify" db-relationship-path="e9"/>
 	<obj-relationship name="e8" source="E9" target="E8" deleteRule="Nullify" db-relationship-path="e8"/>
+	<dbImport xmlns="http://cayenne.apache.org/schema/10/dbimport">
+		<tableTypes>
+			<tableType>TABLE</tableType>
+			<tableType>VIEW</tableType>
+		</tableTypes>
+		<forceDataMapCatalog>false</forceDataMapCatalog>
+		<forceDataMapSchema>false</forceDataMapSchema>
+		<namingStrategy>org.apache.cayenne.dbsync.naming.DefaultObjectNameGenerator</namingStrategy>
+		<skipPrimaryKeyLoading>false</skipPrimaryKeyLoading>
+		<skipRelationshipsLoading>false</skipRelationshipsLoading>
+		<useJava7Types>false</useJava7Types>
+		<usePrimitives>true</usePrimitives>
+	</dbImport>
 	<cgen xmlns="http://cayenne.apache.org/schema/10/cgen">
-		<excludeEntities>E31</excludeEntities>
-		<destDir>../java</destDir>
+		<destDir>../../java</destDir>
 		<mode>entity</mode>
-		<template>templates/v4_1/subclass.vm</template>
-		<superTemplate>templates/v4_1/superclass.vm</superTemplate>
 		<template>templates/v4_1/subclass.vm</template>
 		<superTemplate>templates/v4_1/superclass.vm</superTemplate>
 		<embeddableTemplate>templates/v4_1/embeddable-subclass.vm</embeddableTemplate>

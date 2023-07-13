@@ -14,7 +14,7 @@ public class JsonValueConvertersProviderTest {
     }
 
     @Test
-    public void testConverter_Injected() {
+    public void converter_Injected() {
         JsonValueConverter<?> customConverter = mock(JsonValueConverter.class);
         Map<String, JsonValueConverter<?>> injected = Map.of(CustomType.class.getName(), customConverter);
         assertSame(customConverter, createConverters(injected).converter(CustomType.class));

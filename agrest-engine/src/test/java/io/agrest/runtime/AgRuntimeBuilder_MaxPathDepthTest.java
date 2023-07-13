@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class AgRuntimeBuilder_MaxPathDepthTest {
 
     @Test
-    public void testDefault() {
+    public void _default() {
         AgRuntime runtime = AgRuntime
                 .builder()
                 .build();
@@ -18,7 +18,7 @@ public class AgRuntimeBuilder_MaxPathDepthTest {
     }
 
     @Test
-    public void testOverride() {
+    public void override() {
         AgRuntime runtime = AgRuntime
                 .builder()
                 .maxPathDepth(3)
@@ -28,7 +28,7 @@ public class AgRuntimeBuilder_MaxPathDepthTest {
     }
 
     @Test
-    public void testOverrideZero() {
+    public void overrideZero() {
         AgRuntime runtime = AgRuntime
                 .builder()
                 .maxPathDepth(0)
@@ -38,7 +38,7 @@ public class AgRuntimeBuilder_MaxPathDepthTest {
     }
 
     @Test
-    public void testNegative() {
+    public void negative() {
         assertThrows(IllegalArgumentException.class, () -> AgRuntime
                 .builder()
                 .maxPathDepth(-1));

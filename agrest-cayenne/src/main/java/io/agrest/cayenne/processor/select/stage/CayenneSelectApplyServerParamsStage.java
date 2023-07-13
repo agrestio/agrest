@@ -4,9 +4,9 @@ import io.agrest.RelatedResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
-import io.agrest.runtime.constraints.IConstraintsHandler;
-import io.agrest.runtime.processor.select.stage.SelectApplyServerParamsStage;
+import io.agrest.runtime.constraints.SelectConstraints;
 import io.agrest.runtime.processor.select.SelectContext;
+import io.agrest.runtime.processor.select.stage.SelectApplyServerParamsStage;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.EntityResolver;
 
@@ -18,9 +18,9 @@ public class CayenneSelectApplyServerParamsStage extends SelectApplyServerParams
     private final EntityResolver entityResolver;
 
     public CayenneSelectApplyServerParamsStage(
-            @Inject IConstraintsHandler constraintsHandler,
+            @Inject SelectConstraints constraints,
             @Inject ICayennePersister persister) {
-        super(constraintsHandler);
+        super(constraints);
         this.entityResolver = persister.entityResolver();
     }
 

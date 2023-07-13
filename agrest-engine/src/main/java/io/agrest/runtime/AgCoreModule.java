@@ -7,6 +7,8 @@ import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
 import io.agrest.converter.jsonvalue.Base64Converter;
 import io.agrest.converter.jsonvalue.BigDecimalConverter;
+import io.agrest.converter.jsonvalue.BigIntegerConverter;
+import io.agrest.converter.jsonvalue.ByteConverter;
 import io.agrest.converter.jsonvalue.DoubleConverter;
 import io.agrest.converter.jsonvalue.FloatConverter;
 import io.agrest.converter.jsonvalue.GenericConverter;
@@ -15,6 +17,7 @@ import io.agrest.converter.jsonvalue.JsonValueConverter;
 import io.agrest.converter.jsonvalue.JsonValueConverters;
 import io.agrest.converter.jsonvalue.JsonValueConvertersProvider;
 import io.agrest.converter.jsonvalue.LongConverter;
+import io.agrest.converter.jsonvalue.ShortConverter;
 import io.agrest.converter.valuestring.LocalDateConverter;
 import io.agrest.converter.valuestring.LocalDateTimeConverter;
 import io.agrest.converter.valuestring.LocalTimeConverter;
@@ -32,8 +35,8 @@ import io.agrest.encoder.ValueEncoders;
 import io.agrest.encoder.ValueEncodersProvider;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.meta.AgSchema;
-import io.agrest.runtime.constraints.ConstraintsHandler;
-import io.agrest.runtime.constraints.IConstraintsHandler;
+import io.agrest.runtime.constraints.SelectConstraints;
+import io.agrest.runtime.constraints.UpdateConstraints;
 import io.agrest.runtime.encoder.EncodablePropertyFactory;
 import io.agrest.runtime.encoder.EncoderFactory;
 import io.agrest.runtime.encoder.IEncodablePropertyFactory;
@@ -97,18 +100,18 @@ import io.agrest.runtime.processor.update.stage.UpdateMapChangesStage;
 import io.agrest.runtime.processor.update.stage.UpdateMergeChangesStage;
 import io.agrest.runtime.processor.update.stage.UpdateParseRequestStage;
 import io.agrest.runtime.processor.update.stage.UpdateStartStage;
-import io.agrest.runtime.protocol.EntityUpdateParser;
 import io.agrest.runtime.protocol.ExcludeParser;
 import io.agrest.runtime.protocol.ExpParser;
-import io.agrest.runtime.protocol.IEntityUpdateParser;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IExpParser;
 import io.agrest.runtime.protocol.IIncludeParser;
 import io.agrest.runtime.protocol.ISizeParser;
 import io.agrest.runtime.protocol.ISortParser;
+import io.agrest.runtime.protocol.IUpdateRequestParser;
 import io.agrest.runtime.protocol.IncludeParser;
 import io.agrest.runtime.protocol.SizeParser;
 import io.agrest.runtime.protocol.SortParser;
+import io.agrest.runtime.protocol.UpdateRequestParser;
 import io.agrest.runtime.request.DefaultRequestBuilderFactory;
 import io.agrest.runtime.request.IAgRequestBuilderFactory;
 import io.agrest.runtime.semantics.IRelationshipMapper;
@@ -120,6 +123,7 @@ import org.apache.cayenne.di.Key;
 import org.apache.cayenne.di.Module;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -225,16 +229,21 @@ public class AgCoreModule implements Module {
                 .put(Object.class.getName(), GenericConverter.converter())
                 .put("byte[]", Base64Converter.converter())
                 .put(BigDecimal.class.getName(), BigDecimalConverter.converter())
+                .put(BigInteger.class.getName(), BigIntegerConverter.converter())
                 .put(Float.class.getName(), FloatConverter.converter())
                 .put("float", FloatConverter.converter())
                 .put(Double.class.getName(), DoubleConverter.converter())
                 .put("double", DoubleConverter.converter())
                 .put(Long.class.getName(), LongConverter.converter())
                 .put("long", LongConverter.converter())
+                .put(Short.class.getName(), ShortConverter.converter())
+                .put("short", ShortConverter.converter())
+                .put(Byte.class.getName(), ByteConverter.converter())
+                .put("byte", ByteConverter.converter())
                 .put(Date.class.getName(), io.agrest.converter.jsonvalue.UtilDateConverter.converter())
                 .put(java.sql.Date.class.getName(), io.agrest.converter.jsonvalue.SqlDateConverter.converter())
-                .put(java.sql.Time.class.getName(), io.agrest.converter.jsonvalue.SqlTimeConverter.converter())
-                .put(java.sql.Timestamp.class.getName(), io.agrest.converter.jsonvalue.SqlTimestampConverter.converter())
+                .put(Time.class.getName(), io.agrest.converter.jsonvalue.SqlTimeConverter.converter())
+                .put(Timestamp.class.getName(), io.agrest.converter.jsonvalue.SqlTimestampConverter.converter())
                 .put(LocalDate.class.getName(), io.agrest.converter.jsonvalue.LocalDateConverter.converter())
                 .put(LocalTime.class.getName(), io.agrest.converter.jsonvalue.LocalTimeConverter.converter())
                 .put(LocalDateTime.class.getName(), io.agrest.converter.jsonvalue.LocalDateTimeConverter.converter())
@@ -259,7 +268,8 @@ public class AgCoreModule implements Module {
         binder.bind(EncoderFactory.class).to(EncoderFactory.class);
         binder.bind(IRelationshipMapper.class).to(RelationshipMapper.class);
         binder.bind(AgSchema.class).toProvider(LazySchemaProvider.class);
-        binder.bind(IConstraintsHandler.class).to(ConstraintsHandler.class);
+        binder.bind(SelectConstraints.class).to(SelectConstraints.class);
+        binder.bind(UpdateConstraints.class).to(UpdateConstraints.class);
 
         binder.bind(IJacksonService.class).toProvider(JacksonServiceProvider.class);
 
@@ -281,6 +291,6 @@ public class AgCoreModule implements Module {
         binder.bind(IResultFilter.class).to(ResultFilter.class);
         binder.bind(IChangeAuthorizer.class).to(ChangeAuthorizer.class);
 
-        binder.bind(IEntityUpdateParser.class).to(EntityUpdateParser.class);
+        binder.bind(IUpdateRequestParser.class).to(UpdateRequestParser.class);
     }
 }

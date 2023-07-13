@@ -67,12 +67,12 @@ public abstract class NoDbTest {
         when(mockCayennePersister.newContext()).thenReturn(getRuntime().newContext());
 
         this.schema = new LazySchema(createEntityCompilers());
-        this.pathDescriptorManager = new PathResolver();
+        this.pathDescriptorManager = new PathResolver(mockCayennePersister);
         this.queryAssembler = new CayenneQueryAssembler(
                 mockCayennePersister,
                 pathDescriptorManager,
                 new CayenneExpParser(),
-                new CayenneExpPostProcessor(pathDescriptorManager));
+                new CayenneExpPostProcessor(pathDescriptorManager, mockCayennePersister));
     }
 
     protected List<AgEntityCompiler> createEntityCompilers() {

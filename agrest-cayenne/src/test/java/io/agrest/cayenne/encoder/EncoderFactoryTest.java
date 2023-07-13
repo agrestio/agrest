@@ -55,7 +55,7 @@ public class EncoderFactoryTest extends MainNoDbTest {
     }
 
     @Test
-    public void testGetRootEncoder_ExcludedAttributes() {
+    public void getRootEncoder_ExcludedAttributes() {
         // empty filter - must only include id
         ResourceEntity<E1> descriptor = getResourceEntity(E1.class);
         descriptor.includeId();
@@ -70,7 +70,7 @@ public class EncoderFactoryTest extends MainNoDbTest {
     }
 
     @Test
-    public void testGetRootEncoder_ExcludedRelationshipAttributes() {
+    public void getRootEncoder_ExcludedRelationshipAttributes() {
 
         RootResourceEntity<E2> re = getResourceEntity(E2.class);
         re.includeId();
@@ -114,7 +114,7 @@ public class EncoderFactoryTest extends MainNoDbTest {
     }
 
     @Test
-    public void testEncoder_BinaryAttribute() {
+    public void encoder_BinaryAttribute() {
 
         ResourceEntity<E19> descriptor = getResourceEntity(E19.class);
         descriptor.includeId();
@@ -129,7 +129,7 @@ public class EncoderFactoryTest extends MainNoDbTest {
 
     private String toJson(Object object, ResourceEntity<?> resourceEntity) {
         Encoder encoder = encoderFactory.encoder(resourceEntity, mock(ProcessingContext.class));
-        return toJson(encoder, DataResponse.of(List.of(object)).build());
+        return toJson(encoder, DataResponse.of(200, List.of(object)).build());
     }
 
     private String toJson(Encoder encoder, Object value) {

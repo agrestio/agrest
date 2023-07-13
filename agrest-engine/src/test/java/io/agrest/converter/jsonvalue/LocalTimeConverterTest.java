@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class LocalTimeConverterTest {
 
     @Test
-    public void testConvert() {
+    public void convert() {
         Object time = LocalTimeConverter.converter().value(new TextNode("16:58:47"));
         assertEquals(LocalTime.class, time.getClass());
         assertEquals(LocalTime.of(16, 58, 47), time);

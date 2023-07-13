@@ -26,7 +26,7 @@ public class AnnotationsAgEntityBuilderTest {
 	}
 
 	@Test
-	public void testBuild_Default() {
+	public void build_Default() {
 
 		AgEntity<P3> p3e = new AnnotationsAgEntityBuilder<>(P3.class, new LazySchema(COMPILERS)).build();
 		assertNotNull(p3e);
@@ -42,7 +42,7 @@ public class AnnotationsAgEntityBuilderTest {
 	}
 
 	@Test
-	public void testToOneRelationship() {
+	public void toOneRelationship() {
 
 		AgEntity<P4> p4e = new AnnotationsAgEntityBuilder<>(P4.class, new LazySchema(COMPILERS)).build();
 		assertNotNull(p4e);
@@ -58,7 +58,7 @@ public class AnnotationsAgEntityBuilderTest {
 	}
 
 	@Test
-	public void testToManyRelationship() {
+	public void toManyRelationship() {
 
 		AgEntity<P5> p5e = new AnnotationsAgEntityBuilder<>(P5.class, new LazySchema(COMPILERS)).build();
 
