@@ -6,6 +6,7 @@ import org.apache.cayenne.exp.ExpressionFactory;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
@@ -86,5 +87,18 @@ public class CayenneExpParserTest {
 
         Expression e = parser.parse(e3);
         assertEquals(ExpressionFactory.exp("(((d = 'z') and (a = 'b')) or (b = 'x')) and (c = 'y')"), e);
+    }
+
+    @Test
+    public void parseComposite_DifferentOrder() {
+        Exp e1 = Exp.from("id = $id").withPositionalParams(1);
+        Exp e2 = Exp.keyValue("otherId", "in", List.of(1, 2, 3));
+        Exp composite1 = e1.and(e2);
+        Exp composite2 = e2.and(e1);
+
+        Expression cayenneComposite1 = parser.parse(composite1);
+        Expression cayenneComposite2 = parser.parse(composite2);
+        assertEquals(ExpressionFactory.exp("(id = 1) and (otherId in (1, 2, 3))"), cayenneComposite1);
+        assertEquals(ExpressionFactory.exp("(otherId in (1, 2, 3)) and (id = 1)"), cayenneComposite2);
     }
 }
