@@ -219,7 +219,7 @@ public abstract class AgExpression extends SimpleNode {
         }
     }
 
-    final static class InPlaceParamReplacer extends TraversalHelper {
+    final static class InPlaceParamReplacer implements TraversalHandler {
 
         private final Object[] parameters;
         private int i;
