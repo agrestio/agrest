@@ -6,7 +6,7 @@ import io.agrest.exp.AgExpression;
 import io.agrest.protocol.Exp;
 
 public
-class ExpAnd extends ExpAggregateCondition {
+class ExpAnd extends ExpCondition {
   public ExpAnd(int id) {
     super(id);
   }

@@ -4,13 +4,13 @@ import io.agrest.exp.AgExpression;
 
 import java.util.function.Function;
 
-public abstract class ExpAggregateCondition extends AgExpression {
+public abstract class ExpCondition extends AgExpression {
 
-    public ExpAggregateCondition(int id) {
+    public ExpCondition(int id) {
         super(id);
     }
 
-    public ExpAggregateCondition(AgExpressionParser p, int id) {
+    public ExpCondition(AgExpressionParser p, int id) {
         super(p, id);
     }
 
@@ -23,10 +23,10 @@ public abstract class ExpAggregateCondition extends AgExpression {
     protected Object transformExpression(Function<Object, Object> transformer) {
         Object transformed = super.transformExpression(transformer);
 
-        if (!(transformed instanceof ExpAggregateCondition)) {
+        if (!(transformed instanceof ExpCondition)) {
             return transformed;
         }
-        ExpAggregateCondition condition = (ExpAggregateCondition) transformed;
+        ExpCondition condition = (ExpCondition) transformed;
 
         // Prune itself if the transformation resulted in no children or a single child.
         switch (condition.getOperandCount()) {

@@ -5,7 +5,7 @@ package io.agrest.exp.parser;
 import io.agrest.exp.AgExpression;
 
 public
-class ExpNot extends ExpAggregateCondition {
+class ExpNot extends ExpCondition {
   public ExpNot(int id) {
     super(id);
   }
