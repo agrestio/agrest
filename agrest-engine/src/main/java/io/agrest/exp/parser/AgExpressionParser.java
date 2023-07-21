@@ -3,6 +3,8 @@
 package io.agrest.exp.parser;
 
 // note: Parser doesn't use this import, but it's shared with the TokenManager
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import io.agrest.AgException;
 import io.agrest.exp.AgExpression;
