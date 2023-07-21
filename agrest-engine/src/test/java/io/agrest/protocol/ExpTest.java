@@ -21,8 +21,8 @@ public class ExpTest {
     public void testBind_equals() {
 
         Exp raw = Exp.from("a = $1");
-        Exp e1 = raw.withPositionalParams("b");
-        Exp e2 = raw.withNamedParams(Map.of("1", "b"));
+        Exp e1 = raw.positionalParams("b");
+        Exp e2 = raw.namedParams(Map.of("1", "b"));
 
         assertEquals(e1, e2);
         assertNotEquals(raw, e1);
@@ -37,10 +37,10 @@ public class ExpTest {
     public void testBind_reusable() {
         Exp raw = Exp.from("a = $1 and b = $2");
 
-        Exp e1 = raw.withPositionalParams(5, 7);
-        Exp e2 = raw.withPositionalParams(7, 5);
-        Exp e3 = raw.withNamedParams(Map.of("1", 3, "2", 4));
-        Exp e4 = raw.withNamedParams(Map.of("1", 4, "2", 3));
+        Exp e1 = raw.positionalParams(5, 7);
+        Exp e2 = raw.positionalParams(7, 5);
+        Exp e3 = raw.namedParams(Map.of("1", 3, "2", 4));
+        Exp e4 = raw.namedParams(Map.of("1", 4, "2", 3));
         Collection<Exp> all = List.of(e1, e2, e3, e4);
 
         // Make sure all of them are different.
@@ -56,10 +56,10 @@ public class ExpTest {
     public void testBind_pruning() {
         Exp raw = Exp.from("a = $1 and b = $2 or c = $3 and not d = $4");
 
-        Exp e1 = raw.withNamedParams(Map.of("1", 2, "2", 4, "3", 8, "4", 16));
-        Exp e2 = raw.withNamedParams(Map.of("1", 2, "2", 4, "3", 8));
-        Exp e3 = raw.withNamedParams(Map.of("3", 8));
-        Exp e4 = raw.withNamedParams(new HashMap<>() {{
+        Exp e1 = raw.namedParams(Map.of("1", 2, "2", 4, "3", 8, "4", 16));
+        Exp e2 = raw.namedParams(Map.of("1", 2, "2", 4, "3", 8));
+        Exp e3 = raw.namedParams(Map.of("3", 8));
+        Exp e4 = raw.namedParams(new HashMap<>() {{
             put("1", null);
             put("3", 8);
         }});
@@ -73,16 +73,16 @@ public class ExpTest {
     @Test
     public void testBind_throwsOn_tooFewParameters() {
         Exp raw = Exp.from("a = $1");
-        assertThrows(AgExpressionException.class, () -> raw.withPositionalParams());
-        assertThrows(AgExpressionException.class, () -> raw.withNamedParams(Collections.emptyMap(), false));
+        assertThrows(AgExpressionException.class, () -> raw.positionalParams());
+        assertThrows(AgExpressionException.class, () -> raw.namedParams(Collections.emptyMap(), false));
     }
 
     @Test
     public void testBind_throwsOn_tooManyParameters() {
         Exp raw = Exp.from("a = $1");
-        assertThrows(AgExpressionException.class, () -> raw.withPositionalParams("a", "b"));
+        assertThrows(AgExpressionException.class, () -> raw.positionalParams("a", "b"));
 
         // Unnecessary parameters are simply not used.
-        raw.withNamedParams(Map.of("1", 2, "2", 4));
+        raw.namedParams(Map.of("1", 2, "2", 4));
     }
 }

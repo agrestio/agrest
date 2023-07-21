@@ -121,7 +121,7 @@ public class ExpParser implements IExpParser {
                 paramsMap.put(key, val);
             }
 
-            return Exp.from(expNode.asText()).withNamedParams(paramsMap);
+            return Exp.from(expNode.asText()).namedParams(paramsMap);
         }
 
         return Exp.from(expNode.asText());
@@ -148,6 +148,6 @@ public class ExpParser implements IExpParser {
             params[i - 1] = extractValue(paramNode);
         }
 
-        return Exp.from(expString).withPositionalParams(params);
+        return Exp.from(expString).positionalParams(params);
     }
 }

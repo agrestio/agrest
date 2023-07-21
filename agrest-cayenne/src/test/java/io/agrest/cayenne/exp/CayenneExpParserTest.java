@@ -24,13 +24,13 @@ public class CayenneExpParserTest {
 
     @Test
     public void testParseNamedParams() {
-        Expression e = parser.parse(Exp.from("a = $a").withNamedParams(Map.of("a", "x")));
+        Expression e = parser.parse(Exp.from("a = $a").namedParams(Map.of("a", "x")));
         assertEquals(ExpressionFactory.exp("a = 'x'"), e);
     }
 
     @Test
     public void testParsePositionalParams() {
-        Expression e = parser.parse(Exp.from("a = $a").withPositionalParams("x"));
+        Expression e = parser.parse(Exp.from("a = $a").positionalParams("x"));
         assertEquals(ExpressionFactory.exp("a = 'x'"), e);
     }
 
@@ -76,8 +76,8 @@ public class CayenneExpParserTest {
     public void testParseComposite() {
 
         Exp e0 = Exp.from("a = 'b'");
-        Exp e1 = Exp.from("b = $a").withNamedParams(Map.of("a", "x"));
-        Exp e2 = Exp.from("c = $a").withPositionalParams("y");
+        Exp e1 = Exp.from("b = $a").namedParams(Map.of("a", "x"));
+        Exp e2 = Exp.from("c = $a").positionalParams("y");
 
         // multilevel composite with heterogeneous params
         Exp e3 = Exp.from("d = 'z'")
@@ -91,7 +91,7 @@ public class CayenneExpParserTest {
 
     @Test
     public void parseComposite_DifferentOrder() {
-        Exp e1 = Exp.from("id = $id").withPositionalParams(1);
+        Exp e1 = Exp.from("id = $id").positionalParams(1);
         Exp e2 = Exp.keyValue("otherId", "in", List.of(1, 2, 3));
         Exp composite1 = e1.and(e2);
         Exp composite2 = e2.and(e1);

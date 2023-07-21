@@ -19,8 +19,27 @@ import java.util.Objects;
  */
 public interface Exp {
 
+    /**
+     * @since 5.0
+     */
     static Exp from(String template) {
         return parseTemplate(template);
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #from(String)} and {@link #namedParams(Map)}
+     */
+    @Deprecated(since = "5.0")
+    static Exp witNamedParams(String template, Map<String, Object> params) {
+        return parseTemplate(template).namedParams(params);
+    }
+
+    /**
+     * @deprecated since 5.0 in favor of {@link #from(String)} and {@link #positionalParams(Object...)}
+     */
+    @Deprecated(since = "5.0")
+    static Exp withPositionalParams(String template, Object... params) {
+        return parseTemplate(template).positionalParams(params);
     }
 
     /**
@@ -51,15 +70,24 @@ public interface Exp {
         }
     }
 
-    default Exp withPositionalParams(Object... params) {
+    /**
+     * @since 5.0
+     */
+    default Exp positionalParams(Object... params) {
         return this;
     }
 
-    default Exp withNamedParams(Map<String, Object> params) {
+    /**
+     * @since 5.0
+     */
+    default Exp namedParams(Map<String, Object> params) {
         return this;
     }
 
-    default Exp withNamedParams(Map<String, Object> params, boolean pruneMissing) {
+    /**
+     * @since 5.0
+     */
+    default Exp namedParams(Map<String, Object> params, boolean pruneMissing) {
         return this;
     }
 
@@ -70,7 +98,7 @@ public interface Exp {
      *
      * @deprecated since 5.0 in favor of {@link #accept(AgExpressionParserVisitor, Object)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0")
     default void visit(ExpVisitor visitor) {
         // DO NOTHING
     }

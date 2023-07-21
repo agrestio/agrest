@@ -34,19 +34,19 @@ public abstract class AgExpression extends SimpleNode {
     }
 
     @Override
-    public Exp withPositionalParams(Object... params) {
+    public Exp positionalParams(Object... params) {
         AgExpression copy = deepCopy();
         copy.inPlaceParams(params);
         return copy;
     }
 
     @Override
-    public Exp withNamedParams(Map<String, Object> params) {
-        return withNamedParams(params, true);
+    public Exp namedParams(Map<String, Object> params) {
+        return namedParams(params, true);
     }
 
     @Override
-    public Exp withNamedParams(Map<String, Object> params, boolean pruneMissing) {
+    public Exp namedParams(Map<String, Object> params, boolean pruneMissing) {
         return transform(new NamedParamTransformer(params, pruneMissing));
     }
 

@@ -104,8 +104,8 @@ public class ExpBuilder {
 
     public AgExpression build() {
         buildBasic();
-        exp.withPositionalParams(positionalParams);
-        exp.withNamedParams(namedParams);
+        exp.positionalParams(positionalParams);
+        exp.namedParams(namedParams);
         return exp;
     }
 
