@@ -28,7 +28,7 @@ class ExpBetween extends AgExpression {
 
   @Override
   public String toString() {
-    return "between " + children[0] + " and " + children[1];
+    return children[0] + " between " + children[1] + " and " + children[2];
   }
 }
 /* JavaCC - OriginalChecksum=c43b74b247f96290e1207f5b0fcef774 (do not edit this line) */

@@ -6,29 +6,31 @@ import io.agrest.exp.AgExpression;
 
 public
 class ExpMod extends AgExpression {
-  public ExpMod(int id) {
-    super(id);
-  }
+    public ExpMod(int id) {
+        super(id);
+    }
 
-  public ExpMod(AgExpressionParser p, int id) {
-    super(p, id);
-  }
+    public ExpMod(AgExpressionParser p, int id) {
+        super(p, id);
+    }
 
-  /** Accept the visitor. **/
-  public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
+    /**
+     * Accept the visitor.
+     **/
+    public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 
-    return
-    visitor.visit(this, data);
-  }
+        return
+                visitor.visit(this, data);
+    }
 
-  @Override
-  protected AgExpression shallowCopy() {
-    return new ExpMod(id);
-  }
+    @Override
+    protected AgExpression shallowCopy() {
+        return new ExpMod(id);
+    }
 
-  @Override
-  public String toString() {
-    return "mod(" + children[0] + ")";
-  }
+    @Override
+    public String toString() {
+        return "mod(" + children[0] + ", " + children[1] + ")";
+    }
 }
 /* JavaCC - OriginalChecksum=6563b330904d626ec86b2bd306259dd3 (do not edit this line) */

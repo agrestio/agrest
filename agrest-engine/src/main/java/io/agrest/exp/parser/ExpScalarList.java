@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public
@@ -67,7 +66,9 @@ class ExpScalarList extends ExpGenericScalar<Collection<?>> {
 
   @Override
   public String toString() {
-    return getValue().stream().map(Objects::toString).collect(Collectors.joining(", "));
+    return Arrays.stream(children)
+            .map(String::valueOf)
+            .collect(Collectors.joining(", "));
   }
 
   private static class ListValueVisitor extends AgExpressionParserDefaultVisitor<List<Object>> {

@@ -28,7 +28,7 @@ class ExpLess extends AgExpression {
 
   @Override
   public String toString() {
-    return children[0] + " < " + children[1];
+    return "(" + children[0] + ") < (" + children[1] + ")";
   }
 }
 /* JavaCC - OriginalChecksum=cd3543ed8cbdcb8d8a299d020cc92831 (do not edit this line) */

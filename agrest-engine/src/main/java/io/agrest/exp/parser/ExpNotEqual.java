@@ -28,7 +28,7 @@ class ExpNotEqual extends AgExpression {
 
   @Override
   public String toString() {
-    return children[0] + " != " + children[1];
+    return "(" + children[0] + ") != (" + children[1] + ")";
   }
 }
 /* JavaCC - OriginalChecksum=cd31a8834ec599e6eb06535df7a2b157 (do not edit this line) */

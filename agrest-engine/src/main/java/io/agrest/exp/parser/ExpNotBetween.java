@@ -28,7 +28,7 @@ class ExpNotBetween extends AgExpression {
 
   @Override
   public String toString() {
-    return "!between " + children[0] + " and " + children[1];
+    return children[0] + " !between " + children[1] + " and " + children[2];
   }
 }
 /* JavaCC - OriginalChecksum=1af9c63e271dbd73a0ef825dda231d68 (do not edit this line) */

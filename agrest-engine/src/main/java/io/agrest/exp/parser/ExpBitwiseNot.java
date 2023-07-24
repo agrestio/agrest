@@ -28,7 +28,7 @@ class ExpBitwiseNot extends AgExpression {
 
   @Override
   public String toString() {
-    return "~" + children[0];
+    return "~(" + children[0] + ")";
   }
 }
 /* JavaCC - OriginalChecksum=19c490da33ec6688721f4959812e3984 (do not edit this line) */

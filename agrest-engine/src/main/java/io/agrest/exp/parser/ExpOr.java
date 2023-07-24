@@ -5,6 +5,9 @@ package io.agrest.exp.parser;
 import io.agrest.exp.AgExpression;
 import io.agrest.protocol.Exp;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public
 class ExpOr extends ExpCondition {
   public ExpOr(int id) {
@@ -38,7 +41,7 @@ class ExpOr extends ExpCondition {
 
   @Override
   public String toString() {
-    return children[0] + " or " + children[1];
+    return Arrays.stream(children).map(String::valueOf).collect(Collectors.joining(") or (", "(", ")"));
   }
 }
 /* JavaCC - OriginalChecksum=674a058bd6a706248aae7d6f4cb49ef6 (do not edit this line) */

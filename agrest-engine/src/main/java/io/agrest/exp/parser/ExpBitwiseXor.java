@@ -28,7 +28,7 @@ class ExpBitwiseXor extends AgExpression {
 
   @Override
   public String toString() {
-    return children[0] + " ^ " + children[1];
+    return "(" + children[0] + ") ^ (" + children[1] + ")";
   }
 }
 /* JavaCC - OriginalChecksum=9e28b3f45bea0aa6bcbfd7fa8910fd4e (do not edit this line) */
