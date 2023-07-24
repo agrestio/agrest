@@ -1,6 +1,7 @@
 package io.agrest.protocol;
 
 import io.agrest.exp.AgExpressionException;
+import io.agrest.exp.parser.SimpleNode;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -68,6 +70,66 @@ public class ExpTest {
         assertEquals("(((a) = (2)) and ((b) = (4))) or ((c) = (8))", e2.toString());
         assertEquals("(c) = (8)", e3.toString());
         assertEquals("((a) = (null)) or ((c) = (8))", e4.toString());
+    }
+
+    @Test
+    public void testBind_keepsImmutable() {
+        Exp raw = Exp.from("a = $1 and b = $2");
+        Exp e1 = raw.positionalParams("test1", "test2");
+        Exp e2 = raw.namedParams(Map.of("1", "one"));
+        Exp e3 = raw.namedParams(Map.of("1", "two"), true);
+        Exp e4 = raw.namedParams(Map.of("1", "three", "2", "four"));
+        Exp e5 = raw.namedParams(Map.of("1", "five", "2", "six"), true);
+        Exp e6 = raw.namedParams(Map.of("1", "seven", "2", "eight"), false);
+        Collection<Exp> all = List.of(raw, e1, e2, e3, e4, e5, e6);
+
+        // Make sure all of them are different.
+        assertEquals(new ArrayList<>(all), new ArrayList<>(new LinkedHashSet<>(all)));
+
+        assertEquals("((a) = ($1)) and ((b) = ($2))", raw.toString());
+        assertEquals("((a) = ('test1')) and ((b) = ('test2'))", e1.toString());
+        assertEquals("(a) = ('one')", e2.toString());
+        assertEquals("(a) = ('two')", e3.toString());
+        assertEquals("((a) = ('three')) and ((b) = ('four'))", e4.toString());
+        assertEquals("((a) = ('five')) and ((b) = ('six'))", e5.toString());
+        assertEquals("((a) = ('seven')) and ((b) = ('eight'))", e6.toString());
+    }
+
+    @Test
+    public void testCompose_keepsImmutable() {
+        Exp e1 = Exp.from("1 > 2");
+        Exp e2 = e1.and(Exp.from("3 < 4"));
+        Exp e3 = e1.or(Exp.from("5 = 6"));
+        Exp e4 = e2.or(Exp.from("7 > 8"));
+        Exp e5 = e3.and(Exp.from("9 < 10"));
+        Collection<Exp> all = List.of(e1, e2, e3, e4, e5);
+
+        // Make sure all of them are different.
+        assertEquals(new ArrayList<>(all), new ArrayList<>(new LinkedHashSet<>(all)));
+
+        assertEquals("(1) > (2)", e1.toString());
+        assertEquals("((1) > (2)) and ((3) < (4))", e2.toString());
+        assertEquals("((1) > (2)) or ((5) = (6))", e3.toString());
+        assertEquals("(((1) > (2)) and ((3) < (4))) or ((7) > (8))", e4.toString());
+        assertEquals("(((1) > (2)) or ((5) = (6))) and ((9) < (10))", e5.toString());
+    }
+
+    @Test
+    public void testCompose_Optimized() {
+        Exp e1 = Exp.from("1 > 2");
+        Exp e2 = Exp.from("3 < 4 and 5 = 6");
+        Exp e3 = Exp.from("7 > 8 or 9 != 10");
+        List<Exp> exps = List.of(e1, e2, e3);
+
+        Collection<Exp> all = new ArrayList<>();
+        for (Exp exp : exps) {
+            for (Exp otherExp : exps) {
+                all.add(exp.and(otherExp));
+                all.add(exp.or(otherExp));
+            }
+        }
+        assertEquals(List.of(2, 2, 3, 2, 2, 3, 3, 2, 4, 2, 3, 3, 2, 3, 3, 3, 2, 4),
+                     all.stream().map(exp -> ((SimpleNode) exp).jjtGetNumChildren()).collect(Collectors.toList()));
     }
 
     @Test
