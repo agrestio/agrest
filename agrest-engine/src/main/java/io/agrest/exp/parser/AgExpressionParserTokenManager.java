@@ -39,7 +39,7 @@ public class AgExpressionParserTokenManager implements AgExpressionParserConstan
         return (char) value;
     }
 
-    private Object makeInt()
+    private Object makeInt() throws ParseException
     {
         Object  result;
         String  s = image.toString();
@@ -49,35 +49,51 @@ public class AgExpressionParserTokenManager implements AgExpressionParserConstan
             base = (s.length() > 1 && (s.charAt(1) == 'x' || s.charAt(1) == 'X'))? 16 : 8;
         if ( base == 16 )
             s = s.substring(2); // Trim the 0x off the front
-        switch ( s.charAt(s.length()-1) ) {
-            case 'l': case 'L':
-                result = Long.valueOf( s.substring(0,s.length()-1), base );
-                break;
+        try {
+            switch ( s.charAt(s.length()-1) ) {
+                case 'l': case 'L':
+                    result = Long.valueOf( s.substring(0,s.length()-1), base );
+                    break;
 
-            case 'h': case 'H':
-                result = new BigInteger( s.substring(0,s.length()-1), base );
-                break;
+                case 'h': case 'H':
+                    result = new BigInteger( s.substring(0,s.length()-1), base );
+                    break;
 
-            default:
-                result = Integer.valueOf( s, base );
-                break;
+                default:
+                    result = Integer.valueOf( s, base );
+                    break;
+            }
+        } catch (NumberFormatException e) {
+            throw new ParseException(e);
         }
         return result;
     }
 
-    private Object makeFloat()
+    private Object makeFloat() throws ParseException
     {
         String s = image.toString();
-        switch ( s.charAt(s.length()-1) ) {
-            case 'f': case 'F':
-                return Float.valueOf( s );
+        try {
+            switch ( s.charAt(s.length()-1) ) {
+                case 'f': case 'F':
+                    Float fValue = Float.valueOf( s );
+                    if (fValue.isInfinite()) {
+                       throw new ParseException("Too large float value: " + image);
+                    }
+                    return fValue;
 
-            case 'b': case 'B':
-                return new BigDecimal( s.substring(0,s.length()-1) );
+                case 'b': case 'B':
+                    return new BigDecimal( s.substring(0,s.length()-1) );
 
-            case 'd': case 'D':
-            default:
-                return Double.valueOf( s );
+                case 'd': case 'D':
+                default:
+                    Double dValue = Double.valueOf( s );
+                    if (dValue.isInfinite()) {
+                       throw new ParseException("Too large double value: " + image);
+                    }
+                    return dValue;
+            }
+        } catch (NumberFormatException e) {
+            throw new ParseException(e);
         }
     }
 

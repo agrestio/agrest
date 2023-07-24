@@ -11,7 +11,7 @@ package io.agrest.exp.parser;
  * You can modify this class to customize your error reporting
  * mechanisms so long as you retain the public fields.
  */
-public class ParseException extends Exception {
+public class ParseException extends RuntimeException {
 
   /**
    * The version identifier for this Serializable class.
@@ -74,6 +74,15 @@ public class ParseException extends Exception {
     super(message);
   }
 
+  /** Constructor with exception cause. */
+  public ParseException(Throwable cause) {
+      super(cause);
+  }
+
+  /** Constructor with message and exception cause. */
+  public ParseException(String message, Throwable cause) {
+      super(message, cause);
+  }
 
   /**
    * This is the last token that has been consumed successfully.  If
