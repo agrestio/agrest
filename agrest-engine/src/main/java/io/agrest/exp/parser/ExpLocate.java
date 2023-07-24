@@ -14,6 +14,10 @@ class ExpLocate extends AgExpression {
     super(p, id);
   }
 
+  public ExpLocate() {
+    super(AgExpressionParserTreeConstants.JJTLOCATE);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

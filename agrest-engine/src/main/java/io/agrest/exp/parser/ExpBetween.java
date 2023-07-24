@@ -14,6 +14,10 @@ class ExpBetween extends AgExpression {
     super(p, id);
   }
 
+  public ExpBetween() {
+    super(AgExpressionParserTreeConstants.JJTBETWEEN);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

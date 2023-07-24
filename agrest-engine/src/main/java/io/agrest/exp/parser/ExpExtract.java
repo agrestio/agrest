@@ -14,6 +14,10 @@ class ExpExtract extends AgExpression {
     super(p, id);
   }
 
+  public ExpExtract() {
+    super(AgExpressionParserTreeConstants.JJTEXTRACT);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

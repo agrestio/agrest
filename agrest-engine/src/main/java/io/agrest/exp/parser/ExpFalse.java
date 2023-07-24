@@ -14,6 +14,10 @@ class ExpFalse extends AgExpression {
     super(p, id);
   }
 
+  public ExpFalse() {
+    super(AgExpressionParserTreeConstants.JJTFALSE);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

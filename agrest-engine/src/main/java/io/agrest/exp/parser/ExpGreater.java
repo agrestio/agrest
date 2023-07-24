@@ -14,6 +14,10 @@ class ExpGreater extends AgExpression {
     super(p, id);
   }
 
+  public ExpGreater() {
+    super(AgExpressionParserTreeConstants.JJTGREATER);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

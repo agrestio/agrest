@@ -18,6 +18,10 @@ class ExpAnd extends ExpCondition {
     super(p, id);
   }
 
+  public ExpAnd() {
+    super(AgExpressionParserTreeConstants.JJTAND);
+  }
+
   @Override
   public Exp and(Exp exp) {
     if (exp == null) {

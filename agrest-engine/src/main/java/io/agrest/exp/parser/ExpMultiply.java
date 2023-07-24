@@ -14,6 +14,10 @@ class ExpMultiply extends AgExpression {
     super(p, id);
   }
 
+  public ExpMultiply() {
+    super(AgExpressionParserTreeConstants.JJTMULTIPLY);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

@@ -14,6 +14,10 @@ class ExpBitwiseXor extends AgExpression {
     super(p, id);
   }
 
+  public ExpBitwiseXor() {
+    super(AgExpressionParserTreeConstants.JJTBITWISEXOR);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

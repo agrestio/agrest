@@ -14,6 +14,10 @@ class ExpNotLikeIgnoreCase extends AgExpression {
     super(p, id);
   }
 
+  public ExpNotLikeIgnoreCase() {
+    super(AgExpressionParserTreeConstants.JJTNOTLIKEIGNORECASE);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

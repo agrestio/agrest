@@ -14,6 +14,10 @@ class ExpBitwiseAnd extends AgExpression {
     super(p, id);
   }
 
+  public ExpBitwiseAnd() {
+    super(AgExpressionParserTreeConstants.JJTBITWISEAND);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

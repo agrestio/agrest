@@ -14,6 +14,10 @@ class ExpNot extends ExpCondition {
     super(p, id);
   }
 
+  public ExpNot() {
+    super(AgExpressionParserTreeConstants.JJTNOT);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

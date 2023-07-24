@@ -14,6 +14,10 @@ class ExpSqrt extends AgExpression {
     super(p, id);
   }
 
+  public ExpSqrt() {
+    super(AgExpressionParserTreeConstants.JJTSQRT);
+  }
+
 
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {

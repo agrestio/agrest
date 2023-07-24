@@ -14,6 +14,10 @@ class ExpSubtract extends AgExpression {
     super(p, id);
   }
 
+  public ExpSubtract() {
+    super(AgExpressionParserTreeConstants.JJTSUBTRACT);
+  }
+
 
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {

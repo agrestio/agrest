@@ -14,6 +14,10 @@ class ExpEqual extends AgExpression {
     super(p, id);
   }
 
+  public ExpEqual() {
+    super(AgExpressionParserTreeConstants.JJTEQUAL);
+  }
+
   public static ExpEqual of(ExpObjPath path, ExpGenericScalar<?> value) {
     ExpEqual equal = new ExpEqual(AgExpressionParserTreeConstants.JJTEQUAL);
     equal.jjtAddChild(path, 0);

@@ -14,6 +14,10 @@ class ExpScalar extends ExpGenericScalar<Object> {
     super(p, id);
   }
 
+  public ExpScalar() {
+    super(AgExpressionParserTreeConstants.JJTSCALAR);
+  }
+
   public ExpScalar(Object value) {
     super(AgExpressionParserTreeConstants.JJTSCALAR);
     setValue(value);

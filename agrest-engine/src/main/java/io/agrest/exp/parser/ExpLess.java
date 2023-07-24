@@ -14,6 +14,10 @@ class ExpLess extends AgExpression {
     super(p, id);
   }
 
+  public ExpLess() {
+    super(AgExpressionParserTreeConstants.JJTLESS);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

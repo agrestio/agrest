@@ -14,6 +14,10 @@ class ExpNotIn extends AgExpression {
     super(p, id);
   }
 
+  public ExpNotIn() {
+    super(AgExpressionParserTreeConstants.JJTNOTIN);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

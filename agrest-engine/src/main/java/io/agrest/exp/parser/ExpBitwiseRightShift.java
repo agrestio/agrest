@@ -14,6 +14,10 @@ class ExpBitwiseRightShift extends AgExpression {
     super(p, id);
   }
 
+  public ExpBitwiseRightShift() {
+    super(AgExpressionParserTreeConstants.JJTBITWISERIGHTSHIFT);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

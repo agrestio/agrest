@@ -14,6 +14,10 @@ class ExpCurrentTimestamp extends AgExpression {
     super(p, id);
   }
 
+  public ExpCurrentTimestamp() {
+    super(AgExpressionParserTreeConstants.JJTCURRENTTIMESTAMP);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

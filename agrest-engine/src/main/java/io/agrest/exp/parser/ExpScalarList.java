@@ -25,6 +25,10 @@ class ExpScalarList extends ExpGenericScalar<Collection<?>> {
     super(p, id);
   }
 
+  public ExpScalarList() {
+    super(AgExpressionParserTreeConstants.JJTSCALARLIST);
+  }
+
   public ExpScalarList(Object[] values) {
     this(Arrays.asList(values));
   }

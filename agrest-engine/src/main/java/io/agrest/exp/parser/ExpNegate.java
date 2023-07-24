@@ -14,6 +14,10 @@ class ExpNegate extends AgExpression {
     super(p, id);
   }
 
+  public ExpNegate() {
+    super(AgExpressionParserTreeConstants.JJTNEGATE);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

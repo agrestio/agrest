@@ -14,6 +14,10 @@ class ExpNotLike extends AgExpression {
     super(p, id);
   }
 
+  public ExpNotLike() {
+    super(AgExpressionParserTreeConstants.JJTNOTLIKE);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

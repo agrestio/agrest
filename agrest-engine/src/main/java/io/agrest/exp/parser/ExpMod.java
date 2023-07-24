@@ -10,9 +10,13 @@ class ExpMod extends AgExpression {
         super(id);
     }
 
-    public ExpMod(AgExpressionParser p, int id) {
-        super(p, id);
-    }
+  public ExpMod(AgExpressionParser p, int id) {
+    super(p, id);
+  }
+
+  public ExpMod() {
+    super(AgExpressionParserTreeConstants.JJTMOD);
+  }
 
     /**
      * Accept the visitor.

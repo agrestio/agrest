@@ -14,6 +14,10 @@ class ExpLike extends AgExpression {
     super(p, id);
   }
 
+  public ExpLike() {
+    super(AgExpressionParserTreeConstants.JJTLIKE);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

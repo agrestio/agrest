@@ -14,6 +14,10 @@ class ExpTrim extends AgExpression {
     super(p, id);
   }
 
+  public ExpTrim() {
+    super(AgExpressionParserTreeConstants.JJTTRIM);
+  }
+
 
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {

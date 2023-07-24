@@ -14,6 +14,10 @@ class ExpConcat extends AgExpression {
     super(p, id);
   }
 
+  public ExpConcat() {
+    super(AgExpressionParserTreeConstants.JJTCONCAT);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

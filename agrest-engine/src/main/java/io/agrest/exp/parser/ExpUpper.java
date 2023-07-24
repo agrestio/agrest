@@ -14,6 +14,10 @@ class ExpUpper extends AgExpression {
     super(p, id);
   }
 
+  public ExpUpper() {
+    super(AgExpressionParserTreeConstants.JJTUPPER);
+  }
+
 
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {

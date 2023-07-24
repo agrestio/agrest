@@ -14,6 +14,10 @@ class ExpCurrentTime extends AgExpression {
     super(p, id);
   }
 
+  public ExpCurrentTime() {
+    super(AgExpressionParserTreeConstants.JJTCURRENTTIME);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

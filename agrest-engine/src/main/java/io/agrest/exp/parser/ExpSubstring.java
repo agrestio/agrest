@@ -14,6 +14,10 @@ class ExpSubstring extends AgExpression {
     super(p, id);
   }
 
+  public ExpSubstring() {
+    super(AgExpressionParserTreeConstants.JJTSUBSTRING);
+  }
+
 
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {

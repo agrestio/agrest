@@ -14,6 +14,10 @@ class ExpTrue extends AgExpression {
     super(p, id);
   }
 
+  public ExpTrue() {
+    super(AgExpressionParserTreeConstants.JJTTRUE);
+  }
+
 
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {

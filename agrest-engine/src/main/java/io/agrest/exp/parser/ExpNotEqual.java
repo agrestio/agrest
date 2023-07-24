@@ -14,6 +14,10 @@ class ExpNotEqual extends AgExpression {
     super(p, id);
   }
 
+  public ExpNotEqual() {
+    super(AgExpressionParserTreeConstants.JJTNOTEQUAL);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

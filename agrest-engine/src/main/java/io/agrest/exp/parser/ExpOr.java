@@ -18,6 +18,10 @@ class ExpOr extends ExpCondition {
     super(p, id);
   }
 
+  public ExpOr() {
+    super(AgExpressionParserTreeConstants.JJTOR);
+  }
+
   @Override
   public Exp or(Exp exp) {
     if (exp == null) {

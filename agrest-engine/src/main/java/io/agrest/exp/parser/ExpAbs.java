@@ -14,6 +14,10 @@ class ExpAbs extends AgExpression {
     super(p, id);
   }
 
+  public ExpAbs() {
+    super(AgExpressionParserTreeConstants.JJTABS);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

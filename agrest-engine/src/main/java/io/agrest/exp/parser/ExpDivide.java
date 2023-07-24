@@ -14,6 +14,10 @@ class ExpDivide extends AgExpression {
     super(p, id);
   }
 
+  public ExpDivide() {
+    super(AgExpressionParserTreeConstants.JJTDIVIDE);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

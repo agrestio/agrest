@@ -14,6 +14,10 @@ class ExpBitwiseNot extends AgExpression {
     super(p, id);
   }
 
+  public ExpBitwiseNot() {
+    super(AgExpressionParserTreeConstants.JJTBITWISENOT);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 

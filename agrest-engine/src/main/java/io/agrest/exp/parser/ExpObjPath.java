@@ -14,6 +14,10 @@ class ExpObjPath extends AgExpression {
     super(p, id);
   }
 
+  public ExpObjPath() {
+    super(AgExpressionParserTreeConstants.JJTOBJPATH);
+  }
+
   static public ExpObjPath of(String path) {
     ExpObjPath pathExp = new ExpObjPath(AgExpressionParserTreeConstants.JJTOBJPATH);
     pathExp.jjtSetValue(path);

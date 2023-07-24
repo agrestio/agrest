@@ -14,6 +14,10 @@ class ExpLessOrEqual extends AgExpression {
     super(p, id);
   }
 
+  public ExpLessOrEqual() {
+    super(AgExpressionParserTreeConstants.JJTLESSOREQUAL);
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 
