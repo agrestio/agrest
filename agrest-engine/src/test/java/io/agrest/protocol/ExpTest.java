@@ -28,9 +28,9 @@ public class ExpTest {
         assertNotEquals(raw, e1);
         assertNotEquals(raw, e2);
 
-        assertEquals("a = $1", raw.toString());
-        assertEquals("a = 'b'", e1.toString());
-        assertEquals("a = 'b'", e2.toString());
+        assertEquals("(a) = ($1)", raw.toString());
+        assertEquals("(a) = ('b')", e1.toString());
+        assertEquals("(a) = ('b')", e2.toString());
     }
 
     @Test
@@ -46,10 +46,10 @@ public class ExpTest {
         // Make sure all of them are different.
         assertEquals(new ArrayList<>(all), new ArrayList<>(new LinkedHashSet<>(all)));
 
-        assertEquals("a = 5 and b = 7", e1.toString());
-        assertEquals("a = 7 and b = 5", e2.toString());
-        assertEquals("a = 3 and b = 4", e3.toString());
-        assertEquals("a = 4 and b = 3", e4.toString());
+        assertEquals("((a) = (5)) and ((b) = (7))", e1.toString());
+        assertEquals("((a) = (7)) and ((b) = (5))", e2.toString());
+        assertEquals("((a) = (3)) and ((b) = (4))", e3.toString());
+        assertEquals("((a) = (4)) and ((b) = (3))", e4.toString());
     }
 
     @Test
@@ -64,10 +64,10 @@ public class ExpTest {
             put("3", 8);
         }});
 
-        assertEquals("a = 2 and b = 4 or c = 8 and !(d = 16)", e1.toString());
-        assertEquals("a = 2 and b = 4 or c = 8", e2.toString());
-        assertEquals("c = 8", e3.toString());
-        assertEquals("a = null or c = 8", e4.toString());
+        assertEquals("(((a) = (2)) and ((b) = (4))) or (((c) = (8)) and (!((d) = (16))))", e1.toString());
+        assertEquals("(((a) = (2)) and ((b) = (4))) or ((c) = (8))", e2.toString());
+        assertEquals("(c) = (8)", e3.toString());
+        assertEquals("((a) = (null)) or ((c) = (8))", e4.toString());
     }
 
     @Test
