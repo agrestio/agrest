@@ -30,11 +30,11 @@ class ExpFalseTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("false"), "false"),
-                Arguments.of(Exp.from(" false  "), "false"),
-                Arguments.of(Exp.from("FALSE"), "false")
+                Arguments.of("false", "false"),
+                Arguments.of(" false  ", "false"),
+                Arguments.of("FALSE", "false")
         );
     }
 }

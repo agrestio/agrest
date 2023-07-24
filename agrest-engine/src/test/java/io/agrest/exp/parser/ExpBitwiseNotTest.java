@@ -35,10 +35,10 @@ class ExpBitwiseNotTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("~2"), "~(2)"),
-                Arguments.of(Exp.from("~ 2"), "~(2)")
+                Arguments.of("~2", "~(2)"),
+                Arguments.of("~ 2", "~(2)")
         );
     }
 }

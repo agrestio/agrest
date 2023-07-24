@@ -44,13 +44,13 @@ class ExpNotInTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("a !in('b','c')"), "a !in ('b', 'c')"),
-                Arguments.of(Exp.from("a !in ('b',  'c')"), "a !in ('b', 'c')"),
-                Arguments.of(Exp.from("a not in ('b', 'c')"), "a !in ('b', 'c')"),
-                Arguments.of(Exp.from("a !in ('b', 'c', 'd')"), "a !in ('b', 'c', 'd')"),
-                Arguments.of(Exp.from("a !in $b"), "a !in $b")
+                Arguments.of("a !in('b','c')", "a !in ('b', 'c')"),
+                Arguments.of("a !in ('b',  'c')", "a !in ('b', 'c')"),
+                Arguments.of("a not in ('b', 'c')", "a !in ('b', 'c')"),
+                Arguments.of("a !in ('b', 'c', 'd')", "a !in ('b', 'c', 'd')"),
+                Arguments.of("a !in $b", "a !in $b")
         );
     }
 }

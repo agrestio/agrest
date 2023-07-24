@@ -52,18 +52,18 @@ class ExpScalarFloatTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("1.0"), "1.0"),
-                Arguments.of(Exp.from("  1.0 "), "1.0"),
-                Arguments.of(Exp.from(".1"), "0.1"),
-                Arguments.of(Exp.from("1e1"), "10.0"),
-                Arguments.of(Exp.from("1E1"), "10.0"),
-                Arguments.of(Exp.from("1.1e1"), "11.0"),
-                Arguments.of(Exp.from("3.4028235e+38f"), "3.4028235E38"),
-                Arguments.of(Exp.from("1.7976931348623157e+308"), "1.7976931348623157E308"),
-                Arguments.of(Exp.from("1.7976931348623157e+308d"), "1.7976931348623157E308"),
-                Arguments.of(Exp.from("1.7976931348623157e+309b"), "1.7976931348623157E+309")
+                Arguments.of("1.0", "1.0"),
+                Arguments.of("  1.0 ", "1.0"),
+                Arguments.of(".1", "0.1"),
+                Arguments.of("1e1", "10.0"),
+                Arguments.of("1E1", "10.0"),
+                Arguments.of("1.1e1", "11.0"),
+                Arguments.of("3.4028235e+38f", "3.4028235E38"),
+                Arguments.of("1.7976931348623157e+308", "1.7976931348623157E308"),
+                Arguments.of("1.7976931348623157e+308d", "1.7976931348623157E308"),
+                Arguments.of("1.7976931348623157e+309b", "1.7976931348623157E+309")
         );
     }
 }

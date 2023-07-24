@@ -31,10 +31,10 @@ class ExpCurrentTimestampTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("currentTimestamp()"), "currentTimestamp()"),
-                Arguments.of(Exp.from("currentTimestamp ( )"), "currentTimestamp()")
+                Arguments.of("currentTimestamp()", "currentTimestamp()"),
+                Arguments.of("currentTimestamp ( )", "currentTimestamp()")
         );
     }
 }

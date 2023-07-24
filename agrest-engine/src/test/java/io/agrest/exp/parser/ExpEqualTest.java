@@ -40,10 +40,10 @@ class ExpEqualTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("a=b"), "(a) = (b)"),
-                Arguments.of(Exp.from("a = b"), "(a) = (b)")
+                Arguments.of("a=b", "(a) = (b)"),
+                Arguments.of("a = b", "(a) = (b)")
         );
     }
 }

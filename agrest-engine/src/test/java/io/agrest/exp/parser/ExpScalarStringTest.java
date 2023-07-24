@@ -34,15 +34,15 @@ class ExpScalarStringTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("'example'"), "'example'"),
-                Arguments.of(Exp.from("  'example' "), "'example'"),
-                Arguments.of(Exp.from("\"example\""), "'example'"),
-                Arguments.of(Exp.from("''"), "''"),
-                Arguments.of(Exp.from("'  '"), "'  '"),
-                Arguments.of(Exp.from("'example\\'example\\''"), "'example'example''"),
-                Arguments.of(Exp.from("\"\\\"example\\\"\""), "'\"example\"'")
+                Arguments.of("'example'", "'example'"),
+                Arguments.of("  'example' ", "'example'"),
+                Arguments.of("\"example\"", "'example'"),
+                Arguments.of("''", "''"),
+                Arguments.of("'  '", "'  '"),
+                Arguments.of("'example\\'example\\''", "'example'example''"),
+                Arguments.of("\"\\\"example\\\"\"", "'\"example\"'")
         );
     }
 }

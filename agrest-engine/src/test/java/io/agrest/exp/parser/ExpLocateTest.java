@@ -37,11 +37,11 @@ class ExpLocateTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("locate(a,b)"), "locate(a, b)"),
-                Arguments.of(Exp.from("locate ( a, b )"), "locate(a, b)"),
-                Arguments.of(Exp.from("locate (a, b, 1)"), "locate(a, b, (1))")
+                Arguments.of("locate(a,b)", "locate(a, b)"),
+                Arguments.of("locate ( a, b )", "locate(a, b)"),
+                Arguments.of("locate (a, b, 1)", "locate(a, b, (1))")
         );
     }
 }

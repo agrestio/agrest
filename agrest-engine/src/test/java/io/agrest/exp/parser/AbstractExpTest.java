@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractExpTest {
 
-    private ExpTestVisitor visitor;
+    protected ExpTestVisitor visitor;
 
     @BeforeAll
     void init() {
@@ -30,30 +30,31 @@ public abstract class AbstractExpTest {
 
     abstract Stream<Arguments> parseExpThrows();
 
-    abstract Stream<Arguments> stringify();
+    abstract Stream<Arguments> stringifyRaw();
+
+    protected Stream<Arguments> stringify() {
+        return stringifyRaw().peek(args -> args.get()[0] = Exp.from((String) args.get()[0]));
+    }
 
     @ParameterizedTest
     @MethodSource
-    @Order(1)
     void parseExp(String expString) {
         parseExpString(expString);
     }
 
     @ParameterizedTest
     @MethodSource
-    @Order(2)
-    void parseExpThrows(String expString, Class<? extends Throwable> throwableType) {
-        assertThrows(throwableType, () -> parseExpString(expString));
-    }
-
-    @ParameterizedTest
-    @MethodSource
-    @Order(2)
     void stringify(Exp exp, String expected) {
         assertEquals(expected, exp.toString());
     }
 
-    private void parseExpString(String expString) {
+    @ParameterizedTest
+    @MethodSource
+    void parseExpThrows(String expString, Class<? extends Throwable> throwableType) {
+        assertThrows(throwableType, () -> parseExpString(expString));
+    }
+
+    protected void parseExpString(String expString) {
         Exp expression = AgExpressionParser.parse(expString);
         assertNotNull(expression);
         assertEquals(visitor.getNodeType(), expression.getClass());

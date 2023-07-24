@@ -37,11 +37,11 @@ class ExpSubstringTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("substring(a,0)"), "substring(a, 0)"),
-                Arguments.of(Exp.from("substring ( a, 0 )"), "substring(a, 0)"),
-                Arguments.of(Exp.from("substring(a, 0, 1)"), "substring(a, 0, 1)")
+                Arguments.of("substring(a,0)", "substring(a, 0)"),
+                Arguments.of("substring ( a, 0 )", "substring(a, 0)"),
+                Arguments.of("substring(a, 0, 1)", "substring(a, 0, 1)")
         );
     }
 }

@@ -53,23 +53,23 @@ class ExpScalarIntTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("1"), "1"),
-                Arguments.of(Exp.from(" 1  "), "1"),
+                Arguments.of("1", "1"),
+                Arguments.of(" 1  ", "1"),
 
                 // Integer.MAX_VALUE
-                Arguments.of(Exp.from("2147483647"), "2147483647"),
+                Arguments.of("2147483647", "2147483647"),
 
                 // Integer.MAX_VALUE + 1
-                Arguments.of(Exp.from("2147483648L"), "2147483648"),
+                Arguments.of("2147483648L", "2147483648"),
 
                 // Long.MAX_VALUE + 1
-                Arguments.of(Exp.from("9223372036854775808H"), "9223372036854775808"),
+                Arguments.of("9223372036854775808H", "9223372036854775808"),
 
-                Arguments.of(Exp.from("01234567"), "342391"),
-                Arguments.of(Exp.from("0x12345678"), "305419896"),
-                Arguments.of(Exp.from("0x09abcdef"), "162254319")
+                Arguments.of("01234567", "342391"),
+                Arguments.of("0x12345678", "305419896"),
+                Arguments.of("0x09abcdef", "162254319")
         );
     }
 }

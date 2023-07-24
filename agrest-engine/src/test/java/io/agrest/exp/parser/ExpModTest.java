@@ -37,10 +37,10 @@ class ExpModTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("mod(a, b)"), "mod(a, b)"),
-                Arguments.of(Exp.from("mod( a, b )"), "mod(a, b)")
+                Arguments.of("mod(a, b)", "mod(a, b)"),
+                Arguments.of("mod( a, b )", "mod(a, b)")
         );
     }
 }

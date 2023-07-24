@@ -41,13 +41,13 @@ class ExpNotLikeTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("a !like b"), "a !like b"),
-                Arguments.of(Exp.from("a !like   b"), "a !like b"),
-                Arguments.of(Exp.from("a !like b escape 'c'"), "a !like b escape 'c'"),
-                Arguments.of(Exp.from("a not like b"), "a !like b"),
-                Arguments.of(Exp.from("a !like (b)"), "a !like b")
+                Arguments.of("a !like b", "a !like b"),
+                Arguments.of("a !like   b", "a !like b"),
+                Arguments.of("a !like b escape 'c'", "a !like b escape 'c'"),
+                Arguments.of("a not like b", "a !like b"),
+                Arguments.of("a !like (b)", "a !like b")
         );
     }
 }

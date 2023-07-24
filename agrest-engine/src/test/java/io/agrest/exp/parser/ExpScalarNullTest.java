@@ -31,11 +31,11 @@ class ExpScalarNullTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("null"), "null"),
-                Arguments.of(Exp.from(" null  "), "null"),
-                Arguments.of(Exp.from("NULL"), "null")
+                Arguments.of("null", "null"),
+                Arguments.of(" null  ", "null"),
+                Arguments.of("NULL", "null")
         );
     }
 }

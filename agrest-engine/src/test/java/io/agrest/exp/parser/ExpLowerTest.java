@@ -34,10 +34,10 @@ class ExpLowerTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("lower(a)"), "lower(a)"),
-                Arguments.of(Exp.from("lower ( a )"), "lower(a)")
+                Arguments.of("lower(a)", "lower(a)"),
+                Arguments.of("lower ( a )", "lower(a)")
         );
     }
 }

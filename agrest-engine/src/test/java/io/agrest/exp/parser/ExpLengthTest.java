@@ -35,10 +35,10 @@ class ExpLengthTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("length(a)"), "length(a)"),
-                Arguments.of(Exp.from("length ( a )"), "length(a)")
+                Arguments.of("length(a)", "length(a)"),
+                Arguments.of("length ( a )", "length(a)")
         );
     }
 }

@@ -39,10 +39,10 @@ class ExpConcatTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("concat(a,b)"), "concat(a, b)"),
-                Arguments.of(Exp.from("concat (a,  b)"), "concat(a, b)")
+                Arguments.of("concat(a,b)", "concat(a, b)"),
+                Arguments.of("concat (a,  b)", "concat(a, b)")
         );
     }
 }

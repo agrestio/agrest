@@ -41,10 +41,10 @@ class ExpBetweenTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("a between b and c"), "a between b and c"),
-                Arguments.of(Exp.from("a between  b and  c"), "a between b and c")
+                Arguments.of("a between b and c", "a between b and c"),
+                Arguments.of("a between  b and  c", "a between b and c")
         );
     }
 }

@@ -41,13 +41,13 @@ class ExpNotLikeIgnoreCaseTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("a !likeIgnoreCase b"), "a !likeIgnoreCase b"),
-                Arguments.of(Exp.from("a !likeIgnoreCase   b"), "a !likeIgnoreCase b"),
-                Arguments.of(Exp.from("a not likeIgnoreCase b"), "a !likeIgnoreCase b"),
-                Arguments.of(Exp.from("a !likeIgnoreCase b escape 'c'"), "a !likeIgnoreCase b escape 'c'"),
-                Arguments.of(Exp.from("a !likeIgnoreCase (b)"), "a !likeIgnoreCase b")
+                Arguments.of("a !likeIgnoreCase b", "a !likeIgnoreCase b"),
+                Arguments.of("a !likeIgnoreCase   b", "a !likeIgnoreCase b"),
+                Arguments.of("a not likeIgnoreCase b", "a !likeIgnoreCase b"),
+                Arguments.of("a !likeIgnoreCase b escape 'c'", "a !likeIgnoreCase b escape 'c'"),
+                Arguments.of("a !likeIgnoreCase (b)", "a !likeIgnoreCase b")
         );
     }
 }

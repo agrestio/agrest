@@ -34,10 +34,10 @@ class ExpUpperTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("upper(a)"), "upper(a)"),
-                Arguments.of(Exp.from("upper ( a )"), "upper(a)")
+                Arguments.of("upper(a)", "upper(a)"),
+                Arguments.of("upper ( a )", "upper(a)")
         );
     }
 }

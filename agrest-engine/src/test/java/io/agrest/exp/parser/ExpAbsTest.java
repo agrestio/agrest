@@ -36,11 +36,11 @@ class ExpAbsTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("abs(1)"), "abs(1)"),
-                Arguments.of(Exp.from("abs(  1 )"), "abs(1)"),
-                Arguments.of(Exp.from("abs(abs(1))"), "abs(abs(1))")
+                Arguments.of("abs(1)", "abs(1)"),
+                Arguments.of("abs(  1 )", "abs(1)"),
+                Arguments.of("abs(abs(1))", "abs(abs(1))")
         );
     }
 }

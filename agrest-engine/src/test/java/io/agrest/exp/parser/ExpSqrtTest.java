@@ -36,10 +36,10 @@ class ExpSqrtTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("sqrt(1)"), "sqrt(1)"),
-                Arguments.of(Exp.from("sqrt(  1 )"), "sqrt(1)")
+                Arguments.of("sqrt(1)", "sqrt(1)"),
+                Arguments.of("sqrt(  1 )", "sqrt(1)")
         );
     }
 }

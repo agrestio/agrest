@@ -46,10 +46,10 @@ class ExpObjPathTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("a"), "a"),
-                Arguments.of(Exp.from(" a  "), "a")
+                Arguments.of("a", "a"),
+                Arguments.of(" a  ", "a")
         );
     }
 }

@@ -46,19 +46,19 @@ class ExpExtractTest extends AbstractExpTest {
     }
 
     @Override
-    Stream<Arguments> stringify() {
+    Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of(Exp.from("year(a)"), "year(a)"),
-                Arguments.of(Exp.from("year ( a )"), "year(a)"),
-                Arguments.of(Exp.from("month(a)"), "month(a)"),
-                Arguments.of(Exp.from("week(a)"), "week(a)"),
-                Arguments.of(Exp.from("day(a)"), "day(a)"),
-                Arguments.of(Exp.from("dayOfYear(a)"), "dayOfYear(a)"),
-                Arguments.of(Exp.from("dayOfMonth(a)"), "dayOfMonth(a)"),
-                Arguments.of(Exp.from("dayOfWeek(a)"), "dayOfWeek(a)"),
-                Arguments.of(Exp.from("hour(a)"), "hour(a)"),
-                Arguments.of(Exp.from("minute(a)"), "minute(a)"),
-                Arguments.of(Exp.from("second(a)"), "second(a)")
+                Arguments.of("year(a)", "year(a)"),
+                Arguments.of("year ( a )", "year(a)"),
+                Arguments.of("month(a)", "month(a)"),
+                Arguments.of("week(a)", "week(a)"),
+                Arguments.of("day(a)", "day(a)"),
+                Arguments.of("dayOfYear(a)", "dayOfYear(a)"),
+                Arguments.of("dayOfMonth(a)", "dayOfMonth(a)"),
+                Arguments.of("dayOfWeek(a)", "dayOfWeek(a)"),
+                Arguments.of("hour(a)", "hour(a)"),
+                Arguments.of("minute(a)", "minute(a)"),
+                Arguments.of("second(a)", "second(a)")
         );
     }
 }
