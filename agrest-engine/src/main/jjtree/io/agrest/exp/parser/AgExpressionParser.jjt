@@ -75,12 +75,12 @@ AgExpression expression() : {}
 
 void orCondition() : {}
 {
-	andCondition() ( "or" andCondition() #Or(2) )*
+	( andCondition() ( "or" andCondition() )* ) #Or(>1)
 }
 
 void andCondition() : {}
 {
-	notCondition() ( "and" notCondition() #And(2) )*
+	( notCondition() ( "and" notCondition() )* ) #And(>1)
 }
 
 void notCondition() : {}
