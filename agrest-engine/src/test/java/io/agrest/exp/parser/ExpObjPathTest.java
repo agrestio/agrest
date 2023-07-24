@@ -1,6 +1,7 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 import org.opentest4j.AssertionFailedError;
 
@@ -41,6 +42,14 @@ class ExpObjPathTest extends AbstractExpTest {
                 Arguments.of("#a", TokenMgrException.class),
                 Arguments.of("a#0", TokenMgrException.class),
                 Arguments.of("a#a#a", TokenMgrException.class)
+        );
+    }
+
+    @Override
+    Stream<Arguments> stringify() {
+        return Stream.of(
+                Arguments.of(Exp.from("a"), "a"),
+                Arguments.of(Exp.from(" a  "), "a")
         );
     }
 }

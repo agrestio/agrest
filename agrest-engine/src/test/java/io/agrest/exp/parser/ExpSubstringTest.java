@@ -1,6 +1,7 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
@@ -32,6 +33,15 @@ class ExpSubstringTest extends AbstractExpTest {
                 Arguments.of("substring(a, '1')", AgException.class),
                 Arguments.of("substring($a, 1)", AgException.class),
                 Arguments.of("SUBSTRING(a, 0)", AgException.class)
+        );
+    }
+
+    @Override
+    Stream<Arguments> stringify() {
+        return Stream.of(
+                Arguments.of(Exp.from("substring(a,0)"), "substring(a, 0)"),
+                Arguments.of(Exp.from("substring ( a, 0 )"), "substring(a, 0)"),
+                Arguments.of(Exp.from("substring(a, 0, 1)"), "substring(a, 0, 1)")
         );
     }
 }

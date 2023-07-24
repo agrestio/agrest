@@ -1,6 +1,7 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
@@ -32,6 +33,14 @@ class ExpModTest extends AbstractExpTest {
                 Arguments.of("mod(, b)", AgException.class),
                 Arguments.of("mod(1, currentDate())", AgException.class),
                 Arguments.of("mod('1', '2')", AgException.class)
+        );
+    }
+
+    @Override
+    Stream<Arguments> stringify() {
+        return Stream.of(
+                Arguments.of(Exp.from("mod(a, b)"), "mod(a, b)"),
+                Arguments.of(Exp.from("mod( a, b )"), "mod(a, b)")
         );
     }
 }

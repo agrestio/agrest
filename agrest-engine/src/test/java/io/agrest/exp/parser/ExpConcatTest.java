@@ -1,6 +1,7 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
@@ -34,6 +35,14 @@ class ExpConcatTest extends AbstractExpTest {
                 Arguments.of("concat($a, $b)", AgException.class),
                 Arguments.of("CONCAT(a)", AgException.class),
                 Arguments.of("concat(a, and)", AgException.class)
+        );
+    }
+
+    @Override
+    Stream<Arguments> stringify() {
+        return Stream.of(
+                Arguments.of(Exp.from("concat(a,b)"), "concat(a, b)"),
+                Arguments.of(Exp.from("concat (a,  b)"), "concat(a, b)")
         );
     }
 }

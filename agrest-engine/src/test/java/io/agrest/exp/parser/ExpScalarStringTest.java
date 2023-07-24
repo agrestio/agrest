@@ -1,5 +1,6 @@
 package io.agrest.exp.parser;
 
+import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 import org.opentest4j.AssertionFailedError;
 
@@ -29,6 +30,19 @@ class ExpScalarStringTest extends AbstractExpTest {
     Stream<Arguments> parseExpThrows() {
         return Stream.of(
                 Arguments.of("example", AssertionFailedError.class)
+        );
+    }
+
+    @Override
+    Stream<Arguments> stringify() {
+        return Stream.of(
+                Arguments.of(Exp.from("'example'"), "'example'"),
+                Arguments.of(Exp.from("  'example' "), "'example'"),
+                Arguments.of(Exp.from("\"example\""), "'example'"),
+                Arguments.of(Exp.from("''"), "''"),
+                Arguments.of(Exp.from("'  '"), "'  '"),
+                Arguments.of(Exp.from("'example\\'example\\''"), "'example'example''"),
+                Arguments.of(Exp.from("\"\\\"example\\\"\""), "'\"example\"'")
         );
     }
 }

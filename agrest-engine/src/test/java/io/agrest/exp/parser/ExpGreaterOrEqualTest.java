@@ -1,6 +1,7 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
@@ -34,6 +35,14 @@ class ExpGreaterOrEqualTest extends AbstractExpTest {
                 Arguments.of(">=", AgException.class),
                 Arguments.of("a >=", AgException.class),
                 Arguments.of(">= b", AgException.class)
+        );
+    }
+
+    @Override
+    Stream<Arguments> stringify() {
+        return Stream.of(
+                Arguments.of(Exp.from("a>=b"), "(a) >= (b)"),
+                Arguments.of(Exp.from("a >= b"), "(a) >= (b)")
         );
     }
 }

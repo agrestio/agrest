@@ -1,6 +1,7 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
@@ -19,8 +20,6 @@ class ExpNegateTest extends AbstractExpTest {
                 "- a",
                 "-1",
                 "-1.1",
-
-                // TODO: Should throw AgException.
                 "--a",
                 "---a"
         );
@@ -32,6 +31,14 @@ class ExpNegateTest extends AbstractExpTest {
                 Arguments.of("-", AgException.class),
                 Arguments.of("-'1'", AgException.class),
                 Arguments.of("-currentDate()", AgException.class)
+        );
+    }
+
+    @Override
+    Stream<Arguments> stringify() {
+        return Stream.of(
+                Arguments.of(Exp.from("-a"), "-(a)"),
+                Arguments.of(Exp.from("- a"), "-(a)")
         );
     }
 }

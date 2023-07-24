@@ -1,6 +1,7 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 import org.opentest4j.AssertionFailedError;
 
@@ -26,6 +27,15 @@ class ExpTrueTest extends AbstractExpTest {
         return Stream.of(
                 Arguments.of("True", AssertionFailedError.class),
                 Arguments.of("true()", AgException.class)
+        );
+    }
+
+    @Override
+    Stream<Arguments> stringify() {
+        return Stream.of(
+                Arguments.of(Exp.from("true"), "true"),
+                Arguments.of(Exp.from(" true  "), "true"),
+                Arguments.of(Exp.from("TRUE"), "true")
         );
     }
 }

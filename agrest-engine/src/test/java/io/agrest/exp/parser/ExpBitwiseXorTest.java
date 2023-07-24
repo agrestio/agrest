@@ -1,6 +1,7 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
@@ -33,6 +34,14 @@ class ExpBitwiseXorTest extends AbstractExpTest {
                 Arguments.of("1 ^^ 2", AgException.class),
                 Arguments.of("1 ^ 'a'", AgException.class),
                 Arguments.of("1 ^ getDate()", AgException.class)
+        );
+    }
+
+    @Override
+    Stream<Arguments> stringify() {
+        return Stream.of(
+                Arguments.of(Exp.from("1^2"), "(1) ^ (2)"),
+                Arguments.of(Exp.from("1 ^  2"), "(1) ^ (2)")
         );
     }
 }

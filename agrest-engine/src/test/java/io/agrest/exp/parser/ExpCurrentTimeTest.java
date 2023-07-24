@@ -1,6 +1,7 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
@@ -26,6 +27,14 @@ class ExpCurrentTimeTest extends AbstractExpTest {
                 Arguments.of("currentTime", AgException.class),
                 Arguments.of("currentTime(0)", AgException.class),
                 Arguments.of("CURRENTTIME()", AgException.class)
+        );
+    }
+
+    @Override
+    Stream<Arguments> stringify() {
+        return Stream.of(
+                Arguments.of(Exp.from("currentTime()"), "currentTime()"),
+                Arguments.of(Exp.from("currentTime ( )"), "currentTime()")
         );
     }
 }

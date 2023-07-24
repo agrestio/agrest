@@ -1,6 +1,7 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 import org.opentest4j.AssertionFailedError;
 
@@ -29,6 +30,7 @@ class ExpScalarIntTest extends AbstractExpTest {
                 // Long.MAX_VALUE + 1
                 "9223372036854775808H",
                 "9223372036854775808h",
+
                 "01234567",
                 "0x12345678",
                 "0x09abcdef",
@@ -45,12 +47,29 @@ class ExpScalarIntTest extends AbstractExpTest {
                 Arguments.of("0x", AgException.class),
                 Arguments.of("08", AgException.class),
                 Arguments.of("0xG", AgException.class),
+                Arguments.of("2147483648", AgException.class),          // Integer.MAX_VALUE + 1
+                Arguments.of("9223372036854775808l", AgException.class) // Long.MAX_VALUE + 1
+        );
+    }
+
+    @Override
+    Stream<Arguments> stringify() {
+        return Stream.of(
+                Arguments.of(Exp.from("1"), "1"),
+                Arguments.of(Exp.from(" 1  "), "1"),
+
+                // Integer.MAX_VALUE
+                Arguments.of(Exp.from("2147483647"), "2147483647"),
 
                 // Integer.MAX_VALUE + 1
-                Arguments.of("2147483648", NumberFormatException.class),
+                Arguments.of(Exp.from("2147483648L"), "2147483648"),
 
                 // Long.MAX_VALUE + 1
-                Arguments.of("9223372036854775808l", NumberFormatException.class)
+                Arguments.of(Exp.from("9223372036854775808H"), "9223372036854775808"),
+
+                Arguments.of(Exp.from("01234567"), "342391"),
+                Arguments.of(Exp.from("0x12345678"), "305419896"),
+                Arguments.of(Exp.from("0x09abcdef"), "162254319")
         );
     }
 }

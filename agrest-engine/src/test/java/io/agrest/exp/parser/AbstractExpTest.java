@@ -30,6 +30,8 @@ public abstract class AbstractExpTest {
 
     abstract Stream<Arguments> parseExpThrows();
 
+    abstract Stream<Arguments> stringify();
+
     @ParameterizedTest
     @MethodSource
     @Order(1)
@@ -37,16 +39,23 @@ public abstract class AbstractExpTest {
         parseExpString(expString);
     }
 
-    private void parseExpString(String expString) {
-        Exp expression = AgExpressionParser.parse(expString);
-        assertNotNull(expression);
-        assertEquals(visitor.getNodeType(), expression.getClass());
-    }
-
     @ParameterizedTest
     @MethodSource
     @Order(2)
     void parseExpThrows(String expString, Class<? extends Throwable> throwableType) {
         assertThrows(throwableType, () -> parseExpString(expString));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    @Order(2)
+    void stringify(Exp exp, String expected) {
+        assertEquals(expected, exp.toString());
+    }
+
+    private void parseExpString(String expString) {
+        Exp expression = AgExpressionParser.parse(expString);
+        assertNotNull(expression);
+        assertEquals(visitor.getNodeType(), expression.getClass());
     }
 }

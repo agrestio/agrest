@@ -1,6 +1,7 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
@@ -29,6 +30,14 @@ class ExpUpperTest extends AbstractExpTest {
                 Arguments.of("upper(1)", AgException.class),
                 Arguments.of("upper($a)", AgException.class),
                 Arguments.of("UPPER(a)", AgException.class)
+        );
+    }
+
+    @Override
+    Stream<Arguments> stringify() {
+        return Stream.of(
+                Arguments.of(Exp.from("upper(a)"), "upper(a)"),
+                Arguments.of(Exp.from("upper ( a )"), "upper(a)")
         );
     }
 }

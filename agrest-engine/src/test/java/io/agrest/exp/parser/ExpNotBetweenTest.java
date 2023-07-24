@@ -1,6 +1,7 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
@@ -38,6 +39,15 @@ class ExpNotBetweenTest extends AbstractExpTest {
                 Arguments.of("a NOT between b and c", AgException.class),
                 Arguments.of("a !BETWEEN b and c", AgException.class),
                 Arguments.of("a !between b AND c", AgException.class)
+        );
+    }
+
+    @Override
+    Stream<Arguments> stringify() {
+        return Stream.of(
+                Arguments.of(Exp.from("a !between b and c"), "a !between b and c"),
+                Arguments.of(Exp.from("a not between b and c"), "a !between b and c"),
+                Arguments.of(Exp.from("a !between  b and  c"), "a !between b and c")
         );
     }
 }

@@ -1,6 +1,7 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
@@ -29,6 +30,14 @@ class ExpTrimTest extends AbstractExpTest {
                 Arguments.of("trim(1)", AgException.class),
                 Arguments.of("trim($a)", AgException.class),
                 Arguments.of("TRIM(a)", AgException.class)
+        );
+    }
+
+    @Override
+    Stream<Arguments> stringify() {
+        return Stream.of(
+                Arguments.of(Exp.from("trim(a)"), "trim(a)"),
+                Arguments.of(Exp.from("trim ( a )"), "trim(a)")
         );
     }
 }

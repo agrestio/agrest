@@ -1,5 +1,6 @@
 package io.agrest.exp.parser;
 
+import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 import org.opentest4j.AssertionFailedError;
 
@@ -26,6 +27,15 @@ class ExpScalarNullTest extends AbstractExpTest {
                 Arguments.of("nil", AssertionFailedError.class),
                 Arguments.of("Null", AssertionFailedError.class),
                 Arguments.of("None", AssertionFailedError.class)
+        );
+    }
+
+    @Override
+    Stream<Arguments> stringify() {
+        return Stream.of(
+                Arguments.of(Exp.from("null"), "null"),
+                Arguments.of(Exp.from(" null  "), "null"),
+                Arguments.of(Exp.from("NULL"), "null")
         );
     }
 }

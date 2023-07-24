@@ -1,6 +1,7 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
@@ -33,6 +34,15 @@ class ExpAndTest extends AbstractExpTest {
                 Arguments.of("a and", AgException.class),
                 Arguments.of("and", AgException.class),
                 Arguments.of("a AND b", AgException.class)
+        );
+    }
+
+    @Override
+    Stream<Arguments> stringify() {
+        return Stream.of(
+                Arguments.of(Exp.from("a and b"), "(a) and (b)"),
+                Arguments.of(Exp.from("a and  b"), "(a) and (b)"),
+                Arguments.of(Exp.from("a and b and c"), "((a) and (b)) and (c)")
         );
     }
 }
