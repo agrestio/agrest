@@ -24,11 +24,7 @@ class ExpAnd extends ExpCondition {
 
   @Override
   public Exp and(Exp exp) {
-    if (exp == null) {
-      return this;
-    }
-    jjtAddChild((Node) exp, jjtGetNumChildren());
-    return this;
+    return ExpUtils.and(this, (Node) exp);
   }
 
   /** Accept the visitor. **/

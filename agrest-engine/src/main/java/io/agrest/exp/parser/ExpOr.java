@@ -24,11 +24,7 @@ class ExpOr extends ExpCondition {
 
   @Override
   public Exp or(Exp exp) {
-    if (exp == null) {
-      return this;
-    }
-    jjtAddChild((Node) exp, jjtGetNumChildren());
-    return this;
+    return ExpUtils.or(this, (Node) exp);
   }
 
   /** Accept the visitor. **/
