@@ -27,11 +27,19 @@ public interface Exp {
     }
 
     /**
+     * @deprecated since 5.0 in favor of {@link #from(String)}
+     */
+    @Deprecated(since = "5.0")
+    static Exp simple(String template) {
+        return from(template);
+    }
+
+    /**
      * @deprecated since 5.0 in favor of {@link #from(String)} and {@link #namedParams(Map)}
      */
     @Deprecated(since = "5.0")
     static Exp witNamedParams(String template, Map<String, Object> params) {
-        return parseTemplate(template).namedParams(params);
+        return from(template).namedParams(params);
     }
 
     /**
@@ -39,7 +47,7 @@ public interface Exp {
      */
     @Deprecated(since = "5.0")
     static Exp withPositionalParams(String template, Object... params) {
-        return parseTemplate(template).positionalParams(params);
+        return from(template).positionalParams(params);
     }
 
     /**
