@@ -39,9 +39,7 @@ final class ExpUtils {
     }
 
     static Exp composeBinary(Exp exp, Exp arg1, Exp arg2) {
-        Node[] children = new Node[2];
-        children[0] = (Node) arg1;
-        children[1] = (Node) arg2;
+        Node[] children = new Node[]{(Node) arg1, (Node) arg2};
         ((SimpleNode) exp).setChildren(children);
         return exp;
     }

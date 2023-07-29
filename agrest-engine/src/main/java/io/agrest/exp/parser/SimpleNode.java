@@ -82,6 +82,14 @@ public class SimpleNode implements Node {
 
     public void setChildren(Node[] children) {
         this.children = children;
+
+        if (children != null) {
+            for (Node n : children) {
+                if (n != null) {
+                    n.jjtSetParent(this);
+                }
+            }
+        }
     }
 
     public Node[] getChildren() {

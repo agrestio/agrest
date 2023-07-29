@@ -56,7 +56,7 @@ public abstract class AgExpression extends SimpleNode {
         replacer.onFinish();
     }
 
-    protected AgExpression deepCopy() {
+    public AgExpression deepCopy() {
         return transform(null);
     }
 

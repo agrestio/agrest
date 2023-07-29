@@ -1,5 +1,6 @@
 package io.agrest.protocol;
 
+import io.agrest.exp.AgExpression;
 import io.agrest.exp.ExpVisitor;
 import io.agrest.exp.parser.AgExpressionParser;
 import io.agrest.exp.parser.AgExpressionParserTreeConstants;
@@ -179,11 +180,12 @@ public interface Exp {
                 List<Node> children = new ArrayList<>(len);
 
                 for (Exp e : exps) {
-                    ExpUtils.appendAndChild(children, (Node) e);
+                    ExpUtils.appendAndChild(children, ((AgExpression) e).deepCopy());
                 }
 
                 ExpAnd exp = new ExpAnd();
                 exp.setChildren(children.toArray(new Node[0]));
+
                 return exp;
         }
     }
@@ -199,7 +201,7 @@ public interface Exp {
                 List<Node> children = new ArrayList<>(len);
 
                 for (Exp e : exps) {
-                    ExpUtils.appendOrChild(children, (Node) e);
+                    ExpUtils.appendOrChild(children, ((AgExpression) e).deepCopy());
                 }
 
                 ExpOr exp = new ExpOr();
