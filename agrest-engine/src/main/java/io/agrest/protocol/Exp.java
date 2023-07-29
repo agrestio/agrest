@@ -2,24 +2,7 @@ package io.agrest.protocol;
 
 import io.agrest.exp.AgExpression;
 import io.agrest.exp.ExpVisitor;
-import io.agrest.exp.parser.AgExpressionParser;
-import io.agrest.exp.parser.AgExpressionParserTreeConstants;
-import io.agrest.exp.parser.AgExpressionParserVisitor;
-import io.agrest.exp.parser.ExpAnd;
-import io.agrest.exp.parser.ExpEqual;
-import io.agrest.exp.parser.ExpGenericScalar;
-import io.agrest.exp.parser.ExpGreater;
-import io.agrest.exp.parser.ExpGreaterOrEqual;
-import io.agrest.exp.parser.ExpIn;
-import io.agrest.exp.parser.ExpLess;
-import io.agrest.exp.parser.ExpLessOrEqual;
-import io.agrest.exp.parser.ExpLike;
-import io.agrest.exp.parser.ExpLikeIgnoreCase;
-import io.agrest.exp.parser.ExpPath;
-import io.agrest.exp.parser.ExpOr;
-import io.agrest.exp.parser.ExpScalar;
-import io.agrest.exp.parser.ExpScalarList;
-import io.agrest.exp.parser.Node;
+import io.agrest.exp.parser.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,7 +97,7 @@ public interface Exp {
             return new ExpScalar(AgExpressionParserTreeConstants.JJTSCALAR);
         }
 
-        ExpGenericScalar<?> scalar;
+        ExpBaseScalar<?> scalar;
         if (value instanceof Collection) {
             scalar = new ExpScalarList(AgExpressionParserTreeConstants.JJTSCALARLIST);
         } else if (value.getClass().isArray()) {
@@ -133,42 +116,114 @@ public interface Exp {
         return scalar;
     }
 
-    static Exp in(String path, Object... scalars) {
-        return ExpUtils.composeBinary(new ExpIn(), path(path), ExpUtils.scalarArray(scalars));
+    /**
+     * @since 5.0
+     */
+    static Exp between(String left, Object right1, Object right2) {
+        return ExpUtils.composeTernary(new ExpBetween(), path(left), scalar(right1), scalar(right2));
     }
 
+    /**
+     * @since 5.0
+     */
+    static Exp notBetween(String left, Object right1, Object right2) {
+        return ExpUtils.composeTernary(new ExpNotBetween(), path(left), scalar(right1), scalar(right2));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp in(String path, Object... values) {
+        return ExpUtils.composeBinary(new ExpIn(), path(path), ExpUtils.scalarArray(values));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp notIn(String path, Object... scalars) {
+        return ExpUtils.composeBinary(new ExpNotIn(), path(path), ExpUtils.scalarArray(scalars));
+    }
+
+    /**
+     * @since 5.0
+     */
     static Exp inCollection(String path, Collection<?> scalars) {
         return ExpUtils.composeBinary(new ExpIn(), path(path), ExpUtils.scalarArray(scalars));
     }
 
+    /**
+     * @since 5.0
+     */
+    static Exp notInCollection(String path, Collection<?> scalars) {
+        return ExpUtils.composeBinary(new ExpNotIn(), path(path), ExpUtils.scalarArray(scalars));
+    }
+
+    /**
+     * @since 5.0
+     */
     static Exp likeIgnoreCase(String path, Object scalar) {
         return ExpUtils.composeBinary(new ExpLikeIgnoreCase(), path(path), scalar(scalar));
     }
 
+    /**
+     * @since 5.0
+     */
+    static Exp notLikeIgnoreCase(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpNotLikeIgnoreCase(), path(path), scalar(scalar));
+    }
+
+    /**
+     * @since 5.0
+     */
     static Exp like(String path, Object scalar) {
         return ExpUtils.composeBinary(new ExpLike(), path(path), scalar(scalar));
     }
 
+    /**
+     * @since 5.0
+     */
+    static Exp notLike(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpNotLike(), path(path), scalar(scalar));
+    }
+
+    /**
+     * @since 5.0
+     */
     static Exp greaterOrEqual(String path, Object scalar) {
         return ExpUtils.composeBinary(new ExpGreaterOrEqual(), path(path), scalar(scalar));
     }
 
+    /**
+     * @since 5.0
+     */
     static Exp lessOrEqual(String path, Object scalar) {
         return ExpUtils.composeBinary(new ExpLessOrEqual(), path(path), scalar(scalar));
     }
 
+    /**
+     * @since 5.0
+     */
     static Exp greater(String path, Object scalar) {
         return ExpUtils.composeBinary(new ExpGreater(), path(path), scalar(scalar));
     }
 
+    /**
+     * @since 5.0
+     */
     static Exp less(String path, Object scalar) {
         return ExpUtils.composeBinary(new ExpLess(), path(path), scalar(scalar));
     }
 
+    /**
+     * @since 5.0
+     */
     static Exp equal(String path, Object scalar) {
         return ExpUtils.composeBinary(new ExpEqual(), path(path), scalar(scalar));
     }
 
+    /**
+     * @since 5.0
+     */
     static Exp and(Exp... exps) {
         int len = exps.length;
         switch (len) {
@@ -190,6 +245,9 @@ public interface Exp {
         }
     }
 
+    /**
+     * @since 5.0
+     */
     static Exp or(Exp... exps) {
         int len = exps.length;
         switch (len) {
@@ -208,6 +266,14 @@ public interface Exp {
                 exp.setChildren(children.toArray(new Node[0]));
                 return exp;
         }
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp not(Exp exp) {
+        // delegating to the object allows polymorphic implementation
+        return exp.not();
     }
 
     /**
@@ -264,5 +330,14 @@ public interface Exp {
 
     default Exp or(Exp exp) {
         return exp != null ? Exp.or(this, exp) : this;
+    }
+
+    /**
+     * @since 5.0
+     */
+    default Exp not() {
+        ExpNot not = new ExpNot();
+        not.jjtAddChild((Node) this, 0);
+        return not;
     }
 }

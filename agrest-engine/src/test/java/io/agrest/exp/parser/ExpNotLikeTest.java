@@ -1,7 +1,6 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
-import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
@@ -43,11 +42,11 @@ class ExpNotLikeTest extends AbstractExpTest {
     @Override
     Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of("a !like b", "a !like b"),
-                Arguments.of("a !like   b", "a !like b"),
-                Arguments.of("a !like b escape 'c'", "a !like b escape 'c'"),
-                Arguments.of("a not like b", "a !like b"),
-                Arguments.of("a !like (b)", "a !like b")
+                Arguments.of("a !like b", "a not like b"),
+                Arguments.of("a !like   b", "a not like b"),
+                Arguments.of("a !like b escape 'c'", "a not like b escape 'c'"),
+                Arguments.of("a not like b", "a not like b"),
+                Arguments.of("a !like (b)", "a not like b")
         );
     }
 }

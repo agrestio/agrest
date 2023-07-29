@@ -1,7 +1,6 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
-import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
@@ -43,11 +42,11 @@ class ExpNotLikeIgnoreCaseTest extends AbstractExpTest {
     @Override
     Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of("a !likeIgnoreCase b", "a !likeIgnoreCase b"),
-                Arguments.of("a !likeIgnoreCase   b", "a !likeIgnoreCase b"),
-                Arguments.of("a not likeIgnoreCase b", "a !likeIgnoreCase b"),
-                Arguments.of("a !likeIgnoreCase b escape 'c'", "a !likeIgnoreCase b escape 'c'"),
-                Arguments.of("a !likeIgnoreCase (b)", "a !likeIgnoreCase b")
+                Arguments.of("a !likeIgnoreCase b", "a not likeIgnoreCase b"),
+                Arguments.of("a !likeIgnoreCase   b", "a not likeIgnoreCase b"),
+                Arguments.of("a not likeIgnoreCase b", "a not likeIgnoreCase b"),
+                Arguments.of("a !likeIgnoreCase b escape 'c'", "a not likeIgnoreCase b escape 'c'"),
+                Arguments.of("a !likeIgnoreCase (b)", "a not likeIgnoreCase b")
         );
     }
 }

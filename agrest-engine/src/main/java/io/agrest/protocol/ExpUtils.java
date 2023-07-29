@@ -1,6 +1,7 @@
 package io.agrest.protocol;
 
 import io.agrest.AgException;
+import io.agrest.exp.AgExpression;
 import io.agrest.exp.parser.AgExpressionParserTreeConstants;
 import io.agrest.exp.parser.ExpAnd;
 import io.agrest.exp.parser.ExpOr;
@@ -38,8 +39,14 @@ final class ExpUtils {
         }
     }
 
-    static Exp composeBinary(Exp exp, Exp arg1, Exp arg2) {
-        Node[] children = new Node[]{(Node) arg1, (Node) arg2};
+    static Exp composeBinary(Exp exp, Exp child1, Exp child2) {
+        Node[] children = new Node[]{(Node) child1, (Node) child2};
+        ((SimpleNode) exp).setChildren(children);
+        return exp;
+    }
+
+    static Exp composeTernary(Exp exp, Exp child1, Exp child2, Exp child3) {
+        Node[] children = new Node[]{(Node) child1, (Node) child2, (Node) child3};
         ((SimpleNode) exp).setChildren(children);
         return exp;
     }
@@ -48,6 +55,19 @@ final class ExpUtils {
         ExpScalarList exp = new ExpScalarList(AgExpressionParserTreeConstants.JJTSCALARLIST);
         // TODO: copy the values to a new array for guaranteed immutability?
         exp.jjtSetValue(values);
+        return exp;
+    }
+
+    static Exp scalarArray(Exp[] values) {
+        ExpScalarList exp = new ExpScalarList(AgExpressionParserTreeConstants.JJTSCALARLIST);
+
+        int len = values != null ? values.length : 0;
+        Exp[] clonedValues = new Exp[len];
+        for (int i = 0; i < len; i++) {
+            clonedValues[i] = ((AgExpression) values[i]).deepCopy();
+        }
+
+        exp.jjtSetValue(clonedValues);
         return exp;
     }
 

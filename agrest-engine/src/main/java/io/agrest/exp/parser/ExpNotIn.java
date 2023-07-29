@@ -30,9 +30,11 @@ class ExpNotIn extends AgExpression {
     return new ExpNotIn(id);
   }
 
+  // TODO: override not() to compact the result
+
   @Override
   public String toString() {
-    return children[0] + " !in " + (
+    return children[0] + " not in " + (
             children[1].getClass() == ExpNamedParameter.class
                     ? children[1]
                     : "(" + children[1] + ")"

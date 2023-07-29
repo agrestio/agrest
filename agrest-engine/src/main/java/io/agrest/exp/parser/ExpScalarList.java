@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public
-class ExpScalarList extends ExpGenericScalar<Collection<?>> {
+class ExpScalarList extends ExpBaseScalar<Collection<?>> {
 
   private static final ListValueVisitor LIST_VALUE_VISITOR = new ListValueVisitor();
 

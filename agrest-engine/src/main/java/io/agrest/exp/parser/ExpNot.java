@@ -3,6 +3,7 @@
 package io.agrest.exp.parser;
 
 import io.agrest.exp.AgExpression;
+import io.agrest.protocol.Exp;
 
 public
 class ExpNot extends ExpCondition {
@@ -31,8 +32,13 @@ class ExpNot extends ExpCondition {
   }
 
   @Override
+  public Exp not() {
+    return jjtGetNumChildren() > 0 ? jjtGetChild(0) : new ExpTrue();
+  }
+
+  @Override
   public String toString() {
-    return "!(" + children[0] + ")";
+    return "not (" + children[0] + ")";
   }
 }
 /* JavaCC - OriginalChecksum=0fe2b3f475a020609f2cfa348e9fe03d (do not edit this line) */

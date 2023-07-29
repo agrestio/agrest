@@ -1,7 +1,6 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
-import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
@@ -34,10 +33,10 @@ class ExpNotTest extends AbstractExpTest {
     @Override
     Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of("!a", "!(a)"),
-                Arguments.of("! a", "!(a)"),
-                Arguments.of("not a", "!(a)"),
-                Arguments.of("not (a)", "!(a)")
+                Arguments.of("!a", "not (a)"),
+                Arguments.of("! a", "not (a)"),
+                Arguments.of("not a", "not (a)"),
+                Arguments.of("not (a)", "not (a)")
         );
     }
 }

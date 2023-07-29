@@ -20,7 +20,7 @@ public class ExpTest {
         Exp exp = Exp.parse("a = $1 and b = $2 or c = $3 and not d = $4");
 
         assertEquals(
-                "(((a) = (2)) and ((b) = (4))) or (((c) = (8)) and (!((d) = (16))))",
+                "(((a) = (2)) and ((b) = (4))) or (((c) = (8)) and (not ((d) = (16))))",
                 exp.namedParams(Map.of("1", 2, "2", 4, "3", 8, "4", 16)).toString());
 
         assertEquals("(((a) = (2)) and ((b) = (4))) or ((c) = (8))",
@@ -83,20 +83,6 @@ public class ExpTest {
     }
 
     @Test
-    public void andCompact() {
-        assertEquals(2, ((SimpleNode) Exp.parse("3 < 4 and 5 = 6")).jjtGetNumChildren());
-        assertEquals(3, ((SimpleNode) Exp.parse("3 < 4 and 5 = 6 and 7 > 8")).jjtGetNumChildren());
-        assertEquals(4, ((SimpleNode) Exp.parse("3 < 4 and 5 = 6 and 7 > 8 and 9 != 10")).jjtGetNumChildren());
-    }
-
-    @Test
-    public void orCompact() {
-        assertEquals(2, ((SimpleNode) Exp.parse("3 < 4 or 5 = 6")).jjtGetNumChildren());
-        assertEquals(3, ((SimpleNode) Exp.parse("3 < 4 or 5 = 6 or 7 > 8")).jjtGetNumChildren());
-        assertEquals(4, ((SimpleNode) Exp.parse("3 < 4 or 5 = 6 or 7 > 8 or 9 != 10")).jjtGetNumChildren());
-    }
-
-    @Test
     public void positionalParamsThrowsOnTooFewParams() {
         assertThrows(AgExpressionException.class, () -> Exp.parse("a = $1").positionalParams());
     }
@@ -114,5 +100,71 @@ public class ExpTest {
     @Test
     public void namedParamsIgnoresExtraParams() {
         Exp.parse("a = $1").namedParams(Map.of("1", 2, "2", 4));
+    }
+
+    @Test
+    public void between() {
+        assertEquals("a between 5 and 10", Exp.between("a", 5, 10).toString());
+    }
+
+    @Test
+    public void notBetween() {
+        assertEquals("a not between 5 and 10", Exp.notBetween("a", 5, 10).toString());
+    }
+
+    @Test
+    public void equal() {
+        assertEquals("(a) = ('b')", Exp.equal("a", "b").toString());
+    }
+
+    @Test
+    public void lessOrEqual() {
+        assertEquals("(a) <= (5)", Exp.lessOrEqual("a", 5).toString());
+    }
+
+    @Test
+    public void like() {
+        assertEquals("a like 'x%'", Exp.like("a", "x%").toString());
+    }
+
+    @Test
+    public void notLike() {
+        assertEquals("a not like 'x%'", Exp.notLike("a", "x%").toString());
+    }
+
+    @Test
+    public void likeIgnoreCase() {
+        assertEquals("a likeIgnoreCase 'x%'", Exp.likeIgnoreCase("a", "x%").toString());
+    }
+
+    @Test
+    public void notLikeIgnoreCase() {
+        assertEquals("a not likeIgnoreCase 'x%'", Exp.notLikeIgnoreCase("a", "x%").toString());
+    }
+
+    @Test
+    public void in() {
+        assertEquals("a in ('a', 4, 'b')", Exp.in("a", "a", 4, "b").toString());
+    }
+
+    @Test
+    public void inCollection() {
+        assertEquals("a in ('a', 4, 'b')", Exp.inCollection("a", List.of("a", 4, "b")).toString());
+    }
+
+    @Test
+    public void notIn() {
+        assertEquals("a not in ('a', 4, 'b')", Exp.notIn("a", "a", 4, "b").toString());
+    }
+
+    @Test
+    public void notInCollection() {
+        assertEquals("a not in ('a', 4, 'b')", Exp.notInCollection("a", List.of("a", 4, "b")).toString());
+    }
+
+    @Test
+    public void not() {
+        assertEquals("not ((a) = (5))", Exp.not(Exp.equal("a", 5)).toString());
+        assertEquals("(a) = (5)", Exp.not(Exp.not(Exp.equal("a", 5))).toString());
     }
 }

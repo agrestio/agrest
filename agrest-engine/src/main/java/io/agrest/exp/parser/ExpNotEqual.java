@@ -25,6 +25,8 @@ class ExpNotEqual extends AgExpression {
     visitor.visit(this, data);
   }
 
+  // TODO: override not() to compact the result
+
   @Override
   protected AgExpression shallowCopy() {
     return new ExpNotEqual(id);

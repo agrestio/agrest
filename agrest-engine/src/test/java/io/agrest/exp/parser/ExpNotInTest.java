@@ -1,7 +1,6 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
-import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
@@ -46,11 +45,11 @@ class ExpNotInTest extends AbstractExpTest {
     @Override
     Stream<Arguments> stringifyRaw() {
         return Stream.of(
-                Arguments.of("a !in('b','c')", "a !in ('b', 'c')"),
-                Arguments.of("a !in ('b',  'c')", "a !in ('b', 'c')"),
-                Arguments.of("a not in ('b', 'c')", "a !in ('b', 'c')"),
-                Arguments.of("a !in ('b', 'c', 'd')", "a !in ('b', 'c', 'd')"),
-                Arguments.of("a !in $b", "a !in $b")
+                Arguments.of("a !in('b','c')", "a not in ('b', 'c')"),
+                Arguments.of("a !in ('b',  'c')", "a not in ('b', 'c')"),
+                Arguments.of("a not in ('b', 'c')", "a not in ('b', 'c')"),
+                Arguments.of("a !in ('b', 'c', 'd')", "a not in ('b', 'c', 'd')"),
+                Arguments.of("a !in $b", "a not in $b")
         );
     }
 }

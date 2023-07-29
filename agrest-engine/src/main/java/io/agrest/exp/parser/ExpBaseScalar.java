@@ -4,13 +4,13 @@ import io.agrest.exp.AgExpression;
 
 import java.util.Objects;
 
-public abstract class ExpGenericScalar<T> extends AgExpression {
+public abstract class ExpBaseScalar<T> extends AgExpression {
 
-    public ExpGenericScalar(int i) {
+    public ExpBaseScalar(int i) {
         super(i);
     }
 
-    public ExpGenericScalar(AgExpressionParser p, int i) {
+    public ExpBaseScalar(AgExpressionParser p, int i) {
         super(p, i);
     }
 
@@ -35,7 +35,7 @@ public abstract class ExpGenericScalar<T> extends AgExpression {
             return false;
         }
 
-        ExpGenericScalar<?> expOther = (ExpGenericScalar<?>) o;
+        ExpBaseScalar<?> expOther = (ExpBaseScalar<?>) o;
         return Objects.equals(getValue(), expOther.getValue());
     }
 

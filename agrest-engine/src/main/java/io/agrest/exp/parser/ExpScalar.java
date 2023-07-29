@@ -5,7 +5,7 @@ package io.agrest.exp.parser;
 import io.agrest.exp.AgExpression;
 
 public
-class ExpScalar extends ExpGenericScalar<Object> {
+class ExpScalar extends ExpBaseScalar<Object> {
   public ExpScalar(int id) {
     super(id);
   }

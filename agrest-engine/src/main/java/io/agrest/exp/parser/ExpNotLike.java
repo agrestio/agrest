@@ -30,9 +30,11 @@ class ExpNotLike extends AgExpression {
     return new ExpNotLike(id);
   }
 
+  // TODO: override not() to compact the result
+
   @Override
   public String toString() {
-    return children[0] + " !like " + children[1] + (children.length > 2 ? " escape " + children[2] : "");
+    return children[0] + " not like " + children[1] + (children.length > 2 ? " escape " + children[2] : "");
   }
 }
 /* JavaCC - OriginalChecksum=9551a6b7ade4165e58bcc54093cfb9dd (do not edit this line) */

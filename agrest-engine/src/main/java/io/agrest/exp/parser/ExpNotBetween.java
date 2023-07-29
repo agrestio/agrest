@@ -30,9 +30,11 @@ class ExpNotBetween extends AgExpression {
     return new ExpNotBetween(id);
   }
 
+  // TODO: override not() to compact the result
+
   @Override
   public String toString() {
-    return children[0] + " !between " + children[1] + " and " + children[2];
+    return children[0] + " not between " + children[1] + " and " + children[2];
   }
 }
 /* JavaCC - OriginalChecksum=1af9c63e271dbd73a0ef825dda231d68 (do not edit this line) */
