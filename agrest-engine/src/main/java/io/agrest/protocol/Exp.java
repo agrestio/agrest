@@ -15,7 +15,7 @@ import io.agrest.exp.parser.ExpLess;
 import io.agrest.exp.parser.ExpLessOrEqual;
 import io.agrest.exp.parser.ExpLike;
 import io.agrest.exp.parser.ExpLikeIgnoreCase;
-import io.agrest.exp.parser.ExpObjPath;
+import io.agrest.exp.parser.ExpPath;
 import io.agrest.exp.parser.ExpOr;
 import io.agrest.exp.parser.ExpScalar;
 import io.agrest.exp.parser.ExpScalarList;
@@ -101,7 +101,7 @@ public interface Exp {
      * @since 5.0
      */
     static Exp path(String path) {
-        ExpObjPath pathExp = new ExpObjPath();
+        ExpPath pathExp = new ExpPath();
         pathExp.jjtSetValue(Objects.requireNonNull(path));
         return pathExp;
     }

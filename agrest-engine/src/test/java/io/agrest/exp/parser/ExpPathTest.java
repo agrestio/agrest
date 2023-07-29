@@ -6,11 +6,11 @@ import org.opentest4j.AssertionFailedError;
 
 import java.util.stream.Stream;
 
-class ExpObjPathTest extends AbstractExpTest {
+class ExpPathTest extends AbstractExpTest {
 
     @Override
     ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpObjPath.class);
+        return new ExpTestVisitor(ExpPath.class);
     }
 
     @Override

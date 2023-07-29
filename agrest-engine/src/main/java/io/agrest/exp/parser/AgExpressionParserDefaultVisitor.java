@@ -150,7 +150,7 @@ public class AgExpressionParserDefaultVisitor<T> implements AgExpressionParserVi
   public T visit(ExpNamedParameter node, T data){
     return defaultVisit(node, data);
   }
-  public T visit(ExpObjPath node, T data){
+  public T visit(ExpPath node, T data){
     return defaultVisit(node, data);
   }
 }

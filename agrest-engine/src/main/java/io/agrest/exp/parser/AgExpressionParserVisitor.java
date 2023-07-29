@@ -51,6 +51,6 @@ public interface AgExpressionParserVisitor<T>
   public T visit(ExpCurrentTimestamp node, T data);
   public T visit(ExpExtract node, T data);
   public T visit(ExpNamedParameter node, T data);
-  public T visit(ExpObjPath node, T data);
+  public T visit(ExpPath node, T data);
 }
 /* JavaCC - OriginalChecksum=07bf064c3b4fb526a1f18cfe68cf8d9d (do not edit this line) */

@@ -103,7 +103,7 @@ public interface AgExpressionParserTreeConstants
     "CurrentTimestamp",
     "Extract",
     "NamedParameter",
-    "ObjPath",
+    "Path",
   };
 }
 /* JavaCC - OriginalChecksum=02270a257b9c8c966235aa790c144441 (do not edit this line) */

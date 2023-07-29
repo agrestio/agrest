@@ -5,16 +5,16 @@ package io.agrest.exp.parser;
 import io.agrest.exp.AgExpression;
 
 public
-class ExpObjPath extends AgExpression {
-  public ExpObjPath(int id) {
+class ExpPath extends AgExpression {
+  public ExpPath(int id) {
     super(id);
   }
 
-  public ExpObjPath(AgExpressionParser p, int id) {
+  public ExpPath(AgExpressionParser p, int id) {
     super(p, id);
   }
 
-  public ExpObjPath() {
+  public ExpPath() {
     super(AgExpressionParserTreeConstants.JJTOBJPATH);
   }
 
@@ -35,7 +35,7 @@ class ExpObjPath extends AgExpression {
 
   @Override
   protected AgExpression shallowCopy() {
-    ExpObjPath copy = new ExpObjPath(id);
+    ExpPath copy = new ExpPath(id);
     copy.setPath(getPath());
     return copy;
   }
@@ -52,7 +52,7 @@ class ExpObjPath extends AgExpression {
       return false;
     }
 
-    ExpObjPath expPath = (ExpObjPath) o;
+    ExpPath expPath = (ExpPath) o;
     return getPath().equals(expPath.getPath());
   }
 

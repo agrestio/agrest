@@ -578,7 +578,7 @@ void pathExpression() : {
    Token t;
 }
 {
-   t = <PROPERTY_PATH> { jjtThis.jjtSetValue(t.image); } #ObjPath(0)
+   t = <PROPERTY_PATH> { jjtThis.jjtSetValue(t.image); } #Path(0)
 }
 
 TOKEN : {

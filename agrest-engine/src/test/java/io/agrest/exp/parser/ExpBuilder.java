@@ -59,7 +59,7 @@ public class ExpBuilder {
         expIdMap.put(ExpCurrentTimestamp.class, AgExpressionParserTreeConstants.JJTCURRENTTIMESTAMP);
         expIdMap.put(ExpExtract.class, AgExpressionParserTreeConstants.JJTEXTRACT);
         expIdMap.put(ExpNamedParameter.class, AgExpressionParserTreeConstants.JJTNAMEDPARAMETER);
-        expIdMap.put(ExpObjPath.class, AgExpressionParserTreeConstants.JJTOBJPATH);
+        expIdMap.put(ExpPath.class, AgExpressionParserTreeConstants.JJTOBJPATH);
     }
 
     private final AgExpression exp;

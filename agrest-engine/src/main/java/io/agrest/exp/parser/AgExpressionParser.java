@@ -2345,7 +2345,7 @@ if (jjtc001) {
 
   final public void pathExpression() throws ParseException {Token t;
     t = jj_consume_token(PROPERTY_PATH);
-ExpObjPath jjtn001 = new ExpObjPath(JJTOBJPATH);
+ExpPath jjtn001 = new ExpPath(JJTOBJPATH);
                          boolean jjtc001 = true;
                          jjtree.openNodeScope(jjtn001);
     try {
