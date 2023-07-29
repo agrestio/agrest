@@ -4,52 +4,43 @@ import io.agrest.AgException;
 import io.agrest.exp.AgExpression;
 import io.agrest.protocol.Exp;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
+public class ExpEqualTest {
 
-class ExpEqualTest extends AbstractExpTest {
-
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpEqual.class);
+    @ParameterizedTest
+    @ValueSource(strings = {"a=b",
+            "a = b",
+            "a =  b",
+            "a == b",
+            "$a = $b",
+            "1 = 2",
+            "1 = 2.2",
+            "1 = TRUE",
+            "'1' = '2'",
+            "null = c",
+            "a = currentDate()"})
+    public void parse(String expString) {
+        assertEquals(ExpEqual.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "a=b",
-                "a = b",
-                "a =  b",
-                "a == b",
-                "$a = $b",
-                "1 = 2",
-                "1 = 2.2",
-                "1 = TRUE",
-                "'1' = '2'",
-                "null = c",
-                "a = currentDate()"
-        );
+    @ParameterizedTest
+    @CsvSource({
+            "a=b,(a) = (b)",
+            "a = b,(a) = (b)"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("=", AgException.class),
-                Arguments.of("a =", AgException.class),
-                Arguments.of("= b", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("a=b", "(a) = (b)"),
-                Arguments.of("a = b", "(a) = (b)")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {"=", "a =", "= b"})
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 
     @Test
