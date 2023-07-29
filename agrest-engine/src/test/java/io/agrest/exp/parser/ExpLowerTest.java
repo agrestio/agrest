@@ -2,42 +2,43 @@ package io.agrest.exp.parser;
 
 import io.agrest.AgException;
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpLowerTest extends AbstractExpTest {
+public class ExpLowerTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpLower.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "lower(a)",
+            "lower ( a )",
+            "lower('a')"
+    })
+    public void parse(String expString) {
+        assertEquals(ExpLower.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "lower(a)",
-                "lower ( a )",
-                "lower('a')"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "lower(a)|lower(a)",
+            "lower ( a )|lower(a)"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("lower", AgException.class),
-                Arguments.of("lower()", AgException.class),
-                Arguments.of("lower(1)", AgException.class),
-                Arguments.of("lower($a)", AgException.class),
-                Arguments.of("LOWER(a)", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("lower(a)", "lower(a)"),
-                Arguments.of("lower ( a )", "lower(a)")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "lower",
+            "lower()",
+            "lower(1)",
+            "lower($a)",
+            "LOWER(a)"
+    })
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

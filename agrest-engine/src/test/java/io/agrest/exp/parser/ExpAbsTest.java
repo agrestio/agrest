@@ -2,45 +2,40 @@ package io.agrest.exp.parser;
 
 import io.agrest.AgException;
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpAbsTest extends AbstractExpTest {
+public class ExpAbsTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpAbs.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "abs(1)",
+            "abs(  1 )",
+            "abs(1.2)",
+            "abs($a)",
+            "abs(a)",
+            "abs(abs(1))"})
+    public void parse(String expString) {
+        assertEquals(ExpAbs.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "abs(1)",
-                "abs(  1 )",
-                "abs(1.2)",
-                "abs($a)",
-                "abs(a)",
-                "abs(abs(1))"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "abs(1)|abs(1)",
+            "abs(  1 )|abs(1)",
+            "abs(abs(1))|abs(abs(1))"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("abs", AgException.class),
-                Arguments.of("abs()", AgException.class),
-                Arguments.of("ABS(a)", AgException.class),
-                Arguments.of("abs(a and b)", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("abs(1)", "abs(1)"),
-                Arguments.of("abs(  1 )", "abs(1)"),
-                Arguments.of("abs(abs(1))", "abs(abs(1))")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {"abs", "abs()", "ABS(a)", "abs(a and b)"})
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

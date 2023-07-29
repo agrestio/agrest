@@ -33,10 +33,10 @@ public class ExpScalarListTest {
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "'$a, $b','$a, $b'",
-            "'$a,  $b','$a, $b'",
-            "'$a, $b, $c','$a, $b, $c'"
+    @CsvSource(delimiter = '|', value = {
+            "'$a, $b'|'$a, $b'",
+            "'$a,  $b'|'$a, $b'",
+            "'$a, $b, $c'|'$a, $b, $c'"
     })
     void parsedToString(String expString, String expected) {
         Exp parsed = parseList(expString);
@@ -46,17 +46,20 @@ public class ExpScalarListTest {
     @ParameterizedTest
     // TODO: the last two variants should actually be valid
     @ValueSource(strings = {
-            "$a,", "$a, $b,", ",", ",$b", "null, $b", "$a, currentDate()"
+            "$a,",
+            "$a, $b,", ",",
+            ",$b", "null, $b",
+            "$a, currentDate()"
     })
     void parseInvalidGrammar(String expString) {
         assertThrows(AgException.class, () -> parseList(expString));
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "$a,1",
-            "'$a, $b',2",
-            "'$a, $b, $c',3"
+    @CsvSource(delimiter = '|', value = {
+            "$a|1",
+            "'$a, $b'|2",
+            "'$a, $b, $c'|3"
     })
     public void countChildren(String expString, int expected) {
         Exp parsed = parseList(expString);

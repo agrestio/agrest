@@ -31,7 +31,7 @@ public class ExpInTest {
     }
 
     @ParameterizedTest
-    @CsvSource(delimiterString = "|", value = {
+    @CsvSource(delimiter = '|', value = {
             "a in('b','c')|a in ('b', 'c')",
             "a in ('b',  'c')|a in ('b', 'c')",
             "a in ('b', 'c', 'd')|a in ('b', 'c', 'd')",

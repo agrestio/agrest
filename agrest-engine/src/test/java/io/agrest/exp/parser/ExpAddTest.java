@@ -2,44 +2,39 @@ package io.agrest.exp.parser;
 
 import io.agrest.AgException;
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpAddTest extends AbstractExpTest {
+public class ExpAddTest {
 
-    @Override
-    protected ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpAdd.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "1+2",
+            "1 +  2",
+            "1 + 1.3",
+            "1 + $a",
+            "1 + a",
+            "1 + abs(-3)"})
+    public void parse(String expString) {
+        assertEquals(ExpAdd.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "1+2",
-                "1 +  2",
-                "1 + 1.3",
-                "1 + $a",
-                "1 + a",
-                "1 + abs(-3)"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "1+2|(1) + (2)",
+            "1 +  2|(1) + (2)"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("a +", AgException.class),
-                Arguments.of("+", AgException.class),
-                Arguments.of("1 + 'a'", AgException.class),
-                Arguments.of("1 + getDate()", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("1+2", "(1) + (2)"),
-                Arguments.of("1 +  2", "(1) + (2)")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {"a +", "+", "1 + 'a'", "1 + getDate()"})
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

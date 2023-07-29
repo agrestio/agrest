@@ -65,8 +65,6 @@ public class ExpBuilder {
     private final AgExpression exp;
     private final List<ExpBuilder> children = new ArrayList<>();
     private Object value;
-    private Object[] positionalParams;
-    private Map<String, Object> namedParams;
     private SimpleNode parent;
 
     public ExpBuilder(Class<? extends AgExpression> expType) {
@@ -81,16 +79,6 @@ public class ExpBuilder {
         return new ExpBuilder(expType);
     }
 
-    public ExpBuilder withPositionalParams(Object... params) {
-        positionalParams = params;
-        return this;
-    }
-
-    public ExpBuilder withNamedParams(Map<String, Object> params) {
-        namedParams = params;
-        return this;
-    }
-
     public ExpBuilder withValue(Object value) {
         this.value = value;
         return this;
@@ -103,13 +91,6 @@ public class ExpBuilder {
     }
 
     public AgExpression build() {
-        buildBasic();
-        exp.positionalParams(positionalParams);
-        exp.namedParams(namedParams);
-        return exp;
-    }
-
-    private AgExpression buildBasic() {
         buildChildren();
         exp.jjtSetParent(parent);
         exp.jjtSetValue(value);
@@ -117,7 +98,7 @@ public class ExpBuilder {
     }
 
     private void buildChildren() {
-        AgExpression[] children = this.children.stream().map(ExpBuilder::buildBasic).toArray(AgExpression[]::new);
+        AgExpression[] children = this.children.stream().map(ExpBuilder::build).toArray(AgExpression[]::new);
         if (children.length != 0) {
             for (int i = 0; i < children.length; i++) {
                 exp.jjtAddChild(children[i], i);

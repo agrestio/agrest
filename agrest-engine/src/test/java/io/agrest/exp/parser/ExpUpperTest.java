@@ -2,42 +2,43 @@ package io.agrest.exp.parser;
 
 import io.agrest.AgException;
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpUpperTest extends AbstractExpTest {
+public class ExpUpperTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpUpper.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "upper(a)",
+            "upper ( a )",
+            "upper('a')"
+    })
+    public void parse(String expString) {
+        assertEquals(ExpUpper.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "upper(a)",
-                "upper ( a )",
-                "upper('a')"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "upper(a)|upper(a)",
+            "upper ( a )|upper(a)"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("upper", AgException.class),
-                Arguments.of("upper()", AgException.class),
-                Arguments.of("upper(1)", AgException.class),
-                Arguments.of("upper($a)", AgException.class),
-                Arguments.of("UPPER(a)", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("upper(a)", "upper(a)"),
-                Arguments.of("upper ( a )", "upper(a)")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "upper",
+            "upper()",
+            "upper(1)",
+            "upper($a)",
+            "UPPER(a)"
+    })
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

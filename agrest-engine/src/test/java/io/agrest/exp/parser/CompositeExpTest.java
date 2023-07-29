@@ -5,10 +5,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.agrest.exp.parser.ExpBuilder.expFromType;
@@ -176,25 +172,9 @@ class CompositeExpTest {
         );
     }
 
-    private static String stringify(Node exp) {
-        List<String> properties = new ArrayList<>(List.of(
-            "id=" + exp.getId(),
-            "value=" + exp.jjtGetValue(),
-            "parent=" + exp.jjtGetParent(),
-            "children=" + IntStream.range(0, exp.jjtGetNumChildren())
-                .mapToObj(exp::jjtGetChild)
-                .map(CompositeExpTest::stringify)
-                .collect(Collectors.joining(", ", "[", "]"))
-        ));
-
-        return exp + properties.stream().collect(Collectors.joining(", ", "{", "}"));
-    }
-
     @ParameterizedTest(name = "{0}")
     @MethodSource
     void parseExp(String expString, AgExpression expected) {
-        AgExpression exp = AgExpressionParser.parse(expString);
-        assertEquals(expected, exp, () -> String.format("%nExpected: %s%nActual: %s%n",
-                                                        stringify(expected), stringify(exp)));
+        assertEquals(expected, AgExpressionParser.parse(expString));
     }
 }
