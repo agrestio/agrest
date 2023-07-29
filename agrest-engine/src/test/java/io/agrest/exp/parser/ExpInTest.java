@@ -1,12 +1,18 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.exp.AgExpression;
 import io.agrest.protocol.Exp;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.provider.Arguments;
 
+import java.util.List;
 import java.util.stream.Stream;
 
-class ExpInTest extends AbstractExpTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+
+public class ExpInTest extends AbstractExpTest {
 
     @Override
     ExpTestVisitor provideVisitor() {
@@ -49,5 +55,23 @@ class ExpInTest extends AbstractExpTest {
                 Arguments.of("a in ('b', 'c', 'd')", "a in ('b', 'c', 'd')"),
                 Arguments.of("a in $b", "a in $b")
         );
+    }
+
+    @Test
+    public void parameterizedToString() {
+        assertEquals("a in ('x', 'y')", Exp.parse("a in $l").positionalParams(List.of("x", "y")).toString());
+    }
+
+    @Test
+    public void manualToString() {
+        assertEquals("a in ('x', 'y')", Exp.in("a", "x", "y").toString());
+    }
+
+    @Test
+    public void deepCopy() {
+        Exp e = Exp.in("a", "x", "y");
+        Exp eCopy = ((AgExpression) e).deepCopy();
+        assertNotSame(e, eCopy);
+        assertEquals(e, eCopy);
     }
 }

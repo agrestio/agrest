@@ -3,7 +3,6 @@
 package io.agrest.exp.parser;
 
 import io.agrest.exp.AgExpression;
-import io.agrest.exp.AgExpressionParameter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +38,8 @@ class ExpScalarList extends ExpGenericScalar<Collection<?>> {
   }
 
   public Collection<?> getValue() {
+
+    // value is either an internal collection, or child nodes
     Collection<?> value = (Collection<?>) jjtGetValue();
     if (value != null) {
       return value;
@@ -65,14 +66,16 @@ class ExpScalarList extends ExpGenericScalar<Collection<?>> {
 
   @Override
   protected AgExpression shallowCopy() {
-    return new ExpScalarList(id);
+    return new ExpScalarList((Collection<?>) jjtGetValue());
   }
 
   @Override
   public String toString() {
-    return Arrays.stream(children)
-            .map(String::valueOf)
-            .collect(Collectors.joining(", "));
+      // children can be either an internal collection, or child nodes, so must use "getValue()"
+      return getValue()
+              .stream()
+              .map(v -> v instanceof CharSequence ? "'" + v + "'" : String.valueOf(v))
+              .collect(Collectors.joining(", "));
   }
 
   private static class ListValueVisitor extends AgExpressionParserDefaultVisitor<List<Object>> {
@@ -91,7 +94,7 @@ class ExpScalarList extends ExpGenericScalar<Collection<?>> {
 
     @Override
     public List<Object> visit(ExpNamedParameter node, List<Object> data) {
-      data.add(new AgExpressionParameter((String) node.jjtGetValue()));
+      data.add(node.jjtGetValue());
       return data;
     }
   }

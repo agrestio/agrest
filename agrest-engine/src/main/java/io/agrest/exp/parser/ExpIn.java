@@ -33,7 +33,7 @@ class ExpIn extends AgExpression {
   @Override
   public String toString() {
     return children[0] + " in " + (
-            children[1].getClass() == ExpNamedParameter.class
+            children[1] instanceof ExpNamedParameter
                    ? children[1]
                    : "(" + children[1] + ")"
     );

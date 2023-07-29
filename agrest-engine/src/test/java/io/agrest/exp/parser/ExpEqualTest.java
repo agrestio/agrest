@@ -1,10 +1,15 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
+import io.agrest.exp.AgExpression;
 import io.agrest.protocol.Exp;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 class ExpEqualTest extends AbstractExpTest {
 
@@ -46,4 +51,13 @@ class ExpEqualTest extends AbstractExpTest {
                 Arguments.of("a = b", "(a) = (b)")
         );
     }
+
+    @Test
+    public void deepCopy() {
+        Exp e = Exp.equal("a", 5);
+        Exp eCopy = ((AgExpression) e).deepCopy();
+        assertNotSame(e, eCopy);
+        assertEquals(e, eCopy);
+    }
+
 }
