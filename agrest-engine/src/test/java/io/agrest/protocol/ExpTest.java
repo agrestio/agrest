@@ -22,7 +22,7 @@ public class ExpTest {
     @Test
     public void testBind_equals() {
 
-        Exp raw = Exp.from("a = $1");
+        Exp raw = Exp.parse("a = $1");
         Exp e1 = raw.positionalParams("b");
         Exp e2 = raw.namedParams(Map.of("1", "b"));
 
@@ -37,7 +37,7 @@ public class ExpTest {
 
     @Test
     public void testBind_reusable() {
-        Exp raw = Exp.from("a = $1 and b = $2");
+        Exp raw = Exp.parse("a = $1 and b = $2");
 
         Exp e1 = raw.positionalParams(5, 7);
         Exp e2 = raw.positionalParams(7, 5);
@@ -56,7 +56,7 @@ public class ExpTest {
 
     @Test
     public void testBind_pruning() {
-        Exp raw = Exp.from("a = $1 and b = $2 or c = $3 and not d = $4");
+        Exp raw = Exp.parse("a = $1 and b = $2 or c = $3 and not d = $4");
 
         Exp e1 = raw.namedParams(Map.of("1", 2, "2", 4, "3", 8, "4", 16));
         Exp e2 = raw.namedParams(Map.of("1", 2, "2", 4, "3", 8));
@@ -74,7 +74,7 @@ public class ExpTest {
 
     @Test
     public void testBind_keepsImmutable() {
-        Exp raw = Exp.from("a = $1 and b = $2");
+        Exp raw = Exp.parse("a = $1 and b = $2");
         Exp e1 = raw.positionalParams("test1", "test2");
         Exp e2 = raw.namedParams(Map.of("1", "one"));
         Exp e3 = raw.namedParams(Map.of("1", "two"), true);
@@ -97,11 +97,11 @@ public class ExpTest {
 
     @Test
     public void testCompose_keepsImmutable() {
-        Exp e1 = Exp.from("1 > 2");
-        Exp e2 = e1.and(Exp.from("3 < 4"));
-        Exp e3 = e1.or(Exp.from("5 = 6"));
-        Exp e4 = e2.or(Exp.from("7 > 8"));
-        Exp e5 = e3.and(Exp.from("9 < 10"));
+        Exp e1 = Exp.parse("1 > 2");
+        Exp e2 = e1.and(Exp.parse("3 < 4"));
+        Exp e3 = e1.or(Exp.parse("5 = 6"));
+        Exp e4 = e2.or(Exp.parse("7 > 8"));
+        Exp e5 = e3.and(Exp.parse("9 < 10"));
         Collection<Exp> all = List.of(e1, e2, e3, e4, e5);
 
         // Make sure all of them are different.
@@ -116,9 +116,9 @@ public class ExpTest {
 
     @Test
     public void testCompose_Optimized() {
-        Exp e1 = Exp.from("1 > 2");
-        Exp e2 = Exp.from("3 < 4 and 5 = 6");
-        Exp e3 = Exp.from("7 > 8 or 9 != 10");
+        Exp e1 = Exp.parse("1 > 2");
+        Exp e2 = Exp.parse("3 < 4 and 5 = 6");
+        Exp e3 = Exp.parse("7 > 8 or 9 != 10");
         List<Exp> exps = List.of(e1, e2, e3);
 
         Collection<Exp> all = new ArrayList<>();
@@ -134,14 +134,14 @@ public class ExpTest {
 
     @Test
     public void testBind_throwsOn_tooFewParameters() {
-        Exp raw = Exp.from("a = $1");
+        Exp raw = Exp.parse("a = $1");
         assertThrows(AgExpressionException.class, () -> raw.positionalParams());
         assertThrows(AgExpressionException.class, () -> raw.namedParams(Collections.emptyMap(), false));
     }
 
     @Test
     public void testBind_throwsOn_tooManyParameters() {
-        Exp raw = Exp.from("a = $1");
+        Exp raw = Exp.parse("a = $1");
         assertThrows(AgExpressionException.class, () -> raw.positionalParams("a", "b"));
 
         // Unnecessary parameters are simply not used.

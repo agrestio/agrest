@@ -60,7 +60,7 @@ class ExpAndTest extends AbstractExpTest {
 
     @ParameterizedTest
     @MethodSource
-    void countChildren(Exp exp, int expected) {
-        assertEquals(((SimpleNode) exp).children.length, expected);
+    void countChildren(String exp, int expected) {
+        assertEquals(((SimpleNode) Exp.parse(exp)).children.length, expected);
     }
 }

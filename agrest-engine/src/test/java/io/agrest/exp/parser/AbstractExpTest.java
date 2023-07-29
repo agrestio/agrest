@@ -2,7 +2,6 @@ package io.agrest.exp.parser;
 
 import io.agrest.protocol.Exp;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -33,7 +32,7 @@ public abstract class AbstractExpTest {
     abstract Stream<Arguments> stringifyRaw();
 
     protected Stream<Arguments> stringify() {
-        return stringifyRaw().peek(args -> args.get()[0] = Exp.from((String) args.get()[0]));
+        return stringifyRaw().peek(args -> args.get()[0] = Exp.parse((String) args.get()[0]));
     }
 
     @ParameterizedTest

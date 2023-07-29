@@ -1,14 +1,29 @@
 package io.agrest.protocol;
 
-import io.agrest.exp.AgExpression;
 import io.agrest.exp.ExpVisitor;
 import io.agrest.exp.parser.AgExpressionParser;
+import io.agrest.exp.parser.AgExpressionParserTreeConstants;
 import io.agrest.exp.parser.AgExpressionParserVisitor;
+import io.agrest.exp.parser.ExpAnd;
+import io.agrest.exp.parser.ExpEqual;
 import io.agrest.exp.parser.ExpGenericScalar;
+import io.agrest.exp.parser.ExpGreater;
+import io.agrest.exp.parser.ExpGreaterOrEqual;
+import io.agrest.exp.parser.ExpIn;
+import io.agrest.exp.parser.ExpLess;
+import io.agrest.exp.parser.ExpLessOrEqual;
+import io.agrest.exp.parser.ExpLike;
+import io.agrest.exp.parser.ExpLikeIgnoreCase;
 import io.agrest.exp.parser.ExpObjPath;
-import io.agrest.exp.parser.ExpUtils;
+import io.agrest.exp.parser.ExpOr;
+import io.agrest.exp.parser.ExpScalar;
+import io.agrest.exp.parser.ExpScalarList;
 import io.agrest.exp.parser.Node;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -20,61 +35,176 @@ import java.util.Objects;
 public interface Exp {
 
     /**
+     * Creates a new expression, parsing the provided String.
+     *
      * @since 5.0
      */
-    static Exp from(String template) {
-        return parseTemplate(template);
+    static Exp parse(String expString) {
+        return AgExpressionParser.parse(Objects.requireNonNull(expString));
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #from(String)}
+     * @deprecated since 5.0 in favor of {@link #parse(String)}
      */
     @Deprecated(since = "5.0")
     static Exp simple(String template) {
-        return from(template);
+        return parse(template);
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #from(String)} and {@link #namedParams(Map)}
+     * @deprecated since 5.0 in favor of {@link #parse(String)} and {@link #namedParams(Map)}
      */
     @Deprecated(since = "5.0")
     static Exp witNamedParams(String template, Map<String, Object> params) {
-        return from(template).namedParams(params);
+        return parse(template).namedParams(params);
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #from(String)} and {@link #positionalParams(Object...)}
+     * @deprecated since 5.0 in favor of {@link #parse(String)} and {@link #positionalParams(Object...)}
      */
     @Deprecated(since = "5.0")
     static Exp withPositionalParams(String template, Object... params) {
-        return from(template).positionalParams(params);
+        return parse(template).positionalParams(params);
+    }
+
+    /**
+     * @since 5.0
+     * @deprecated use explicit factory methods, like {@link #equal(String, Object)}, {@link #less(String, Object)}, etc.
+     */
+    @Deprecated(since = "5.0")
+    static Exp keyValue(String key, String op, Object value) {
+
+        switch (op) {
+            case "=":
+                return Exp.equal(key, value);
+            case "<":
+                return Exp.less(key, value);
+            case ">":
+                return Exp.greater(key, value);
+            case "<=":
+                return Exp.lessOrEqual(key, value);
+            case ">=":
+                return Exp.greaterOrEqual(key, value);
+            case "like":
+                return Exp.like(key, value);
+            case "likeIgnoreCase":
+                return Exp.likeIgnoreCase(key, value);
+            case "in":
+                return Exp.in(key, value);
+            default:
+                throw new IllegalArgumentException("Unsupported operation in Expression: " + op);
+        }
     }
 
     /**
      * @since 5.0
      */
-    static Exp keyValue(String key, String op, Object value) {
-        ExpObjPath path = ExpObjPath.of(Objects.requireNonNull(key));
-        ExpGenericScalar<?> scalar = ExpGenericScalar.of(value);
-        switch (op) {
-            case "=":
-                return ExpUtils.equal(path, scalar);
-            case "<":
-                return ExpUtils.less(path, scalar);
-            case ">":
-                return ExpUtils.greater(path, scalar);
-            case "<=":
-                return ExpUtils.lessOrEqual(path, scalar);
-            case ">=":
-                return ExpUtils.greaterOrEqual(path, scalar);
-            case "like":
-                return ExpUtils.like(path, scalar);
-            case "likeIgnoreCase":
-                return ExpUtils.likeIgnoreCase(path, scalar);
-            case "in":
-                return ExpUtils.in(path, scalar);
+    static Exp path(String path) {
+        ExpObjPath pathExp = new ExpObjPath();
+        pathExp.jjtSetValue(Objects.requireNonNull(path));
+        return pathExp;
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp scalar(Object value) {
+        if (value == null) {
+            return new ExpScalar(AgExpressionParserTreeConstants.JJTSCALAR);
+        }
+
+        ExpGenericScalar<?> scalar;
+        if (value instanceof Collection) {
+            scalar = new ExpScalarList(AgExpressionParserTreeConstants.JJTSCALARLIST);
+        } else if (value.getClass().isArray()) {
+            Class<?> componentType = value.getClass().getComponentType();
+            if (componentType.isPrimitive()) {
+                value = ExpUtils.wrapPrimitiveArray(value);
+            } else {
+                value = Arrays.asList((Object[]) value);
+            }
+            scalar = new ExpScalarList(AgExpressionParserTreeConstants.JJTSCALARLIST);
+        } else {
+            scalar = new ExpScalar(AgExpressionParserTreeConstants.JJTSCALAR);
+        }
+
+        scalar.jjtSetValue(value);
+        return scalar;
+    }
+
+    static Exp in(String path, Object... scalars) {
+        return ExpUtils.composeBinary(new ExpIn(), path(path), ExpUtils.scalarArray(scalars));
+    }
+
+    static Exp inCollection(String path, Collection<?> scalars) {
+        return ExpUtils.composeBinary(new ExpIn(), path(path), ExpUtils.scalarArray(scalars));
+    }
+
+    static Exp likeIgnoreCase(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpLikeIgnoreCase(), path(path), scalar(scalar));
+    }
+
+    static Exp like(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpLike(), path(path), scalar(scalar));
+    }
+
+    static Exp greaterOrEqual(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpGreaterOrEqual(), path(path), scalar(scalar));
+    }
+
+    static Exp lessOrEqual(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpLessOrEqual(), path(path), scalar(scalar));
+    }
+
+    static Exp greater(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpGreater(), path(path), scalar(scalar));
+    }
+
+    static Exp less(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpLess(), path(path), scalar(scalar));
+    }
+
+    static Exp equal(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpEqual(), path(path), scalar(scalar));
+    }
+
+    static Exp and(Exp... exps) {
+        int len = exps.length;
+        switch (len) {
+            case 0:
+                return null;
+            case 1:
+                return exps[0];
             default:
-                throw new IllegalArgumentException("Unsupported operation in Expression: " + op);
+                List<Node> children = new ArrayList<>(len);
+
+                for (Exp e : exps) {
+                    ExpUtils.appendAndChild(children, (Node) e);
+                }
+
+                ExpAnd exp = new ExpAnd();
+                exp.setChildren(children.toArray(new Node[0]));
+                return exp;
+        }
+    }
+
+    static Exp or(Exp... exps) {
+        int len = exps.length;
+        switch (len) {
+            case 0:
+                return null;
+            case 1:
+                return exps[0];
+            default:
+                List<Node> children = new ArrayList<>(len);
+
+                for (Exp e : exps) {
+                    ExpUtils.appendOrChild(children, (Node) e);
+                }
+
+                ExpOr exp = new ExpOr();
+                exp.setChildren(children.toArray(new Node[0]));
+                return exp;
         }
     }
 
@@ -117,10 +247,9 @@ public interface Exp {
      * need to implement this logic on its own.
      *
      * @param visitor to accept
-     * @param data that passed down to the expression node
+     * @param data    that passed down to the expression node
+     * @param <T>     type of the data to pass down the expression tree
      * @return transformed data
-     * @param <T> type of the data to pass down the expression tree
-     *
      * @since 5.0
      */
     default <T> T accept(AgExpressionParserVisitor<T> visitor, T data) {
@@ -128,14 +257,10 @@ public interface Exp {
     }
 
     default Exp and(Exp exp) {
-        return exp != null ? ExpUtils.and((Node) this, (Node) exp) : this;
+        return exp != null ? Exp.and(this, exp) : this;
     }
 
     default Exp or(Exp exp) {
-        return exp != null ? ExpUtils.or((Node) this, (Node) exp) : this;
-    }
-
-    private static AgExpression parseTemplate(String template) {
-        return AgExpressionParser.parse(Objects.requireNonNull(template));
+        return exp != null ? Exp.or(this, exp) : this;
     }
 }

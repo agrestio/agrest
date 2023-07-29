@@ -3,7 +3,6 @@
 package io.agrest.exp.parser;
 
 import io.agrest.exp.AgExpression;
-import io.agrest.protocol.Exp;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -20,11 +19,6 @@ class ExpOr extends ExpCondition {
 
   public ExpOr() {
     super(AgExpressionParserTreeConstants.JJTOR);
-  }
-
-  @Override
-  public Exp or(Exp exp) {
-    return ExpUtils.or(this, (Node) exp);
   }
 
   /** Accept the visitor. **/

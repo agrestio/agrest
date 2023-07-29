@@ -1,5 +1,7 @@
 ## Release 5.0.M18
 
+* #602 Expressions - immutable parameter binding
+* #603 Expressions: compact and/or chains
 * #638 EntityUpdate.getToMany(String) should return null if the key is not a part of update
 * #640 DataResponse<T> to support "304 Not Modified"
 * #641 Cayenne IPathResolver may get "poisoned" by per-request overlayed AgEntities

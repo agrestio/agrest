@@ -1,12 +1,7 @@
 package io.agrest.exp.parser;
 
-import io.agrest.AgException;
 import io.agrest.exp.AgExpression;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 public abstract class ExpGenericScalar<T> extends AgExpression {
@@ -26,94 +21,6 @@ public abstract class ExpGenericScalar<T> extends AgExpression {
 
     public void setValue(T value) {
         jjtSetValue(value);
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public static ExpGenericScalar<?> of(Object value) {
-        if (value == null) {
-            return new ExpScalar(AgExpressionParserTreeConstants.JJTSCALAR);
-        }
-
-        ExpGenericScalar<?> scalar;
-        if (value instanceof Collection) {
-            scalar = new ExpScalarList(AgExpressionParserTreeConstants.JJTSCALARLIST);
-        } else if (value.getClass().isArray()) {
-            Class<?> componentType = value.getClass().getComponentType();
-            if (componentType.isPrimitive()) {
-                value = wrapPrimitiveArray(value);
-            } else {
-                value = Arrays.asList((Object[]) value);
-            }
-            scalar = new ExpScalarList(AgExpressionParserTreeConstants.JJTSCALARLIST);
-        } else {
-            scalar = new ExpScalar(AgExpressionParserTreeConstants.JJTSCALAR);
-        }
-
-        ((ExpGenericScalar)scalar).setValue(value);
-        return scalar;
-    }
-
-    private static List<?> wrapPrimitiveArray(Object value) {
-        if(value instanceof byte[]) {
-            byte[] array = (byte[]) value;
-            List<Byte> result = new ArrayList<>(array.length);
-            for (byte b : array) {
-                result.add(b);
-            }
-            return result;
-        } else if(value instanceof short[]) {
-            short[] array = (short[]) value;
-            List<Short> result = new ArrayList<>(array.length);
-            for (short b : array) {
-                result.add(b);
-            }
-            return result;
-        } else if(value instanceof char[]) {
-            char[] array = (char[]) value;
-            List<Character> result = new ArrayList<>(array.length);
-            for (char b : array) {
-                result.add(b);
-            }
-            return result;
-        } else if(value instanceof int[]) {
-            int[] array = (int[]) value;
-            List<Integer> result = new ArrayList<>(array.length);
-            for (int b : array) {
-                result.add(b);
-            }
-            return result;
-        } else if(value instanceof long[]) {
-            long[] array = (long[]) value;
-            List<Long> result = new ArrayList<>(array.length);
-            for (long b : array) {
-                result.add(b);
-            }
-            return result;
-        } else if(value instanceof float[]) {
-            float[] array = (float[]) value;
-            List<Float> result = new ArrayList<>(array.length);
-            for (float b : array) {
-                result.add(b);
-            }
-            return result;
-        } else if(value instanceof double[]) {
-            double[] array = (double[]) value;
-            List<Double> result = new ArrayList<>(array.length);
-            for (double b : array) {
-                result.add(b);
-            }
-            return result;
-        } else if(value instanceof boolean[]) {
-            boolean[] array = (boolean[]) value;
-            List<Boolean> result = new ArrayList<>(array.length);
-            for (boolean b : array) {
-                result.add(b);
-            }
-            return result;
-        } else {
-            throw AgException.internalServerError("Array of type '%s' is not supported as an 'in' exp parameter",
-                                                  value.getClass().getComponentType().getSimpleName());
-        }
     }
 
     @Override

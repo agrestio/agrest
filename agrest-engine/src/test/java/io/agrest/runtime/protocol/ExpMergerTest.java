@@ -41,15 +41,15 @@ public class ExpMergerTest {
 
     @Test
     public void testMerge_Empty() {
-        merger.merge(entity, Exp.from("a = 12345 and b = 'John Smith'"));
-        assertEquals(Exp.from("a = 12345 and b = 'John Smith'"), entity.getExp());
+        merger.merge(entity, Exp.parse("a = 12345 and b = 'John Smith'"));
+        assertEquals(Exp.parse("a = 12345 and b = 'John Smith'"), entity.getExp());
     }
 
     @Test
     public void testMerge_OverExisting() {
-        entity.andExp(Exp.from("c = true"));
-        merger.merge(entity, Exp.from("a = 12345 and b = 'John Smith'"));
-        assertEquals(Exp.from("c = true").and(Exp.from("a = 12345 and b = 'John Smith'")), entity.getExp());
+        entity.andExp(Exp.parse("c = true"));
+        merger.merge(entity, Exp.parse("a = 12345 and b = 'John Smith'"));
+        assertEquals(Exp.parse("c = true").and(Exp.parse("a = 12345 and b = 'John Smith'")), entity.getExp());
     }
 
     public static class Tr {

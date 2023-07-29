@@ -31,7 +31,7 @@ public class ControlParams_v12_Latest_Test {
         ControlParamsTester.test(Pojo.class, tester.runtime())
                 .param("exp", "name = 'Joe'")
                 .parseRequest()
-                .assertExp(Exp.from("name = 'Joe'"));
+                .assertExp(Exp.parse("name = 'Joe'"));
     }
 
     @Test

@@ -57,7 +57,7 @@ public class AgExpressionParser {
         try {
             AgExpressionParser parser = new AgExpressionParser(expressionString);
             return parser.expression();
-        } catch (ParseException e) {
+        } catch (ParseException | TokenMgrException e) {
             throw AgException.badRequest(e, e.getMessage());
         }
     }

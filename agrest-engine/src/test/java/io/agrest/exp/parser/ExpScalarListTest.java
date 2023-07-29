@@ -56,7 +56,7 @@ class ExpScalarListTest extends AbstractExpTest {
     @Override
     protected Stream<Arguments> stringify() {
         // Wrap scalar list in 'In' expression to meet grammar requirements.
-        return stringifyRaw().peek(args -> args.get()[0] = Exp.from("a in (" + args.get()[0] + ")"));
+        return stringifyRaw().peek(args -> args.get()[0] = Exp.parse("a in (" + args.get()[0] + ")"));
     }
 
     Stream<Arguments> countChildren() {
@@ -66,7 +66,7 @@ class ExpScalarListTest extends AbstractExpTest {
                 Arguments.of("$a, $b, $c", 3)
         ).peek(
                 // Wrap scalar list in 'In' expression to meet grammar requirements.
-                args -> args.get()[0] = Exp.from("a in (" + args.get()[0] + ")")
+                args -> args.get()[0] = Exp.parse("a in (" + args.get()[0] + ")")
         );
     }
 

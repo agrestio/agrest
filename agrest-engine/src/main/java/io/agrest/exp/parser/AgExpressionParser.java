@@ -3,8 +3,6 @@
 package io.agrest.exp.parser;
 
 // note: Parser doesn't use this import, but it's shared with the TokenManager
-import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import io.agrest.AgException;
 import io.agrest.exp.AgExpression;
@@ -20,7 +18,7 @@ public class AgExpressionParser/*@bgen(jjtree)*/implements AgExpressionParserTre
         try {
             AgExpressionParser parser = new AgExpressionParser(expressionString);
             return parser.expression();
-        } catch (ParseException e) {
+        } catch (ParseException | TokenMgrException e) {
             throw AgException.badRequest(e, e.getMessage());
         }
     }

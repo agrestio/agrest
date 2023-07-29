@@ -69,7 +69,7 @@ public class ExpParser implements IExpParser {
         } else if (value.startsWith("{")) {
             exp = fromJsonObject(jsonParser.parseJson(value));
         } else {
-            exp = Exp.from(value);
+            exp = Exp.parse(value);
         }
 
         return exp;
@@ -86,7 +86,7 @@ public class ExpParser implements IExpParser {
         }
 
         if (json.isTextual()) {
-            return Exp.from(json.asText());
+            return Exp.parse(json.asText());
         }
 
         if (json.isArray()) {
@@ -121,10 +121,10 @@ public class ExpParser implements IExpParser {
                 paramsMap.put(key, val);
             }
 
-            return Exp.from(expNode.asText()).namedParams(paramsMap);
+            return Exp.parse(expNode.asText()).namedParams(paramsMap);
         }
 
-        return Exp.from(expNode.asText());
+        return Exp.parse(expNode.asText());
     }
 
     private Exp fromJsonArray(JsonNode array) {
@@ -137,7 +137,7 @@ public class ExpParser implements IExpParser {
         String expString = array.get(0).asText();
 
         if (len < 2) {
-            return Exp.from(expString);
+            return Exp.parse(expString);
         }
 
         Object[] params = new Object[len - 1];
@@ -148,6 +148,6 @@ public class ExpParser implements IExpParser {
             params[i - 1] = extractValue(paramNode);
         }
 
-        return Exp.from(expString).positionalParams(params);
+        return Exp.parse(expString).positionalParams(params);
     }
 }

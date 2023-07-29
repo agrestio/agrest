@@ -27,11 +27,11 @@ public class ResourceEntityTest {
         ResourceEntity<P1> e = new RootResourceEntity<>(mockEntity(P1.class));
         assertNull(e.getExp());
 
-        e.andExp(Exp.from("a = 1"));
-        assertEquals(Exp.from("a = 1"), e.getExp());
+        e.andExp(Exp.parse("a = 1"));
+        assertEquals(Exp.parse("a = 1"), e.getExp());
 
-        e.andExp(Exp.from("b = 2"));
-        assertEquals(Exp.from("a = 1").and(Exp.from("b = 2")), e.getExp());
+        e.andExp(Exp.parse("b = 2"));
+        assertEquals(Exp.parse("a = 1").and(Exp.parse("b = 2")), e.getExp());
     }
 
 

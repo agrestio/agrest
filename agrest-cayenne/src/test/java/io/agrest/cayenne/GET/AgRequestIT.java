@@ -125,7 +125,7 @@ public class AgRequestIT extends MainDbTest {
         @GET
         @Path("e2_exp")
         public DataResponse<E2> getE2(@Context UriInfo uriInfo) {
-            Exp exp = Exp.from("name = 'xxx'");
+            Exp exp = Exp.parse("name = 'xxx'");
             AgRequest agRequest = AgJaxrs.request(config).andExp(exp).build();
 
             return AgJaxrs.select(E2.class, config)

@@ -3,7 +3,6 @@
 package io.agrest.exp.parser;
 
 import io.agrest.exp.AgExpression;
-import io.agrest.protocol.Exp;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -20,11 +19,6 @@ class ExpAnd extends ExpCondition {
 
   public ExpAnd() {
     super(AgExpressionParserTreeConstants.JJTAND);
-  }
-
-  @Override
-  public Exp and(Exp exp) {
-    return ExpUtils.and(this, (Node) exp);
   }
 
   /** Accept the visitor. **/

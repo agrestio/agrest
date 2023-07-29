@@ -4,9 +4,9 @@ import io.agrest.protocol.Exp;
 
 /**
  * @since 5.0
- * @deprecated since 5.0 as Agrest now supports fully featured parsing for the expressions
+ * @deprecated in favor of the new unified expression API
  */
-@Deprecated
+@Deprecated(since = "5.0")
 public class KeyValueExp implements Exp {
 
     private final String key;

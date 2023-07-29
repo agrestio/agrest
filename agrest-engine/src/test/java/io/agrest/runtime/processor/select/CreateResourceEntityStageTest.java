@@ -455,7 +455,7 @@ public class CreateResourceEntityStageTest {
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
-                .andExp(Exp.from("x = 12345 and y = 'John Smith' and z = true")).build());
+                .andExp(Exp.parse("x = 12345 and y = 'John Smith' and z = true")).build());
 
         assertDoesNotThrow(() -> stage.execute(context), "Even though the passed spec is invalid, no parsing should occur at this stage");
     }
@@ -470,12 +470,12 @@ public class CreateResourceEntityStageTest {
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
-                .andExp(Exp.from("m = 'John Smith'")).build());
+                .andExp(Exp.parse("m = 'John Smith'")).build());
 
         stage.execute(context);
 
         ResourceEntity<Ts> resourceEntity = context.getEntity();
-        assertEquals(Exp.from("m = 'John Smith'"), resourceEntity.getExp());
+        assertEquals(Exp.parse("m = 'John Smith'"), resourceEntity.getExp());
     }
 
     public static class Tr {

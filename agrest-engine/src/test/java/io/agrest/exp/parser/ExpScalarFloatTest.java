@@ -1,7 +1,6 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
-import io.agrest.protocol.Exp;
 import org.junit.jupiter.params.provider.Arguments;
 import org.opentest4j.AssertionFailedError;
 
@@ -46,8 +45,8 @@ class ExpScalarFloatTest extends AbstractExpTest {
                 Arguments.of("e1", AssertionFailedError.class),
                 Arguments.of("1+e1", AssertionFailedError.class),
                 Arguments.of("1e1.1", AgException.class),
-                Arguments.of(".", TokenMgrException.class),
-                Arguments.of("0x1.F", TokenMgrException.class)
+                Arguments.of(".", AgException.class),
+                Arguments.of("0x1.F", AgException.class)
         );
     }
 

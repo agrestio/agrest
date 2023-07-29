@@ -80,6 +80,14 @@ public class SimpleNode implements Node {
         return visitor.visit(this, data);
     }
 
+    public void setChildren(Node[] children) {
+        this.children = children;
+    }
+
+    public Node[] getChildren() {
+        return children;
+    }
+
     /**
      * Accept the visitor.
      **/
@@ -105,21 +113,6 @@ public class SimpleNode implements Node {
 
     public String toString(String prefix) {
         return prefix + this;
-    }
-
-  /* Override this method if you want to customize how the node dumps
-     out its children. */
-
-    public void dump(String prefix) {
-        System.out.println(toString(prefix));
-        if (children != null) {
-            for (Node child : children) {
-                SimpleNode n = (SimpleNode) child;
-                if (n != null) {
-                    n.dump(prefix + " ");
-                }
-            }
-        }
     }
 
     @Override
