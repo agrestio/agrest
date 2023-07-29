@@ -1,7 +1,6 @@
 package io.agrest.cayenne.exp;
 
 import io.agrest.cayenne.path.PathOps;
-import io.agrest.exp.AgExpressionParameter;
 import io.agrest.exp.parser.SimpleNode;
 import io.agrest.exp.parser.*;
 import org.apache.cayenne.exp.Expression;
@@ -121,8 +120,8 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
         Object[] cayenneValues = new Object[value.size()];
         int i = 0;
         for (Object next : value) {
-            if (next instanceof AgExpressionParameter) {
-                cayenneValues[i++] = new ExpressionParameter(((AgExpressionParameter) next).getName());
+            if (next instanceof ExpNamedParameter) {
+                cayenneValues[i++] = new ExpressionParameter(((ExpNamedParameter) next).getName());
             } else {
                 cayenneValues[i++] = next;
             }

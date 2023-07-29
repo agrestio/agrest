@@ -4,10 +4,9 @@ package io.agrest.exp.parser;
 
 import io.agrest.exp.AgExpression;
 import io.agrest.exp.AgExpressionException;
-import io.agrest.exp.AgExpressionParameter;
 
 public
-class ExpNamedParameter extends ExpScalar {
+class ExpNamedParameter extends AgExpression {
   public ExpNamedParameter(int id) {
     super(id);
   }
@@ -18,6 +17,10 @@ class ExpNamedParameter extends ExpScalar {
 
   public ExpNamedParameter() {
     super(AgExpressionParserTreeConstants.JJTNAMEDPARAMETER);
+  }
+
+  public String getName() {
+    return (String) jjtGetValue();
   }
 
   /** Accept the visitor. **/
@@ -38,7 +41,7 @@ class ExpNamedParameter extends ExpScalar {
       throw new AgExpressionException("Empty Parameter value");
     }
 
-    super.jjtSetValue(new AgExpressionParameter(name));
+    super.jjtSetValue(name);
   }
 
   @Override
@@ -47,5 +50,11 @@ class ExpNamedParameter extends ExpScalar {
     copy.value = value;
     return copy;
   }
+
+    @Override
+    public String toString() {
+        String name = getName();
+        return name != null ? "$" + name : "null";
+    }
 }
 /* JavaCC - OriginalChecksum=7b4e7b4225063fe3b24686d5b6a2ada2 (do not edit this line) */

@@ -94,7 +94,7 @@ class ExpScalarList extends ExpGenericScalar<Collection<?>> {
 
     @Override
     public List<Object> visit(ExpNamedParameter node, List<Object> data) {
-      data.add(node.jjtGetValue());
+      data.add(node);
       return data;
     }
   }

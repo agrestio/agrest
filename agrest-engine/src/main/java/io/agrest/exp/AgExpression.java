@@ -3,6 +3,7 @@ package io.agrest.exp;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.agrest.exp.parser.AgExpressionParser;
 import io.agrest.exp.parser.AgExpressionParserVisitor;
+import io.agrest.exp.parser.ExpNamedParameter;
 import io.agrest.exp.parser.ExpScalar;
 import io.agrest.exp.parser.ExpScalarList;
 import io.agrest.exp.parser.Node;
@@ -189,7 +190,7 @@ public abstract class AgExpression extends SimpleNode {
 
         @Override
         public Object apply(Object object) {
-            if (!(object instanceof AgExpressionParameter)) {
+            if (!(object instanceof ExpNamedParameter)) {
                 if (!(object instanceof Object[])) {
                     return object;
                 }
@@ -205,7 +206,7 @@ public abstract class AgExpression extends SimpleNode {
                 return target;
             }
 
-            String name = ((AgExpressionParameter) object).getName();
+            String name = ((ExpNamedParameter) object).getName();
             if (!parameters.containsKey(name)) {
                 if (pruneMissing) {
                     return PRUNED_NODE;
@@ -232,7 +233,7 @@ public abstract class AgExpression extends SimpleNode {
         void onFinish() {
             if (i < parameters.length) {
                 throw new AgExpressionException("Too many parameters to bind expression. "
-                                                + "Expected: " + i + ", actual: " + parameters.length);
+                        + "Expected: " + i + ", actual: " + parameters.length);
             }
         }
 
@@ -240,14 +241,14 @@ public abstract class AgExpression extends SimpleNode {
         public void finishedChild(AgExpression node, int childIndex, boolean hasMoreChildren) {
 
             Object child = node.getOperand(childIndex);
-            if (child instanceof AgExpressionParameter) {
-                node.setOperand(childIndex, nextValue(((AgExpressionParameter) child).getName()));
+            if (child instanceof ExpNamedParameter) {
+                node.setOperand(childIndex, nextValue(((ExpNamedParameter) child).getName()));
             } else if (child instanceof Object[]) {
                 Object[] array = (Object[]) child;
 
                 for (int i = 0; i < array.length; i++) {
-                    if (array[i] instanceof AgExpressionParameter) {
-                        array[i] = nextValue(((AgExpressionParameter) array[i]).getName());
+                    if (array[i] instanceof ExpNamedParameter) {
+                        array[i] = nextValue(((ExpNamedParameter) array[i]).getName());
                     }
                 }
             }
