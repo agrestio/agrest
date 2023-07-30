@@ -15,7 +15,7 @@ class ExpPath extends AgExpression {
   }
 
   public ExpPath() {
-    super(AgExpressionParserTreeConstants.JJTOBJPATH);
+    super(AgExpressionParserTreeConstants.JJTPATH);
   }
 
   public String getPath() {

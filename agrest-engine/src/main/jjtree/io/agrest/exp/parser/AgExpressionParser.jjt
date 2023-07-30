@@ -40,7 +40,7 @@ PARSER_BEGIN(AgExpressionParser)
 package io.agrest.exp.parser;
 
 // note: Parser doesn't use this import, but it's shared with the TokenManager
-import java.math.BigDecimal;
+import java.io.StringReader;import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import io.agrest.AgException;
@@ -55,9 +55,12 @@ public class AgExpressionParser {
 
     public static AgExpression parse(String expressionString) {
         try {
-            AgExpressionParser parser = new AgExpressionParser(expressionString);
+            AgExpressionParser parser = new AgExpressionParser(new StringReader(expressionString));
             return parser.expression();
-        } catch (ParseException | TokenMgrException e) {
+        } catch (ParseException e) {
+            throw AgException.badRequest(e, e.getMessage());
+        }
+        catch (TokenMgrError e) {
             throw AgException.badRequest(e, e.getMessage());
         }
     }
