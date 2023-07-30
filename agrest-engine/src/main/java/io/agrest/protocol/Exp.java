@@ -224,6 +224,13 @@ public interface Exp {
     /**
      * @since 5.0
      */
+    static Exp notEqual(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpNotEqual(), path(path), scalar(scalar));
+    }
+
+    /**
+     * @since 5.0
+     */
     static Exp and(Exp... exps) {
         int len = exps.length;
         switch (len) {

@@ -118,6 +118,11 @@ public class ExpTest {
     }
 
     @Test
+    public void notEqual() {
+        assertEquals("(a) != ('b')", Exp.notEqual("a", "b").toString());
+    }
+
+    @Test
     public void lessOrEqual() {
         assertEquals("(a) <= (5)", Exp.lessOrEqual("a", 5).toString());
     }

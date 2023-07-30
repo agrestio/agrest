@@ -33,6 +33,12 @@ public class CayenneExpParserTest {
     }
 
     @Test
+    public void parseNotEqual() {
+        Expression e = parser.parse(Exp.notEqual("a", 5));
+        assertEquals(ExpressionFactory.exp("a != 5"), e);
+    }
+
+    @Test
     public void parseEqualDate() {
         LocalDate d = LocalDate.of(1999, 8, 7);
         Expression e = parser.parse(Exp.equal("a", d));
