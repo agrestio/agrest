@@ -15,45 +15,39 @@ public class CayenneExpParserTest {
     static final CayenneExpParser parser = new CayenneExpParser();
 
     @Test
-    public void testParseSimple() {
-        Expression e = parser.parse(Exp.parse("a = 'b'"));
-        assertEquals(ExpressionFactory.exp("a = 'b'"), e);
-    }
-
-    @Test
-    public void testParseNamedParams() {
+    public void parseNamedParams() {
         Expression e = parser.parse(Exp.parse("a = $a").namedParams(Map.of("a", "x")));
         assertEquals(ExpressionFactory.exp("a = 'x'"), e);
     }
 
     @Test
-    public void testParsePositionalParams() {
+    public void parsePositionalParams() {
         Expression e = parser.parse(Exp.parse("a = $a").positionalParams("x"));
         assertEquals(ExpressionFactory.exp("a = 'x'"), e);
     }
 
     @Test
-    public void testParseKeyValue_Eq() {
+    public void parseEqual() {
         Expression e = parser.parse(Exp.equal("a", 5));
         assertEquals(ExpressionFactory.exp("a = 5"), e);
     }
 
     @Test
-    public void testParseKeyValue_Eq_Date() {
+    public void parseEqualDate() {
         LocalDate d = LocalDate.of(1999, 8, 7);
         Expression e = parser.parse(Exp.equal("a", d));
         assertEquals(ExpressionFactory.exp("a = $a").paramsArray(d), e);
     }
 
     @Test
-    public void testParseKeyValue_Eq_Object() {
+    public void parseEqual_Object() {
         Object o = new Object();
         Expression e = parser.parse(Exp.equal("a", o));
         assertEquals(ExpressionFactory.exp("a = $a").paramsArray(o), e);
     }
 
     @Test
-    public void testParseKeyValue_In() {
+    public void parseIn() {
         Expression e1 = parser.parse(Exp.in("a", 5, 6, 7));
         assertEquals(ExpressionFactory.exp("a in (5, 6, 7)"), e1);
 
@@ -65,13 +59,13 @@ public class CayenneExpParserTest {
     }
 
     @Test
-    public void testParseKeyValue_DB_Path_Eq() {
+    public void parseEqual_DbPath() {
         Expression e = parser.parse(Exp.equal("db:a", 5));
         assertEquals(ExpressionFactory.exp("db:a = 5"), e);
     }
 
     @Test
-    public void testParseComposite() {
+    public void parseCompositeCondition() {
 
         Exp e0 = Exp.parse("a = 'b'");
         Exp e1 = Exp.parse("b = $a").namedParams(Map.of("a", "x"));
