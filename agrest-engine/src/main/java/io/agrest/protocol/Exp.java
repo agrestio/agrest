@@ -286,7 +286,7 @@ public interface Exp {
     default void visit(ExpVisitor visitor) {
         // DO NOTHING
     }
-    
+
     /**
      * Invokes a callback on the visitor corresponding to one of the known expression types. The operation is
      * non-recursive even for composite expressions. If the visitor needs to descend into expression tree, it will
