@@ -53,35 +53,6 @@ public interface Exp {
 
     /**
      * @since 5.0
-     * @deprecated use explicit factory methods, like {@link #equal(String, Object)}, {@link #less(String, Object)}, etc.
-     */
-    @Deprecated(since = "5.0")
-    static Exp keyValue(String key, String op, Object value) {
-
-        switch (op) {
-            case "=":
-                return Exp.equal(key, value);
-            case "<":
-                return Exp.less(key, value);
-            case ">":
-                return Exp.greater(key, value);
-            case "<=":
-                return Exp.lessOrEqual(key, value);
-            case ">=":
-                return Exp.greaterOrEqual(key, value);
-            case "like":
-                return Exp.like(key, value);
-            case "likeIgnoreCase":
-                return Exp.likeIgnoreCase(key, value);
-            case "in":
-                return Exp.in(key, value);
-            default:
-                throw new IllegalArgumentException("Unsupported operation in Expression: " + op);
-        }
-    }
-
-    /**
-     * @since 5.0
      */
     static Exp path(String path) {
         ExpPath pathExp = new ExpPath();
@@ -315,7 +286,7 @@ public interface Exp {
     default void visit(ExpVisitor visitor) {
         // DO NOTHING
     }
-
+    
     /**
      * Invokes a callback on the visitor corresponding to one of the known expression types. The operation is
      * non-recursive even for composite expressions. If the visitor needs to descend into expression tree, it will
