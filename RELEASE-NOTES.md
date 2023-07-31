@@ -7,6 +7,7 @@
 * #641 Cayenne IPathResolver may get "poisoned" by per-request overlayed AgEntities
 * #642 TokenMgrException is not handled by Agrest
 * #643 Static factory methods in Exp for conditions
+* #646 org.apache.cayenne.exp.ExpressionException: [v.4.2 May 16 2023 08:31:12] In: invalid parent - Equal
  
 ## Release 5.0.M17
 
