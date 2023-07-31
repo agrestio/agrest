@@ -5,11 +5,11 @@
     <parent>
         <groupId>io.agrest</groupId>
         <artifactId>agrest-parent</artifactId>
-        <version>5.0.M18</version>
+        <version>5.0.M19-SNAPSHOT</version>
     </parent>
 
     <artifactId>agrest-cayenne</artifactId>
-  <version>5.0.M18</version>
+  <version>5.0.M19-SNAPSHOT</version>
     <name>agrest-cayenne: Cayenne backend for Agrest</name>
     <description>Cayenne backend for Agrest</description>
 
