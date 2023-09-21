@@ -58,7 +58,7 @@ public abstract class AgExpression extends SimpleNode {
     }
 
     public AgExpression deepCopy() {
-        return transform(null);
+        return transform(o -> o);
     }
 
     protected abstract AgExpression shallowCopy();
@@ -114,6 +114,7 @@ public abstract class AgExpression extends SimpleNode {
     }
 
     protected AgExpression transform(Function<Object, Object> transformer) {
+
         Object transformed = transformExpression(transformer);
         if (transformed == PRUNED_NODE || transformed == null) {
             return null;
@@ -145,7 +146,7 @@ public abstract class AgExpression extends SimpleNode {
         }
 
         // all the children are processed, only now transform this copy
-        return (transformer != null) ? transformer.apply(copy) : copy;
+        return transformer.apply(copy);
     }
 
     protected boolean pruneNodeForPrunedChild() {
@@ -180,20 +181,9 @@ public abstract class AgExpression extends SimpleNode {
 
         @Override
         public Object apply(Object object) {
+
             if (!(object instanceof ExpNamedParameter)) {
-                if (!(object instanceof Object[])) {
-                    return object;
-                }
-
-                Object[] source = (Object[]) object;
-                int len = source.length;
-                Object[] target = new Object[len];
-
-                for (int i = 0; i < len; i++) {
-                    target[i] = apply(source[i]);
-                }
-
-                return target;
+                return object;
             }
 
             String name = ((ExpNamedParameter) object).getName();
@@ -205,7 +195,7 @@ public abstract class AgExpression extends SimpleNode {
                 }
             } else {
                 Object value = parameters.get(name);
-                return (value != null) ? wrapParameterValue(value) : new ExpScalar(null);
+                return value != null ? wrapParameterValue(value) : new ExpScalar(null);
             }
         }
     }

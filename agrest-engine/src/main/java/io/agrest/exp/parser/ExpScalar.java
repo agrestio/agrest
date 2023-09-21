@@ -26,8 +26,7 @@ public class ExpScalar extends ExpBaseScalar<Object> {
 
     @Override
     protected Object transformExpression(Function<Object, Object> transformer) {
-        Object transformedValue = transformer != null ? transformer.apply(getValue()) : getValue();
-        return transformedValue == PRUNED_NODE ? null : new ExpScalar(transformedValue);
+        return transformer.apply(new ExpScalar(getValue()));
     }
 
     /**
