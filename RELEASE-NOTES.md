@@ -1,3 +1,7 @@
+## Release 5.0.M19
+
+* #648 NPE in CayenneExpParser for a combination of null and positional parameter
+
 ## Release 5.0.M18
 
 * #602 Expressions - immutable parameter binding

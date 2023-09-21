@@ -128,20 +128,10 @@ public abstract class AgExpression extends SimpleNode {
         AgExpression copy = shallowCopy();
         int count = getOperandCount();
         for (int i = 0, j = 0; i < count; i++) {
-            Object operand = getOperand(i);
-            Object transformedChild;
+            AgExpression child = (AgExpression) jjtGetChild(i);
+            Object transformedChild = child.transformExpression(transformer);
 
-            if (operand instanceof AgExpression) {
-                transformedChild = ((AgExpression) operand).transformExpression(transformer);
-            } else if (transformer != null) {
-                transformedChild = transformer.apply(operand);
-            } else {
-                transformedChild = operand;
-            }
-
-            // prune null children only if there is a transformer and it
-            // indicated so
-            boolean prune = transformer != null && transformedChild == PRUNED_NODE;
+            boolean prune = transformedChild == PRUNED_NODE;
 
             if (!prune) {
                 copy.setOperand(j, transformedChild);

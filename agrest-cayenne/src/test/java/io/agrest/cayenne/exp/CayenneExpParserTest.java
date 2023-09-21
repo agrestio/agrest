@@ -27,6 +27,13 @@ public class CayenneExpParserTest {
     }
 
     @Test
+    public void parsePositionalParams_NullAndParam() {
+        Exp agExp = Exp.parse("a = null or a.b = $b").positionalParams("B");
+        Expression e = parser.parse(agExp);
+        assertEquals(ExpressionFactory.exp("a = null or a.b = 'B'"), e);
+    }
+
+    @Test
     public void parseEqual() {
         Expression e = parser.parse(Exp.equal("a", 5));
         assertEquals(ExpressionFactory.exp("a = 5"), e);

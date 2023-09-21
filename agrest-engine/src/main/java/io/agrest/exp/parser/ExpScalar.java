@@ -4,45 +4,52 @@ package io.agrest.exp.parser;
 
 import io.agrest.exp.AgExpression;
 
-public
-class ExpScalar extends ExpBaseScalar<Object> {
-  public ExpScalar(int id) {
-    super(id);
-  }
+import java.util.function.Function;
 
-  public ExpScalar(AgExpressionParser p, int id) {
-    super(p, id);
-  }
-
-  public ExpScalar() {
-    super(AgExpressionParserTreeConstants.JJTSCALAR);
-  }
-
-  public ExpScalar(Object value) {
-    super(AgExpressionParserTreeConstants.JJTSCALAR);
-    setValue(value);
-  }
-
-
-  /** Accept the visitor. **/
-  public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
-
-    return
-    visitor.visit(this, data);
-  }
-
-  @Override
-  protected AgExpression shallowCopy() {
-    return new ExpScalar(getValue());
-  }
-
-  @Override
-  public String toString() {
-    if (value instanceof CharSequence) {
-      return "'" + value + "'";
-    } else {
-      return String.valueOf(value);
+public class ExpScalar extends ExpBaseScalar<Object> {
+    public ExpScalar(int id) {
+        super(id);
     }
-  }
+
+    public ExpScalar(AgExpressionParser p, int id) {
+        super(p, id);
+    }
+
+    public ExpScalar() {
+        super(AgExpressionParserTreeConstants.JJTSCALAR);
+    }
+
+    public ExpScalar(Object value) {
+        super(AgExpressionParserTreeConstants.JJTSCALAR);
+        setValue(value);
+    }
+
+    @Override
+    protected Object transformExpression(Function<Object, Object> transformer) {
+        Object transformedValue = transformer != null ? transformer.apply(getValue()) : getValue();
+        return transformedValue == PRUNED_NODE ? null : new ExpScalar(transformedValue);
+    }
+
+    /**
+     * Accept the visitor.
+     **/
+    public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
+
+        return visitor.visit(this, data);
+    }
+
+    @Override
+    protected AgExpression shallowCopy() {
+        return new ExpScalar(getValue());
+    }
+
+    @Override
+    public String toString() {
+        if (value instanceof CharSequence) {
+            return "'" + value + "'";
+        } else {
+            return String.valueOf(value);
+        }
+    }
 }
 /* JavaCC - OriginalChecksum=21004db13a44c6b16cc9797a6f36a4af (do not edit this line) */
