@@ -23,7 +23,7 @@ public class WritablePropFilterIT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E8.class)
+            .entitiesAndDependencies(E2.class, E3.class, E8.class)
             .build();
 
     @Test
