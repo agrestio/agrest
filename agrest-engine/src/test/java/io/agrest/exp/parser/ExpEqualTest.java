@@ -1,7 +1,6 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
-import io.agrest.exp.AgExpression;
 import io.agrest.protocol.Exp;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -54,7 +53,7 @@ public class ExpEqualTest {
     @Test
     public void shallowCopy_toString() {
         ExpEqual e = (ExpEqual) Exp.equal("a", 5);
-        AgExpression copy = e.shallowCopy();
+        SimpleNode copy = e.shallowCopy();
         assertEquals("? = ?", copy.toString());
     }
 }

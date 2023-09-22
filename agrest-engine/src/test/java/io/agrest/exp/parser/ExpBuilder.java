@@ -1,7 +1,5 @@
 package io.agrest.exp.parser;
 
-import io.agrest.exp.AgExpression;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,12 +60,12 @@ public class ExpBuilder {
         expIdMap.put(ExpPath.class, AgExpressionParserTreeConstants.JJTPATH);
     }
 
-    private final AgExpression exp;
+    private final SimpleNode exp;
     private final List<ExpBuilder> children = new ArrayList<>();
     private Object value;
     private SimpleNode parent;
 
-    public ExpBuilder(Class<? extends AgExpression> expType) {
+    public ExpBuilder(Class<? extends SimpleNode> expType) {
         try {
             exp = expType.getConstructor(int.class).newInstance(expIdMap.get(expType));
         } catch (Exception e) {
@@ -75,7 +73,7 @@ public class ExpBuilder {
         }
     }
 
-    public static ExpBuilder expFromType(Class<? extends AgExpression> expType) {
+    public static ExpBuilder expFromType(Class<? extends SimpleNode> expType) {
         return new ExpBuilder(expType);
     }
 
@@ -90,7 +88,7 @@ public class ExpBuilder {
         return this;
     }
 
-    public AgExpression build() {
+    public SimpleNode build() {
         buildChildren();
         exp.jjtSetParent(parent);
         exp.jjtSetValue(value);
@@ -98,7 +96,7 @@ public class ExpBuilder {
     }
 
     private void buildChildren() {
-        AgExpression[] children = this.children.stream().map(ExpBuilder::build).toArray(AgExpression[]::new);
+        SimpleNode[] children = this.children.stream().map(ExpBuilder::build).toArray(SimpleNode[]::new);
         if (children.length != 0) {
             for (int i = 0; i < children.length; i++) {
                 exp.jjtAddChild(children[i], i);

@@ -2,10 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
-import io.agrest.exp.AgExpression;
-
 public
-class ExpGreaterOrEqual extends AgExpression {
+class ExpGreaterOrEqual extends SimpleNode {
   public ExpGreaterOrEqual(int id) {
     super(id);
   }
@@ -26,7 +24,7 @@ class ExpGreaterOrEqual extends AgExpression {
   }
 
   @Override
-  protected AgExpression shallowCopy() {
+  protected ExpGreaterOrEqual shallowCopy() {
     return new ExpGreaterOrEqual(id);
   }
 

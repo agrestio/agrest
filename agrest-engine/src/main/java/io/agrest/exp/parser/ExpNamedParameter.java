@@ -2,11 +2,10 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
-import io.agrest.exp.AgExpression;
 import io.agrest.exp.AgExpressionException;
 
 public
-class ExpNamedParameter extends AgExpression {
+class ExpNamedParameter extends SimpleNode {
   public ExpNamedParameter(int id) {
     super(id);
   }
@@ -45,7 +44,7 @@ class ExpNamedParameter extends AgExpression {
   }
 
   @Override
-  protected AgExpression shallowCopy() {
+  protected SimpleNode shallowCopy() {
     ExpNamedParameter copy = new ExpNamedParameter(id);
     copy.value = value;
     return copy;

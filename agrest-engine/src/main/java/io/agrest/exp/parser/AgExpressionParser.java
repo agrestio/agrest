@@ -4,7 +4,6 @@ package io.agrest.exp.parser;
 // note: Parser doesn't use this import, but it's shared with the TokenManager
 
 import io.agrest.AgException;
-import io.agrest.exp.AgExpression;
 
 import java.io.StringReader;
 
@@ -15,7 +14,7 @@ import java.io.StringReader;
   */
 public class AgExpressionParser/*@bgen(jjtree)*/implements AgExpressionParserTreeConstants, AgExpressionParserConstants {/*@bgen(jjtree)*/
   protected JJTAgExpressionParserState jjtree = new JJTAgExpressionParserState();
-    public static AgExpression parse(String expressionString) {
+    public static SimpleNode parse(String expressionString) {
         try {
             AgExpressionParser parser = new AgExpressionParser(new StringReader(expressionString));
             return parser.expression();
@@ -27,10 +26,10 @@ public class AgExpressionParser/*@bgen(jjtree)*/implements AgExpressionParserTre
         }
     }
 
-  final public AgExpression expression() throws ParseException {
+  final public SimpleNode expression() throws ParseException {
     orCondition();
     jj_consume_token(0);
-        {if (true) return (AgExpression) jjtree.rootNode();}
+        {if (true) return (SimpleNode) jjtree.rootNode();}
     throw new Error("Missing return statement in function");
   }
 

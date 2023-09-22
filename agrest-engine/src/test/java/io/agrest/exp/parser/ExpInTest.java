@@ -1,7 +1,6 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
-import io.agrest.exp.AgExpression;
 import io.agrest.protocol.Exp;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -67,7 +66,7 @@ public class ExpInTest {
     @Test
     public void deepCopy() {
         Exp e = Exp.in("a", "x", "y");
-        Exp eCopy = ((AgExpression) e).deepCopy();
+        Exp eCopy = ((SimpleNode) e).deepCopy();
         assertNotSame(e, eCopy);
         assertEquals(e, eCopy);
     }

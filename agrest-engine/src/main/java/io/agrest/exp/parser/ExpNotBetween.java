@@ -2,10 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
-import io.agrest.exp.AgExpression;
-
 public
-class ExpNotBetween extends AgExpression {
+class ExpNotBetween extends SimpleNode {
   public ExpNotBetween(int id) {
     super(id);
   }
@@ -26,7 +24,7 @@ class ExpNotBetween extends AgExpression {
   }
 
   @Override
-  protected AgExpression shallowCopy() {
+  protected ExpNotBetween shallowCopy() {
     return new ExpNotBetween(id);
   }
 

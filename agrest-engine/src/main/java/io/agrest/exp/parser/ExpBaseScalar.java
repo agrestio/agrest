@@ -1,10 +1,8 @@
 package io.agrest.exp.parser;
 
-import io.agrest.exp.AgExpression;
-
 import java.util.Objects;
 
-public abstract class ExpBaseScalar<T> extends AgExpression {
+public abstract class ExpBaseScalar<T> extends SimpleNode {
 
     public ExpBaseScalar(int i) {
         super(i);

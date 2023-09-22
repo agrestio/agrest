@@ -44,7 +44,7 @@ import java.io.StringReader;import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import io.agrest.AgException;
-import io.agrest.exp.AgExpression;
+import io.agrest.exp.SimpleNode;
 
 /**
   * Parser of AgRest Expressions.
@@ -53,7 +53,7 @@ import io.agrest.exp.AgExpression;
   */
 public class AgExpressionParser {
 
-    public static AgExpression parse(String expressionString) {
+    public static SimpleNode parse(String expressionString) {
         try {
             AgExpressionParser parser = new AgExpressionParser(new StringReader(expressionString));
             return parser.expression();
@@ -68,11 +68,11 @@ public class AgExpressionParser {
 
 PARSER_END(AgExpressionParser)
 
-AgExpression expression() : {}
+SimpleNode expression() : {}
 {
 	orCondition() <EOF> 
     { 
-        return (AgExpression) jjtree.rootNode();
+        return (SimpleNode) jjtree.rootNode();
     }
 }
 

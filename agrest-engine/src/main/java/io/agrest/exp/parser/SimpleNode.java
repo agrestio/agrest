@@ -2,10 +2,19 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
-import java.util.Arrays;
-import java.util.Objects;
+import io.agrest.exp.AgExpressionException;
+import io.agrest.exp.TraversalHandler;
+import io.agrest.protocol.Exp;
 
-public class SimpleNode implements Node {
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+
+public abstract class SimpleNode implements Node {
+
+    protected final static Object PRUNED_NODE = new Object();
 
     protected Node parent;
     protected Node[] children;
@@ -20,6 +29,135 @@ public class SimpleNode implements Node {
     public SimpleNode(AgExpressionParser p, int i) {
         this(i);
         parser = p;
+    }
+
+    static Object wrapParameterValue(Object value) {
+        if (value instanceof Collection<?>) {
+            return new ExpScalarList((Collection<?>) value);
+        } else if (value instanceof Object[]) {
+            return new ExpScalarList((Object[]) value);
+        } else {
+            return new ExpScalar(value);
+        }
+    }
+
+    @Override
+    public Exp positionalParams(Object... params) {
+        SimpleNode copy = deepCopy();
+        copy.inPlaceParams(params);
+        return copy;
+    }
+
+    @Override
+    public Exp namedParams(Map<String, Object> params) {
+        return namedParams(params, true);
+    }
+
+    @Override
+    public Exp namedParams(Map<String, Object> params, boolean pruneMissing) {
+        return transform(new NamedParamTransformer(params, pruneMissing));
+    }
+
+    public SimpleNode deepCopy() {
+        return transform(o -> o);
+    }
+
+    protected abstract SimpleNode shallowCopy();
+
+    void inPlaceParams(Object... params) {
+        InPlaceParamReplacer replacer = new InPlaceParamReplacer(params == null ? new Object[0] : params);
+        traverse(replacer);
+        replacer.onFinish();
+    }
+
+    protected Object getOperand(int index) {
+        Node child = jjtGetChild(index);
+        return unwrapChild(child);
+    }
+
+    protected void setOperand(int index, Object value) {
+        Node node = (value == null || value instanceof Node)
+                ? (Node) value
+                : new ExpScalar(value);
+        jjtAddChild(node, index);
+
+        if (node != null) {
+            node.jjtSetParent(this);
+        }
+    }
+
+    protected void traverse(TraversalHandler visitor) {
+        if (visitor == null) {
+            throw new NullPointerException("Null Visitor.");
+        }
+
+        traverse(null, visitor);
+    }
+
+    protected void traverse(SimpleNode parentExp, TraversalHandler visitor) {
+
+        visitor.startNode(this, parentExp);
+
+        // recursively traverse each child
+        int count = jjtGetNumChildren();
+        for (int i = 0; i < count; i++) {
+            Object child = getOperand(i);
+
+            if (child instanceof SimpleNode && !(child instanceof ExpScalar)) {
+                SimpleNode childExp = (SimpleNode) child;
+                childExp.traverse(this, visitor);
+            } else {
+                visitor.objectNode(child, this);
+            }
+
+            visitor.finishedChild(this, i, i < count - 1);
+        }
+
+        visitor.endNode(this, parentExp);
+    }
+
+    protected SimpleNode transform(Function<Object, Object> transformer) {
+
+        Object transformed = transformExpression(transformer);
+        if (transformed == PRUNED_NODE || transformed == null) {
+            return null;
+        } else if (transformed instanceof SimpleNode) {
+            return (SimpleNode) transformed;
+        }
+
+        throw new AgExpressionException("Invalid transformed expression: " + transformed);
+    }
+
+    protected Object transformExpression(Function<Object, Object> transformer) {
+        SimpleNode copy = shallowCopy();
+        int count = jjtGetNumChildren();
+        for (int i = 0, j = 0; i < count; i++) {
+            SimpleNode child = (SimpleNode) jjtGetChild(i);
+            Object transformedChild = child.transformExpression(transformer);
+
+            boolean prune = transformedChild == PRUNED_NODE;
+
+            if (!prune) {
+                copy.setOperand(j, transformedChild);
+                j++;
+            }
+
+            if (prune && pruneNodeForPrunedChild()) {
+                // bail out early...
+                return PRUNED_NODE;
+            }
+        }
+
+        // all the children are processed, only now transform this copy
+        return transformer.apply(copy);
+    }
+
+    protected boolean pruneNodeForPrunedChild() {
+        return true;
+    }
+
+    private Object unwrapChild(Node child) {
+        return (child instanceof ExpScalar) ? ((ExpScalar) child).getValue() : child;
     }
 
     @Override
@@ -74,7 +212,7 @@ public class SimpleNode implements Node {
 
     /**
      * Accept the visitor.
-     **/
+     */
     @Override
     public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
         return visitor.visit(this, data);
@@ -142,6 +280,7 @@ public class SimpleNode implements Node {
         result = 31 * result + Arrays.hashCode(children);
         return result;
     }
+
 }
 
 /* JavaCC - OriginalChecksum=5b582160ae0ddf8fccabd52a1f82953e (do not edit this line) */

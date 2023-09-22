@@ -2,10 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
-import io.agrest.exp.AgExpression;
-
 public
-class ExpExtract extends AgExpression {
+class ExpExtract extends SimpleNode {
   public ExpExtract(int id) {
     super(id);
   }
@@ -26,7 +24,7 @@ class ExpExtract extends AgExpression {
   }
 
   @Override
-  protected AgExpression shallowCopy() {
+  protected ExpExtract shallowCopy() {
     return new ExpExtract(id);
   }
 

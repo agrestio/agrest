@@ -1,6 +1,5 @@
 package io.agrest.exp.parser;
 
-import io.agrest.exp.AgExpression;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -174,7 +173,7 @@ class CompositeExpTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource
-    void parseExp(String expString, AgExpression expected) {
+    void parseExp(String expString, SimpleNode expected) {
         assertEquals(expected, AgExpressionParser.parse(expString));
     }
 }

@@ -1,10 +1,8 @@
 package io.agrest.exp.parser;
 
-import io.agrest.exp.AgExpression;
-
 import java.util.function.Function;
 
-public abstract class ExpCondition extends AgExpression {
+public abstract class ExpCondition extends SimpleNode {
 
     public ExpCondition(int id) {
         super(id);
@@ -29,7 +27,7 @@ public abstract class ExpCondition extends AgExpression {
         ExpCondition condition = (ExpCondition) transformed;
 
         // Prune itself if the transformation resulted in no children or a single child.
-        switch (condition.getOperandCount()) {
+        switch (condition.jjtGetNumChildren()) {
             case 1:
                 if (condition instanceof ExpNot) {
                     return condition;

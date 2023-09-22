@@ -2,8 +2,6 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
-import io.agrest.exp.AgExpression;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -65,7 +63,7 @@ class ExpScalarList extends ExpBaseScalar<Collection<?>> {
   }
 
   @Override
-  protected AgExpression shallowCopy() {
+  protected ExpScalarList shallowCopy() {
     return new ExpScalarList((Collection<?>) jjtGetValue());
   }
 

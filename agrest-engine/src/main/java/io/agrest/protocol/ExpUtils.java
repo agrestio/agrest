@@ -1,7 +1,6 @@
 package io.agrest.protocol;
 
 import io.agrest.AgException;
-import io.agrest.exp.AgExpression;
 import io.agrest.exp.parser.AgExpressionParserTreeConstants;
 import io.agrest.exp.parser.ExpAnd;
 import io.agrest.exp.parser.ExpOr;
@@ -64,7 +63,7 @@ final class ExpUtils {
         int len = values != null ? values.length : 0;
         Exp[] clonedValues = new Exp[len];
         for (int i = 0; i < len; i++) {
-            clonedValues[i] = ((AgExpression) values[i]).deepCopy();
+            clonedValues[i] = ((SimpleNode) values[i]).deepCopy();
         }
 
         exp.jjtSetValue(clonedValues);
