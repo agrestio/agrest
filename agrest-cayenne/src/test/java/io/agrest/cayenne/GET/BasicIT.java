@@ -30,8 +30,7 @@ public class BasicIT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E4.class, E6.class, E17.class, E31.class)
-            .entitiesAndDependencies(E29.class)
+            .entitiesAndDependencies(E2.class, E3.class, E4.class, E6.class, E17.class, E29.class, E31.class)
             .build();
 
     @Test
