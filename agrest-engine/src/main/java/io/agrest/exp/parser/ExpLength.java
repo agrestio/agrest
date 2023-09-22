@@ -32,7 +32,9 @@ class ExpLength extends AgExpression {
 
   @Override
   public String toString() {
-    return "length(" + children[0] + ")";
+    return children != null
+            ? "length(" + children[0] + ")"
+            : "length(?)";
   }
 }
 /* JavaCC - OriginalChecksum=f19b92880659daa8634dd190871429c4 (do not edit this line) */

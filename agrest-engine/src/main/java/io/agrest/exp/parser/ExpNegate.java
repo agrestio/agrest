@@ -32,7 +32,9 @@ class ExpNegate extends AgExpression {
 
   @Override
   public String toString() {
-    return "-(" + children[0] + ")";
+    return children != null
+            ? "-(" + children[0] + ")"
+            : "-?";
   }
 }
 /* JavaCC - OriginalChecksum=100942f12f6576bdafd2b6051325e733 (do not edit this line) */

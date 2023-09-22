@@ -34,11 +34,9 @@ class ExpNotIn extends AgExpression {
 
   @Override
   public String toString() {
-    return children[0] + " not in " + (
-            children[1].getClass() == ExpNamedParameter.class
-                    ? children[1]
-                    : "(" + children[1] + ")"
-    );
+    return children != null
+            ? children[0] + " not in " + (children[1].getClass() == ExpNamedParameter.class ? children[1] : "(" + children[1] + ")")
+            : "? not in (?)";
   }
 }
 /* JavaCC - OriginalChecksum=49ec5ffe4a961c9a3e6170dbd0f7ad1f (do not edit this line) */

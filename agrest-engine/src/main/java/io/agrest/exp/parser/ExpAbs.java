@@ -32,7 +32,7 @@ class ExpAbs extends AgExpression {
 
   @Override
   public String toString() {
-    return "abs(" + children[0] + ")";
+    return children != null ? "abs(" + children[0] + ")" : "abs(?)";
   }
 }
 /* JavaCC - OriginalChecksum=01d2266f2e2852f0cc30cb38133844d2 (do not edit this line) */

@@ -32,7 +32,9 @@ class ExpEqual extends AgExpression {
 
   @Override
   public String toString() {
-    return "(" + children[0] + ") = (" + children[1] + ")";
+    return children != null
+            ? "(" + children[0] + ") = (" + children[1] + ")"
+            : "? = ?";
   }
 }
 /* JavaCC - OriginalChecksum=5d0a19fd37d62fae2718cc73973efde7 (do not edit this line) */

@@ -24,6 +24,8 @@ public class ExpParser implements IExpParser {
         JsonToken type = valueNode.asToken();
 
         switch (type) {
+            case VALUE_STRING:
+                return valueNode.asText();
             case VALUE_NUMBER_INT:
                 return valueNode.asInt();
             case VALUE_NUMBER_FLOAT:
@@ -37,8 +39,7 @@ public class ExpParser implements IExpParser {
             case START_ARRAY:
                 return extractArray(valueNode);
             default:
-                // String parameters may need to be parsed further. Defer parsing
-                // until it is placed in the context of an expression...
+                // TODO: what else is left out? START_OBJECT maybe for map parameters?
                 return valueNode;
         }
     }

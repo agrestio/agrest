@@ -33,7 +33,7 @@ class ExpSqrt extends AgExpression {
 
   @Override
   public String toString() {
-    return "sqrt(" + children[0] + ")";
+    return children != null ? "sqrt(" + children[0] + ")" : "sqrt(?)";
   }
 }
 /* JavaCC - OriginalChecksum=e749d50dc99d6d7acc161593f5e1b43e (do not edit this line) */

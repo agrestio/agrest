@@ -32,7 +32,9 @@ class ExpLower extends AgExpression {
 
   @Override
   public String toString() {
-    return "lower(" + children[0] + ")";
+    return children != null
+            ? "lower(" + children[0] + ")"
+            : "lower(?)";
   }
 }
 /* JavaCC - OriginalChecksum=46a8609164b2bd56451f930c7b2db122 (do not edit this line) */

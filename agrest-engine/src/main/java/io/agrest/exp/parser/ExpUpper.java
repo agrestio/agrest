@@ -33,7 +33,9 @@ class ExpUpper extends AgExpression {
 
   @Override
   public String toString() {
-    return "upper(" + children[0] + ")";
+    return children != null
+            ? "upper(" + children[0] + ")"
+            : "upper(?)";
   }
 }
 /* JavaCC - OriginalChecksum=579bc67a9a18bf15184b23f2649cc451 (do not edit this line) */

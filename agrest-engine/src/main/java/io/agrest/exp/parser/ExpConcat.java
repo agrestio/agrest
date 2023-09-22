@@ -32,7 +32,9 @@ class ExpConcat extends AgExpression {
 
   @Override
   public String toString() {
-    return "concat(" + children[0] + ", " + children[1] + ")";
+    return children != null
+            ? "concat(" + children[0] + ", " + children[1] + ")"
+            : "concat(?, ?)";
   }
 }
 /* JavaCC - OriginalChecksum=2de2c03e3db046b2f2cdd50df8e4a48e (do not edit this line) */

@@ -32,7 +32,9 @@ class ExpBitwiseAnd extends AgExpression {
 
   @Override
   public String toString() {
-    return "(" + children[0] + ") & (" + children[1] + ")";
+    return children != null
+            ? "(" + children[0] + ") & (" + children[1] + ")"
+            : "? & ?";
   }
 }
 /* JavaCC - OriginalChecksum=114e39f3e98a01e9d633fb36f9cdc27e (do not edit this line) */

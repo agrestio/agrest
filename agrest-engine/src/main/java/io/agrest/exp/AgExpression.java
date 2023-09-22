@@ -1,6 +1,5 @@
 package io.agrest.exp;
 
-import com.fasterxml.jackson.databind.node.TextNode;
 import io.agrest.exp.parser.AgExpressionParser;
 import io.agrest.exp.parser.AgExpressionParserVisitor;
 import io.agrest.exp.parser.ExpNamedParameter;
@@ -162,10 +161,8 @@ public abstract class AgExpression extends SimpleNode {
             return new ExpScalarList((Collection<?>) value);
         } else if (value instanceof Object[]) {
             return new ExpScalarList((Object[]) value);
-        } else if (value instanceof TextNode) {
-            return ((TextNode) value).asText();
         } else {
-            return value;
+            return new ExpScalar(value);
         }
     }
 
@@ -188,11 +185,10 @@ public abstract class AgExpression extends SimpleNode {
 
             String name = ((ExpNamedParameter) object).getName();
             if (!parameters.containsKey(name)) {
-                if (pruneMissing) {
-                    return PRUNED_NODE;
-                } else {
-                    throw new AgExpressionException("Missing required parameter: $" + name);
-                }
+
+                // allow partial parameter resolution. It may be quiet useful
+                return pruneMissing ? PRUNED_NODE : object;
+
             } else {
                 Object value = parameters.get(name);
                 return value != null ? wrapParameterValue(value) : new ExpScalar(null);

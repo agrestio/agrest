@@ -16,22 +16,49 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ExpTest {
 
     @Test
-    public void namedParamsPruning() {
-        Exp exp = Exp.parse("a = $1 and b = $2 or c = $3 and not d = $4");
+    public void namedParams() {
+        Exp exp = Exp.parse("a = $a and b = $b or c = $c and not d = $d");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("a", 2);
+        params.put("b", 4);
+        params.put("c", null);
+        params.put("d", 16);
 
         assertEquals(
-                "(((a) = (2)) and ((b) = (4))) or (((c) = (8)) and (not ((d) = (16))))",
-                exp.namedParams(Map.of("1", 2, "2", 4, "3", 8, "4", 16)).toString());
+                "(((a) = (2)) and ((b) = (4))) or (((c) = (null)) and (not ((d) = (16))))",
+                exp.namedParams(params).toString());
+    }
 
-        assertEquals("(((a) = (2)) and ((b) = (4))) or ((c) = (8))",
-                exp.namedParams(Map.of("1", 2, "2", 4, "3", 8)).toString());
+    @Test
+    public void namedParams_Pruning() {
+        Exp exp = Exp.parse("a = $a and b = $b or c = $c and not d = $d");
 
-        assertEquals("(c) = (8)", exp.namedParams(Map.of("3", 8)).toString());
+        Map<String, Object> params1 = Map.of("a", 2, "b", 4, "c", 8);
+        assertEquals("(((a) = (2)) and ((b) = (4))) or ((c) = (8))", exp.namedParams(params1).toString());
 
-        Map<String, Object> withNulls = new HashMap<>();
-        withNulls.put("1", null);
-        withNulls.put("3", 8);
-        assertEquals("((a) = (null)) or ((c) = (8))", exp.namedParams(withNulls).toString());
+        Map<String, Object> params2 = Map.of("c", 8);
+        assertEquals("(c) = (8)", exp.namedParams(params2).toString());
+
+        Map<String, Object> params3 = new HashMap<>();
+        params3.put("a", null);
+        params3.put("c", 8);
+        assertEquals("((a) = (null)) or ((c) = (8))", exp.namedParams(params3).toString());
+    }
+
+    @Test
+    public void namedParams_NoPruning() {
+        Exp exp = Exp.parse("a = $a and b = $b or c = $c and not d = $d");
+
+        Map<String, Object> params1 = Map.of("a", 2, "b", 4, "c", 8);
+        assertEquals("(((a) = (2)) and ((b) = (4))) or (((c) = (8)) and (not ((d) = ($d))))",
+                exp.namedParams(params1, false).toString());
+
+        Map<String, Object> params2 = new HashMap<>();
+        params2.put("a", null);
+        params2.put("c", 8);
+        assertEquals("(((a) = (null)) and ((b) = ($b))) or (((c) = (8)) and (not ((d) = ($d))))",
+                exp.namedParams(params2, false).toString());
     }
 
     @Test
@@ -88,8 +115,13 @@ public class ExpTest {
     }
 
     @Test
-    public void namedParamsThrowsOnTooFewParams() {
-        assertThrows(AgExpressionException.class, () -> Exp.parse("a = $1").namedParams(Collections.emptyMap(), false));
+    public void namedParams_PartialResolution() {
+
+        Exp p1 = Exp.parse("a = $a").namedParams(Collections.emptyMap(), false);
+        assertEquals("(a) = ($a)", p1.toString());
+
+        Exp p2 = Exp.parse("a = $a and b = $b").namedParams(Map.of("b", 1), false);
+        assertEquals("((a) = ($a)) and ((b) = (1))", p2.toString());
     }
 
     @Test

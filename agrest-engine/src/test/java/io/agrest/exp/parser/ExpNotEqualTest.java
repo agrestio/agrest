@@ -46,9 +46,16 @@ public class ExpNotEqualTest {
 
     @Test
     public void deepCopy() {
-        Exp e = Exp.notEqual("a", 5);
-        Exp eCopy = ((AgExpression) e).deepCopy();
-        assertNotSame(e, eCopy);
-        assertEquals(e, eCopy);
+        ExpNotEqual e = (ExpNotEqual) Exp.notEqual("a", 5);
+        Exp copy = e.deepCopy();
+        assertNotSame(e, copy);
+        assertEquals(e, copy);
+    }
+
+    @Test
+    public void shallowCopy_toString() {
+        ExpNotEqual e = (ExpNotEqual) Exp.notEqual("a", 5);
+        AgExpression copy = e.shallowCopy();
+        assertEquals("? != ?", copy.toString());
     }
 }

@@ -32,7 +32,9 @@ class ExpGreater extends AgExpression {
 
   @Override
   public String toString() {
-    return "(" + children[0] + ") > (" + children[1] + ")";
+    return children != null
+            ? "(" + children[0] + ") > (" + children[1] + ")"
+            : "? > ?";
   }
 }
 /* JavaCC - OriginalChecksum=ea0ce31b9d9db21857900434d14bd004 (do not edit this line) */

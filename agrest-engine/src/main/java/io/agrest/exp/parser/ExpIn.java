@@ -32,11 +32,9 @@ class ExpIn extends AgExpression {
 
   @Override
   public String toString() {
-    return children[0] + " in " + (
-            children[1] instanceof ExpNamedParameter
-                   ? children[1]
-                   : "(" + children[1] + ")"
-    );
+    return children != null
+            ? children[0] + " in " + (children[1] instanceof ExpNamedParameter ? children[1] : "(" + children[1] + ")")
+            : "? in (?)";
   }
 }
 /* JavaCC - OriginalChecksum=40738702f4699c9b3a308d49a792f974 (do not edit this line) */

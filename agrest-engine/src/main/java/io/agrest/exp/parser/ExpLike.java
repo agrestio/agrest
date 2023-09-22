@@ -32,7 +32,9 @@ class ExpLike extends AgExpression {
 
   @Override
   public String toString() {
-    return children[0] + " like " + children[1] + (children.length > 2 ? " escape " + children[2] : "");
+    return children != null
+            ? children[0] + " like " + children[1] + (children.length > 2 ? " escape " + children[2] : "")
+            : "? like ?";
   }
 }
 /* JavaCC - OriginalChecksum=3985611ab5ab3bf8b4211521f95869c3 (do not edit this line) */

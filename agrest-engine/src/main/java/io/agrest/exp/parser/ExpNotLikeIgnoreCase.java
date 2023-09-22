@@ -34,7 +34,9 @@ class ExpNotLikeIgnoreCase extends AgExpression {
 
   @Override
   public String toString() {
-    return children[0] + " not likeIgnoreCase " + children[1] + (children.length > 2 ? " escape " + children[2] : "");
+    return children != null
+            ? children[0] + " not likeIgnoreCase " + children[1] + (children.length > 2 ? " escape " + children[2] : "")
+            : "? not likeIgnoreCase ?";
   }
 }
 /* JavaCC - OriginalChecksum=d8fe9f940e276eee5cebf87aaffb7afb (do not edit this line) */

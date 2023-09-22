@@ -33,7 +33,9 @@ class ExpTrim extends AgExpression {
 
   @Override
   public String toString() {
-    return "trim(" + children[0] + ")";
+    return children != null
+            ? "trim(" + children[0] + ")"
+            : "trim(?)";
   }
 }
 /* JavaCC - OriginalChecksum=ccfdd54aef305779d90fa4c832c4339a (do not edit this line) */

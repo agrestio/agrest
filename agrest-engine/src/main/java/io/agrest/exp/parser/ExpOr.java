@@ -35,7 +35,9 @@ class ExpOr extends ExpCondition {
 
   @Override
   public String toString() {
-    return Arrays.stream(children).map(String::valueOf).collect(Collectors.joining(") or (", "(", ")"));
+    return children != null
+            ? Arrays.stream(children).map(String::valueOf).collect(Collectors.joining(") or (", "(", ")"))
+            : "? or ?";
   }
 }
 /* JavaCC - OriginalChecksum=674a058bd6a706248aae7d6f4cb49ef6 (do not edit this line) */

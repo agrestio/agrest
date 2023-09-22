@@ -34,7 +34,9 @@ class ExpMod extends AgExpression {
 
     @Override
     public String toString() {
-        return "mod(" + children[0] + ", " + children[1] + ")";
+        return children != null
+                ? "mod(" + children[0] + ", " + children[1] + ")"
+                : "mod(?, ?)";
     }
 }
 /* JavaCC - OriginalChecksum=6563b330904d626ec86b2bd306259dd3 (do not edit this line) */

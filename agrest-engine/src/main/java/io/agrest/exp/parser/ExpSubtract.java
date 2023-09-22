@@ -33,7 +33,9 @@ class ExpSubtract extends AgExpression {
 
   @Override
   public String toString() {
-    return "(" + children[0] + ") - (" + children[1] + ")";
+    return children != null
+            ? "(" + children[0] + ") - (" + children[1] + ")"
+            : "? - ?";
   }
 }
 /* JavaCC - OriginalChecksum=9461ebb6e8a7eebd514bd15e14ac0623 (do not edit this line) */

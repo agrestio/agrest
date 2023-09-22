@@ -32,7 +32,7 @@ class ExpAdd extends AgExpression {
 
   @Override
   public String toString() {
-    return "(" + children[0] + ") + (" + children[1] + ")";
+    return children != null ? "(" + children[0] + ") + (" + children[1] + ")" : "? + ?";
   }
 }
 /* JavaCC - OriginalChecksum=67440c31da272c3cf98559aaecf49bc2 (do not edit this line) */

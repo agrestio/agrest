@@ -32,7 +32,9 @@ class ExpDivide extends AgExpression {
 
   @Override
   public String toString() {
-    return "(" + children[0] + ") / (" + children[1] + ")";
+    return children != null
+            ? "(" + children[0] + ") / (" + children[1] + ")"
+            : "? / ?";
   }
 }
 /* JavaCC - OriginalChecksum=ff843f7912488202daf5cfaf1517956b (do not edit this line) */

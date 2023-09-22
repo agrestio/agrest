@@ -32,7 +32,9 @@ class ExpLocate extends AgExpression {
 
   @Override
   public String toString() {
-    return "locate(" + children[0] + ", " + children[1] + (children.length > 2 ? ", (" + children[2] + ")" : "") + ")";
+    return children != null
+            ? "locate(" + children[0] + ", " + children[1] + (children.length > 2 ? ", (" + children[2] + ")" : "") + ")"
+            : "locate(?, ?)";
   }
 }
 /* JavaCC - OriginalChecksum=f84e448f9a20bd2e9cfcd100ef030c8a (do not edit this line) */

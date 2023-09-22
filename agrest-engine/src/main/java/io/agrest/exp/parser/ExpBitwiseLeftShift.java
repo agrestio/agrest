@@ -32,7 +32,9 @@ class ExpBitwiseLeftShift extends AgExpression {
 
   @Override
   public String toString() {
-    return "(" + children[0] + ") << (" + children[1] + ")";
+    return children != null
+            ? "(" + children[0] + ") << (" + children[1] + ")"
+            : "? << ?";
   }
 }
 /* JavaCC - OriginalChecksum=a6ef6adcc35a4fc93a897a3b9a1b6dfd (do not edit this line) */

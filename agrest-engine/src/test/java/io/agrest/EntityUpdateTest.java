@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 public class EntityUpdateTest {
 
     @Test
-    public void testGetToMany() {
+    public void getToMany() {
         EntityUpdate<Object> u = new EntityUpdate<>(mock(AgEntity.class));
         assertNull(u.getToMany("a"));
 

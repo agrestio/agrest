@@ -1,6 +1,7 @@
 ## Release 5.0.M19
 
 * #648 NPE in CayenneExpParser for a combination of null and positional parameter
+* #649 AgExpression internal cleanup
 
 ## Release 5.0.M18
 

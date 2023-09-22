@@ -32,7 +32,9 @@ class ExpExtract extends AgExpression {
 
   @Override
   public String toString() {
-    return value + "(" + children[0] + ")";
+    return children != null
+            ? value + "(" + children[0] + ")"
+            : value + "(?)";
   }
 }
 /* JavaCC - OriginalChecksum=58cc7e1d25270e1d515170647eb54773 (do not edit this line) */
