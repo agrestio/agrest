@@ -18,6 +18,15 @@ public class ExpParserTest {
     }
 
     @Test
+    public void fromString_Numbers() {
+        assertEquals("1",  parser.fromString("1").toString());
+        assertEquals("2.1",  parser.fromString("2.1").toString());
+        assertEquals("-(55)",  parser.fromString("-55").toString());
+
+        assertEquals("3147483647",  parser.fromString("3147483647L").toString());
+    }
+
+    @Test
     public void fromString_Bare() {
         Exp exp = parser.fromString("a = 12345 and b = 'John Smith' and c = true");
         assertNotNull(exp);
