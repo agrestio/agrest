@@ -48,6 +48,14 @@ public class ExpParserTest {
     }
 
     @Test
+    public void fromString_Arithmetics() {
+        assertEquals("(1) + (a)", parser.fromString("1 + a").toString());
+        assertEquals("(a.b) - (5)", parser.fromString("a.b - 5").toString());
+        assertEquals("(a) * (b)", parser.fromString("a * b").toString());
+        assertEquals("(c) / (d)", parser.fromString("c / d").toString());
+    }
+
+    @Test
     public void fromString_Bare() {
         Exp exp = parser.fromString("a = 12345 and b = 'John Smith' and c = true");
         assertNotNull(exp);
@@ -55,10 +63,24 @@ public class ExpParserTest {
     }
 
     @Test
-    public void fromString_Functions() {
+    public void fromString_Functions_Paths() {
         Exp exp = parser.fromString("length(b) > 5");
         assertNotNull(exp);
         assertEquals("(length(b)) > (5)", exp.toString());
+    }
+
+    @Test
+    public void fromString_Functions_Scalars() {
+        Exp exp = parser.fromString("b > sqrt(4)");
+        assertNotNull(exp);
+        assertEquals("(b) > (sqrt(4))", exp.toString());
+    }
+
+    @Test
+    public void fromString_Functions_NoArgs() {
+        Exp exp = parser.fromString("b > currentDate()");
+        assertNotNull(exp);
+        assertEquals("(b) > (currentDate())", exp.toString());
     }
 
     @Test
