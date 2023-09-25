@@ -1,12 +1,12 @@
 package io.agrest.runtime.protocol;
 
+import io.agrest.AgException;
 import io.agrest.protocol.Exp;
 import io.agrest.runtime.jackson.JacksonService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ExpParserTest {
 
@@ -19,11 +19,32 @@ public class ExpParserTest {
 
     @Test
     public void fromString_Numbers() {
-        assertEquals("1",  parser.fromString("1").toString());
-        assertEquals("2.1",  parser.fromString("2.1").toString());
-        assertEquals("-(55)",  parser.fromString("-55").toString());
+        assertEquals("1", parser.fromString("1").toString());
+        assertEquals("2.1", parser.fromString("2.1").toString());
+        assertEquals("-(55)", parser.fromString("-55").toString());
 
-        assertEquals("3147483647",  parser.fromString("3147483647L").toString());
+        // TODO: this is wrong, L suffix expected
+        assertEquals("3147483647", parser.fromString("3147483647L").toString());
+
+        // TODO: this is wrong, B suffix expected
+        assertEquals("2.1000001", parser.fromString("2.1000001B").toString());
+    }
+
+    @Test
+    public void fromString_Strings() {
+        assertEquals("'a'", parser.fromString("'a'").toString());
+        assertEquals("'a'", parser.fromString("\"a\"").toString());
+
+        // TODO: this is wrong, single quote must be escaped or double quotes used
+        assertEquals("'a'b'", parser.fromString("\"a'b\"").toString());
+        assertEquals("'a\"b'", parser.fromString("'a\"b'").toString());
+        assertEquals("'a'b'", parser.fromString("'a\\'b'").toString());
+        assertEquals("'a\"b'", parser.fromString("\"a\\\"b\"").toString());
+    }
+
+    @Test
+    public void fromString_Strings_BadEscaping() {
+        assertThrows(AgException.class, () -> parser.fromString("'a'b'").toString());
     }
 
     @Test
