@@ -1,12 +1,12 @@
 package io.agrest.runtime.protocol;
 
-import io.agrest.AgException;
 import io.agrest.protocol.Exp;
 import io.agrest.runtime.jackson.JacksonService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ExpParserTest {
 
@@ -15,44 +15,6 @@ public class ExpParserTest {
     @BeforeAll
     public static void beforeAll() {
         parser = new ExpParser(JacksonService.create());
-    }
-
-    @Test
-    public void fromString_Numbers() {
-        assertEquals("1", parser.fromString("1").toString());
-        assertEquals("2.1", parser.fromString("2.1").toString());
-        assertEquals("-(55)", parser.fromString("-55").toString());
-
-        // TODO: this is wrong, L suffix expected
-        assertEquals("3147483647", parser.fromString("3147483647L").toString());
-
-        // TODO: this is wrong, B suffix expected
-        assertEquals("2.1000001", parser.fromString("2.1000001B").toString());
-    }
-
-    @Test
-    public void fromString_Strings() {
-        assertEquals("'a'", parser.fromString("'a'").toString());
-        assertEquals("'a'", parser.fromString("\"a\"").toString());
-
-        // TODO: this is wrong, single quote must be escaped or double quotes used
-        assertEquals("'a'b'", parser.fromString("\"a'b\"").toString());
-        assertEquals("'a\"b'", parser.fromString("'a\"b'").toString());
-        assertEquals("'a'b'", parser.fromString("'a\\'b'").toString());
-        assertEquals("'a\"b'", parser.fromString("\"a\\\"b\"").toString());
-    }
-
-    @Test
-    public void fromString_Strings_BadEscaping() {
-        assertThrows(AgException.class, () -> parser.fromString("'a'b'").toString());
-    }
-
-    @Test
-    public void fromString_Arithmetics() {
-        assertEquals("(1) + (a)", parser.fromString("1 + a").toString());
-        assertEquals("(a.b) - (5)", parser.fromString("a.b - 5").toString());
-        assertEquals("(a) * (b)", parser.fromString("a * b").toString());
-        assertEquals("(c) / (d)", parser.fromString("c / d").toString());
     }
 
     @Test
@@ -67,20 +29,6 @@ public class ExpParserTest {
         Exp exp = parser.fromString("length(b) > 5");
         assertNotNull(exp);
         assertEquals("(length(b)) > (5)", exp.toString());
-    }
-
-    @Test
-    public void fromString_Functions_Scalars() {
-        Exp exp = parser.fromString("b > sqrt(4)");
-        assertNotNull(exp);
-        assertEquals("(b) > (sqrt(4))", exp.toString());
-    }
-
-    @Test
-    public void fromString_Functions_NoArgs() {
-        Exp exp = parser.fromString("b > currentDate()");
-        assertNotNull(exp);
-        assertEquals("(b) > (currentDate())", exp.toString());
     }
 
     @Test

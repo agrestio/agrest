@@ -18,6 +18,8 @@ public class ExpAddTest {
             "1 + 1.3",
             "1 + $a",
             "1 + a",
+            "a + 1",
+            "a + b",
             "1 + abs(-3)"})
     public void parse(String expString) {
         assertEquals(ExpAdd.class, Exp.parse(expString).getClass());

@@ -43,6 +43,8 @@ public class ExpScalarIntTest {
             "1|1",
             " 1  |1",
             "2147483647|2147483647",
+
+            // TODO: this is wrong, L suffix expected in the output
             "2147483648L|2147483648",
             "9223372036854775808H|9223372036854775808",
             "01234567|342391",

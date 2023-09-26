@@ -47,6 +47,8 @@ public class ExpScalarFloatTest {
             "3.4028235e+38f|3.4028235E38",
             "1.7976931348623157e+308|1.7976931348623157E308",
             "1.7976931348623157e+308d|1.7976931348623157E308",
+
+            // TODO: this is wrong, B suffix expected
             "1.7976931348623157e+309b|1.7976931348623157E+309"
     })
     public void parsedToString(String expString, String expected) {
