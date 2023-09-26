@@ -337,6 +337,9 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
         }
     }
 
+    // A hack - must use reflection to create Cayenne expressions, as the common int constructor is not public
+    // in any of them.
+    // TODO: refactor this in Cayenne to provide public constructors
     private Expression constructExpression(Class<? extends Expression> expClass) {
         Expression exp;
         try {
