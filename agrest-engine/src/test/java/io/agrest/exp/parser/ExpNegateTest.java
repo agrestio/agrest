@@ -2,43 +2,44 @@ package io.agrest.exp.parser;
 
 import io.agrest.AgException;
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpNegateTest extends AbstractExpTest {
+public class ExpNegateTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpNegate.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "-a",
+            "- a",
+            "-1",
+            "-1.1",
+            "--a",
+            "---a"
+    })
+    void parse(String expString) {
+        assertEquals(ExpNegate.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "-a",
-                "- a",
-                "-1",
-                "-1.1",
-                "--a",
-                "---a"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "-a|-(a)",
+            "- a|-(a)"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("-", AgException.class),
-                Arguments.of("-'1'", AgException.class),
-                Arguments.of("-currentDate()", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("-a", "-(a)"),
-                Arguments.of("- a", "-(a)")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "-",
+            "-'1'",
+            "-currentDate()"
+    })
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

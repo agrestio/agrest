@@ -2,41 +2,42 @@ package io.agrest.exp.parser;
 
 import io.agrest.AgException;
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpNamedParameterTest extends AbstractExpTest {
+public class ExpNamedParameterTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpNamedParameter.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "$a",
+            "$1",
+            "$ a",
+            "$a.b"
+    })
+    void parse(String expString) {
+        assertEquals(ExpNamedParameter.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "$a",
-                "$1",
-                "$ a",
-                "$a.b"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "$a|$a",
+            "$ a|$a",
+            "$a.b|$a.b"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("$", AgException.class),
-                Arguments.of("$$a", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("$a", "$a"),
-                Arguments.of("$ a", "$a"),
-                Arguments.of("$a.b", "$a.b")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "$",
+            "$$a"
+    })
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

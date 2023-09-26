@@ -2,46 +2,47 @@ package io.agrest.exp.parser;
 
 import io.agrest.AgException;
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpSubstringTest extends AbstractExpTest {
+public class ExpSubstringTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpSubstring.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "substring(a, 0)",
+            "substring ( a, 0 )",
+            "substring('a', 0)",
+            "substring(a, $b)",
+            "substring(a, 0, 1)"
+    })
+    void parse(String expString) {
+        assertEquals(ExpSubstring.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "substring(a, 0)",
-                "substring ( a, 0 )",
-                "substring('a', 0)",
-                "substring(a, $b)",
-                "substring(a, 0, 1)"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "substring(a,0)|substring(a, 0)",
+            "substring ( a, 0 )|substring(a, 0)",
+            "substring(a, 0, 1)|substring(a, 0, 1)"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("substring", AgException.class),
-                Arguments.of("substring()", AgException.class),
-                Arguments.of("substring(a)", AgException.class),
-                Arguments.of("substring(a, '1')", AgException.class),
-                Arguments.of("substring($a, 1)", AgException.class),
-                Arguments.of("SUBSTRING(a, 0)", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("substring(a,0)", "substring(a, 0)"),
-                Arguments.of("substring ( a, 0 )", "substring(a, 0)"),
-                Arguments.of("substring(a, 0, 1)", "substring(a, 0, 1)")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "substring",
+            "substring()",
+            "substring(a)",
+            "substring(a, '1')",
+            "substring($a, 1)",
+            "SUBSTRING(a, 0)"
+    })
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

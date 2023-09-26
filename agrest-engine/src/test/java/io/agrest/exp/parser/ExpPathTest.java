@@ -1,54 +1,54 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
-import org.junit.jupiter.params.provider.Arguments;
-import org.opentest4j.AssertionFailedError;
+import io.agrest.protocol.Exp;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpPathTest extends AbstractExpTest {
+public class ExpPathTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpPath.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "a",
+            "A",
+            "_",
+            "a.b",
+            "a.b.c",
+            "a0",
+            "a$",
+            "a+",
+            "a0$b+._c#d+"
+    })
+    void parse(String expString) {
+        assertEquals(ExpPath.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "a",
-                "A",
-                "_",
-                "a.b",
-                "a.b.c",
-                "a0",
-                "a$",
-                "a+",
-                "a0$b+._c#d+"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "a|a",
+            " a  |a"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("$a", AssertionFailedError.class),
-                Arguments.of("0a", AgException.class),
-                Arguments.of("a++", AgException.class),
-                Arguments.of(".", AgException.class),
-                Arguments.of(".b", AgException.class),
-                Arguments.of("a..b", AgException.class),
-                Arguments.of("a . b", AgException.class),
-                Arguments.of("#a", AgException.class),
-                Arguments.of("a#0", AgException.class),
-                Arguments.of("a#a#a", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("a", "a"),
-                Arguments.of(" a  ", "a")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "0a",
+            "a++",
+            ".",
+            ".b",
+            "a..b",
+            "a . b",
+            "#a",
+            "a#0",
+            "a#a#a"
+    })
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

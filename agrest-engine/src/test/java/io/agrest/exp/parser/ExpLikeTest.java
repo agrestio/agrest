@@ -2,49 +2,49 @@ package io.agrest.exp.parser;
 
 import io.agrest.AgException;
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpLikeTest extends AbstractExpTest {
+public class ExpLikeTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpLike.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "a like b",
+            "a like b escape 'c'",
+            "a like 'b'",
+            "a like 1",
+            "a like 1.2",
+            "a like $b",
+            "a like TRUE",
+            "a like(b)"
+    })
+    void parse(String expString) {
+        assertEquals(ExpLike.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "a like b",
-                "a like b escape 'c'",
-                "a like 'b'",
-                "a like 1",
-                "a like 1.2",
-                "a like $b",
-                "a like TRUE",
-                "a like(b)"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "a like b|a like b",
+            "a like   b|a like b",
+            "a like b escape 'c'|a like b escape 'c'",
+            "a like (b)|a like b"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("like", AgException.class),
-                Arguments.of("a like", AgException.class),
-                Arguments.of("a like()", AgException.class),
-                Arguments.of("a LIKE b", AgException.class),
-                Arguments.of("a like b ESCAPE 'c'", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("a like b", "a like b"),
-                Arguments.of("a like   b", "a like b"),
-                Arguments.of("a like b escape 'c'", "a like b escape 'c'"),
-                Arguments.of("a like (b)", "a like b")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "like",
+            "a like",
+            "a like()",
+            "a LIKE b",
+            "a like b ESCAPE 'c'"})
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

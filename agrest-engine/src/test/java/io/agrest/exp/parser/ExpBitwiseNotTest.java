@@ -2,43 +2,40 @@ package io.agrest.exp.parser;
 
 import io.agrest.AgException;
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpBitwiseNotTest extends AbstractExpTest {
+public class ExpBitwiseNotTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpBitwiseNot.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "~2",
+            "~ 2",
+            "~1.3",
+            "~$a",
+            "~a",
+            "~abs(-3)"
+    })
+    void parse(String expString) {
+        assertEquals(ExpBitwiseNot.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "~2",
-                "~ 2",
-                "~1.3",
-                "~$a",
-                "~a",
-                "~abs(-3)"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "~2|~(2)",
+            "~ 2|~(2)"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("~", AgException.class),
-                Arguments.of("~'a'", AgException.class),
-                Arguments.of("~getDate()", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("~2", "~(2)"),
-                Arguments.of("~ 2", "~(2)")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {"~", "~'a'", "~getDate()"})
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

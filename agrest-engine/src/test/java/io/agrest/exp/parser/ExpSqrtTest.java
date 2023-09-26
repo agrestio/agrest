@@ -2,44 +2,45 @@ package io.agrest.exp.parser;
 
 import io.agrest.AgException;
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpSqrtTest extends AbstractExpTest {
+public class ExpSqrtTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpSqrt.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "sqrt(1)",
+            "sqrt(  1 )",
+            "sqrt(1.2)",
+            "sqrt($a)",
+            "sqrt(a)",
+            "sqrt(abs(1))"
+    })
+    void parse(String expString) {
+        assertEquals(ExpSqrt.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "sqrt(1)",
-                "sqrt(  1 )",
-                "sqrt(1.2)",
-                "sqrt($a)",
-                "sqrt(a)",
-                "sqrt(abs(1))"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "sqrt(1)|sqrt(1)",
+            "sqrt(  1 )|sqrt(1)"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("sqrt", AgException.class),
-                Arguments.of("sqrt()", AgException.class),
-                Arguments.of("SQRT(a)", AgException.class),
-                Arguments.of("sqrt(a and b)", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("sqrt(1)", "sqrt(1)"),
-                Arguments.of("sqrt(  1 )", "sqrt(1)")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "sqrt",
+            "sqrt()",
+            "SQRT(a)",
+            "sqrt(a and b)"
+    })
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

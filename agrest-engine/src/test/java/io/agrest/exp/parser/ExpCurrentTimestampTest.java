@@ -2,39 +2,36 @@ package io.agrest.exp.parser;
 
 import io.agrest.AgException;
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpCurrentTimestampTest extends AbstractExpTest {
+public class ExpCurrentTimestampTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpCurrentTimestamp.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "currentTimestamp()",
+            "currentTimestamp ( )"
+    })
+    void parse(String expString) {
+        assertEquals(ExpCurrentTimestamp.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "currentTimestamp()",
-                "currentTimestamp ( )"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "currentTimestamp()|currentTimestamp()",
+            "currentTimestamp ( )|currentTimestamp()"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("currentTimestamp", AgException.class),
-                Arguments.of("currentTimestamp(0)", AgException.class),
-                Arguments.of("CURRENTTIMESTAMP()", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("currentTimestamp()", "currentTimestamp()"),
-                Arguments.of("currentTimestamp ( )", "currentTimestamp()")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {"currentTimestamp", "currentTimestamp(0)", "CURRENTTIMESTAMP()"})
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

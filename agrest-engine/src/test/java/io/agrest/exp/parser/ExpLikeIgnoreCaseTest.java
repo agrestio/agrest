@@ -2,49 +2,49 @@ package io.agrest.exp.parser;
 
 import io.agrest.AgException;
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpLikeIgnoreCaseTest extends AbstractExpTest {
+public class ExpLikeIgnoreCaseTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpLikeIgnoreCase.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "a likeIgnoreCase b",
+            "a likeIgnoreCase b escape 'c'",
+            "a likeIgnoreCase 'b'",
+            "a likeIgnoreCase 1",
+            "a likeIgnoreCase 1.2",
+            "a likeIgnoreCase $b",
+            "a likeIgnoreCase TRUE",
+            "a likeIgnoreCase(b)"
+    })
+    void parse(String expString) {
+        assertEquals(ExpLikeIgnoreCase.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "a likeIgnoreCase b",
-                "a likeIgnoreCase b escape 'c'",
-                "a likeIgnoreCase 'b'",
-                "a likeIgnoreCase 1",
-                "a likeIgnoreCase 1.2",
-                "a likeIgnoreCase $b",
-                "a likeIgnoreCase TRUE",
-                "a likeIgnoreCase(b)"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "a likeIgnoreCase b|a likeIgnoreCase b",
+            "a likeIgnoreCase   b|a likeIgnoreCase b",
+            "a likeIgnoreCase b escape 'c'|a likeIgnoreCase b escape 'c'",
+            "a likeIgnoreCase (b)|a likeIgnoreCase b"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("likeIgnoreCase", AgException.class),
-                Arguments.of("a likeIgnoreCase", AgException.class),
-                Arguments.of("a likeIgnoreCase()", AgException.class),
-                Arguments.of("a LIKEIGNORECASE b", AgException.class),
-                Arguments.of("a likeIgnoreCase b ESCAPE 'c'", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("a likeIgnoreCase b", "a likeIgnoreCase b"),
-                Arguments.of("a likeIgnoreCase   b", "a likeIgnoreCase b"),
-                Arguments.of("a likeIgnoreCase b escape 'c'", "a likeIgnoreCase b escape 'c'"),
-                Arguments.of("a likeIgnoreCase (b)", "a likeIgnoreCase b")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "likeIgnoreCase",
+            "a likeIgnoreCase",
+            "a likeIgnoreCase()",
+            "a LIKEIGNORECASE b",
+            "a likeIgnoreCase b ESCAPE 'c'"})
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

@@ -1,55 +1,57 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
-import org.junit.jupiter.params.provider.Arguments;
+import io.agrest.protocol.Exp;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpNotInTest extends AbstractExpTest {
+public class ExpNotInTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpNotIn.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "a !in('b','c')",
+            "a !in ('b', 'c')",
+            "a not in ('b', 'c')",
+            "a !in ('b')",
+            "a !in ('b',  'c')",
+            "a !in ($b, $c)",
+            "a !in (1, 2)",
+            "a !in (1, 2.2)",
+            "a !in (1, TRUE)",
+            "a !in ('1', '2')",
+            "a !in $b"
+    })
+    void parse(String expString) {
+        assertEquals(ExpNotIn.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "a !in('b','c')",
-                "a !in ('b', 'c')",
-                "a not in ('b', 'c')",
-                "a !in ('b')",
-                "a !in ('b',  'c')",
-                "a !in ($b, $c)",
-                "a !in (1, 2)",
-                "a !in (1, 2.2)",
-                "a !in (1, TRUE)",
-                "a !in ('1', '2')",
-                "a !in $b"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "a !in('b','c')|a not in ('b', 'c')",
+            "a !in ('b',  'c')|a not in ('b', 'c')",
+            "a not in ('b', 'c')|a not in ('b', 'c')",
+            "a !in ('b', 'c', 'd')|a not in ('b', 'c', 'd')",
+            "a !in $b|a not in $b"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("a !in", AgException.class),
-                Arguments.of("a !in ()", AgException.class),
-                Arguments.of("a !in ('b',)", AgException.class),
-                Arguments.of("a !in (, c)", AgException.class),
-                Arguments.of("a !in (null, 'c')", AgException.class),
-                Arguments.of("a NOT in (b, c)", AgException.class),
-                Arguments.of("a !IN (b, c)", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("a !in('b','c')", "a not in ('b', 'c')"),
-                Arguments.of("a !in ('b',  'c')", "a not in ('b', 'c')"),
-                Arguments.of("a not in ('b', 'c')", "a not in ('b', 'c')"),
-                Arguments.of("a !in ('b', 'c', 'd')", "a not in ('b', 'c', 'd')"),
-                Arguments.of("a !in $b", "a not in $b")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "a !in",
+            "a !in ()",
+            "a !in ('b',)",
+            "a !in (, c)",
+            "a !in (null, 'c')",
+            "a NOT in (b, c)",
+            "a !IN (b, c)"
+    })
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

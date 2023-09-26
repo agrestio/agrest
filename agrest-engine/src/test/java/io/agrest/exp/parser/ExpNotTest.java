@@ -1,42 +1,41 @@
 package io.agrest.exp.parser;
 
 import io.agrest.AgException;
-import org.junit.jupiter.params.provider.Arguments;
+import io.agrest.protocol.Exp;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpNotTest extends AbstractExpTest {
+public class ExpNotTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpNot.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "!a",
+            "! a",
+            "not a",
+            "not(a)"
+    })
+    void parse(String expString) {
+        assertEquals(ExpNot.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "!a",
-                "! a",
-                "not a",
-                "not(a)"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "!a|not (a)",
+            "! a|not (a)",
+            "not a|not (a)",
+            "not (a)|not (a)"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("!", AgException.class),
-                Arguments.of("NOT a", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("!a", "not (a)"),
-                Arguments.of("! a", "not (a)"),
-                Arguments.of("not a", "not (a)"),
-                Arguments.of("not (a)", "not (a)")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {"!", "NOT a"})
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

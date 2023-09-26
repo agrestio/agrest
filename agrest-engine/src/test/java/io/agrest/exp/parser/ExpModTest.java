@@ -2,45 +2,46 @@ package io.agrest.exp.parser;
 
 import io.agrest.AgException;
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpModTest extends AbstractExpTest {
+public class ExpModTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpMod.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "mod(a, b)",
+            "mod( a, b )",
+            "mod(1, 2)",
+            "mod(1.2, 2.3)",
+            "mod($a, $b)"
+    })
+    void parse(String expString) {
+        assertEquals(ExpMod.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "mod(a, b)",
-                "mod( a, b )",
-                "mod(1, 2)",
-                "mod(1.2, 2.3)",
-                "mod($a, $b)"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "mod(a, b)|mod(a, b)",
+            "mod( a, b )|mod(a, b)"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("mod", AgException.class),
-                Arguments.of("mod()", AgException.class),
-                Arguments.of("mod(a)", AgException.class),
-                Arguments.of("mod(, b)", AgException.class),
-                Arguments.of("mod(1, currentDate())", AgException.class),
-                Arguments.of("mod('1', '2')", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("mod(a, b)", "mod(a, b)"),
-                Arguments.of("mod( a, b )", "mod(a, b)")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "mod",
+            "mod()",
+            "mod(a)",
+            "mod(, b)",
+            "mod(1, currentDate())",
+            "mod('1', '2')"
+    })
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

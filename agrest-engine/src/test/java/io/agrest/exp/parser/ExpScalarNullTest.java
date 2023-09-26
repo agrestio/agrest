@@ -1,41 +1,41 @@
 package io.agrest.exp.parser;
 
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
-import org.opentest4j.AssertionFailedError;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-class ExpScalarNullTest extends AbstractExpTest {
+public class ExpScalarNullTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpScalar.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "null",
+            "NULL"
+    })
+    void parse(String expString) {
+        assertEquals(ExpScalar.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "null",
-                "NULL"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "null|null",
+            " null  |null",
+            "NULL|null"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("nil", AssertionFailedError.class),
-                Arguments.of("Null", AssertionFailedError.class),
-                Arguments.of("None", AssertionFailedError.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("null", "null"),
-                Arguments.of(" null  ", "null"),
-                Arguments.of("NULL", "null")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "nil",
+            "Null",
+            "None"
+    })
+    public void parseNotANull(String expString) {
+        assertFalse(Exp.parse(expString) instanceof ExpScalar);
     }
 }

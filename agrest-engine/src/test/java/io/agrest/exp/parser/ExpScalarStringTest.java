@@ -1,48 +1,46 @@
 package io.agrest.exp.parser;
 
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
-import org.opentest4j.AssertionFailedError;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-class ExpScalarStringTest extends AbstractExpTest {
+public class ExpScalarStringTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpScalar.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "'example'",
+            "\"example\"",
+            "''",
+            "'  '",
+            "'123'",
+            "'example\\'example\\''",
+            "\"\\\"example\\\"\""
+    })
+    void parse(String expString) {
+        assertEquals(ExpScalar.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "'example'",
-                "\"example\"",
-                "''",
-                "'  '",
-                "'123'",
-                "'example\\'example\\''",
-                "\"\\\"example\\\"\""
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', quoteCharacter = 'X', value = {
+            "'example'|'example'",
+            "  'example' |'example'",
+            "\"example\"|'example'",
+            "''|''",
+            "'  '|'  '",
+            "'example\\'example\\''|'example'example''",
+            "\"\\\"example\\\"\"|'\"example\"'"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("example", AssertionFailedError.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("'example'", "'example'"),
-                Arguments.of("  'example' ", "'example'"),
-                Arguments.of("\"example\"", "'example'"),
-                Arguments.of("''", "''"),
-                Arguments.of("'  '", "'  '"),
-                Arguments.of("'example\\'example\\''", "'example'example''"),
-                Arguments.of("\"\\\"example\\\"\"", "'\"example\"'")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {"example"})
+    public void parseNotAString(String expString) {
+        assertFalse(Exp.parse(expString) instanceof ExpScalar);
     }
 }

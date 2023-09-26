@@ -2,46 +2,47 @@ package io.agrest.exp.parser;
 
 import io.agrest.AgException;
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpLocateTest extends AbstractExpTest {
+public class ExpLocateTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpLocate.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "locate(a,b)",
+            "locate ( a, b )",
+            "locate('a', 'b')",
+            "locate(a, b, 1)"
+    })
+    void parse(String expString) {
+        assertEquals(ExpLocate.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "locate(a,b)",
-                "locate ( a, b )",
-                "locate('a', 'b')",
-                "locate(a, b, 1)"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "locate(a,b)|locate(a, b)",
+            "locate ( a, b )|locate(a, b)",
+            "locate (a, b, 1)|locate(a, b, (1))"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("locate", AgException.class),
-                Arguments.of("locate()", AgException.class),
-                Arguments.of("locate(a)", AgException.class),
-                Arguments.of("locate(a, 1)", AgException.class),
-                Arguments.of("locate(a, $b)", AgException.class),
-                Arguments.of("locate(a, b, '1')", AgException.class),
-                Arguments.of("LOCATE(a, b)", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("locate(a,b)", "locate(a, b)"),
-                Arguments.of("locate ( a, b )", "locate(a, b)"),
-                Arguments.of("locate (a, b, 1)", "locate(a, b, (1))")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "locate",
+            "locate()",
+            "locate(a)",
+            "locate(a, 1)",
+            "locate(a, $b)",
+            "locate(a, b, '1')",
+            "LOCATE(a, b)"
+    })
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }

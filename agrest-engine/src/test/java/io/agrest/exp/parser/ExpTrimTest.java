@@ -2,42 +2,43 @@ package io.agrest.exp.parser;
 
 import io.agrest.AgException;
 import io.agrest.protocol.Exp;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ExpTrimTest extends AbstractExpTest {
+public class ExpTrimTest {
 
-    @Override
-    ExpTestVisitor provideVisitor() {
-        return new ExpTestVisitor(ExpTrim.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "trim(a)",
+            "trim ( a )",
+            "trim('a')"
+    })
+    void parse(String expString) {
+        assertEquals(ExpTrim.class, Exp.parse(expString).getClass());
     }
 
-    @Override
-    Stream<String> parseExp() {
-        return Stream.of(
-                "trim(a)",
-                "trim ( a )",
-                "trim('a')"
-        );
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "trim(a)|trim(a)",
+            "trim ( a )|trim(a)"
+    })
+    public void parsedToString(String expString, String expected) {
+        assertEquals(expected, Exp.parse(expString).toString());
     }
 
-    @Override
-    Stream<Arguments> parseExpThrows() {
-        return Stream.of(
-                Arguments.of("trim", AgException.class),
-                Arguments.of("trim()", AgException.class),
-                Arguments.of("trim(1)", AgException.class),
-                Arguments.of("trim($a)", AgException.class),
-                Arguments.of("TRIM(a)", AgException.class)
-        );
-    }
-
-    @Override
-    Stream<Arguments> stringifyRaw() {
-        return Stream.of(
-                Arguments.of("trim(a)", "trim(a)"),
-                Arguments.of("trim ( a )", "trim(a)")
-        );
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "trim",
+            "trim()",
+            "trim(1)",
+            "trim($a)",
+            "TRIM(a)"
+    })
+    public void parseInvalidGrammar(String expString) {
+        assertThrows(AgException.class, () -> Exp.parse(expString));
     }
 }
