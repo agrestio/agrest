@@ -13,8 +13,8 @@ public class ExpLikeTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "a like b",
-            "a like b escape 'c'",
+            "a like 'abc%'",
+            "a like 'abc%' escape 'c'",
             "a like 'b'",
             "a like 1",
             "a like 1.2",

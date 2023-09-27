@@ -13,6 +13,8 @@ public class ExpLessTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
+            "a < 2",
+            "2 < a",
             "a<b",
             "a < b",
             "a <  b",
