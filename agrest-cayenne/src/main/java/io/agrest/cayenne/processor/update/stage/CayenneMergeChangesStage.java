@@ -263,6 +263,9 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
                     relatedId);
 
             DataObject oldRelated = (DataObject) o.readProperty(name);
+
+            // TODO: a bug (but mostly just dead code) - this check does not work, as we are comparing "relatedId"
+            //  scalar with ObjectId, so it will return false no matter what
             if (oldRelated != null && oldRelated.getObjectId().equals(relatedId)) {
                 continue;
             }
