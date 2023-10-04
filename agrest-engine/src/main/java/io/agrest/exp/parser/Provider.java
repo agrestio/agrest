@@ -9,8 +9,8 @@ public interface Provider {
     /**
      * Reads characters into an array
      * @param buffer  Destination buffer
-     * @param offset  Offset at which to start storing characters
-     * @param len     The maximum possible number of characters to read
+     * @param offset   Offset at which to start storing characters
+     * @param length   The maximum possible number of characters to read
      * @return The number of characters read, or -1 if all read
      * @exception  IOException
      */
@@ -24,4 +24,4 @@ public interface Provider {
      public void close() throws IOException;
     
 }
-/* JavaCC - OriginalChecksum=0ba4bbc0aabdc96f9dcd36f86853eebb (do not edit this line) */
+/* JavaCC - OriginalChecksum=752fa03dd1582bdaddca364a4ac5fbb1 (do not edit this line) */
