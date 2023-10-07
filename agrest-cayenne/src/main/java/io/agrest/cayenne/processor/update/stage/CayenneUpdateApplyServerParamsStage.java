@@ -274,7 +274,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
         for (AgIdPart idPart : parentAgEntity.getIdParts()) {
 
             ASTPath idPath = pathResolver.resolve(parentCayenneEntity.getName(), idPart.getName()).getPathExp();
-            ASTDbPath dbPath = PathOps.resolveAsDbPath(parentCayenneEntity, idPath);
+            ASTDbPath dbPath = PathOps.resolveAsDbPath(idPath);
             String targetPath = sourceToTargetJoins.remove(dbPath.getPath());
             if (targetPath == null) {
                 // not a part of our relationship, ignore
