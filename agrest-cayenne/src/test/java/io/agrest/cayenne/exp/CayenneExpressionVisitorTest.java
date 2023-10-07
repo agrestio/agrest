@@ -1,124 +1,93 @@
 package io.agrest.cayenne.exp;
 
-import io.agrest.exp.parser.AgExpressionParser;
 import io.agrest.protocol.Exp;
 import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.parser.*;
-import org.junit.jupiter.api.BeforeAll;
+import org.apache.cayenne.exp.parser.PatternMatchNode;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CayenneExpressionVisitorTest {
+public class CayenneExpressionVisitorTest {
 
-    static CayenneExpressionVisitor visitor;
+    static final CayenneExpressionVisitor visitor = new CayenneExpressionVisitor();
 
-    @BeforeAll
-    static void init() {
-        visitor = new CayenneExpressionVisitor();
-    }
+    @ParameterizedTest
+    @CsvSource(delimiterString = "_|", value = {
+            "abs(1)_|org.apache.cayenne.exp.parser.ASTAbs",
+            "1 + 2_|org.apache.cayenne.exp.parser.ASTAdd",
+            "t.isA = true and t.isB = true_|org.apache.cayenne.exp.parser.ASTAnd",
+            "t.value between 10 and 20_|org.apache.cayenne.exp.parser.ASTBetween",
+            "0xFF & 0x01_|org.apache.cayenne.exp.parser.ASTBitwiseAnd",
+            "0xFF << 2_|org.apache.cayenne.exp.parser.ASTBitwiseLeftShift",
+            "~0xA7_|org.apache.cayenne.exp.parser.ASTBitwiseNot",
+            "0xFF | 0x01_|org.apache.cayenne.exp.parser.ASTBitwiseOr",
+            "0xFF >> 2_|org.apache.cayenne.exp.parser.ASTBitwiseRightShift",
+            "0xFF ^ 0x01_|org.apache.cayenne.exp.parser.ASTBitwiseXor",
+            "concat(t.v, '10')_|org.apache.cayenne.exp.parser.ASTConcat",
+            "currentDate()_|org.apache.cayenne.exp.parser.ASTCurrentDate",
+            "currentTime()_|org.apache.cayenne.exp.parser.ASTCurrentTime",
+            "currentTimestamp()_|org.apache.cayenne.exp.parser.ASTCurrentTimestamp",
+            "t.value / 2_|org.apache.cayenne.exp.parser.ASTDivide",
+            "t.v1 = t.v2_|org.apache.cayenne.exp.parser.ASTEqual",
+            "day(t.dateTime)_|org.apache.cayenne.exp.parser.ASTExtract",
+            "false_|org.apache.cayenne.exp.parser.ASTFalse",
+            "t.v > 0_|org.apache.cayenne.exp.parser.ASTGreater",
+            "t.v >= 0_|org.apache.cayenne.exp.parser.ASTGreaterOrEqual",
+            "t.v in (0, 5)_|org.apache.cayenne.exp.parser.ASTIn",
+            "length(a.v)_|org.apache.cayenne.exp.parser.ASTLength",
+            "t.v < 0_|org.apache.cayenne.exp.parser.ASTLess",
+            "t.v <= 0_|org.apache.cayenne.exp.parser.ASTLessOrEqual",
+            "t.name like '%s'_|org.apache.cayenne.exp.parser.ASTLike",
+            "t.name likeIgnoreCase '%s'_|org.apache.cayenne.exp.parser.ASTLikeIgnoreCase",
+            "locate(t.v, 'id')_|org.apache.cayenne.exp.parser.ASTLocate",
+            "lower(t.v)_|org.apache.cayenne.exp.parser.ASTLower",
+            "mod(t.v, 10)_|org.apache.cayenne.exp.parser.ASTMod",
+            "1 * 4_|org.apache.cayenne.exp.parser.ASTMultiply",
+            "$a_|org.apache.cayenne.exp.parser.ASTNamedParameter",
+            "-a.v_|org.apache.cayenne.exp.parser.ASTNegate",
+            "!(t.a = 1 and t.b = 3)_|org.apache.cayenne.exp.parser.ASTNot",
+            "t.value !between 10 and 20_|org.apache.cayenne.exp.parser.ASTNotBetween",
+            "t.v1 != t.v2_|org.apache.cayenne.exp.parser.ASTNotEqual",
+            "t.v !in (0, 5)_|org.apache.cayenne.exp.parser.ASTNotIn",
+            "t.name !like '%s'_|org.apache.cayenne.exp.parser.ASTNotLike",
+            "t.name !likeIgnoreCase '%s'_|org.apache.cayenne.exp.parser.ASTNotLikeIgnoreCase",
+            "a.v_|org.apache.cayenne.exp.parser.ASTObjPath",
+            "t.isA = true or t.isB = true_|org.apache.cayenne.exp.parser.ASTOr",
+            "1.2_|org.apache.cayenne.exp.parser.ASTScalar",
+            "null_|org.apache.cayenne.exp.parser.ASTScalar",
+            "1_|org.apache.cayenne.exp.parser.ASTScalar",
+            "\"value\"_|org.apache.cayenne.exp.parser.ASTScalar",
+            "sqrt(2)_|org.apache.cayenne.exp.parser.ASTSqrt",
+            "substring(a.v, 3)_|org.apache.cayenne.exp.parser.ASTSubstring",
+            "3 - 1_|org.apache.cayenne.exp.parser.ASTSubtract",
+            "trim(a.v)_|org.apache.cayenne.exp.parser.ASTTrim",
+            "true_|org.apache.cayenne.exp.parser.ASTTrue",
+            "upper(t.v)_|org.apache.cayenne.exp.parser.ASTUpper"
 
-    @ParameterizedTest(name = "{1}")
-    @MethodSource
-    public void visit_checkReturnedType(Exp agrestExp, Class<? extends Expression> cayenneExpExpectedType) {
-        Expression cayenneExp = agrestExp.accept(visitor, null);
+            // TODO: Cayenne doesn't allow objPath as operand for logical operators (see AggregateConditionNode).
+            //       It will be reasonable to change this.
+            //"!t.m", ASTNot
+            //"t.isA and t.isB ", ASTAnd
+            //"t.isA or t.isB ", ASTOr
+    })
+    public void visit_checkReturnedType(String agrestExp, Class<? extends Expression> cayenneExpExpectedType) {
+        Expression cayenneExp = Exp.parse(agrestExp).accept(visitor, null);
         assertEquals(cayenneExpExpectedType, cayenneExp.getClass());
     }
 
     @ParameterizedTest(name = "case {index}")
-    @MethodSource
-    public void setEscapeChar(Exp agrestExp) {
-        Expression cayenneExp = agrestExp.accept(visitor, null);
+    @ValueSource(strings = {
+            "a like 'bcd' escape '$'",
+            "a likeIgnoreCase 'bcd' escape '$'",
+            "a not like 'bcd' escape '$'",
+            "a not likeIgnoreCase 'bcd' escape '$'"})
+    public void setEscapeChar(String agrestExp) {
+        Expression cayenneExp = Exp.parse(agrestExp).accept(visitor, null);
         assertTrue(cayenneExp instanceof PatternMatchNode);
         PatternMatchNode matchNode = (PatternMatchNode) cayenneExp;
         assertEquals('$', matchNode.getEscapeChar());
-    }
-
-    static Iterable<Arguments> visit_checkReturnedType() {
-        List<Arguments> argsList = List.of(
-                Arguments.of("abs(1)", ASTAbs.class),
-                Arguments.of("1 + 2", ASTAdd.class),
-                Arguments.of("t.isA = true and t.isB = true", ASTAnd.class),
-                Arguments.of("t.value between 10 and 20", ASTBetween.class),
-                Arguments.of("0xFF & 0x01", ASTBitwiseAnd.class),
-                Arguments.of("0xFF << 2", ASTBitwiseLeftShift.class),
-                Arguments.of("~0xA7", ASTBitwiseNot.class),
-                Arguments.of("0xFF | 0x01", ASTBitwiseOr.class),
-                Arguments.of("0xFF >> 2", ASTBitwiseRightShift.class),
-                Arguments.of("0xFF ^ 0x01", ASTBitwiseXor.class),
-                Arguments.of("concat(t.v, '10')", ASTConcat.class),
-                Arguments.of("currentDate()", ASTCurrentDate.class),
-                Arguments.of("currentTime()", ASTCurrentTime.class),
-                Arguments.of("currentTimestamp()", ASTCurrentTimestamp.class),
-                Arguments.of("t.value / 2", ASTDivide.class),
-                Arguments.of("t.v1 = t.v2", ASTEqual.class),
-                Arguments.of("day(t.dateTime)", ASTExtract.class),
-                Arguments.of("false", ASTFalse.class),
-                Arguments.of("t.v > 0", ASTGreater.class),
-                Arguments.of("t.v >= 0", ASTGreaterOrEqual.class),
-                Arguments.of("t.v in (0, 5)", ASTIn.class),
-                Arguments.of("length(a.v)", ASTLength.class),
-                Arguments.of("t.v < 0", ASTLess.class),
-                Arguments.of("t.v <= 0", ASTLessOrEqual.class),
-                Arguments.of("t.name like '%s'", ASTLike.class),
-                Arguments.of("t.name likeIgnoreCase '%s'", ASTLikeIgnoreCase.class),
-                Arguments.of("locate(t.v, 'id')", ASTLocate.class),
-                Arguments.of("lower(t.v)", ASTLower.class),
-                Arguments.of("mod(t.v, 10)", ASTMod.class),
-                Arguments.of("1 * 4", ASTMultiply.class),
-                Arguments.of("$a", ASTNamedParameter.class),
-                Arguments.of("-a.v", ASTNegate.class),
-                Arguments.of("!(t.a = 1 and t.b = 3)", ASTNot.class),
-                Arguments.of("t.value !between 10 and 20", ASTNotBetween.class),
-                Arguments.of("t.v1 != t.v2", ASTNotEqual.class),
-                Arguments.of("t.v !in (0, 5)", ASTNotIn.class),
-                Arguments.of("t.name !like '%s'", ASTNotLike.class),
-                Arguments.of("t.name !likeIgnoreCase '%s'", ASTNotLikeIgnoreCase.class),
-                Arguments.of("a.v", ASTObjPath.class),
-                Arguments.of("t.isA = true or t.isB = true", ASTOr.class),
-                Arguments.of("1.2", ASTScalar.class),
-                Arguments.of("1", ASTScalar.class),
-                Arguments.of("null", ASTScalar.class),
-                Arguments.of("'value'", ASTScalar.class),
-                Arguments.of("sqrt(2)", ASTSqrt.class),
-                Arguments.of("substring(a.v, 3)", ASTSubstring.class),
-                Arguments.of("3 - 1", ASTSubtract.class),
-                Arguments.of("trim(a.v)", ASTTrim.class),
-                Arguments.of("true", ASTTrue.class),
-                Arguments.of("upper(t.v)", ASTUpper.class)
-
-                // TODO: Cayenne doesn't allow objPath as operand for logical operators (see AggregateConditionNode).
-                //       It will be reasonable to change this.
-                //Arguments.of("!t.m", ASTNot.class),
-                //Arguments.of("t.isA and t.isB ", ASTAnd.class),
-                //Arguments.of("t.isA or t.isB ", ASTOr.class)
-        );
-        for (Arguments args : argsList) {
-            try {
-                args.get()[0] = AgExpressionParser.parse((String) args.get()[0]);
-            } catch (Exception e) {
-                System.err.println("Expression string: " + args.get()[0]);
-                throw e;
-            }
-        }
-        return argsList;
-    }
-
-    static Iterable<Arguments> setEscapeChar() {
-        return Stream.of(
-                "a like 'bcd' escape '$'",
-                        "a likeIgnoreCase 'bcd' escape '$'",
-                        "a not like 'bcd' escape '$'",
-                        "a not likeIgnoreCase 'bcd' escape '$'")
-                .map(AgExpressionParser::parse)
-                .map(Arguments::of)
-                .collect(Collectors.toList());
     }
 }
