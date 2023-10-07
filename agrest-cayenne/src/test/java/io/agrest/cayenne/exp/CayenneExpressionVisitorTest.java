@@ -73,7 +73,7 @@ public class CayenneExpressionVisitorTest {
             //"t.isA and t.isB ", ASTAnd
             //"t.isA or t.isB ", ASTOr
     })
-    public void visit_checkReturnedType(String agrestExp, Class<? extends Expression> cayenneExpExpectedType) {
+    public void accept_ReturnedType(String agrestExp, Class<? extends Expression> cayenneExpExpectedType) {
         Expression cayenneExp = Exp.parse(agrestExp).accept(visitor, null);
         assertEquals(cayenneExpExpectedType, cayenneExp.getClass());
     }
@@ -84,7 +84,7 @@ public class CayenneExpressionVisitorTest {
             "a likeIgnoreCase 'bcd' escape '$'",
             "a not like 'bcd' escape '$'",
             "a not likeIgnoreCase 'bcd' escape '$'"})
-    public void setEscapeChar(String agrestExp) {
+    public void accept_escapeChar(String agrestExp) {
         Expression cayenneExp = Exp.parse(agrestExp).accept(visitor, null);
         assertTrue(cayenneExp instanceof PatternMatchNode);
         PatternMatchNode matchNode = (PatternMatchNode) cayenneExp;
