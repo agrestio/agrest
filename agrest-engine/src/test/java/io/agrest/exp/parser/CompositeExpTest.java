@@ -211,7 +211,7 @@ public class CompositeExpTest {
                         .addChild(expFromType(ExpPath.class)
                                 .withValue("t.name"))
                         .addChild(expFromType(ExpScalar.class)
-                                .withValue("%story")))
+                                .withValue("'%story'")))
                 .build();
 
         assertEquals(expected, AgExpressionParser.parse("t.amount > 0 and t.name like '%story'"));

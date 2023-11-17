@@ -43,10 +43,14 @@ public class ExpScalar extends ExpBaseScalar<Object> {
     @Override
     public String toString() {
         if (value instanceof CharSequence) {
-            return "'" + value + "'";
-        } else {
-            return String.valueOf(value);
+            String stringValue = value.toString();
+            String quoteChar = stringValue.substring(0, 1);
+            String escapedContent = stringValue
+                    .substring(1, stringValue.length() - 1)
+                    .replaceAll(quoteChar, "\\\\" + quoteChar);
+            return quoteChar + escapedContent + quoteChar;
         }
+        return String.valueOf(value);
     }
 }
 /* JavaCC - OriginalChecksum=21004db13a44c6b16cc9797a6f36a4af (do not edit this line) */

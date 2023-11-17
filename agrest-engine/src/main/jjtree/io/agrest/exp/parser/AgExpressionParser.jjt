@@ -624,7 +624,7 @@ MORE:
 <WithinSingleQuoteLiteral> TOKEN :
 {
     <SINGLE_QUOTED_STRING: "'">
-        { literalValue = stringBuffer.toString(); }
+        { literalValue = "'" + stringBuffer.toString() + "'"; }
         : DEFAULT
 }
 
@@ -640,7 +640,7 @@ MORE:
 <WithinDoubleQuoteLiteral> TOKEN:
 {
     <DOUBLE_QUOTED_STRING: "\"">
-        { literalValue = stringBuffer.toString(); }
+        { literalValue = "\"" + stringBuffer.toString() + "\""; }
         : DEFAULT
 }
 

@@ -82,8 +82,8 @@ public class ExpTest {
     @Test
     public void paramsImmutable() {
         Exp raw = Exp.parse("a = $1");
-        Exp e1 = raw.positionalParams("b");
-        Exp e2 = raw.namedParams(Map.of("1", "c"));
+        Exp e1 = raw.positionalParams("'b'");
+        Exp e2 = raw.namedParams(Map.of("1", "'c'"));
 
         assertEquals("(a) = ($1)", raw.toString());
         assertEquals("(a) = ('b')", e1.toString());
@@ -146,12 +146,12 @@ public class ExpTest {
 
     @Test
     public void equal() {
-        assertEquals("(a) = ('b')", Exp.equal("a", "b").toString());
+        assertEquals("(a) = ('b')", Exp.equal("a", "'b'").toString());
     }
 
     @Test
     public void notEqual() {
-        assertEquals("(a) != ('b')", Exp.notEqual("a", "b").toString());
+        assertEquals("(a) != ('b')", Exp.notEqual("a", "'b'").toString());
     }
 
     @Test
@@ -161,42 +161,42 @@ public class ExpTest {
 
     @Test
     public void like() {
-        assertEquals("a like 'x%'", Exp.like("a", "x%").toString());
+        assertEquals("a like 'x%'", Exp.like("a", "'x%'").toString());
     }
 
     @Test
     public void notLike() {
-        assertEquals("a not like 'x%'", Exp.notLike("a", "x%").toString());
+        assertEquals("a not like 'x%'", Exp.notLike("a", "'x%'").toString());
     }
 
     @Test
     public void likeIgnoreCase() {
-        assertEquals("a likeIgnoreCase 'x%'", Exp.likeIgnoreCase("a", "x%").toString());
+        assertEquals("a likeIgnoreCase 'x%'", Exp.likeIgnoreCase("a", "'x%'").toString());
     }
 
     @Test
     public void notLikeIgnoreCase() {
-        assertEquals("a not likeIgnoreCase 'x%'", Exp.notLikeIgnoreCase("a", "x%").toString());
+        assertEquals("a not likeIgnoreCase 'x%'", Exp.notLikeIgnoreCase("a", "'x%'").toString());
     }
 
     @Test
     public void in() {
-        assertEquals("a in ('a', 4, 'b')", Exp.in("a", "a", 4, "b").toString());
+        assertEquals("a in ('a', 4, 'b')", Exp.in("a", "'a'", 4, "'b'").toString());
     }
 
     @Test
     public void inCollection() {
-        assertEquals("a in ('a', 4, 'b')", Exp.inCollection("a", List.of("a", 4, "b")).toString());
+        assertEquals("a in ('a', 4, 'b')", Exp.inCollection("a", List.of("'a'", 4, "'b'")).toString());
     }
 
     @Test
     public void notIn() {
-        assertEquals("a not in ('a', 4, 'b')", Exp.notIn("a", "a", 4, "b").toString());
+        assertEquals("a not in ('a', 4, 'b')", Exp.notIn("a", "'a'", 4, "'b'").toString());
     }
 
     @Test
     public void notInCollection() {
-        assertEquals("a not in ('a', 4, 'b')", Exp.notInCollection("a", List.of("a", 4, "b")).toString());
+        assertEquals("a not in ('a', 4, 'b')", Exp.notInCollection("a", List.of("'a'", 4, "'b'")).toString());
     }
 
     @Test

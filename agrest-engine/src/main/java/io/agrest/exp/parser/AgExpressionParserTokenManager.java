@@ -2555,11 +2555,11 @@ void TokenLexicalActions(Token matchedToken)
    {
       case 71 :
         image.append(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1)));
-          literalValue = stringBuffer.toString();
+          literalValue = "'" + stringBuffer.toString() + "'";
          break;
       case 74 :
         image.append(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1)));
-          literalValue = stringBuffer.toString();
+          literalValue = "\"" + stringBuffer.toString() + "\"";
          break;
       case 75 :
         image.append(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1)));

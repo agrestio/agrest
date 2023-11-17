@@ -16,19 +16,19 @@ public class CayenneExpParserTest {
 
     @Test
     public void parseNamedParams() {
-        Expression e = parser.parse(Exp.parse("a = $a").namedParams(Map.of("a", "x")));
+        Expression e = parser.parse(Exp.parse("a = $a").namedParams(Map.of("a", "'x'")));
         assertEquals(ExpressionFactory.exp("a = 'x'"), e);
     }
 
     @Test
     public void parsePositionalParams() {
-        Expression e = parser.parse(Exp.parse("a = $a").positionalParams("x"));
+        Expression e = parser.parse(Exp.parse("a = $a").positionalParams("'x'"));
         assertEquals(ExpressionFactory.exp("a = 'x'"), e);
     }
 
     @Test
     public void parsePositionalParams_NullAndParam() {
-        Exp agExp = Exp.parse("a = null or a.b = $b").positionalParams("B");
+        Exp agExp = Exp.parse("a = null or a.b = $b").positionalParams("'B'");
         Expression e = parser.parse(agExp);
         assertEquals(ExpressionFactory.exp("a = null or a.b = 'B'"), e);
     }
@@ -64,7 +64,7 @@ public class CayenneExpParserTest {
         Expression e1 = parser.parse(Exp.in("a", 5, 6, 7));
         assertEquals(ExpressionFactory.exp("a in (5, 6, 7)"), e1);
 
-        Expression e2 = parser.parse(Exp.in("a", "x", "y", "z"));
+        Expression e2 = parser.parse(Exp.in("a", "'x'", "'y'", "'z'"));
         assertEquals(ExpressionFactory.exp("a in ('x','y','z')"), e2);
 
         Expression e3 = parser.parse(Exp.in("a", 5, 6, 7));
@@ -81,8 +81,8 @@ public class CayenneExpParserTest {
     public void parseCompositeCondition() {
 
         Exp e0 = Exp.parse("a = 'b'");
-        Exp e1 = Exp.parse("b = $a").namedParams(Map.of("a", "x"));
-        Exp e2 = Exp.parse("c = $a").positionalParams("y");
+        Exp e1 = Exp.parse("b = $a").namedParams(Map.of("a", "'x'"));
+        Exp e2 = Exp.parse("c = $a").positionalParams("'y'");
 
         // multilevel composite with heterogeneous params
         Exp e3 = Exp.parse("d = 'z'")
