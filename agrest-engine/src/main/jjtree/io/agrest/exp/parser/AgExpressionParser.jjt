@@ -480,7 +480,7 @@ TOKEN_MGR_DECLS:
 
     private Object makeFloat() throws ParseException
     {
-        String s = image.toString();
+        String s = image.toString().replaceAll("_", "");
         try {
             switch ( s.charAt(s.length()-1) ) {
                 case 'f': case 'F':
@@ -673,8 +673,9 @@ TOKEN:
  |  < #OCTAL_DIGIT: ["0"-"7"] >
  |  < #HEX_DIGIT_UNDERSCORE: ["0"-"9","a"-"f","A"-"F","_"] >
  |  < #HEX_DIGIT: ["0"-"9","a"-"f","A"-"F"] >
- |  < #DEC_FLT: (<DEC_DIGIT>)+ "." (<DEC_DIGIT>)* | "." (<DEC_DIGIT>)+ >
- |  < #EXPONENT: ["e","E"] (["+","-"])? (<DEC_DIGIT>)+ >
+ |  < #DEC_FLT: <DEC_DIGITS_INNER_UNDERSCORE> "." (<DEC_DIGITS_INNER_UNDERSCORE>)? | "." <DEC_DIGITS_INNER_UNDERSCORE> >
+ |  < #DEC_DIGITS_INNER_UNDERSCORE: <DEC_DIGIT> ( (<DEC_DIGIT_UNDERSCORE>)* <DEC_DIGIT> )? >
+ |  < #EXPONENT: ["e","E"] (["+","-"])? (<DEC_DIGITS_INNER_UNDERSCORE>)+ >
  |  < #INT_SUFF: ["l","L","h","H"] >
  |  < #FLT_SUFF: ["d","D","f","F","b","B"] >
 }

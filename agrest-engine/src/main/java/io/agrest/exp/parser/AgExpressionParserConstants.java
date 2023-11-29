@@ -99,11 +99,13 @@ public interface AgExpressionParserConstants {
   /** RegularExpression Id. */
   int DEC_FLT = 83;
   /** RegularExpression Id. */
-  int EXPONENT = 84;
+  int DEC_DIGITS_INNER_UNDERSCORE = 84;
   /** RegularExpression Id. */
-  int INT_SUFF = 85;
+  int EXPONENT = 85;
   /** RegularExpression Id. */
-  int FLT_SUFF = 86;
+  int INT_SUFF = 86;
+  /** RegularExpression Id. */
+  int FLT_SUFF = 87;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -198,6 +200,7 @@ public interface AgExpressionParserConstants {
     "<HEX_DIGIT_UNDERSCORE>",
     "<HEX_DIGIT>",
     "<DEC_FLT>",
+    "<DEC_DIGITS_INNER_UNDERSCORE>",
     "<EXPONENT>",
     "<INT_SUFF>",
     "<FLT_SUFF>",
