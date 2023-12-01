@@ -81,6 +81,7 @@ public final class CayenneUtil {
     }
 
 
+    // TODO: this logic is somewhat duplicated in CayenneQueryAssembler.createQueryForIds. Maybe it belongs there to begin with?
     public static <A> A findById(
             IPathResolver pathResolver,
             ObjectContext context,

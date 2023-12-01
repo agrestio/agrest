@@ -30,8 +30,19 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
         this.deleteOperations = Collections.emptyList();
     }
 
-    public boolean isById() {
+    /**
+     * @since 5.0
+     */
+    public boolean isByIds() {
         return ids != null && !ids.isEmpty();
+    }
+
+    /**
+     * @deprecated in favor of {@link #isByIds()}
+     */
+    @Deprecated(since = "5.0", forRemoval = true)
+    public boolean isById() {
+        return isByIds();
     }
 
     public Collection<AgObjectId> getIds() {

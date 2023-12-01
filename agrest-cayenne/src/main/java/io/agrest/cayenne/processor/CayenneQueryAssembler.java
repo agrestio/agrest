@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * @since 3.4
@@ -117,6 +118,58 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         }
 
         return columns;
+    }
+
+    @Override
+    public <T> ObjectSelect<T> createQueryForIds(AgEntity<T> entity, Collection<AgObjectId> ids) {
+
+        if (ids.isEmpty()) {
+            throw AgException.badRequest("No ids specified");
+        }
+
+        ObjEntity objEntity = entityResolver.getObjEntity(entity.getType());
+
+        // sanity checking...
+        if (objEntity == null) {
+            throw AgException.internalServerError("Unknown entity class: %s", entity.getType());
+        }
+
+        Function<AgObjectId, Expression> qualifierMaker = idQualifierMaker(entity);
+        List<Expression> idQualifiers = new ArrayList<>(ids.size());
+
+        // TODO: for single-column IDs, a better qualifier would be "IN (..)" instead of "OR"
+        for (AgObjectId id : ids) {
+            idQualifiers.add(qualifierMaker.apply(id));
+        }
+
+        return ObjectSelect.query(entity.getType()).where(ExpressionFactory.or(idQualifiers));
+    }
+
+    private Function<AgObjectId, Expression> idQualifierMaker(AgEntity<?> entity) {
+        int idSize = entity.getIdParts().size();
+
+        if (idSize == 1) {
+            String partName = entity.getIdParts().iterator().next().getName();
+            ASTPath idPath = pathResolver.resolve(entity.getName(), partName).getPathExp();
+            return id -> ExpressionFactory.matchExp(idPath, id.get(partName));
+        } else {
+
+            List<String> partNames = new ArrayList<>(idSize);
+            List<ASTPath> paths = new ArrayList<>(idSize);
+            for (AgIdPart idPart : entity.getIdParts()) {
+                partNames.add(idPart.getName());
+                paths.add(pathResolver.resolve(entity.getName(), idPart.getName()).getPathExp());
+            }
+
+            return id -> {
+                List<Expression> idQualifier = new ArrayList<>(idSize);
+                for (int i = 0; i < idSize; i++) {
+                    idQualifier.add(ExpressionFactory.matchExp(paths.get(i), id.get(partNames.get(i))));
+                }
+
+                return ExpressionFactory.and(idQualifier);
+            };
+        }
     }
 
     private ObjRelationship findRelationship(ObjEntity entity, String name) {

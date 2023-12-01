@@ -110,7 +110,7 @@ public class BasicIT extends MainDbTest {
         tester.target("/e4/7")
                 .delete()
                 .wasNotFound()
-                .bodyEquals("{\"message\":\"No object for ID '7' and entity 'E4'\"}");
+                .bodyEquals("{\"message\":\"No matching objects for entity 'E4' and ids: 7\"}");
 
         tester.e4().matcher().assertMatches(1);
     }
@@ -130,7 +130,7 @@ public class BasicIT extends MainDbTest {
         tester.target("/e4/8")
                 .delete()
                 .wasNotFound()
-                .bodyEquals("{\"message\":\"No object for ID '8' and entity 'E4'\"}");
+                .bodyEquals("{\"message\":\"No matching objects for entity 'E4' and ids: 8\"}");
     }
 
     @Test

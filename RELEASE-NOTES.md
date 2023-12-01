@@ -1,6 +1,7 @@
 ## Release 5.0-M20
 
 * #658 DeleteBuilder: byIds(..), byMultiIds(..)
+* #659 Idempotent DELETE by ids, optimizing performance
 
 ## Release 5.0.M19
 

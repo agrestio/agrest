@@ -1,12 +1,12 @@
 package io.agrest.cayenne.processor.delete.stage;
 
 import io.agrest.AgException;
-import io.agrest.id.AgObjectId;
-import io.agrest.runtime.EntityParent;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.processor.CayenneUtil;
+import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.meta.AgEntity;
 import io.agrest.processor.ProcessorOutcome;
+import io.agrest.runtime.EntityParent;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.stage.DeleteMapChangesStage;
 import io.agrest.runtime.processor.update.ChangeOperation;
@@ -19,6 +19,7 @@ import org.apache.cayenne.query.ObjectSelect;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A processor for the {@link io.agrest.DeleteStage#MAP_CHANGES} stage that associates persistent objects with delete
@@ -29,9 +30,13 @@ import java.util.List;
 public class CayenneDeleteMapChangesStage extends DeleteMapChangesStage {
 
     private final IPathResolver pathResolver;
+    private final ICayenneQueryAssembler queryAssembler;
 
-    public CayenneDeleteMapChangesStage(@Inject IPathResolver pathResolver) {
+    public CayenneDeleteMapChangesStage(
+            @Inject IPathResolver pathResolver,
+            @Inject ICayenneQueryAssembler queryAssembler) {
         this.pathResolver = pathResolver;
+        this.queryAssembler = queryAssembler;
     }
 
     @Override
@@ -56,8 +61,8 @@ public class CayenneDeleteMapChangesStage extends DeleteMapChangesStage {
 
     protected <T extends DataObject> List<T> findObjectsToDelete(DeleteContext<T> context) {
 
-        if (context.isById()) {
-            return findById(context);
+        if (context.isByIds()) {
+            return findByIds(context);
         } else if (context.getParent() != null) {
             return findByParent(context, context.getParent());
         }
@@ -67,23 +72,20 @@ public class CayenneDeleteMapChangesStage extends DeleteMapChangesStage {
         }
     }
 
-    protected <T extends DataObject> List<T> findById(DeleteContext<T> context) {
+    protected <T extends DataObject> List<T> findByIds(DeleteContext<T> context) {
 
-        List<T> objects = new ArrayList<>(context.getIds().size());
         ObjectContext cayenneContext = CayenneDeleteStartStage.cayenneContext(context);
+        List<T> objects = queryAssembler.createQueryForIds(context.getAgEntity(), context.getIds()).select(cayenneContext);
 
-        for (AgObjectId id : context.getIds()) {
+        // DELETE is idempotent, so if some objects are missing, we should proceed ...
+        // Also, only return 404 if zero objects matched
 
-            // TODO: batch objects retrieval into a single query
+        if (objects.isEmpty()) {
+            ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(context.getType());
 
-            T o = CayenneUtil.findById(pathResolver, cayenneContext, context.getAgEntity(), id);
-
-            if (o == null) {
-                ObjEntity entity = cayenneContext.getEntityResolver().getObjEntity(context.getType());
-                throw AgException.notFound("No object for ID '%s' and entity '%s'", id, entity.getName());
-            }
-
-            objects.add(o);
+            String idsString = context.getIds().stream().map(id -> id.toString()).collect(Collectors.joining(","));
+            throw AgException.notFound("No matching objects for entity '%s' and ids: %s",
+                    entity.getName(), idsString);
         }
 
         return objects;
