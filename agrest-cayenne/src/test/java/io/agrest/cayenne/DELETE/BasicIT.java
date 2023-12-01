@@ -1,5 +1,6 @@
 package io.agrest.cayenne.DELETE;
 
+import io.agrest.DeleteBuilder;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.cayenne.main.E17;
 import io.agrest.cayenne.cayenne.main.E2;
@@ -10,8 +11,6 @@ import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs3.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
-import org.junit.jupiter.api.Test;
-
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -19,7 +18,10 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
+import org.junit.jupiter.api.Test;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BasicIT extends MainDbTest {
@@ -62,6 +64,23 @@ public class BasicIT extends MainDbTest {
                 .values(8, "yyy").exec();
 
         tester.target("/e4/8")
+                .delete()
+                .wasOk()
+                .bodyEquals("{}");
+
+        tester.e4().matcher().assertOneMatch();
+    }
+
+    @Test
+    public void deleteByIds() {
+
+        tester.e4().insertColumns("id", "c_varchar")
+                .values(1, "xxx")
+                .values(7, "aaa")
+                .values(8, "yyy").exec();
+
+        tester.target("/e4")
+                .queryParam("ids", 1, 8)
                 .delete()
                 .wasOk()
                 .bodyEquals("{}");
@@ -163,8 +182,13 @@ public class BasicIT extends MainDbTest {
 
         @DELETE
         @Path("e4")
-        public SimpleResponse deleteAll() {
-            return AgJaxrs.delete(E4.class, config).sync();
+        public SimpleResponse deleteAll(@QueryParam("ids") List<Integer> ids) {
+            DeleteBuilder<E4> builder = AgJaxrs.delete(E4.class, config);
+            if (ids != null && !ids.isEmpty()) {
+                builder.byIds(ids);
+            }
+
+            return builder.sync();
         }
 
         @DELETE
@@ -180,11 +204,11 @@ public class BasicIT extends MainDbTest {
                 @QueryParam("id1") Integer id1,
                 @QueryParam("id2") Integer id2) {
 
-            Map<String, Object> ids = new HashMap<>();
-            ids.put(E17.ID1.getName(), id1);
-            ids.put(E17.ID2.getName(), id2);
+            Map<String, Object> id = new HashMap<>();
+            id.put(E17.ID1.getName(), id1);
+            id.put(E17.ID2.getName(), id2);
 
-            return AgJaxrs.delete(E17.class, config).byId(ids).sync();
+            return AgJaxrs.delete(E17.class, config).byMultiId(id).sync();
         }
 
         @DELETE

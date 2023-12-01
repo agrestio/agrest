@@ -12,7 +12,10 @@ import io.agrest.processor.Processor;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,13 +34,57 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
     }
 
     @Override
-    public DeleteBuilder<T> byId(Object id) {
+    public DeleteBuilder<T> byIds(Object... ids) {
+        List<AgObjectId> wrapped = new ArrayList<>(ids.length);
+
+        for (Object id : ids) {
+            wrapped.add(AgObjectId.of(id));
+        }
+        context.setIds(wrapped);
+        return this;
+    }
+
+    @Override
+    public DeleteBuilder<T> byIds(Collection<?> ids) {
+        List<AgObjectId> wrapped = new ArrayList<>(ids.size());
+
+        for (Object id : ids) {
+            wrapped.add(AgObjectId.of(id));
+        }
+        context.setIds(wrapped);
+        return this;
+    }
+
+    @Override
+    public DeleteBuilder<T> byMultiIds(Map<String, Object>... ids) {
+        List<AgObjectId> wrapped = new ArrayList<>(ids.length);
+
+        for (Map<String, Object> id : ids) {
+            wrapped.add(AgObjectId.ofMap(id));
+        }
+        context.setIds(wrapped);
+        return this;
+    }
+
+    @Override
+    public DeleteBuilder<T> byMultiIds(Collection<Map<String, Object>> ids) {
+        List<AgObjectId> wrapped = new ArrayList<>(ids.size());
+
+        for (Map<String, Object> id : ids) {
+            wrapped.add(AgObjectId.ofMap(id));
+        }
+        context.setIds(wrapped);
+        return this;
+    }
+
+    @Override
+    public DeleteBuilder<T> id(Object id) {
         context.addId(AgObjectId.of(id));
         return this;
     }
 
     @Override
-    public DeleteBuilder<T> byId(Map<String, Object> id) {
+    public DeleteBuilder<T> id(Map<String, Object> id) {
         context.addId(AgObjectId.ofMap(id));
         return this;
     }

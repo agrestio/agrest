@@ -7,7 +7,7 @@ import io.agrest.meta.AgIdPart;
 import java.util.*;
 
 /**
- * A multi-value id.
+ * An id consisting from multiple individual values.
  *
  * @since 5.0
  */

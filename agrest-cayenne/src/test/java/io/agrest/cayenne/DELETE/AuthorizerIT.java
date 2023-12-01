@@ -98,7 +98,7 @@ public class AuthorizerIT extends MainDbTest {
         @Path("e2_stack_authorizer/{id}")
         public SimpleResponse putE2StackFilter(@PathParam("id") int id) {
             return AgJaxrs.delete(E2.class, config)
-                    .byId(id)
+                    .byIds(id)
                     .sync();
         }
 

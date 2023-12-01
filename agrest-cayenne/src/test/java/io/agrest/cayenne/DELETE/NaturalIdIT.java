@@ -71,7 +71,7 @@ public class NaturalIdIT extends MainDbTest {
             Map<String, Object> id = new HashMap<>(3);
             id.put("age", age);
             id.put("name", name);
-            return AgJaxrs.delete(E21.class, config).byId(id).sync();
+            return AgJaxrs.delete(E21.class, config).byMultiId(id).sync();
         }
 
         @DELETE

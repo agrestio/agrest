@@ -183,7 +183,7 @@ public class AgRuntime {
     @Deprecated
     public <T> SimpleResponse delete(Class<T> root, Collection<EntityDelete<T>> deleted) {
         DeleteBuilder<T> builder = delete(root);
-        deleted.forEach(entityDelete -> builder.id(entityDelete.getId()));
+        deleted.forEach(entityDelete -> builder.byId(entityDelete.getId()));
         return builder.sync();
     }
 

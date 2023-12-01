@@ -35,9 +35,20 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
     }
 
     public Collection<AgObjectId> getIds() {
-        return ids;
+        return ids != null ? ids : Collections.emptyList();
     }
 
+    /**
+     * @since 5.0
+     */
+    public void setIds(Collection<AgObjectId> ids) {
+        this.ids = ids;
+    }
+
+    /**
+     * @deprecated in favor of {@link #setIds(Collection)}
+     */
+    @Deprecated(since = "5.0", forRemoval = true)
     public void addId(AgObjectId id) {
         if (this.ids == null) {
             this.ids = new ArrayList<>();

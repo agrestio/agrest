@@ -10,14 +10,13 @@ import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs3.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
-import org.junit.jupiter.api.Test;
-
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.UriInfo;
+import org.junit.jupiter.api.Test;
+
 import java.util.Collection;
 
 public class RelatedIT extends MainDbTest {
@@ -129,13 +128,13 @@ public class RelatedIT extends MainDbTest {
 
         @DELETE
         @Path("{id}")
-        public SimpleResponse deleteE2ById(@PathParam("id") int id, @Context UriInfo uriInfo) {
+        public SimpleResponse deleteE2ById(@PathParam("id") int id) {
             return AgJaxrs.delete(E2.class, config).byId(id).sync();
         }
 
         @Deprecated
         @DELETE
-        public SimpleResponse deleteE2_Batch(Collection<EntityDelete<E2>> deleted, @Context UriInfo uriInfo) {
+        public SimpleResponse deleteE2_Batch(Collection<EntityDelete<E2>> deleted) {
             return AgJaxrs.runtime(config).delete(E2.class, deleted);
         }
 
