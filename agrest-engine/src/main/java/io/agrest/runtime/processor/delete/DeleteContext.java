@@ -20,6 +20,7 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
 
     private final RequestSchema schema;
     protected AgEntity<T> agEntity;
+    protected Collection<?> unresolvedIds;
     protected Collection<AgObjectId> ids;
     protected EntityParent<?> parent;
     private List<ChangeOperation<T>> deleteOperations;
@@ -34,7 +35,7 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
      * @since 5.0
      */
     public boolean isByIds() {
-        return ids != null && !ids.isEmpty();
+        return unresolvedIds != null && !unresolvedIds.isEmpty();
     }
 
     /**
@@ -43,6 +44,20 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
     @Deprecated(since = "5.0", forRemoval = true)
     public boolean isById() {
         return isByIds();
+    }
+
+    /**
+     * @since 5.0
+     */
+    public Collection<?> getUnresolvedIds() {
+        return unresolvedIds != null ? unresolvedIds : Collections.emptyList();
+    }
+
+    /**
+     * @since 5.0
+     */
+    public void setUnresolvedIds(Collection<?> unresolvedIds) {
+        this.unresolvedIds = unresolvedIds;
     }
 
     public Collection<AgObjectId> getIds() {

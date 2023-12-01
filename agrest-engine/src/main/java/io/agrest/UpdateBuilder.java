@@ -43,14 +43,7 @@ public interface UpdateBuilder<T> {
     }
 
     /**
-     * Set an explicit multi-value id for the update. In this case only a single object is allowed in the update.
-     *
-     * @since 5.0
-     */
-    UpdateBuilder<T> byId(Map<String, Object> id);
-
-    /**
-     * @deprecated since 5.0 in favor of {@link #byId(Map)}.
+     * @deprecated since 5.0 in favor of {@link #byId(Object)}.
      */
     @Deprecated
     default UpdateBuilder<T> id(Map<String, Object> id) {

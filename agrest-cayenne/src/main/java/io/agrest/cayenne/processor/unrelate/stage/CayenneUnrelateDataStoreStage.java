@@ -1,14 +1,14 @@
 package io.agrest.cayenne.processor.unrelate.stage;
 
 import io.agrest.AgException;
-import io.agrest.id.AgObjectId;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.processor.CayenneUtil;
+import io.agrest.id.AgObjectId;
 import io.agrest.meta.AgRelationship;
 import io.agrest.meta.AgSchema;
-import io.agrest.processor.ProcessorOutcome;
+import io.agrest.runtime.entity.IIdResolver;
 import io.agrest.runtime.processor.unrelate.UnrelateContext;
-import io.agrest.runtime.processor.unrelate.stage.UnrelateUpdateDateStoreStage;
+import io.agrest.runtime.processor.unrelate.stage.UnrelateUpdateDataStoreStage;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.di.Inject;
@@ -20,33 +20,29 @@ import java.util.Collection;
 /**
  * @since 2.7
  */
-public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDateStoreStage {
+public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDataStoreStage {
 
     private final AgSchema schema;
     private final IPathResolver pathResolver;
 
     public CayenneUnrelateDataStoreStage(
+            @Inject IIdResolver idResolver,
             @Inject AgSchema schema,
             @Inject IPathResolver pathResolver) {
+
+        super(idResolver);
         this.schema = schema;
         this.pathResolver = pathResolver;
     }
 
     @Override
-    public ProcessorOutcome execute(UnrelateContext<?> context) {
-        doExecute((UnrelateContext<DataObject>) context);
-        return ProcessorOutcome.CONTINUE;
-    }
-
-
-    protected <T extends DataObject> void doExecute(UnrelateContext<T> context) {
-
+    protected void unrelate(UnrelateContext<?> context) {
         ObjectContext cayenneContext = CayenneUnrelateStartStage.cayenneContext(context);
 
         if (context.getTargetId() != null) {
-            unrelateSingle(context, cayenneContext);
+            unrelateSingle((UnrelateContext<DataObject>) context, cayenneContext);
         } else {
-            unrelateAll(context, cayenneContext);
+            unrelateAll((UnrelateContext<DataObject>) context, cayenneContext);
         }
     }
 

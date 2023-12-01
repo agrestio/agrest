@@ -6,7 +6,7 @@ import io.agrest.runtime.AgExceptionMappers;
 import io.agrest.runtime.processor.unrelate.UnrelateContext;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
 import io.agrest.runtime.processor.unrelate.stage.UnrelateStartStage;
-import io.agrest.runtime.processor.unrelate.stage.UnrelateUpdateDateStoreStage;
+import io.agrest.runtime.processor.unrelate.stage.UnrelateUpdateDataStoreStage;
 import org.apache.cayenne.di.DIRuntimeException;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.di.Provider;
@@ -23,8 +23,7 @@ public class UnrelateProcessorFactoryProvider implements Provider<UnrelateProces
 
     public UnrelateProcessorFactoryProvider(
             @Inject UnrelateStartStage startStage,
-            @Inject UnrelateUpdateDateStoreStage dataStoreStage,
-
+            @Inject UnrelateUpdateDataStoreStage dataStoreStage,
             @Inject AgExceptionMappers exceptionMappers
     ) {
 

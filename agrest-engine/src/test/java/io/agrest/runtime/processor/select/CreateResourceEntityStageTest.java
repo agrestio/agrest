@@ -22,6 +22,7 @@ import io.agrest.runtime.entity.IIncludeMerger;
 import io.agrest.runtime.entity.IMapByMerger;
 import io.agrest.runtime.entity.ISizeMerger;
 import io.agrest.runtime.entity.ISortMerger;
+import io.agrest.runtime.entity.IdResolver;
 import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.entity.MapByMerger;
 import io.agrest.runtime.entity.SizeMerger;
@@ -66,6 +67,7 @@ public class CreateResourceEntityStageTest {
         IExcludeMerger excludeMerger = new ExcludeMerger();
 
         stage = new SelectCreateResourceEntityStage(
+                new IdResolver(),
                 expMerger,
                 sortMerger,
                 mapByMerger,

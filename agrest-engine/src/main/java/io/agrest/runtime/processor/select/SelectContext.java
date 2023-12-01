@@ -27,6 +27,7 @@ import java.util.Map;
 public class SelectContext<T> extends BaseProcessingContext<T> {
 
     private final RequestSchema schema;
+    private Object unresolvedId;
     private AgObjectId id;
     private EntityParent<?> parent;
     private RootResourceEntity<T> entity;
@@ -68,7 +69,21 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     }
 
     public boolean isById() {
-        return id != null;
+        return unresolvedId != null;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public Object getUnresolvedId() {
+        return unresolvedId;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public void setUnresolvedId(Object unresolvedId) {
+        this.unresolvedId = unresolvedId;
     }
 
     public AgObjectId getId() {

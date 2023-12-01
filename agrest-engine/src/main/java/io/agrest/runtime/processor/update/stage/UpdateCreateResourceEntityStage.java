@@ -6,6 +6,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.entity.IExcludeMerger;
+import io.agrest.runtime.entity.IIdResolver;
 import io.agrest.runtime.entity.IIncludeMerger;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.di.Inject;
@@ -15,13 +16,16 @@ import org.apache.cayenne.di.Inject;
  */
 public class UpdateCreateResourceEntityStage implements Processor<UpdateContext<?>> {
 
+    private final IIdResolver idResolver;
     private final IIncludeMerger includeMerger;
     private final IExcludeMerger excludeMerger;
 
     public UpdateCreateResourceEntityStage(
+            @Inject IIdResolver idResolver,
             @Inject IIncludeMerger includeMerger,
             @Inject IExcludeMerger excludeMerger) {
 
+        this.idResolver = idResolver;
         this.includeMerger = includeMerger;
         this.excludeMerger = excludeMerger;
     }
@@ -34,8 +38,9 @@ public class UpdateCreateResourceEntityStage implements Processor<UpdateContext<
 
     protected <T> void doExecute(UpdateContext<T> context) {
         AgEntity<T> entity = context.getSchema().getEntity(context.getType());
-        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(entity);
+        context.setId(idResolver.resolve(entity, context.getUnresolvedId()));
 
+        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(entity);
         if (context.isIncludingDataInResponse()) {
             AgRequest request = context.getRequest();
             includeMerger.merge(resourceEntity,

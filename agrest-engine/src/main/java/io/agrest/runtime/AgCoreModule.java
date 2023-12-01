@@ -46,11 +46,13 @@ import io.agrest.runtime.entity.ExpMerger;
 import io.agrest.runtime.entity.IChangeAuthorizer;
 import io.agrest.runtime.entity.IExcludeMerger;
 import io.agrest.runtime.entity.IExpMerger;
+import io.agrest.runtime.entity.IIdResolver;
 import io.agrest.runtime.entity.IIncludeMerger;
 import io.agrest.runtime.entity.IMapByMerger;
 import io.agrest.runtime.entity.IResultFilter;
 import io.agrest.runtime.entity.ISizeMerger;
 import io.agrest.runtime.entity.ISortMerger;
+import io.agrest.runtime.entity.IdResolver;
 import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.entity.MapByMerger;
 import io.agrest.runtime.entity.ResultFilter;
@@ -77,7 +79,7 @@ import io.agrest.runtime.processor.select.stage.SelectStartStage;
 import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
 import io.agrest.runtime.processor.unrelate.provider.UnrelateProcessorFactoryProvider;
 import io.agrest.runtime.processor.unrelate.stage.UnrelateStartStage;
-import io.agrest.runtime.processor.unrelate.stage.UnrelateUpdateDateStoreStage;
+import io.agrest.runtime.processor.unrelate.stage.UnrelateUpdateDataStoreStage;
 import io.agrest.runtime.processor.update.CreateOrUpdateProcessorFactory;
 import io.agrest.runtime.processor.update.CreateProcessorFactory;
 import io.agrest.runtime.processor.update.IdempotentCreateOrUpdateProcessorFactory;
@@ -217,7 +219,7 @@ public class AgCoreModule implements Module {
         // unrelate stages
         binder.bind(UnrelateProcessorFactory.class).toProvider(UnrelateProcessorFactoryProvider.class);
         binder.bind(UnrelateStartStage.class).to(UnrelateStartStage.class);
-        binder.bind(UnrelateUpdateDateStoreStage.class).to(UnrelateUpdateDateStoreStage.class);
+        binder.bind(UnrelateUpdateDataStoreStage.class).to(UnrelateUpdateDataStoreStage.class);
 
         // a map of custom encoders
         binder.bindMap(Encoder.class);
@@ -282,6 +284,7 @@ public class AgCoreModule implements Module {
 
         binder.bind(IAgRequestBuilderFactory.class).to(DefaultRequestBuilderFactory.class);
 
+        binder.bind(IIdResolver.class).to(IdResolver.class);
         binder.bind(IExpMerger.class).to(ExpMerger.class);
         binder.bind(ISortMerger.class).to(SortMerger.class);
         binder.bind(IMapByMerger.class).to(MapByMerger.class);

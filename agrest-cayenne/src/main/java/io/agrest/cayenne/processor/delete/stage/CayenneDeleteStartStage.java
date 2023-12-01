@@ -3,6 +3,7 @@ package io.agrest.cayenne.processor.delete.stage;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.processor.ProcessorOutcome;
+import io.agrest.runtime.entity.IIdResolver;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.stage.DeleteStartStage;
 import org.apache.cayenne.ObjectContext;
@@ -25,7 +26,10 @@ public class CayenneDeleteStartStage extends DeleteStartStage {
 
     private final ICayennePersister persister;
 
-    public CayenneDeleteStartStage(@Inject ICayennePersister persister) {
+    public CayenneDeleteStartStage(
+            @Inject IIdResolver idResolver,
+            @Inject ICayennePersister persister) {
+        super(idResolver);
         this.persister = persister;
     }
 

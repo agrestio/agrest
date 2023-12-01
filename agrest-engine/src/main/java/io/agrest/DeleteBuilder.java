@@ -7,8 +7,11 @@ import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.delete.DeleteContext;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import static java.util.Arrays.asList;
 
 /**
  * @since 1.4
@@ -16,51 +19,35 @@ import java.util.function.Consumer;
 public interface DeleteBuilder<T> {
 
     /**
-     * Will delete an object with the specified single-value id. Any previously set IDs are replaced with this ID.
+     * Will delete an object with the specified id. Any previously set IDs are replaced with this ID. For single-value
+     * ID entities, the ID argument should be a simple value (e.g. an Integer). For multi-value IDs, it should be a Map
+     * of values.
      *
      * @since 5.0
      */
     default DeleteBuilder<T> byId(Object id) {
-        return byIds(id);
+        return byIds(List.of(id));
     }
 
     /**
-     * Will delete objects identified by the specified single-value IDs. Any previously set IDs are replaced with the new collection.
+     * Will delete objects identified by the specified single-value IDs. Any previously set IDs are replaced with the
+     * new collection. For single-value ID entities, array elements should be simple values (e.g. Integers). For
+     * multi-value IDs, they should be represented as Maps.
      *
      * @since 5.0
      */
-    DeleteBuilder<T> byIds(Object... ids);
+    default DeleteBuilder<T> byIds(Object... ids) {
+        return byIds(asList(ids));
+    }
 
     /**
-     * Will delete objects identified by the specified single-value IDs. Any previously set IDs are replaced with the new collection.
+     * Will delete objects identified by the specified single-value IDs. Any previously set IDs are replaced with the
+     * new collection. For single-value ID entities, array elements should be simple values (e.g. Integers). For
+     * multi-value IDs, they should be represented as Maps.
      *
      * @since 5.0
      */
     DeleteBuilder<T> byIds(Collection<?> ids);
-
-    /**
-     * Will delete an object with the specified multi-value id. Any previously set IDs are replaced with this ID.
-     *
-     * @param id multi-attribute ID
-     * @since 5.0
-     */
-    default DeleteBuilder<T> byMultiId(Map<String, Object> id) {
-        return byMultiIds(id);
-    }
-
-    /**
-     * Will delete objects identified by the specified multi-value IDs. Any previously set IDs are replaced with the new collection.
-     *
-     * @since 5.0
-     */
-    DeleteBuilder<T> byMultiIds(Map<String, Object>... ids);
-
-    /**
-     * Will delete objects identified by the specified multi-value IDs. Any previously set IDs are replaced with the new collection.
-     *
-     * @since 5.0
-     */
-    DeleteBuilder<T> byMultiIds(Collection<Map<String, Object>> ids);
 
     /**
      * @deprecated since 5.0 in favor of {@link #byId(Object)}, but keep in mind that the new API does not append the
@@ -70,8 +57,8 @@ public interface DeleteBuilder<T> {
     DeleteBuilder<T> id(Object id);
 
     /**
-     * @deprecated since 5.0 in favor of {@link #byMultiId(Map)}, but keep in mind that the new API does not append the
-     * ID to the internal collection, but rather replaces it. See also {@link #byMultiIds(Map[])}
+     * @deprecated since 5.0 in favor of {@link #byId(Object)}, but keep in mind that the new API does not append the
+     * ID to the internal collection, but rather replaces it. See also {@link #byIds(Object...)}
      */
     @Deprecated(since = "5.0", forRemoval = true)
     DeleteBuilder<T> id(Map<String, Object> id);

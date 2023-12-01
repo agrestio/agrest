@@ -2,6 +2,7 @@
 
 * #658 DeleteBuilder: byIds(..), byMultiIds(..)
 * #659 Idempotent DELETE by ids, optimizing performance
+* #660 Builders: auto-detect multi-column IDs
 
 ## Release 5.0.M19
 

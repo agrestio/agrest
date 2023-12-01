@@ -105,14 +105,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
     @Override
     public SelectBuilder<T> byId(Object id) {
-        // TODO: return a special builder that will preserve 'byId' strategy on select
-        context.setId(AgObjectId.of(id));
-        return this;
-    }
-
-    @Override
-    public SelectBuilder<T> byId(Map<String, Object> id) {
-        context.setId(AgObjectId.ofMap(id));
+        context.setUnresolvedId(id);
         return this;
     }
 

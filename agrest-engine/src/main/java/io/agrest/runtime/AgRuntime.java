@@ -206,7 +206,7 @@ public class AgRuntime {
     }
 
     private <T> UnrelateContext<T> createUnrelateContext(Class<T> type) {
-        return new UnrelateContext<>(type, injector);
+        return new UnrelateContext<>(type, schema, injector);
     }
 
     private <T> DeleteContext<T> createDeleteContext(Class<T> type) {

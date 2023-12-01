@@ -50,13 +50,7 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
     @Override
     public UpdateBuilder<T> byId(Object id) {
-        context.setId(AgObjectId.of(id));
-        return this;
-    }
-
-    @Override
-    public UpdateBuilder<T> byId(Map<String, Object> id) {
-        context.setId(AgObjectId.ofMap(id));
+        context.setUnresolvedId(id);
         return this;
     }
 

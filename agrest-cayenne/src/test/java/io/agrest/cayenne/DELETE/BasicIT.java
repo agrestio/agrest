@@ -208,7 +208,7 @@ public class BasicIT extends MainDbTest {
             id.put(E17.ID1.getName(), id1);
             id.put(E17.ID2.getName(), id2);
 
-            return AgJaxrs.delete(E17.class, config).byMultiId(id).sync();
+            return AgJaxrs.delete(E17.class, config).byId(id).sync();
         }
 
         @DELETE

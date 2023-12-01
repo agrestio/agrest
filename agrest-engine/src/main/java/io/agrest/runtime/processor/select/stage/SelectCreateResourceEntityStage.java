@@ -7,6 +7,7 @@ import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.entity.IExcludeMerger;
 import io.agrest.runtime.entity.IExpMerger;
+import io.agrest.runtime.entity.IIdResolver;
 import io.agrest.runtime.entity.IIncludeMerger;
 import io.agrest.runtime.entity.IMapByMerger;
 import io.agrest.runtime.entity.ISizeMerger;
@@ -19,14 +20,16 @@ import org.apache.cayenne.di.Inject;
  */
 public class SelectCreateResourceEntityStage implements Processor<SelectContext<?>> {
 
-    private IExpMerger expMerger;
-    private ISortMerger sortMerger;
-    private IMapByMerger mapByMerger;
-    private ISizeMerger sizeMerger;
-    private IIncludeMerger includeMerger;
-    private IExcludeMerger excludeMerger;
+    private final IIdResolver idResolver;
+    private final IExpMerger expMerger;
+    private final ISortMerger sortMerger;
+    private final IMapByMerger mapByMerger;
+    private final ISizeMerger sizeMerger;
+    private final IIncludeMerger includeMerger;
+    private final IExcludeMerger excludeMerger;
 
     public SelectCreateResourceEntityStage(
+            @Inject IIdResolver idResolver,
             @Inject IExpMerger expMerger,
             @Inject ISortMerger sortMerger,
             @Inject IMapByMerger mapByMerger,
@@ -34,6 +37,7 @@ public class SelectCreateResourceEntityStage implements Processor<SelectContext<
             @Inject IIncludeMerger includeMerger,
             @Inject IExcludeMerger excludeMerger) {
 
+        this.idResolver = idResolver;
         this.sortMerger = sortMerger;
         this.expMerger = expMerger;
         this.mapByMerger = mapByMerger;
@@ -50,10 +54,11 @@ public class SelectCreateResourceEntityStage implements Processor<SelectContext<
 
     protected <T> void doExecute(SelectContext<T> context) {
         AgEntity<T> entity = context.getSchema().getEntity(context.getType());
+
+        context.setId(idResolver.resolve(entity, context.getUnresolvedId()));
+
         RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(entity);
-
         AgRequest request = context.getRequest();
-
         sizeMerger.merge(resourceEntity, request.getStart(), request.getLimit());
         includeMerger.merge(resourceEntity, request.getIncludes(), context.getSchema(), context.getMaxPathDepth());
         excludeMerger.merge(resourceEntity, request.getExcludes());

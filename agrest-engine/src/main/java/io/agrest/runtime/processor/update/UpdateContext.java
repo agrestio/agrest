@@ -33,6 +33,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     private final RequestSchema schema;
 
     private RootResourceEntity<T> entity;
+    private Object unresolvedId;
     private AgObjectId id;
     private EntityParent<?> parent;
     private boolean includingDataInResponse;
@@ -115,8 +116,23 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
         return updates.iterator().next();
     }
 
+
+    /**
+     * @since 5.0
+     */
+    public Object getUnresolvedId() {
+        return unresolvedId;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public void setUnresolvedId(Object unresolvedId) {
+        this.unresolvedId = unresolvedId;
+    }
+
     public boolean isById() {
-        return id != null;
+        return unresolvedId != null;
     }
 
     public AgObjectId getId() {

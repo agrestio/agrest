@@ -10,7 +10,7 @@ import java.util.Map;
 public interface AgObjectId {
 
     static AgObjectId of(Object idValue) {
-        return idValue instanceof AgObjectId ? (AgObjectId) idValue : new SingleValueId(idValue);
+        return new SingleValueId(idValue);
     }
 
     static AgObjectId ofMap(Map<String, Object> idMap) {

@@ -58,16 +58,10 @@ public interface SelectBuilder<T> {
     <V> SelectBuilder<T> entityAttribute(String name, Class<V> valueType, Function<T, V> reader);
 
     /**
-     * Forces the builder to select a single object by ID.
+     * Forces the builder to select a single object by ID. For single-value ID entities, the ID argument should be a
+     * simple value (e.g. an Integer). For multi-value IDs, it should be a Map of values.
      */
     SelectBuilder<T> byId(Object id);
-
-    /**
-     * Forces the builder to select a single object by compound ID.
-     *
-     * @since 1.20
-     */
-    SelectBuilder<T> byId(Map<String, Object> ids);
 
     /**
      * Appends a {@link PropertyFilter} that defines property access rules for the current request and a given entity. I.e.
