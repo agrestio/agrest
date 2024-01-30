@@ -42,6 +42,8 @@ package io.agrest.exp.parser;
 // note: Parser doesn't use this import, but it's shared with the TokenManager
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.agrest.AgException;
 
@@ -418,13 +420,15 @@ void dateTimeExtractingFunction() #Extract(1) : {
 
 TOKEN_MGR_DECLS:
 {
-      /** Holds the last value computed by a constant token. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(AgExpressionParserTokenManager.class);
+
+    /** Holds the last value computed by a constant token. */
     Object literalValue;
     
-      /** Holds the last string literal parsed. */
+    /** Holds the last string literal parsed. */
     private StringBuffer stringBuffer;
 
-      /** Converts an escape sequence into a character value. */
+    /** Converts an escape sequence into a character value. */
     private char escapeChar()
     {
         int ofs = image.length() - 1;
@@ -439,9 +443,9 @@ TOKEN_MGR_DECLS:
             case '\"':  return '\"';
         }
 
-          // Otherwise, it's an octal number.  Find the backslash and convert.
+        // Otherwise, it's an octal number.  Find the backslash and convert.
         while ( image.charAt(--ofs) != '\\' )
-          {}
+        {}
         int value = 0;
         while ( ++ofs < image.length() )
             value = (value << 3) | (image.charAt(ofs) - '0');
@@ -517,8 +521,23 @@ SKIP :
 
 TOKEN : {
 	<NULL: "null" | "NULL" >
+	{
+	    if ("NULL".equals(image.toString())) {
+            LOGGER.info("*** 'NULL' literal is deprecated. Consider replacing it with 'null'");
+        }
+	}
     |   <TRUE: "true" | "TRUE" >
+    {
+        if ("TRUE".equals(image.toString())) {
+            LOGGER.info("*** 'TRUE' literal is deprecated. Consider replacing it with 'true'");
+        }
+    }
     |   <FALSE: "false" | "FALSE" >
+    {
+        if ("FALSE".equals(image.toString())) {
+            LOGGER.info("*** 'FALSE' literal is deprecated. Consider replacing it with 'false'");
+        }
+    }
 }
 
 TOKEN : /* functions returning strings */
