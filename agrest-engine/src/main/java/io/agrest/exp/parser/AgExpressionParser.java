@@ -5,6 +5,8 @@ package io.agrest.exp.parser;
 // note: Parser doesn't use this import, but it's shared with the TokenManager
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.agrest.AgException;
 
@@ -2486,7 +2488,7 @@ if (jjtc001) {
   /** Generate ParseException. */
   public ParseException generateParseException() {
 	 jj_expentries.clear();
-	 boolean[] la1tokens = new boolean[81];
+	 boolean[] la1tokens = new boolean[88];
 	 if (jj_kind >= 0) {
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
@@ -2506,7 +2508,7 @@ if (jjtc001) {
 		 }
 	   }
 	 }
-	 for (int i = 0; i < 81; i++) {
+	 for (int i = 0; i < 88; i++) {
 	   if (la1tokens[i]) {
 		 jj_expentry = new int[1];
 		 jj_expentry[0] = i;
