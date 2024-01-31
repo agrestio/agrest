@@ -85,13 +85,27 @@ public interface AgExpressionParserConstants {
   /** RegularExpression Id. */
   int FLOAT_LITERAL = 76;
   /** RegularExpression Id. */
-  int DEC_FLT = 77;
+  int DEC_DIGIT_UNDERSCORE = 77;
   /** RegularExpression Id. */
-  int DEC_DIGITS = 78;
+  int DEC_DIGIT = 78;
   /** RegularExpression Id. */
-  int EXPONENT = 79;
+  int OCTAL_DIGIT_UNDERSCORE = 79;
   /** RegularExpression Id. */
-  int FLT_SUFF = 80;
+  int OCTAL_DIGIT = 80;
+  /** RegularExpression Id. */
+  int HEX_DIGIT_UNDERSCORE = 81;
+  /** RegularExpression Id. */
+  int HEX_DIGIT = 82;
+  /** RegularExpression Id. */
+  int DEC_FLT = 83;
+  /** RegularExpression Id. */
+  int DEC_DIGITS_INNER_UNDERSCORE = 84;
+  /** RegularExpression Id. */
+  int EXPONENT = 85;
+  /** RegularExpression Id. */
+  int INT_SUFF = 86;
+  /** RegularExpression Id. */
+  int FLT_SUFF = 87;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -179,9 +193,16 @@ public interface AgExpressionParserConstants {
     "\"\\\"\"",
     "<INT_LITERAL>",
     "<FLOAT_LITERAL>",
+    "<DEC_DIGIT_UNDERSCORE>",
+    "<DEC_DIGIT>",
+    "<OCTAL_DIGIT_UNDERSCORE>",
+    "<OCTAL_DIGIT>",
+    "<HEX_DIGIT_UNDERSCORE>",
+    "<HEX_DIGIT>",
     "<DEC_FLT>",
-    "<DEC_DIGITS>",
+    "<DEC_DIGITS_INNER_UNDERSCORE>",
     "<EXPONENT>",
+    "<INT_SUFF>",
     "<FLT_SUFF>",
   };
 
