@@ -1,4 +1,4 @@
-name: 'build test deploy'
+name: 'verify PR'
 
 on: pull_request
 
