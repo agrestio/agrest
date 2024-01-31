@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: ${{ matrix.jdk }}
+          java-version: ${{ matrix.java }}
           cache: 'maven'
 
       - name: Build and test...
