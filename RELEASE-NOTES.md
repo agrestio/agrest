@@ -3,6 +3,7 @@
 * #658 DeleteBuilder: byIds(..), byMultiIds(..)
 * #659 Idempotent DELETE by ids, optimizing performance
 * #660 Builders: auto-detect multi-column IDs
+* #662 Update expression parser with JavaCC 7.0.13
 
 ## Release 5.0.M19
 
