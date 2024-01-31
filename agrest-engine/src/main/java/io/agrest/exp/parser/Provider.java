@@ -24,4 +24,4 @@ public interface Provider {
      public void close() throws IOException;
     
 }
-/* JavaCC - OriginalChecksum=0ba4bbc0aabdc96f9dcd36f86853eebb (do not edit this line) */
+/* JavaCC - OriginalChecksum=1a46cf72726f35f7af80c456097848bc (do not edit this line) */
