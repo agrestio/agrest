@@ -6,7 +6,7 @@ package io.agrest.exp.parser;
  * An implementation of interface CharStream, where the stream is assumed to
  * contain only ASCII characters (with java-like unicode escape processing).
  */
- 
+
 
 public
 class JavaCharStream
@@ -350,20 +350,20 @@ class JavaCharStream
     }
   }
 
-  @Deprecated
   /**
    * @deprecated
    * @see #getEndColumn
    */
+  @Deprecated
   public int getColumn() {
     return bufcolumn[bufpos];
   }
 
-  @Deprecated
   /**
    * @deprecated
    * @see #getEndLine
    */
+  @Deprecated
   public int getLine() {
     return bufline[bufpos];
   }
@@ -545,4 +545,4 @@ class JavaCharStream
   void setTrackLineColumn(boolean tlc) { trackLineColumn = tlc; }
 
 }
-/* JavaCC - OriginalChecksum=e631fe90bb9f1cdbe82030da111e6410 (do not edit this line) */
+/* JavaCC - OriginalChecksum=7997d1537c9e1fd8bcf95d13b410d4e3 (do not edit this line) */
