@@ -4,18 +4,22 @@ package io.agrest.exp.parser;
 // note: Parser doesn't use this import, but it's shared with the TokenManager
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import io.agrest.AgException;
 
 /** Token Manager. */
 @SuppressWarnings ("unused")
 public class AgExpressionParserTokenManager implements AgExpressionParserConstants {
-      /** Holds the last value computed by a constant token. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(AgExpressionParserTokenManager.class);
+
+    /** Holds the last value computed by a constant token. */
     Object literalValue;
 
-      /** Holds the last string literal parsed. */
+    /** Holds the last string literal parsed. */
     private StringBuffer stringBuffer;
 
-      /** Converts an escape sequence into a character value. */
+    /** Converts an escape sequence into a character value. */
     private char escapeChar()
     {
         int ofs = image.length() - 1;
@@ -30,9 +34,9 @@ public class AgExpressionParserTokenManager implements AgExpressionParserConstan
             case '\"':  return '\"';
         }
 
-          // Otherwise, it's an octal number.  Find the backslash and convert.
+        // Otherwise, it's an octal number.  Find the backslash and convert.
         while ( image.charAt(--ofs) != '\\' )
-          {}
+        {}
         int value = 0;
         while ( ++ofs < image.length() )
             value = (value << 3) | (image.charAt(ofs) - '0');
@@ -2668,6 +2672,24 @@ void TokenLexicalActions(Token matchedToken)
 {
    switch(jjmatchedKind)
    {
+      case 35 :
+        image.append(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1)));
+            if ("NULL".equals(image.toString())) {
+            LOGGER.info("*** 'NULL' literal is deprecated. Consider replacing it with 'null'");
+        }
+         break;
+      case 36 :
+        image.append(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1)));
+        if ("TRUE".equals(image.toString())) {
+            LOGGER.info("*** 'TRUE' literal is deprecated. Consider replacing it with 'true'");
+        }
+         break;
+      case 37 :
+        image.append(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1)));
+        if ("FALSE".equals(image.toString())) {
+            LOGGER.info("*** 'FALSE' literal is deprecated. Consider replacing it with 'false'");
+        }
+         break;
       case 71 :
         image.append(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1)));
           literalValue = stringBuffer.toString();
