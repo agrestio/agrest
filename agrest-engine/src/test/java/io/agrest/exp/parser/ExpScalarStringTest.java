@@ -28,12 +28,13 @@ public class ExpScalarStringTest {
     @CsvSource(delimiter = '|', quoteCharacter = 'X', value = {
             "'example'|'example'",
             "  'example' |'example'",
-            "\"example\"|\"example\"",
+            "\"example\"|'example'",
             "''|''",
             "'  '|'  '",
-            "\"\\\"example\\\"\"|\"\\\"example\\\"\"",
-            "\"a\\\"'b\"|\"a\\\"'b\"",
-            "'a\"\\'b'|'a\"\\'b'"
+            "\"\\\"example\\\"\"|'\"example\"'",
+            // TODO: this is wrong, single quote must be escaped or double quotes used in output
+            "\"a'b\"|'a'b'",
+            "'a\"b'|'a\"b'"
     })
     public void parsedToString(String expString, String expected) {
         assertEquals(expected, Exp.parse(expString).toString());

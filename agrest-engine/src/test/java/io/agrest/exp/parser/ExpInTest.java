@@ -55,12 +55,12 @@ public class ExpInTest {
 
     @Test
     public void parameterizedToString() {
-        assertEquals("a in ('x', 'y')", Exp.parse("a in $l").positionalParams(List.of("'x'", "'y'")).toString());
+        assertEquals("a in ('x', 'y')", Exp.parse("a in $l").positionalParams(List.of("x", "y")).toString());
     }
 
     @Test
     public void manualToString() {
-        assertEquals("a in ('x', 'y')", Exp.in("a", "'x'", "'y'").toString());
+        assertEquals("a in ('x', 'y')", Exp.in("a", "x", "y").toString());
     }
 
     @Test

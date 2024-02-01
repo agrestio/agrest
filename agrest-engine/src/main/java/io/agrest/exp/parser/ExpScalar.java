@@ -2,8 +2,6 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.function.Function;
 
 public class ExpScalar extends ExpBaseScalar<Object> {
@@ -44,32 +42,11 @@ public class ExpScalar extends ExpBaseScalar<Object> {
 
     @Override
     public String toString() {
-        return stringifyValue(value);
-    }
-
-    private static String stringifyValue(CharSequence value) {
-        String stringValue = value.toString();
-        String quoteChar = stringValue.substring(0, 1);
-        String escapedContent = stringValue
-                .substring(1, stringValue.length() - 1)
-                .replaceAll(quoteChar, "\\\\" + quoteChar);
-        return quoteChar + escapedContent + quoteChar;
-    }
-
-    private static String stringifyValue(Long value) {
-        return value + "L";
-    }
-
-    private static String stringifyValue(BigInteger value) {
-        return value + "H";
-    }
-
-    private static String stringifyValue(BigDecimal value) {
-        return value + "B";
-    }
-
-    private static String stringifyValue(Object value) {
-        return String.valueOf(value);
+        if (value instanceof CharSequence) {
+            return "'" + value + "'";
+        } else {
+            return String.valueOf(value);
+        }
     }
 }
 /* JavaCC - OriginalChecksum=21004db13a44c6b16cc9797a6f36a4af (do not edit this line) */

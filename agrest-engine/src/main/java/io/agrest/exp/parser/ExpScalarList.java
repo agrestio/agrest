@@ -72,7 +72,7 @@ class ExpScalarList extends ExpBaseScalar<Collection<?>> {
       // children can be either an internal collection, or child nodes, so must use "getValue()"
       return getValue()
               .stream()
-              .map(String::valueOf)
+              .map(v -> v instanceof CharSequence ? "'" + v + "'" : String.valueOf(v))
               .collect(Collectors.joining(", "));
   }
 

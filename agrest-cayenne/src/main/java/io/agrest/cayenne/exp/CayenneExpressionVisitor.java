@@ -8,9 +8,7 @@ import org.apache.cayenne.exp.ExpressionParameter;
 import org.apache.cayenne.exp.parser.*;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.BiFunction;
 
 class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> {
@@ -118,20 +116,10 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
     @Override
     public Expression visit(ExpScalarList node, Expression data) {
         // NOTE: we are skipping all the List children as they are processed by the getValue() call
-        Collection<?> values = node.getValue();
-        List<Object> preparedValues = new ArrayList<>();
-        for (Object value : values) {
-            if (!(value instanceof CharSequence)) {
-                preparedValues.add(value);
-                continue;
-            }
-            String stringValue = value.toString();
-            preparedValues.add(stringValue.substring(1, stringValue.length() - 1));
-        }
-
-        Object[] cayenneValues = new Object[preparedValues.size()];
+        Collection<?> value = node.getValue();
+        Object[] cayenneValues = new Object[value.size()];
         int i = 0;
-        for (Object next : preparedValues) {
+        for (Object next : value) {
             if (next instanceof ExpNamedParameter) {
                 cayenneValues[i++] = new ExpressionParameter(((ExpNamedParameter) next).getName());
             } else {
@@ -149,12 +137,7 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
 
     @Override
     public Expression visit(ExpScalar node, Expression data) {
-        Object scalarValue = node.jjtGetValue();
-        if (scalarValue instanceof CharSequence) {
-            String value = scalarValue.toString();
-            return process(node, data, new ASTScalar(value.substring(1, value.length() - 1)));
-        }
-        return process(node, data, new ASTScalar(scalarValue));
+        return process(node, data, new ASTScalar(node.jjtGetValue()));
     }
 
     @Override

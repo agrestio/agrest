@@ -40,14 +40,14 @@ public class ExpParserTest {
 
     @Test
     public void fromString_List_Params_String() {
-        Exp exp = parser.fromString("[\"b=$s\",\"'x'\"]");
+        Exp exp = parser.fromString("[\"b=$s\",\"x\"]");
         assertNotNull(exp);
         assertEquals("(b) = ('x')", exp.toString());
     }
 
     @Test
     public void fromString_List_Params_Multiple() {
-        Exp exp = parser.fromString("[\"b=$s or b =$x or b =$s\",\"'x'\",\"'y'\"]");
+        Exp exp = parser.fromString("[\"b=$s or b =$x or b =$s\",\"x\",\"y\"]");
         assertNotNull(exp);
         assertEquals("((b) = ('x')) or ((b) = ('y')) or ((b) = ('x'))", exp.toString());
     }
@@ -61,7 +61,7 @@ public class ExpParserTest {
 
     @Test
     public void fromString_Map_Params_String() {
-        Exp exp = parser.fromString("{\"exp\" : \"b=$s\", \"params\":{\"s\":\"'x'\"}}");
+        Exp exp = parser.fromString("{\"exp\" : \"b=$s\", \"params\":{\"s\":\"x\"}}");
         assertNotNull(exp);
         assertEquals("(b) = ('x')", exp.toString());
     }
