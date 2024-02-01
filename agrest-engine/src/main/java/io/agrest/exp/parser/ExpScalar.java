@@ -2,9 +2,14 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.function.Function;
 
 public class ExpScalar extends ExpBaseScalar<Object> {
+
+    protected String scalarImage;
+
     public ExpScalar(int id) {
         super(id);
     }
@@ -20,6 +25,9 @@ public class ExpScalar extends ExpBaseScalar<Object> {
     public ExpScalar(Object value) {
         super(AgExpressionParserTreeConstants.JJTSCALAR);
         setValue(value);
+        if (value instanceof CharSequence) {
+            setScalarImage("'" + value + "'");
+        }
     }
 
     @Override
@@ -31,8 +39,15 @@ public class ExpScalar extends ExpBaseScalar<Object> {
      * Accept the visitor.
      **/
     public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
-
         return visitor.visit(this, data);
+    }
+
+    public String getScalarImage() {
+        return scalarImage;
+    }
+
+    public void setScalarImage(String scalarImage) {
+        this.scalarImage = scalarImage;
     }
 
     @Override
@@ -42,11 +57,26 @@ public class ExpScalar extends ExpBaseScalar<Object> {
 
     @Override
     public String toString() {
-        if (value instanceof CharSequence) {
-            return "'" + value + "'";
-        } else {
-            return String.valueOf(value);
+        if (value == null) {
+            return "null";
         }
+        if (value instanceof CharSequence) {
+            String quoteChar = scalarImage.substring(0, 1);
+            String escapedContent = scalarImage
+                    .substring(1, scalarImage.length() - 1)
+                    .replaceAll(quoteChar, "\\\\" + quoteChar);
+            return quoteChar + escapedContent + quoteChar;
+        }
+        if (value.getClass() == Long.class) {
+            return value + "L";
+        }
+        if (value.getClass() == BigInteger.class) {
+            return value + "H";
+        }
+        if (value.getClass() == BigDecimal.class) {
+            return value + "B";
+        }
+        return String.valueOf(value);
     }
 }
 /* JavaCC - OriginalChecksum=21004db13a44c6b16cc9797a6f36a4af (do not edit this line) */

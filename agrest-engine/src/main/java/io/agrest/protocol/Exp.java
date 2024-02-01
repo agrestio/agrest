@@ -64,26 +64,27 @@ public interface Exp {
      */
     static Exp scalar(Object value) {
         if (value == null) {
-            return new ExpScalar(AgExpressionParserTreeConstants.JJTSCALAR);
+            return new ExpScalar();
         }
 
         ExpBaseScalar<?> scalar;
         if (value instanceof Collection) {
-            scalar = new ExpScalarList(AgExpressionParserTreeConstants.JJTSCALARLIST);
-        } else if (value.getClass().isArray()) {
+            scalar = new ExpScalarList((Collection<?>) value);
+            return scalar;
+        }
+        if (value.getClass().isArray()) {
             Class<?> componentType = value.getClass().getComponentType();
             if (componentType.isPrimitive()) {
                 value = ExpUtils.wrapPrimitiveArray(value);
             } else {
                 value = Arrays.asList((Object[]) value);
             }
-            scalar = new ExpScalarList(AgExpressionParserTreeConstants.JJTSCALARLIST);
-        } else {
-            scalar = new ExpScalar(AgExpressionParserTreeConstants.JJTSCALAR);
+            scalar = new ExpScalarList();
+            scalar.jjtSetValue(value);
+            return scalar;
         }
 
-        scalar.jjtSetValue(value);
-        return scalar;
+        return new ExpScalar(value);
     }
 
     /**
