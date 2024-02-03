@@ -8,14 +8,16 @@ import java.util.function.Function;
 
 public class ExpScalar extends ExpBaseScalar<Object> {
 
-    protected String scalarImage;
+    private String scalarImage;
 
     public ExpScalar(int id) {
         super(id);
+        syncScalarImage(value);
     }
 
     public ExpScalar(AgExpressionParser p, int id) {
         super(p, id);
+        syncScalarImage(value);
     }
 
     public ExpScalar() {
@@ -25,14 +27,44 @@ public class ExpScalar extends ExpBaseScalar<Object> {
     public ExpScalar(Object value) {
         super(AgExpressionParserTreeConstants.JJTSCALAR);
         setValue(value);
-        if (value instanceof CharSequence) {
-            setScalarImage("'" + value + "'");
-        }
     }
 
     @Override
     protected Object transformExpression(Function<Object, Object> transformer) {
         return transformer.apply(new ExpScalar(getValue()));
+    }
+
+    protected void syncScalarImage(CharSequence value) {
+        if (value.length() < 2) {
+            scalarImage = "'" + value + "'";
+            return;
+        }
+        String stringValue = value.toString();
+        char firstChar = stringValue.charAt(0);
+        if (firstChar != '\'' && firstChar != '"') {
+            scalarImage = "'" + value + "'";
+            return;
+        }
+        String escapedContent = stringValue
+                .substring(1, stringValue.length() - 1)
+                .replaceAll(String.valueOf(firstChar), "\\\\" + firstChar);
+        scalarImage = firstChar + escapedContent + firstChar;
+    }
+
+    protected void syncScalarImage(Long value) {
+        scalarImage = value + "L";
+    }
+
+    protected void syncScalarImage(BigInteger value) {
+        scalarImage = value + "H";
+    }
+
+    protected void syncScalarImage(BigDecimal value) {
+        scalarImage = value + "B";
+    }
+
+    protected void syncScalarImage(Object value) {
+        scalarImage = String.valueOf(value);
     }
 
     /**
@@ -42,12 +74,30 @@ public class ExpScalar extends ExpBaseScalar<Object> {
         return visitor.visit(this, data);
     }
 
-    public String getScalarImage() {
-        return scalarImage;
-    }
-
-    public void setScalarImage(String scalarImage) {
-        this.scalarImage = scalarImage;
+    @Override
+    public void jjtSetValue(Object value) {
+        super.jjtSetValue(value);
+        if (value == null) {
+            scalarImage = "null";
+            return;
+        }
+        if (value instanceof CharSequence) {
+            syncScalarImage(((CharSequence) value));
+            return;
+        }
+        if (value.getClass() == Long.class) {
+            syncScalarImage(((Long) value));
+            return;
+        }
+        if (value.getClass() == BigInteger.class) {
+            syncScalarImage(((BigInteger) value));
+            return;
+        }
+        if (value.getClass() == BigDecimal.class) {
+            syncScalarImage(((BigDecimal) value));
+            return;
+        }
+        syncScalarImage(value);
     }
 
     @Override
@@ -57,26 +107,7 @@ public class ExpScalar extends ExpBaseScalar<Object> {
 
     @Override
     public String toString() {
-        if (value == null) {
-            return "null";
-        }
-        if (value instanceof CharSequence) {
-            String quoteChar = scalarImage.substring(0, 1);
-            String escapedContent = scalarImage
-                    .substring(1, scalarImage.length() - 1)
-                    .replaceAll(quoteChar, "\\\\" + quoteChar);
-            return quoteChar + escapedContent + quoteChar;
-        }
-        if (value.getClass() == Long.class) {
-            return value + "L";
-        }
-        if (value.getClass() == BigInteger.class) {
-            return value + "H";
-        }
-        if (value.getClass() == BigDecimal.class) {
-            return value + "B";
-        }
-        return String.valueOf(value);
+        return scalarImage;
     }
 }
 /* JavaCC - OriginalChecksum=21004db13a44c6b16cc9797a6f36a4af (do not edit this line) */

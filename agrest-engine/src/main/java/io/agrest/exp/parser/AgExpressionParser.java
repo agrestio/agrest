@@ -973,7 +973,7 @@ ExpScalar jjtn001 = new ExpScalar(JJTSCALAR);
 jjtree.closeNodeScope(jjtn001,  0);
       jjtc001 = false;
 jjtn001.jjtSetValue(token_source.literalValue);
-        jjtn001.setScalarImage("'" + token_source.literalValue + "'");
+        jjtn001.syncScalarImage("'" + token_source.literalValue + "'");
       } finally {
 if (jjtc001) {
         jjtree.closeNodeScope(jjtn001,  0);
@@ -990,7 +990,7 @@ ExpScalar jjtn002 = new ExpScalar(JJTSCALAR);
 jjtree.closeNodeScope(jjtn002,  0);
       jjtc002 = false;
 jjtn002.jjtSetValue(token_source.literalValue);
-        jjtn002.setScalarImage("\"" + token_source.literalValue + "\"");
+        jjtn002.syncScalarImage("\"" + token_source.literalValue + "\"");
       } finally {
 if (jjtc002) {
         jjtree.closeNodeScope(jjtn002,  0);
