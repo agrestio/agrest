@@ -568,7 +568,12 @@ void namedParameter() :{
 	Token t;
 }
 {
-    t = <NAMED_PARAMETER> { jjtThis.jjtSetValue(t.image.substring(1)); } #NamedParameter(0)
+	"$" (
+        t = <PROPERTY_PATH>
+        | t = <INT_LITERAL>
+    ) {
+        jjtThis.jjtSetValue(t.image);
+    } #NamedParameter(0)
 }
 
 void pathExpression() : {
@@ -579,8 +584,6 @@ void pathExpression() : {
 }
 
 TOKEN : {
-	<NAMED_PARAMETER: "$" ( <PROPERTY_PATH> | <INT_LITERAL> ) >
-	|
 	<PROPERTY_PATH: <IDENTIFIER> ( "." <IDENTIFIER>) *>
 }
 
