@@ -42,6 +42,8 @@ package io.agrest.exp.parser;
 // note: Parser doesn't use this import, but it's shared with the TokenManager
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.agrest.AgException;
 
@@ -418,13 +420,15 @@ void dateTimeExtractingFunction() #Extract(1) : {
 
 TOKEN_MGR_DECLS:
 {
-      /** Holds the last value computed by a constant token. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(AgExpressionParserTokenManager.class);
+
+    /** Holds the last value computed by a constant token. */
     Object literalValue;
     
-      /** Holds the last string literal parsed. */
+    /** Holds the last string literal parsed. */
     private StringBuffer stringBuffer;
 
-      /** Converts an escape sequence into a character value. */
+    /** Converts an escape sequence into a character value. */
     private char escapeChar()
     {
         int ofs = image.length() - 1;
@@ -439,9 +443,9 @@ TOKEN_MGR_DECLS:
             case '\"':  return '\"';
         }
 
-          // Otherwise, it's an octal number.  Find the backslash and convert.
+        // Otherwise, it's an octal number.  Find the backslash and convert.
         while ( image.charAt(--ofs) != '\\' )
-          {}
+        {}
         int value = 0;
         while ( ++ofs < image.length() )
             value = (value << 3) | (image.charAt(ofs) - '0');
@@ -451,7 +455,7 @@ TOKEN_MGR_DECLS:
     private Object makeInt() throws ParseException
     {
         Object  result;
-        String  s = image.toString();
+        String  s = image.toString().replaceAll("_", "");
         int     base = 10;
 
         if ( s.charAt(0) == '0' )
@@ -480,7 +484,7 @@ TOKEN_MGR_DECLS:
 
     private Object makeFloat() throws ParseException
     {
-        String s = image.toString();
+        String s = image.toString().replaceAll("_", "");
         try {
             switch ( s.charAt(s.length()-1) ) {
                 case 'f': case 'F':
@@ -517,8 +521,23 @@ SKIP :
 
 TOKEN : {
 	<NULL: "null" | "NULL" >
+	{
+	    if ("NULL".equals(image.toString())) {
+            LOGGER.info("*** 'NULL' literal is deprecated. Consider replacing it with 'null'");
+        }
+	}
     |   <TRUE: "true" | "TRUE" >
+    {
+        if ("TRUE".equals(image.toString())) {
+            LOGGER.info("*** 'TRUE' literal is deprecated. Consider replacing it with 'true'");
+        }
+    }
     |   <FALSE: "false" | "FALSE" >
+    {
+        if ("FALSE".equals(image.toString())) {
+            LOGGER.info("*** 'FALSE' literal is deprecated. Consider replacing it with 'false'");
+        }
+    }
 }
 
 TOKEN : /* functions returning strings */
@@ -651,21 +670,31 @@ MORE:
 TOKEN:
 {
     < INT_LITERAL:
-        ( "0" (["0"-"7"])* | ["1"-"9"] (["0"-"9"])* | "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+ )
-        (["l","L","h","H"])?
+        ( "0" ["1"-"7"] (<OCTAL_DIGIT_UNDERSCORE>)* <OCTAL_DIGIT>
+        | "0" ["x","X"] <HEX_DIGIT> ( (<HEX_DIGIT_UNDERSCORE>)* <HEX_DIGIT> )?
+        | ["1"-"9"] ( (<DEC_DIGIT_UNDERSCORE>)* <DEC_DIGIT> )?
+        | "0"
+        ) (<INT_SUFF>)?
     >
         { literalValue = makeInt(); }
  |
     < FLOAT_LITERAL:
         ( <DEC_FLT> (<EXPONENT>)? (<FLT_SUFF>)?
-        | <DEC_DIGITS> <EXPONENT> (<FLT_SUFF>)?
-        | <DEC_DIGITS> <FLT_SUFF>
+        | (<DEC_DIGIT>)+ <EXPONENT> (<FLT_SUFF>)?
+        | (<DEC_DIGIT>)+ <FLT_SUFF>
         )
     >
         { literalValue = makeFloat(); }
 
- |  < #DEC_FLT: (["0"-"9"])+ "." (["0"-"9"])* | "." (["0"-"9"])+ >
- |  < #DEC_DIGITS: (["0"-"9"])+ >
- |  < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
+ |  < #DEC_DIGIT_UNDERSCORE: ["0"-"9","_"] >
+ |  < #DEC_DIGIT: ["0"-"9"] >
+ |  < #OCTAL_DIGIT_UNDERSCORE: ["0"-"7","_"] >
+ |  < #OCTAL_DIGIT: ["0"-"7"] >
+ |  < #HEX_DIGIT_UNDERSCORE: ["0"-"9","a"-"f","A"-"F","_"] >
+ |  < #HEX_DIGIT: ["0"-"9","a"-"f","A"-"F"] >
+ |  < #DEC_FLT: <DEC_DIGITS_INNER_UNDERSCORE> "." (<DEC_DIGITS_INNER_UNDERSCORE>)? | "." <DEC_DIGITS_INNER_UNDERSCORE> >
+ |  < #DEC_DIGITS_INNER_UNDERSCORE: <DEC_DIGIT> ( (<DEC_DIGIT_UNDERSCORE>)* <DEC_DIGIT> )? >
+ |  < #EXPONENT: ["e","E"] (["+","-"])? (<DEC_DIGITS_INNER_UNDERSCORE>)+ >
+ |  < #INT_SUFF: ["l","L","h","H"] >
  |  < #FLT_SUFF: ["d","D","f","F","b","B"] >
 }
