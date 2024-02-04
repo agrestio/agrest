@@ -2,7 +2,7 @@ package io.agrest.runtime.processor.select.stage;
 
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.runtime.constraints.IConstraintsHandler;
+import io.agrest.runtime.constraints.SelectConstraints;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
 
@@ -11,10 +11,10 @@ import org.apache.cayenne.di.Inject;
  */
 public class SelectApplyServerParamsStage implements Processor<SelectContext<?>> {
 
-    private final IConstraintsHandler constraintsHandler;
+    private final SelectConstraints constraints;
 
-    public SelectApplyServerParamsStage(@Inject IConstraintsHandler constraintsHandler) {
-        this.constraintsHandler = constraintsHandler;
+    public SelectApplyServerParamsStage(@Inject SelectConstraints constraints) {
+        this.constraints = constraints;
     }
 
     @Override
@@ -24,6 +24,6 @@ public class SelectApplyServerParamsStage implements Processor<SelectContext<?>>
     }
 
     protected <T> void doExecute(SelectContext<T> context) {
-        constraintsHandler.constrainResponse(context.getEntity(), context.getSizeConstraints());
+        constraints.apply(context);
     }
 }

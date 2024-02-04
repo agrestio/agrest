@@ -2,21 +2,24 @@ package io.agrest.cayenne.path;
 
 import io.agrest.AgException;
 import io.agrest.PathConstants;
-import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgIdPart;
-import io.agrest.meta.AgRelationship;
+import org.apache.cayenne.dba.TypesMapping;
+import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTObjPath;
+import org.apache.cayenne.map.DbAttribute;
+import org.apache.cayenne.map.ObjAttribute;
+import org.apache.cayenne.map.ObjEntity;
+import org.apache.cayenne.map.ObjRelationship;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 class EntityPathCache {
 
-    private final AgEntity<?> entity;
+    private final ObjEntity entity;
     private final Map<String, PathDescriptor> pathCache;
 
-    EntityPathCache(AgEntity<?> entity) {
+    EntityPathCache(ObjEntity entity) {
         this.entity = entity;
         this.pathCache = new ConcurrentHashMap<>();
 
@@ -26,12 +29,14 @@ class EntityPathCache {
         // TODO: this is a hack - we are treating "id" as a "virtual" attribute, as there's generally no "id"
         //   property in AgEntity. See the same note in EncodablePropertyFactory
 
-        if (entity.getIdParts().size() == 1) {
+        // store "pks" in a var for reuse, as ObjEntity would rebuild them on every call
+        Collection<ObjAttribute> pks = entity.getPrimaryKeys();
+        if (pks.size() == 1) {
 
             // TODO: here we are ignoring the name of the ID attribute and are using the fixed name instead.
             //  Same issue as the above
-            AgIdPart id = entity.getIdParts().iterator().next();
-            pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor(id.getType(), PathOps.parsePath(id.getName()), true));
+            ObjAttribute a = pks.iterator().next();
+            pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor(a.getType(), new ASTDbPath(a.getDbAttributePath()), true));
         }
     }
 
@@ -41,26 +46,25 @@ class EntityPathCache {
 
     private PathDescriptor computePathDescriptor(String agPath) {
 
-        final Object last = lastPathComponent(entity, agPath);
+        Object last = lastPathComponent(entity, agPath);
 
-        if (last instanceof AgAttribute) {
-            return new PathDescriptor(((AgAttribute) last).getType(), new ASTObjPath(agPath), true);
+        if (last instanceof ObjAttribute) {
+            ObjAttribute a = (ObjAttribute) last;
+            return a.isPrimaryKey()
+                    ? new PathDescriptor(a.getType(), new ASTDbPath(a.getDbAttributePath()), true)
+                    : new PathDescriptor(a.getType(), new ASTObjPath(agPath), true);
         }
 
-        if (last instanceof AgIdPart) {
-            AgIdPart id = (AgIdPart) last;
-            if (entity.getIdParts().contains(id)) {
-                return new PathDescriptor(id.getType(), PathOps.parsePath(id.getName()), true);
-            } else {
-                return new PathDescriptor(id.getType(), PathOps.parsePath(agPath), true);
-            }
+        if (last instanceof DbAttribute) {
+            DbAttribute a = (DbAttribute) last;
+            return new PathDescriptor(TypesMapping.getJavaBySqlType(a.getType()), new ASTDbPath(a.getName()), true);
         }
 
-        AgRelationship relationship = (AgRelationship) last;
-        return new PathDescriptor(relationship.getTargetEntity().getType(), new ASTObjPath(agPath), false);
+        ObjRelationship relationship = (ObjRelationship) last;
+        return new PathDescriptor(relationship.getTargetEntity().getClassName(), new ASTObjPath(agPath), false);
     }
 
-    Object lastPathComponent(AgEntity<?> entity, String path) {
+    Object lastPathComponent(ObjEntity entity, String path) {
 
         int dot = path.indexOf(PathConstants.DOT);
 
@@ -75,31 +79,33 @@ class EntityPathCache {
         if (dot > 0) {
             String segment = toRelationshipName(path.substring(0, dot));
 
-            // must be a relationship ..
-            AgRelationship relationship = entity.getRelationship(segment);
+            // followed by dot, so must be a relationship
+            ObjRelationship relationship = entity.getRelationship(segment);
             if (relationship == null) {
                 throw AgException.badRequest("Invalid path '%s' for '%s'. Not a relationship",
                         path,
                         entity.getName());
             }
 
-            AgEntity<?> targetEntity = relationship.getTargetEntity();
+            ObjEntity targetEntity = relationship.getTargetEntity();
             return lastPathComponent(targetEntity, path.substring(dot + 1));
         }
 
-        AgAttribute attribute = entity.getAttribute(path);
+        ObjAttribute attribute = entity.getAttribute(path);
         if (attribute != null) {
             return attribute;
         }
 
-        AgIdPart idPart = entity.getIdPart(path);
-        if (idPart != null) {
-            return idPart;
-        }
-
-        AgRelationship relationship = entity.getRelationship(toRelationshipName(path));
+        ObjRelationship relationship = entity.getRelationship(toRelationshipName(path));
         if (relationship != null) {
             return relationship;
+        }
+
+        if (path.startsWith(ASTDbPath.DB_PREFIX)) {
+            DbAttribute dbAttribute = entity.getDbEntity().getAttribute(path.substring(ASTDbPath.DB_PREFIX.length()));
+            if (dbAttribute != null) {
+                return dbAttribute;
+            }
         }
 
         throw AgException.badRequest("Invalid path '%s' for '%s'", path, entity.getName());

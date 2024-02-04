@@ -1,6 +1,42 @@
 _This document contains upgrade notes for Agrest 5.x and newer. Older versions are documented in 
 [UPGRADE-NOTES-1-4](./UPGRADE-NOTES-1-to-4.md)._
 
+## Upgrading to 5.0.M17
+
+### No more single-value syntax for updating to-many relationships [#633](https://github.com/agrestio/agrest/issues/633)
+A number of changes were implemented to improve consistency and functionality of the update pipeline. As a result
+single value syntax for updating to-many relationships is no longer supported as it is semantically invalid. E.g. the 
+following won't work anymore: `{"toMany":1}` -> `{"toMany":[1]}`, and the value should be replaced with an array.
+
+### New EntityUpdate API, no direct update's Maps modification [#636](https://github.com/agrestio/agrest/issues/636)
+EntityUpdate object API was almost completely redone to better track different update components. If you used that API
+directly, you will need to update your code. An important part of the change is that property maps are no longer 
+directly editable. Instead, you should be using the new mutator methods. So instead of `update.getAttributes().put("a", 1)` 
+your would need to call `update.setAttribute("a", 1)`, etc.
+
+## Upgrading to 5.0.M16
+
+### Got rid of custom date/time formatters [#621](https://github.com/agrestio/agrest/issues/621)
+
+To fix formatting issues of the older dates (19th century and earlier), date/time parsing and encoding code was
+refactored. Instead of a set of custom DateTimeFormatters, we are using the standard ISO formatters from the JDK. 
+This introduced slight behavior changes (most are actually desirable in any sane codebase) :
+
+* No more arbitrary truncation of time precision. E.g. a time with 1ns would render as `00:00:00.000000001`, where it would
+previously render as `00:00:00`
+* If a property is modeled as the old `java.sql.Time`, we will no longer allow to parse times starting with "T". So
+`T00:00:00` will no longer work, while `00:00:00` will. This does not affect parsing of `java.time.LocalTime`, as it 
+already disallowed the leading "T".
+
+## Upgrading to 5.0.M15
+
+### To include UriInfo in OpenAPI, an explicit annotation is required [#619](https://github.com/agrestio/agrest/issues/619)
+This only affects projects that auto-generate OpenAPI documentation descriptors from Agrest endpoints.
+Previously, the framework would automatically add every single Ag Protocol parameter to the endpoint signature
+if an endpoint method had `@Context UriInfo` as one of the parameters. This proved to be rather inflexible
+in many situations. So now by default `UriInfo` will be ignored for documentation purposes, and the way to
+turn on the old behavior is to annotate it explicitly like this: `@Parameter UriInfo` (with or without `@Context`).
+
 ## Upgrading to 5.0.M1
 
 5.0 is a major release with a number of breaking changes. Still the upgrade should be fairly straightforward in most

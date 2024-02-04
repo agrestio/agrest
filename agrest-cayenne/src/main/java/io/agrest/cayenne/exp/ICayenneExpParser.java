@@ -8,5 +8,5 @@ import org.apache.cayenne.exp.Expression;
  */
 public interface ICayenneExpParser {
 
-    Expression parse(Exp qualifier);
+    Expression parse(Exp exp);
 }

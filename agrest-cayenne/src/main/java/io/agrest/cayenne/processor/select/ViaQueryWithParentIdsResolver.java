@@ -9,7 +9,6 @@ import org.apache.cayenne.DataObject;
 import org.apache.cayenne.query.ColumnSelect;
 
 import java.util.Collections;
-import java.util.Iterator;
 
 /**
  * A related resolver that waits for the parent query to complete, and resolves its entity objects based on the collection
@@ -35,13 +34,12 @@ public class ViaQueryWithParentIdsResolver<T extends DataObject> extends ViaQuer
             SelectContext<?> context) {
 
         // no parents, no need to fetch children
-        Iterator<?> parentIt = parentData.iterator();
-        if (!parentIt.hasNext()) {
+        if (!parentData.iterator().hasNext()) {
             return Collections.emptyList();
         }
 
         // assemble query here, where we have access to all parent ids
-        ColumnSelect<Object[]> select = queryAssembler.createQueryWithParentIdsQualifier(entity, parentIt);
+        ColumnSelect<Object[]> select = queryAssembler.createQueryWithParentIdsQualifier(entity, parentData);
         if (select == null) {
             // no parents - nothing to fetch for this entity, and no need to descend into children
             return Collections.emptyList();

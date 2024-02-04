@@ -4,90 +4,105 @@ import io.agrest.EntityUpdate;
 import io.agrest.SimpleResponse;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
+import io.agrest.annotation.AgRelationship;
 import io.agrest.jaxrs3.openapi.junit.TestOpenAPIBuilder;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.parameters.RequestBody;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.Context;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EntityUpdateTest {
 
     static final OpenAPI oapi = new TestOpenAPIBuilder()
-            .addClass(Resource.class)
             .addPackage(P4.class)
+            .addClass(Resource.class)
             .build();
 
-    @ParameterizedTest
-    @ValueSource(strings = {"/r/single-untyped/{id}", "/r/single-wildcard/{id}"})
-    public void testSingleUntyped(String uri) {
-        PathItem pi = oapi.getPaths().get(uri);
-        RequestBody rb = pi.getPut().getRequestBody();
-        assertNotNull(rb);
+    @Test
+    public void propertiesPresentAndOrdered() {
+        Schema p4Update = oapi.getComponents().getSchemas().get("EntityUpdate(P4)");
+        assertNotNull(p4Update);
 
-        MediaType mt = rb.getContent().get("*/*");
-        assertNotNull(mt);
+        Map<String, Schema> props = p4Update.getProperties();
 
-        Schema schema = mt.getSchema();
-        assertNotNull(schema);
+        // ordering matters and must be alphabetic within property groups
+        assertEquals(List.of("id", "b", "p5", "p6s", "z"), List.copyOf(props.keySet()));
 
-        assertNull(schema.getName());
-        assertNull(schema.getType());
-        assertEquals("#/components/schemas/EntityUpdate(Object)", schema.get$ref());
+        Schema id = props.get("id");
+        assertNotNull(id);
+        assertEquals("integer", id.getType());
+        assertEquals("int32", id.getFormat());
+
+        Schema b = props.get("b");
+        assertNotNull(b);
+        assertEquals("integer", b.getType());
+        assertEquals("int32", b.getFormat());
+
+        Schema z = props.get("z");
+        assertNotNull(z);
+        assertEquals("string", z.getType());
+
+        Schema p5 = props.get("p5");
+        assertNotNull(p5);
+        assertEquals("integer", p5.getType());
+        assertEquals("int64", p5.getFormat());
+
+        Schema p6s = props.get("p6s");
+        assertNotNull(p6s);
+        assertEquals("array", p6s.getType());
+
+        Schema p6sItems = ((ArraySchema) p6s).getItems();
+        assertNotNull(p6sItems);
+        assertEquals("string", p6sItems.getType());
     }
 
     @Test
-    public void testSingleUpdate() {
-        PathItem pi = oapi.getPaths().get("/r/single/{id}");
-        RequestBody rb = pi.getPut().getRequestBody();
-        assertNotNull(rb);
+    public void properties_FilterByAccess() {
+        Schema p8Update = oapi.getComponents().getSchemas().get("EntityUpdate(P8)");
+        assertNotNull(p8Update);
 
-        MediaType mt = rb.getContent().get("*/*");
-        assertNotNull(mt);
+        Map<String, Schema> props = p8Update.getProperties();
 
-        Schema schema = mt.getSchema();
-        assertNotNull(schema);
+        assertEquals(List.of("b"), List.copyOf(props.keySet()));
 
-        assertNull(schema.getName());
-        assertNull(schema.getType());
-        assertEquals("#/components/schemas/EntityUpdate(P4)", schema.get$ref());
+        Schema b = props.get("b");
+        assertNotNull(b);
+        assertEquals("integer", b.getType());
+        assertEquals("int32", b.getFormat());
     }
 
     @Test
-    public void testUpdateCollection() {
-        PathItem pi = oapi.getPaths().get("/r/collection");
-        RequestBody rb = pi.getPut().getRequestBody();
-        assertNotNull(rb);
+    public void properties_MultiColumnId() {
 
-        MediaType mt = rb.getContent().get("*/*");
-        assertNotNull(mt);
+        Schema p7Update = oapi.getComponents().getSchemas().get("EntityUpdate(P7)");
+        assertNotNull(p7Update);
 
-        Schema schema = mt.getSchema();
-        assertNotNull(schema);
+        assertEquals(1, p7Update.getProperties().size());
+        Schema idSchema = (Schema) p7Update.getProperties().get("id");
+        assertNotNull(idSchema);
 
-        assertNull(schema.getName());
-        assertEquals("array", schema.getType());
+        assertEquals(2, idSchema.getProperties().size());
 
-        assertTrue(schema instanceof ArraySchema);
+        Schema id1Schema = (Schema) idSchema.getProperties().get("id1");
+        assertNotNull(id1Schema);
+        assertEquals("integer", id1Schema.getType());
+        assertEquals("int32", id1Schema.getFormat());
 
-        Schema itemSchema = ((ArraySchema) schema).getItems();
-        assertNull(itemSchema.getName());
-        assertNull(itemSchema.getType());
-        assertNull(itemSchema.getFormat());
-        assertEquals("#/components/schemas/EntityUpdate(P4)", itemSchema.get$ref());
+        Schema id2Schema = (Schema) idSchema.getProperties().get("id2");
+        assertNotNull(id2Schema);
+        assertEquals("string", id2Schema.getType());
     }
 
     @Path("r")
@@ -97,47 +112,31 @@ public class EntityUpdateTest {
         private Configuration config;
 
         @PUT
-        @Path("single-untyped/{id}")
-        public SimpleResponse putByIdUntyped(@PathParam("id") int id, EntityUpdate update) {
+        @Path("p4")
+        public SimpleResponse putP4(List<EntityUpdate<P4>> u) {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
 
         @PUT
-        @Path("single-wildcard/{id}")
-        public SimpleResponse putByIdWildcard(@PathParam("id") int id, EntityUpdate<?> update) {
+        @Path("p7")
+        public SimpleResponse putP7(@PathParam("id") int id, EntityUpdate<P7> u) {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
 
         @PUT
-        @Path("single/{id}")
-        public SimpleResponse putP4ById(@PathParam("id") int id, EntityUpdate<P4> p4Update) {
-            throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
-        }
-
-        @PUT
-        @Path("collection")
-        public SimpleResponse putP4(List<EntityUpdate<P4>> p4Updates) {
-            throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
-        }
-
-        @PUT
-        @Path("string/{id}")
-        public SimpleResponse putP4ByIdString(@PathParam("id") int id, String data) {
-            throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
-        }
-
-        @PUT
-        @Path("string")
-        public SimpleResponse putP4String(String data) {
+        @Path("p8")
+        public SimpleResponse putP8(List<EntityUpdate<P8>> u) {
             throw new UnsupportedOperationException("endpoint logic is irrelevant for the test");
         }
     }
 
     public static class P4 {
 
-        @AgId
-        public int getA() {
-            return -1;
+        // intentionally declare properties in non-alphabetic order
+
+        @AgAttribute
+        public String getZ() {
+            return "";
         }
 
         @AgAttribute
@@ -145,9 +144,83 @@ public class EntityUpdateTest {
             return -1;
         }
 
+        @AgId
+        public int getA() {
+            return -1;
+        }
+
+        @AgRelationship
+        public Set<P6> getP6s() {
+            return Set.of();
+        }
+
+        @AgRelationship
+        public P5 getP5() {
+            return null;
+        }
+    }
+
+    public static class P5 {
+        @AgId
+        public long getA() {
+            return -1L;
+        }
+
         @AgAttribute
-        public String getC() {
+        public int getB() {
+            return -1;
+        }
+    }
+
+    public static class P6 {
+        @AgId
+        public String getA() {
             return "";
+        }
+
+        @AgAttribute
+        public int getB() {
+            return -1;
+        }
+    }
+
+    public static class P7 {
+        @AgId
+        public int getId1() {
+            return -1;
+        }
+
+        @AgId
+        public String getId2() {
+            return "";
+        }
+    }
+
+    public static class P8 {
+
+        @AgAttribute
+        public int getB() {
+            return -1;
+        }
+
+        @AgAttribute(writable = false)
+        public String getZ() {
+            return "";
+        }
+
+        @AgId(writable = false)
+        public int getA() {
+            return -1;
+        }
+
+        @AgRelationship(writable = false)
+        public Set<P6> getP6s() {
+            return Set.of();
+        }
+
+        @AgRelationship(writable = false)
+        public P5 getP5() {
+            return null;
         }
     }
 }

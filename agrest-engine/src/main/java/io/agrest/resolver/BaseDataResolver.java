@@ -13,12 +13,12 @@ public abstract class BaseDataResolver {
 
         ResourceEntity<?> mapBy = entity.getMapBy();
         if (mapBy != null) {
-            for (RelatedResourceEntity c : mapBy.getChildren().values()) {
+            for (RelatedResourceEntity c : mapBy.getChildren()) {
                 c.getResolver().onParentQueryAssembled(c, context);
             }
         }
 
-        for (RelatedResourceEntity c : entity.getChildren().values()) {
+        for (RelatedResourceEntity c : entity.getChildren()) {
             c.getResolver().onParentQueryAssembled(c, context);
         }
     }
@@ -27,12 +27,12 @@ public abstract class BaseDataResolver {
 
         ResourceEntity<?> mapBy = entity.getMapBy();
         if (mapBy != null) {
-            for (RelatedResourceEntity c : mapBy.getChildren().values()) {
+            for (RelatedResourceEntity c : mapBy.getChildren()) {
                 c.getResolver().onParentDataResolved(c, data, context);
             }
         }
 
-        for (RelatedResourceEntity c : entity.getChildren().values()) {
+        for (RelatedResourceEntity c : entity.getChildren()) {
             c.getResolver().onParentDataResolved(c, data, context);
         }
     }

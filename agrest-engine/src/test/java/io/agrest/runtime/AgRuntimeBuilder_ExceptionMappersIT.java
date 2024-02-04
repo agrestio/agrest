@@ -3,8 +3,8 @@ package io.agrest.runtime;
 import io.agrest.AgException;
 import io.agrest.SelectStage;
 import io.agrest.junit.AgPojoTester;
-import io.agrest.pojo.model.P1;
-import io.agrest.pojo.model.P2;
+import io.agrest.junit.pojo.P1;
+import io.agrest.junit.pojo.P2;
 import io.agrest.spi.AgExceptionMapper;
 import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestTool;
@@ -30,7 +30,7 @@ public class AgRuntimeBuilder_ExceptionMappersIT {
     }
 
     @Test
-    public void testExceptionMapper_OverrideStandardMapper() {
+    public void exceptionMapper_OverrideStandardMapper() {
 
         try {
             tester.runtime()
@@ -45,7 +45,7 @@ public class AgRuntimeBuilder_ExceptionMappersIT {
     }
 
     @Test
-    public void testExceptionMapper_CustomExceptionMapper() {
+    public void exceptionMapper_CustomExceptionMapper() {
 
         try {
             tester.runtime()

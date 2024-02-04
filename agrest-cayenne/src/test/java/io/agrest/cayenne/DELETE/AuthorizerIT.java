@@ -1,0 +1,117 @@
+package io.agrest.cayenne.DELETE;
+
+import io.agrest.SimpleResponse;
+import io.agrest.cayenne.cayenne.main.E2;
+import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.cayenne.main.E4;
+import io.agrest.cayenne.unit.main.MainDbTest;
+import io.agrest.cayenne.unit.main.MainModelTester;
+import io.agrest.jaxrs3.AgJaxrs;
+import io.agrest.meta.AgEntity;
+import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.Test;
+
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.Configuration;
+import jakarta.ws.rs.core.Context;
+
+public class AuthorizerIT extends MainDbTest {
+
+    @BQTestTool
+    static final MainModelTester tester = tester(Resource.class)
+            .entities(E2.class, E3.class, E4.class)
+            .agCustomizer(ab -> ab
+                    .entityOverlay(AgEntity.overlay(E2.class).deleteAuthorizer(o -> !"dont_delete".equals(o.getName())))
+            ).build();
+
+    @Test
+    public void inStack_Allowed() {
+
+        tester.e2().insertColumns("id_", "name")
+                .values(1, "a")
+                .values(2, "b")
+                .exec();
+
+        tester.target("/e2_stack_authorizer/1").delete().wasOk();
+
+        tester.e2().matcher().assertMatches(1);
+        tester.e2().matcher().eq("name", "b").assertOneMatch();
+    }
+
+    @Test
+    public void inStack_Blocked() {
+        tester.e2().insertColumns("id_", "name")
+                .values(1, "dont_delete")
+                .values(2, "b")
+                .exec();
+
+        tester.target("/e2_stack_authorizer/1")
+                .delete()
+                .wasForbidden();
+
+        tester.e2().matcher().assertMatches(2);
+        tester.e2().matcher().eq("name", "dont_delete").assertOneMatch();
+        tester.e2().matcher().eq("name", "b").assertOneMatch();
+    }
+
+    @Test
+    public void inRequestAndStack_Allowed() {
+
+        tester.e2().insertColumns("id_", "name")
+                .values(1, "a")
+                .values(2, "b")
+                .exec();
+
+        tester.target("/e2_request_and_stack_authorizer/1/can_delete")
+                .delete()
+                .wasOk();
+
+        tester.e2().matcher().assertMatches(1);
+        tester.e2().matcher().eq("name", "b").assertOneMatch();
+    }
+
+    @Test
+    public void inRequestAndStack_Blocked() {
+        tester.e2().insertColumns("id_", "name")
+                .values(1, "dont_delete_this_either")
+                .values(2, "b")
+                .exec();
+
+        tester.target("/e2_request_and_stack_authorizer/1/dont_delete_this_either")
+                .delete()
+                .wasForbidden();
+
+        tester.e2().matcher().assertMatches(2);
+        tester.e2().matcher().eq("name", "dont_delete_this_either").assertOneMatch();
+        tester.e2().matcher().eq("name", "b").assertOneMatch();
+    }
+
+    @Path("")
+    public static class Resource {
+
+        @Context
+        private Configuration config;
+
+        @DELETE
+        @Path("e2_stack_authorizer/{id}")
+        public SimpleResponse putE2StackFilter(@PathParam("id") int id) {
+            return AgJaxrs.delete(E2.class, config)
+                    .byIds(id)
+                    .sync();
+        }
+
+        @DELETE
+        @Path("e2_request_and_stack_authorizer/{id}/{name}")
+        public SimpleResponse putE2RequestAndStackFilter(
+                @PathParam("name") String name,
+                @PathParam("id") int id) {
+
+            return AgJaxrs.delete(E2.class, config)
+                    .byId(id)
+                    .authorizer(o -> !name.equals(o.getName()))
+                    .sync();
+        }
+    }
+}

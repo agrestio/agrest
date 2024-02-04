@@ -22,12 +22,12 @@ class ByKeyObjectMapper<T> implements ObjectMapper<T> {
 
     @Override
     public Object keyForUpdate(EntityUpdate<T> u) {
-        return u.getValues().get(attribute.getName());
+        return u.getAttributes().get(attribute.getName());
     }
 
     @Override
     public Exp expressionForKey(Object key) {
         // allowing nulls here
-        return Exp.keyValue(attribute.getName(), "=", key);
+        return Exp.equal(attribute.getName(), key);
     }
 }

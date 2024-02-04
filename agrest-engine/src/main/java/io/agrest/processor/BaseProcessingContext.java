@@ -4,7 +4,10 @@ import io.agrest.SimpleResponse;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Key;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,12 +15,13 @@ import java.util.Map;
  */
 public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
 
+    private Integer responseStatus;
+    private Map<String, List<Object>> responseHeaders;
     private final Class<T> type;
     private final Injector injector;
-    private Map<String, Object> attributes;
-    private int status;
+    private Map<String, Object> properties;
 
-    public BaseProcessingContext(Class<T> type, Injector injector) {
+    protected BaseProcessingContext(Class<T> type, Injector injector) {
         this.type = type;
         this.injector = injector;
     }
@@ -47,9 +51,12 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
      *
      * @return a new SimpleResponse with status of this context.
      * @since 1.24
+     * @deprecated unused anymore, as the context should not be creating a response. It is the responsibility of a
+     * pipeline
      */
+    @Deprecated(since = "5.0")
     public SimpleResponse createSimpleResponse() {
-        return SimpleResponse.of(getStatus());
+        return SimpleResponse.of(getResponseStatus());
     }
 
     @Override
@@ -59,31 +66,81 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
 
     @Override
     public Object getProperty(String name) {
-        return attributes != null ? attributes.get(name) : null;
+        return properties != null ? properties.get(name) : null;
     }
 
     @Override
     public void setProperty(String name, Object value) {
+        mutableProperties().put(name, value);
+    }
 
-        // Presumably BaseProcessingContext is single-threaded (one per request), so lazy init and using HashMap is ok.
-        if (attributes == null) {
-            attributes = new HashMap<>();
+    /**
+     * @deprecated in favor of {@link #getResponseStatus()}
+     */
+    @Deprecated(since = "5.0")
+    public int getStatus() {
+        return getResponseStatus() != null ? getResponseStatus() : 0;
+    }
+
+    /**
+     * @deprecated in favor of {@link #setResponseStatus(Integer)}
+     */
+    @Deprecated(since = "5.0")
+    public void setStatus(int responseStatus) {
+        setResponseStatus(responseStatus);
+    }
+
+    /**
+     * @since 5.0
+     */
+    public Integer getResponseStatus() {
+        return responseStatus;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public void setResponseStatus(Integer responseStatus) {
+        this.responseStatus = responseStatus;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public Map<String, List<Object>> getResponseHeaders() {
+        // header names are case-insensitive
+        return responseHeaders != null ? responseHeaders : Collections.emptyMap();
+    }
+
+    /**
+     * @since 5.0
+     */
+    public List<Object> getResponseHeaders(String name) {
+        // header names are case-insensitive per RFC 2616
+        return responseHeaders != null ? responseHeaders.get(name.toLowerCase()) : null;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public void addResponseHeader(String name, Object value) {
+        // header names are case-insensitive per RFC 2616
+        mutableResponseHeaders().computeIfAbsent(name.toLowerCase(), n -> new ArrayList<>()).add(value);
+    }
+
+    private Map<String, List<Object>> mutableResponseHeaders() {
+        if (responseHeaders == null) {
+            responseHeaders = new HashMap<>();
         }
 
-        attributes.put(name, value);
+        return responseHeaders;
     }
 
-    /**
-     * @since 4.7
-     */
-    public int getStatus() {
-        return status;
-    }
+    private Map<String, Object> mutableProperties() {
+        if (properties == null) {
+            properties = new HashMap<>();
+        }
 
-    /**
-     * @since 4.7
-     */
-    public void setStatus(int status) {
-        this.status = status;
+        return properties;
     }
 }

@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class MapByEncoder implements Encoder {
+public class MapByEncoder extends AbstractEncoder {
 
     private final List<DataReader> mapByReaders;
     private final Encoder collectionEncoder;
@@ -29,17 +29,7 @@ public class MapByEncoder implements Encoder {
     }
 
     @Override
-    public void encode(String propertyName, Object object, JsonGenerator out) throws IOException {
-
-        if (propertyName != null) {
-            out.writeFieldName(propertyName);
-        }
-
-        if (object == null) {
-            out.writeNull();
-            return;
-        }
-
+    protected void encodeNonNullObject(Object object, boolean skipNullProperties, JsonGenerator out) throws IOException {
         List<?> objects = (List<?>) object;
         Map<String, List<Object>> map = mapBy(objects);
 
@@ -47,7 +37,7 @@ public class MapByEncoder implements Encoder {
 
         for (Entry<String, List<Object>> e : map.entrySet()) {
             out.writeFieldName(e.getKey());
-            collectionEncoder.encode(null, e.getValue(), out);
+            collectionEncoder.encode(null, e.getValue(), skipNullProperties, out);
         }
 
         out.writeEndObject();

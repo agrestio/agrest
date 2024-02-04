@@ -32,6 +32,18 @@ public interface AgEntity<T> {
     Class<T> getType();
 
     /**
+     * @since 5.0
+     */
+    boolean isAbstract();
+
+    /**
+     * Returns a collection of direct sub-entities. I.e. the entities mapping subclasses of this entity's type.
+     *
+     * @since 5.0
+     */
+    Collection<AgEntity<? extends T>> getSubEntities();
+
+    /**
      * @since 4.1
      */
     Collection<AgIdPart> getIdParts();
@@ -41,10 +53,16 @@ public interface AgEntity<T> {
      */
     AgIdPart getIdPart(String name);
 
+    /**
+     * Returns attributes that are either declared by this entity or are inherited from superclass.
+     */
     Collection<AgAttribute> getAttributes();
 
     AgAttribute getAttribute(String name);
 
+    /**
+     * Returns relationships that are either declared by this entity or are inherited from superclass.
+     */
     Collection<AgRelationship> getRelationships();
 
     AgRelationship getRelationship(String name);
@@ -105,4 +123,17 @@ public interface AgEntity<T> {
      * @since 4.8
      */
     DeleteAuthorizer<T> getDeleteAuthorizer();
+
+    /**
+     * @since 5.0
+     */
+    // TODO: replace all uses with resolveOverlayHierarchy. Otherwise, we'd be dealing with potential inheritance bugs
+    default AgEntity<T> resolveOverlay(AgSchema schema, AgEntityOverlay<T> overlay) {
+        return overlay != null && !overlay.isEmpty() ? overlay.resolve(schema, this, this.getSubEntities()) : this;
+    }
+
+    /**
+     * @since 5.0
+     */
+    AgEntity<T> resolveOverlayHierarchy(AgSchema schema, Map<Class<?>, AgEntityOverlay<?>> overlays);
 }

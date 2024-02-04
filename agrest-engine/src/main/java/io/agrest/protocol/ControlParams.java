@@ -17,14 +17,14 @@ public enum ControlParams {
     cayenneExp("A deprecated alias for 'exp' parameter. Expression used to filter a select result"),
 
     /**
-     * A deprecated alis for the 'direction' parameter. Sort direction. Can be one of 'ASC','ASC_CI', 'DESC', 'DESC_CI'.
+     * A deprecated alias for the 'direction' parameter. Sort direction. Can be one of 'ASC','ASC_CI', 'DESC', 'DESC_CI'.
      * Used in conjunction with 'sort'.
      *
      * @deprecated in the protocol v.1.2 (Agrest 5.0) in favor of {@link ControlParams#direction}. Will be supported
      * indefinitely for backwards compatibility.
      */
     @Deprecated
-    dir("A deprecated alis for the 'direction' parameter. Sort direction. Can be one of 'ASC','ASC_CI', 'DESC', 'DESC_CI'. Used in conjunction with 'sort'."),
+    dir("A deprecated alias for the 'direction' parameter. Sort direction. Can be one of 'ASC','ASC_CI', 'DESC', 'DESC_CI'. Used in conjunction with 'sort'."),
 
     /**
      * Sort direction. Can be one of 'ASC','ASC_CI', 'DESC', 'DESC_CI'. Used in conjunction with 'sort'.

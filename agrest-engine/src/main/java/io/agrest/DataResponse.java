@@ -2,12 +2,11 @@ package io.agrest;
 
 import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.Encoder;
-import io.agrest.encoder.GenericEncoder;
-import io.agrest.encoder.ListEncoder;
 import io.agrest.protocol.CollectionResponse;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -22,29 +21,42 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
     /**
      * @since 5.0
      */
-    public static <T> Builder<T> of(List<? extends T> data) {
-        return new Builder(data);
+    public static <T> Builder<T> of(int status) {
+        return of(status, Collections.emptyList());
     }
 
     /**
-     * @deprecated since 5.0 in favor of the new builder created via {@link #of(List)}
+     * @since 5.0
      */
-    @Deprecated
+    public static <T> Builder<T> of(int status, List<? extends T> data) {
+        return new Builder<>(status, data);
+    }
+
+    /**
+     * @deprecated in favor of the new builder created via {@link #of(int, List)}
+     */
+    @Deprecated(since = "5.0")
     public static <T> DataResponse<T> forObject(T object) {
         Objects.requireNonNull(object);
-        return of(List.of(object)).build();
+        return of(HttpStatus.OK, List.of(object)).build();
     }
 
     /**
-     * @deprecated since 5.0 in favor oof the new builder created via {@link #of(List)}
+     * @deprecated in favor of the new builder created via {@link #of(int, List)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0")
     public static <T> DataResponse<T> forObjects(List<T> data) {
-        return of(data).build();
+        return of(HttpStatus.OK, data).build();
     }
 
-    protected DataResponse(int status, List<? extends T> data, int total, Encoder encoder) {
-        super(status);
+    protected DataResponse(
+            int status,
+            Map<String, List<Object>> headers,
+            List<? extends T> data,
+            int total,
+            Encoder encoder) {
+
+        super(status, headers);
         this.total = total;
         this.data = data;
         this.encoder = encoder;
@@ -88,16 +100,28 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
         private Integer status;
         private Integer total;
         private Encoder encoder;
+        private Map<String, List<Object>> headers;
 
-        public Builder(List<? extends T> data) {
+        private Builder(int status, List<? extends T> data) {
+            this.status = status;
             this.data = data;
         }
 
+        /**
+         * @since 5.0
+         */
+        public Builder headers(Map<String, List<Object>> headers) {
+            this.headers = headers;
+            return this;
+        }
+
+        @Deprecated(since = "5.0")
         public Builder<T> data(List<? extends T> data) {
             this.data = data;
             return this;
         }
 
+        @Deprecated(since = "5.0")
         public Builder<T> status(int status) {
             this.status = status;
             return this;
@@ -109,7 +133,7 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
         }
 
         public Builder<T> elementEncoder(Encoder elementEncoder) {
-            return encoder(defaultEncoder(elementEncoder));
+            return encoder(DataResponseEncoder.withElementEncoder(elementEncoder));
         }
 
         public Builder<T> encoder(Encoder encoder) {
@@ -118,17 +142,16 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
         }
 
         public DataResponse<T> build() {
+
             List<? extends T> data = this.data != null ? this.data : Collections.emptyList();
+
             return new DataResponse<>(
                     status != null ? status : HttpStatus.OK,
+                    headers != null ? headers : Collections.emptyMap(),
                     data,
                     total != null ? total : data.size(),
-                    encoder != null ? encoder : defaultEncoder(GenericEncoder.encoder())
+                    encoder != null ? encoder : DataResponseEncoder.defaultEncoder()
             );
-        }
-
-        private Encoder defaultEncoder(Encoder elementEncoder) {
-            return new DataResponseEncoder("data", new ListEncoder(elementEncoder), "total", GenericEncoder.encoder());
         }
     }
 }

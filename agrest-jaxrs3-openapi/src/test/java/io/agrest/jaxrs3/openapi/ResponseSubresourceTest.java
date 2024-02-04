@@ -23,7 +23,7 @@ public class ResponseSubresourceTest {
             .build();
 
     @Test
-    public void testRootResource() {
+    public void rootResource() {
         PathItem rootPi = oapi.getPaths().get("/r");
         assertNotNull(rootPi);
         Schema schema = rootPi.getGet().getResponses().getDefault().getContent().get("*/*").getSchema();
@@ -31,7 +31,7 @@ public class ResponseSubresourceTest {
     }
 
     @Test
-    public void testSubresource() {
+    public void subresource() {
         PathItem sub1Pi = oapi.getPaths().get("/r/subr/{id}");
         assertNotNull(sub1Pi);
         Schema sub1Schema = sub1Pi.getGet().getResponses().getDefault().getContent().get("*/*").getSchema();

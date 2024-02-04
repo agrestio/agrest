@@ -1,17 +1,16 @@
 package io.agrest;
 
-import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.protocol.Exp;
 import io.agrest.protocol.Sort;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.function.BiFunction;
 
 /**
  * A model of a resource entity for a given client request. ResourceEntity is based on an {@link AgEntity} with
@@ -22,10 +21,8 @@ public abstract class ResourceEntity<T> {
 
     private boolean idIncluded;
 
-    private final AgEntity<T> agEntity;
-
-    private final Map<String, AgAttribute> attributes;
-    private final Set<String> defaultAttributes;
+    private final ResourceEntityProjection<T> baseProjection;
+    private final Map<Class<? extends T>, ResourceEntityProjection<? extends T>> projections;
     private final Map<String, RelatedResourceEntity<?>> children;
     private final Map<String, Object> properties;
 
@@ -37,28 +34,100 @@ public abstract class ResourceEntity<T> {
 
     public ResourceEntity(AgEntity<T> agEntity) {
 
-        this.agEntity = agEntity;
-
+        List<ResourceEntityProjection<? extends T>> projections = buildProjections(agEntity, new ArrayList<>());
+        this.baseProjection = (ResourceEntityProjection<T>) projections.get(0);
+        this.projections = projectionsByType(projections);
         this.idIncluded = false;
-        this.attributes = new HashMap<>();
-        this.defaultAttributes = new HashSet<>();
         this.children = new HashMap<>();
         this.orderings = new ArrayList<>(2);
         this.properties = new HashMap<>(5);
+    }
+
+    private static <T> List<ResourceEntityProjection<? extends T>> buildProjections(
+            AgEntity<? extends T> entity,
+            List<ResourceEntityProjection<? extends T>> projections) {
+
+        // generally we should not need a projection for abstract entities, but since there's still too much
+        // code relying on "baseProjection", we don't check for "abstract" flag here, and create projections
+        // for every entity
+
+        projections.add(new ResourceEntityProjection<>(entity));
+        entity.getSubEntities().forEach(se -> buildProjections(se, projections));
+        return projections;
+    }
+
+    private static <T> Map<Class<? extends T>, ResourceEntityProjection<? extends T>> projectionsByType(
+            List<ResourceEntityProjection<? extends T>> projections) {
+
+        if (projections.size() == 1) {
+            return Map.of(projections.get(0).getAgEntity().getType(), projections.get(0));
+        }
+
+        Map<Class<? extends T>, ResourceEntityProjection<? extends T>> byType = new HashMap<>();
+        projections.forEach(p -> byType.put(p.getAgEntity().getType(), p));
+        return byType;
     }
 
     /**
      * @since 3.4
      */
     public String getName() {
-        return agEntity.getName();
+        return getAgEntity().getName();
+    }
+
+    public Class<T> getType() {
+        return getAgEntity().getType();
+    }
+
+    /**
+     * Returns the projection object associated with this ResourceEntity that corresponds to the topmost superclass
+     * of the entity. I.e. the same type as the T parameter of the entity.
+     *
+     * @since 5.0
+     */
+    public ResourceEntityProjection<T> getBaseProjection() {
+        return baseProjection;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public <S extends T> ResourceEntityProjection<S> getProjection(Class<S> type) {
+        return (ResourceEntityProjection<S>) projections.get(type);
+    }
+
+    /**
+     * @since 5.0
+     */
+    public Collection<ResourceEntityProjection<? extends T>> getProjections() {
+        return projections.values();
     }
 
     /**
      * @since 1.12
      */
     public AgEntity<T> getAgEntity() {
-        return agEntity;
+        return getBaseProjection().getAgEntity();
+    }
+
+    /**
+     * Returns a previously stored custom object for a given name. The properties mechanism allows pluggable processing
+     * pipelines to store and exchange data within a given request.
+     *
+     * @since 5.0
+     */
+    public <P> P getProperty(String name) {
+        return (P) properties.get(name);
+    }
+
+    /**
+     * Sets a property value for a given name. The properties mechanism allows pluggable processing pipelines to
+     * store and exchange data within a given request.
+     *
+     * @since 5.0
+     */
+    public void setProperty(String name, Object value) {
+        properties.put(name, value);
     }
 
     /**
@@ -96,61 +165,86 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * @since 4.7
+     * @return true if the attribute was added to one of the underlying the projections or was already a part of one
+     * of the projections
+     * @since 5.0
      */
-    public AgAttribute getAttribute(String name) {
-        return attributes.get(name);
-    }
+    public boolean ensureAttribute(String attributeName, boolean isDefault) {
 
-    /**
-     * @since 1.12
-     */
-    public Map<String, AgAttribute> getAttributes() {
-        return attributes;
-    }
-
-    /**
-     * Returns whether the named attribute was added to the entity implicitly, via the default rules, instead of being
-     * explicitly requested by the client.
-     *
-     * @since 3.7
-     */
-    public boolean isDefaultAttribute(String name) {
-        return defaultAttributes.contains(name);
-    }
-
-    /**
-     * @since 3.7
-     */
-    public void addAttribute(AgAttribute attribute, boolean isDefault) {
-        attributes.put(attribute.getName(), attribute);
-        if (isDefault) {
-            defaultAttributes.add(attribute.getName());
+        boolean success = false;
+        for (ResourceEntityProjection<?> p : projections.values()) {
+            success = p.ensureAttribute(attributeName, isDefault) || success;
         }
+        return success;
     }
 
     /**
-     * @since 3.7
+     * @since 5.0
      */
-    public AgAttribute removeAttribute(String name) {
+    public boolean removeAttribute(String attributeName) {
 
-        AgAttribute removed = attributes.remove(name);
-        if (removed != null) {
-            defaultAttributes.remove(name);
+        boolean removed = false;
+        for (ResourceEntityProjection<?> p : projections.values()) {
+            removed = p.removeAttribute(attributeName) || removed;
         }
-
         return removed;
     }
 
     /**
      * @since 3.7
      */
-    public RelatedResourceEntity<?> removeChild(String name) {
-        return children.remove(name);
+    public boolean removeChild(String name) {
+
+        boolean removed = false;
+        for (ResourceEntityProjection<?> p : projections.values()) {
+            removed = p.removeRelationship(name) || removed;
+        }
+
+        if (removed) {
+            children.remove(name);
+        }
+
+        return removed;
     }
 
-    public Map<String, RelatedResourceEntity<?>> getChildren() {
-        return children;
+    /**
+     * @since 5.0
+     */
+    public boolean hasRelationship(String relationshipName) {
+        for (ResourceEntityProjection<?> p : projections.values()) {
+            if (p.getAgEntity().getRelationship(relationshipName) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public boolean ensureRelationship(String relationshipName) {
+        boolean success = false;
+        for (ResourceEntityProjection<?> p : projections.values()) {
+            success = p.ensureRelationship(relationshipName) || success;
+        }
+        return success;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public RelatedResourceEntity<?> ensureChild(
+            String relationshipName,
+            BiFunction<ResourceEntity<?>, String, RelatedResourceEntity<?>> childCreator) {
+
+        return children.computeIfAbsent(relationshipName, r -> childCreator.apply(this, r));
+    }
+
+    /**
+     * @since 5.0
+     */
+    public Collection<RelatedResourceEntity<?>> getChildren() {
+        return children.values();
     }
 
     /**
@@ -184,8 +278,8 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * @deprecated in favor of {@link #mapBy(ResourceEntity)}. mapByPath parameter is ignored.
      * @since 1.1
+     * @deprecated in favor of {@link #mapBy(ResourceEntity)}. mapByPath parameter is ignored.
      */
     @Deprecated(since = "5.0")
     public ResourceEntity<T> mapBy(ResourceEntity<?> mapBy, String mapByPath) {
@@ -198,10 +292,6 @@ public abstract class ResourceEntity<T> {
     public ResourceEntity<T> mapBy(ResourceEntity<?> mapBy) {
         this.mapBy = mapBy;
         return this;
-    }
-
-    public Class<T> getType() {
-        return agEntity.getType();
     }
 
     /**
@@ -268,27 +358,13 @@ public abstract class ResourceEntity<T> {
      * @since 1.23
      */
     public boolean isFiltered() {
-        return !agEntity.getReadFilter().allowsAll();
-    }
+        for (ResourceEntityProjection<?> p : projections.values()) {
+            if (!p.getAgEntity().getReadFilter().allowsAll()) {
+                return true;
+            }
+        }
 
-    /**
-     * Returns a previously stored custom object for a given name. The properties mechanism allows pluggable processing
-     * pipelines to store and exchange data within a given request.
-     *
-     * @since 5.0
-     */
-    public <P> P getProperty(String name) {
-        return (P) properties.get(name);
-    }
-
-    /**
-     * Sets a property value for a given name. The properties mechanism allows pluggable processing pipelines to
-     * store and exchange data within a given request.
-     *
-     * @since 5.0
-     */
-    public void setProperty(String name, Object value) {
-        properties.put(name, value);
+        return false;
     }
 
     /**

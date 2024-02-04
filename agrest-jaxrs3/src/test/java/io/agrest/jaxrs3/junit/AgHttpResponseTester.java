@@ -6,6 +6,7 @@ import io.agrest.HttpStatus;
 
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
 import java.io.IOException;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -68,39 +69,30 @@ public class AgHttpResponseTester {
     }
 
     public AgHttpResponseTester wasOk() {
-        assertEquals(HttpStatus.OK,
-                response.getStatus(),
-                "Failed request: " + response.getStatus());
-        return this;
+        return wasStatus(HttpStatus.OK);
     }
 
     public AgHttpResponseTester wasCreated() {
-        assertEquals(HttpStatus.CREATED,
-                response.getStatus(),
-                "Expected 'CREATED' status, was: " + response.getStatus());
-        return this;
+        return wasStatus(HttpStatus.CREATED);
     }
 
     public AgHttpResponseTester wasServerError() {
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
-                response.getStatus(),
-                "Expected 'INTERNAL_SERVER_ERROR' status, was: " + response.getStatus());
-        return this;
+        return wasStatus(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     public AgHttpResponseTester wasBadRequest() {
-        return statusEquals(HttpStatus.BAD_REQUEST);
+        return wasStatus(HttpStatus.BAD_REQUEST);
     }
 
     public AgHttpResponseTester wasForbidden() {
-        return statusEquals(HttpStatus.FORBIDDEN);
+        return wasStatus(HttpStatus.FORBIDDEN);
     }
 
     public AgHttpResponseTester wasNotFound() {
-        return statusEquals(HttpStatus.NOT_FOUND);
+        return wasStatus(HttpStatus.NOT_FOUND);
     }
 
-    protected AgHttpResponseTester statusEquals(int expectedStatus) {
+    public AgHttpResponseTester wasStatus(int expectedStatus) {
         assertEquals(expectedStatus, response.getStatus());
         return this;
     }

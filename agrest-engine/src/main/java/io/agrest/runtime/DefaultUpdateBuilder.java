@@ -3,14 +3,17 @@ package io.agrest.runtime;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
+import io.agrest.HttpStatus;
 import io.agrest.ObjectMapperFactory;
+import io.agrest.RootResourceEntity;
 import io.agrest.SimpleResponse;
 import io.agrest.UpdateBuilder;
 import io.agrest.UpdateStage;
+import io.agrest.access.PathChecker;
+import io.agrest.encoder.DataResponseEncoder;
+import io.agrest.encoder.Encoder;
 import io.agrest.id.AgObjectId;
-import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.AgSchema;
 import io.agrest.processor.Processor;
 import io.agrest.runtime.processor.update.BaseUpdateProcessorFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -47,33 +50,25 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
 
     @Override
     public UpdateBuilder<T> byId(Object id) {
-        context.setId(AgObjectId.of(id));
-        return this;
-    }
-
-    @Override
-    public UpdateBuilder<T> byId(Map<String, Object> id) {
-        context.setId(AgObjectId.ofMap(id));
+        context.setUnresolvedId(id);
         return this;
     }
 
     @Override
     public UpdateBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
-        AgEntity<?> parentEntity = context.service(AgSchema.class).getEntity(parentType);
-        context.setParent(new EntityParent<>(parentEntity, AgObjectId.of(parentId), relationshipFromParent));
+        context.setParent(new EntityParent<>(parentType, AgObjectId.of(parentId), relationshipFromParent));
         return this;
     }
 
     @Override
     public UpdateBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
-        AgEntity<?> parentEntity = context.service(AgSchema.class).getEntity(parentType);
-        context.setParent(new EntityParent<>(parentEntity, AgObjectId.ofMap(parentIds), relationshipFromParent));
+        context.setParent(new EntityParent<>(parentType, AgObjectId.ofMap(parentIds), relationshipFromParent));
         return this;
     }
 
     @Override
     public <A> UpdateBuilder<T> entityOverlay(AgEntityOverlay<A> overlay) {
-        context.addEntityOverlay(overlay);
+        context.getSchema().addOverlay(overlay);
         return this;
     }
 
@@ -83,6 +78,12 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
     @Override
     public UpdateBuilder<T> mapper(ObjectMapperFactory mapper) {
         context.setMapper(mapper);
+        return this;
+    }
+
+    @Override
+    public UpdateBuilder<T> maxPathDepth(int maxPathDepth) {
+        context.setMaxPathDepth(PathChecker.of(maxPathDepth));
         return this;
     }
 
@@ -122,7 +123,8 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
      */
     @Override
     public SimpleResponse sync(EntityUpdate<T> update) {
-        return sync(Collections.singleton(update));
+        Collection<EntityUpdate<T>> updates = update != null ? Collections.singleton(update) : Collections.emptyList();
+        return sync(updates);
     }
 
     /**
@@ -157,18 +159,37 @@ public class DefaultUpdateBuilder<T> implements UpdateBuilder<T> {
      */
     @Override
     public DataResponse<T> syncAndSelect(EntityUpdate<T> update) {
-        return syncAndSelect(Collections.singleton(update));
+        Collection<EntityUpdate<T>> updates = update != null ? Collections.singleton(update) : Collections.emptyList();
+        return syncAndSelect(updates);
     }
 
     private SimpleResponse doSync() {
         context.setIncludingDataInResponse(false);
         processorFactory.createProcessor(processors).execute(context);
-        return context.createSimpleResponse();
+
+        int status = context.getResponseStatus() != null ? context.getResponseStatus() : HttpStatus.OK;
+        return SimpleResponse.of(status);
     }
 
     private DataResponse<T> doSyncAndSelect() {
         context.setIncludingDataInResponse(true);
         processorFactory.createProcessor(processors).execute(context);
-        return context.createDataResponse();
+        return createDataResponse();
+    }
+
+    private DataResponse<T> createDataResponse() {
+
+        // account for partial context stats for cases with terminal stages invoked prior
+        // to those objects being created
+
+        int status = context.getResponseStatus() != null ? context.getResponseStatus() : HttpStatus.OK;
+
+        RootResourceEntity<T> entity = context.getEntity();
+        List<T> data = entity != null ? entity.getDataWindow() : Collections.emptyList();
+        int total = entity != null ? entity.getData().size() : 0;
+
+        Encoder encoder = context.getEncoder() != null ? context.getEncoder() : DataResponseEncoder.defaultEncoder();
+
+        return DataResponse.of(status, data).total(total).encoder(encoder).build();
     }
 }

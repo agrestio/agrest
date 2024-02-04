@@ -43,14 +43,7 @@ public interface UpdateBuilder<T> {
     }
 
     /**
-     * Set an explicit multi-value id for the update. In this case only a single object is allowed in the update.
-     *
-     * @since 5.0
-     */
-    UpdateBuilder<T> byId(Map<String, Object> id);
-
-    /**
-     * @deprecated since 5.0 in favor of {@link #byId(Map)}.
+     * @deprecated since 5.0 in favor of {@link #byId(Object)}.
      */
     @Deprecated
     default UpdateBuilder<T> id(Map<String, Object> id) {
@@ -168,6 +161,17 @@ public interface UpdateBuilder<T> {
     default UpdateBuilder<T> mapper(String propertyName) {
         return mapper(ByKeyObjectMapperFactory.byKey(propertyName));
     }
+
+    /**
+     * Sets the policy for the maximum depth of relationship paths, such as includes. This overrides runtime-defined
+     * policy for this one request. Depth is counted from the root of the request. Only non-negative depths are allowed.
+     * Zero depth blocks all relationships, "1" - blocks anything beyond direct relationships, and so on. Attribute
+     * paths are not counted towards depth (either root or nested).
+     *
+     * @return this builder instance
+     * @since 5.0
+     */
+    UpdateBuilder<T> maxPathDepth(int maxPathDepth);
 
     /**
      * Registers a consumer to be executed after a specified standard execution stage. The consumer can inspect and

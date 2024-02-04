@@ -50,7 +50,7 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
             throw AgException.badRequest("No ID value for path: %s", id.getName());
         }
 
-        return Exp.keyValue(id.getName(), "=", value);
+        return Exp.equal(id.getName(), value);
     }
 
     @Override
@@ -69,6 +69,6 @@ class ByIdObjectMapper<T> implements ObjectMapper<T> {
 
     @Override
     public Object keyForUpdate(EntityUpdate<T> update) {
-        return update.getId();
+        return update.getIdParts().isEmpty() ? null : update.getIdParts();
     }
 }

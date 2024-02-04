@@ -2,8 +2,11 @@ package io.agrest.runtime;
 
 import io.agrest.AgRequestBuilder;
 import io.agrest.UpdateStage;
+import io.agrest.access.PathChecker;
+import io.agrest.meta.AgSchema;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
+import io.agrest.runtime.meta.RequestSchema;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.UpdateProcessorFactory;
 import org.apache.cayenne.di.Injector;
@@ -12,14 +15,19 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class DefaultUpdateBuilderTest {
 
     private <T> DefaultUpdateBuilder<T> createBuilder(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, mock(AgRequestBuilder.class), mock(Injector.class));
+        UpdateContext<T> context = new UpdateContext<>(type,
+                new RequestSchema(mock(AgSchema.class)),
+                mock(AgRequestBuilder.class),
+                PathChecker.ofDefault(),
+                mock(Injector.class));
+
         UpdateProcessorFactory processorFactory = mock(UpdateProcessorFactory.class);
         when(processorFactory.createProcessor(any())).thenReturn(mock(Processor.class));
 
@@ -27,7 +35,7 @@ public class DefaultUpdateBuilderTest {
     }
 
     @Test
-    public void testStage_FunctionTypes() {
+    public void stage_FunctionTypes() {
 
         // note that we do not make any assertions here.. just making sure methods with certain generic signatures
         // would compile without casting...
@@ -45,7 +53,7 @@ public class DefaultUpdateBuilderTest {
     }
 
     @Test
-    public void testTerminalStage_FunctionTypes() {
+    public void terminalStage_FunctionTypes() {
 
         // note that we do not make any assertions here.. just making sure methods with certain generic signatures
         // would compile without casting...
@@ -63,7 +71,7 @@ public class DefaultUpdateBuilderTest {
     }
 
     @Test
-    public void testRoutingStage_FunctionTypes() {
+    public void routingStage_FunctionTypes() {
 
         // note that we do not make any assertions here.. just making sure methods with certain generic signatures
         // would compile without casting...

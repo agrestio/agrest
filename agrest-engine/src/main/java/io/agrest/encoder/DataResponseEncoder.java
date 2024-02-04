@@ -10,13 +10,49 @@ import java.io.IOException;
  */
 public class DataResponseEncoder implements Encoder {
 
+    private final static DataResponseEncoder instance = withElementEncoder(GenericEncoder.encoder());
+
     private final String dataProperty;
     private final Encoder dataEncoder;
 
     private final String totalProperty;
     private final Encoder totalEncoder;
 
-    public DataResponseEncoder(
+    /**
+     * @since 5.0
+     */
+    public static DataResponseEncoder defaultEncoder() {
+        return instance;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public static DataResponseEncoder withElementEncoder(Encoder elementEncoder) {
+        return new DataResponseEncoder(
+                "data",
+                new ListEncoder(elementEncoder),
+                "total",
+                GenericEncoder.encoder());
+    }
+
+    /**
+     * @since 5.0
+     */
+    public static DataResponseEncoder encoder(
+            String dataProperty,
+            Encoder dataEncoder,
+            String totalProperty,
+            Encoder totalEncoder) {
+
+        return new DataResponseEncoder(
+                dataProperty,
+                dataEncoder,
+                totalProperty,
+                totalEncoder);
+    }
+
+    protected DataResponseEncoder(
             String dataProperty,
             Encoder dataEncoder,
             String totalProperty,
@@ -29,19 +65,19 @@ public class DataResponseEncoder implements Encoder {
     }
 
     @Override
-    public void encode(String propertyName, Object object, JsonGenerator out) throws IOException {
+    public void encode(String propertyName, Object object, boolean skipNullProperties, JsonGenerator out) throws IOException {
 
         if (propertyName != null) {
             out.writeFieldName(propertyName);
         }
 
         out.writeStartObject();
-        encodeObjectBody((DataResponse<?>) object, out);
+        encodeObjectBody((DataResponse<?>) object, skipNullProperties, out);
         out.writeEndObject();
     }
 
-    protected void encodeObjectBody(DataResponse<?> response, JsonGenerator out) throws IOException {
-        dataEncoder.encode(dataProperty, response.getData(), out);
-        totalEncoder.encode(totalProperty, response.getTotal(), out);
+    protected void encodeObjectBody(DataResponse<?> response, boolean skipNullProperties, JsonGenerator out) throws IOException {
+        dataEncoder.encode(dataProperty, response.getData(), skipNullProperties, out);
+        totalEncoder.encode(totalProperty, response.getTotal(), skipNullProperties, out);
     }
 }

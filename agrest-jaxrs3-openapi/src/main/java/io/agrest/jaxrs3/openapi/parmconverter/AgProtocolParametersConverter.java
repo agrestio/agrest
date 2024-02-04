@@ -6,9 +6,11 @@ import io.swagger.v3.jaxrs2.ResolvedParameter;
 import io.swagger.v3.jaxrs2.ext.AbstractOpenAPIExtension;
 import io.swagger.v3.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.Operation;
 import jakarta.ws.rs.Consumes;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +25,12 @@ public class AgProtocolParametersConverter extends AbstractOpenAPIExtension {
 
     public AgProtocolParametersConverter() {
         this.uriInfoResolver = new UriInfoResolver();
+    }
+
+    @Override
+    public void decorateOperation(Operation operation, Method method, Iterator<OpenAPIExtension> chain) {
+        super.decorateOperation(operation, method, chain);
+        UriInfoResolver.removeDuplicatedParams(operation);
     }
 
     @Override

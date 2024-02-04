@@ -1,5 +1,6 @@
 package io.agrest.protocol.junit;
 
+import io.agrest.meta.AgAttribute;
 import io.agrest.protocol.Exp;
 import io.agrest.protocol.Sort;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -42,14 +43,17 @@ public class ControlParamsChecker {
 
     public ControlParamsChecker assertAttributes(String... expectedAttributes) {
         String expectedAsString = Arrays.stream(expectedAttributes).sorted().collect(Collectors.joining(","));
-        String actualAsString = context.getEntity().getAttributes().keySet().stream().sorted().collect(Collectors.joining(","));
+        String actualAsString = context.getEntity().getBaseProjection().getAttributes().stream()
+                .map(AgAttribute::getName)
+                .sorted()
+                .collect(Collectors.joining(","));
         assertEquals(expectedAsString, actualAsString);
         return this;
     }
 
     public ControlParamsChecker assertRelationships(String... expectedRelationships) {
         String expectedAsString = Arrays.stream(expectedRelationships).sorted().collect(Collectors.joining(","));
-        String actualAsString = context.getEntity().getChildren().keySet().stream().sorted().collect(Collectors.joining(","));
+        String actualAsString = context.getEntity().getChildren().stream().map(re -> re.getIncoming().getName()).sorted().collect(Collectors.joining(","));
         assertEquals(expectedAsString, actualAsString);
         return this;
     }

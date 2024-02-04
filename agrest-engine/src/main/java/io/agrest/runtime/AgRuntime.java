@@ -7,6 +7,9 @@ import io.agrest.SelectBuilder;
 import io.agrest.SimpleResponse;
 import io.agrest.UnrelateBuilder;
 import io.agrest.UpdateBuilder;
+import io.agrest.access.PathChecker;
+import io.agrest.meta.AgSchema;
+import io.agrest.runtime.meta.RequestSchema;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
 import io.agrest.runtime.processor.select.SelectContext;
@@ -46,6 +49,9 @@ public class AgRuntime {
     private final IdempotentFullSyncProcessorFactory idempotentFullSyncProcessorFactory;
     private final UnrelateProcessorFactory unrelateProcessorFactory;
 
+    private final AgSchema schema;
+    private final PathChecker pathChecker;
+
     /**
      * Creates and returns a default Agrest runtime
      *
@@ -78,6 +84,9 @@ public class AgRuntime {
         this.idempotentCreateOrUpdateProcessorFactory = injector.getInstance(IdempotentCreateOrUpdateProcessorFactory.class);
         this.idempotentFullSyncProcessorFactory = injector.getInstance(IdempotentFullSyncProcessorFactory.class);
         this.unrelateProcessorFactory = injector.getInstance(UnrelateProcessorFactory.class);
+
+        this.schema = injector.getInstance(AgSchema.class);
+        this.pathChecker = injector.getInstance(PathChecker.class);
     }
 
     /**
@@ -115,68 +124,56 @@ public class AgRuntime {
      * @since 5.0
      */
     public <T> SelectBuilder<T> select(Class<T> type) {
-        SelectContext<T> context = new SelectContext<>(type, requestBuilderFactory.builder(), injector);
-        return toSelectBuilder(context);
-    }
-
-    private <T> SelectBuilder<T> toSelectBuilder(SelectContext<T> context) {
-        return new DefaultSelectBuilder<>(context, selectProcessorFactory);
+        return new DefaultSelectBuilder<>(createSelectContext(type), selectProcessorFactory);
     }
 
     /**
      * @since 5.0
      */
     public <T> UpdateBuilder<T> create(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), injector);
-        return new DefaultUpdateBuilder<>(context, createProcessorFactory);
+        return new DefaultUpdateBuilder<>(createUpdateContext(type), createProcessorFactory);
     }
 
     /**
      * @since 5.0
      */
     public <T> UpdateBuilder<T> createOrUpdate(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), injector);
-        return new DefaultUpdateBuilder<>(context, createOrUpdateProcessorFactory);
+        return new DefaultUpdateBuilder<>(createUpdateContext(type), createOrUpdateProcessorFactory);
     }
 
     /**
      * @since 5.0
      */
     public <T> UpdateBuilder<T> idempotentCreateOrUpdate(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), injector);
-        return new DefaultUpdateBuilder<>(context, idempotentCreateOrUpdateProcessorFactory);
+        return new DefaultUpdateBuilder<>(createUpdateContext(type), idempotentCreateOrUpdateProcessorFactory);
     }
 
     /**
      * @since 5.0
      */
     public <T> UpdateBuilder<T> idempotentFullSync(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), injector);
-        return new DefaultUpdateBuilder<>(context, idempotentFullSyncProcessorFactory);
+        return new DefaultUpdateBuilder<>(createUpdateContext(type), idempotentFullSyncProcessorFactory);
     }
 
     /**
      * @since 5.0
      */
     public <T> UpdateBuilder<T> update(Class<T> type) {
-        UpdateContext<T> context = new UpdateContext<>(type, requestBuilderFactory.builder(), injector);
-        return new DefaultUpdateBuilder<>(context, updateProcessorFactory);
+        return new DefaultUpdateBuilder<>(createUpdateContext(type), updateProcessorFactory);
     }
 
     /**
      * @since 5.0
      */
     public <T> UnrelateBuilder<T> unrelate(Class<T> type) {
-        UnrelateContext<T> context = new UnrelateContext<>(type, injector);
-        return new DefaultUnrelateBuilder<>(context, unrelateProcessorFactory);
+        return new DefaultUnrelateBuilder<>(createUnrelateContext(type), unrelateProcessorFactory);
     }
 
     /**
      * @since 5.0
      */
     public <T> DeleteBuilder<T> delete(Class<T> type) {
-        DeleteContext<T> context = new DeleteContext<>(type, injector);
-        return new DefaultDeleteBuilder<>(context, deleteProcessorFactory);
+        return new DefaultDeleteBuilder<>(createDeleteContext(type), deleteProcessorFactory);
     }
 
     /**
@@ -186,7 +183,33 @@ public class AgRuntime {
     @Deprecated
     public <T> SimpleResponse delete(Class<T> root, Collection<EntityDelete<T>> deleted) {
         DeleteBuilder<T> builder = delete(root);
-        deleted.forEach(entityDelete -> builder.id(entityDelete.getId()));
+        deleted.forEach(entityDelete -> builder.byId(entityDelete.getId()));
         return builder.sync();
+    }
+
+    private <T> SelectContext<T> createSelectContext(Class<T> type) {
+        return new SelectContext<>(
+                type,
+                new RequestSchema(schema),
+                request(),
+                pathChecker,
+                injector);
+    }
+
+    private <T> UpdateContext<T> createUpdateContext(Class<T> type) {
+        return new UpdateContext<>(
+                type,
+                new RequestSchema(schema),
+                request(),
+                pathChecker,
+                injector);
+    }
+
+    private <T> UnrelateContext<T> createUnrelateContext(Class<T> type) {
+        return new UnrelateContext<>(type, schema, injector);
+    }
+
+    private <T> DeleteContext<T> createDeleteContext(Class<T> type) {
+        return new DeleteContext<>(type, new RequestSchema(schema), injector);
     }
 }

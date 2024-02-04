@@ -2,19 +2,20 @@ package io.agrest.meta;
 
 import io.agrest.access.CreateAuthorizer;
 import io.agrest.access.DeleteAuthorizer;
+import io.agrest.access.PropertyFilter;
+import io.agrest.access.PropertyFilteringRulesBuilder;
 import io.agrest.access.ReadFilter;
 import io.agrest.access.UpdateAuthorizer;
-import io.agrest.access.PropertyFilteringRulesBuilder;
-import io.agrest.access.PropertyFilter;
 import io.agrest.reader.DataReader;
 import io.agrest.resolver.BaseRootDataResolver;
+import io.agrest.resolver.ReaderBasedResolver;
 import io.agrest.resolver.RelatedDataResolver;
 import io.agrest.resolver.RelatedDataResolverFactory;
-import io.agrest.resolver.ReaderBasedResolver;
 import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.RootDataResolverFactory;
 import io.agrest.runtime.processor.select.SelectContext;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,8 @@ public class AgEntityOverlay<T> {
 
     private PropertyFilter readablePropFilter;
     private PropertyFilter writablePropFilter;
+
+    private boolean ignoreSuperReadFilter;
 
     private boolean ignoreOverlaidReadFilter;
     private boolean ignoreOverlaidCreateAuthorizer;
@@ -74,18 +77,13 @@ public class AgEntityOverlay<T> {
     /**
      * Resolves entity overlay to an entity.
      *
-     * @since 4.8
+     * @since 5.0
      */
-    public AgEntity<T> resolve(AgSchema schema, AgEntity<T> maybeOverlaid) {
+    public AgEntity<T> resolve(AgSchema schema, AgEntity<T> toOverlay, Collection<AgEntity<? extends T>> overlaidSubEntities) {
 
-        // TODO: support null entity like we do for overlaid Attributes and Relationships?
-        Objects.requireNonNull(maybeOverlaid);
+        Objects.requireNonNull(toOverlay);
 
-        if (isEmpty()) {
-            return maybeOverlaid;
-        }
-
-        AgEntityOverlayResolver resolver = new AgEntityOverlayResolver(schema, maybeOverlaid);
+        AgEntityOverlayResolver resolver = new AgEntityOverlayResolver(schema, toOverlay);
 
         getAttributeOverlays().forEach(resolver::loadAttributeOverlay);
         getRelationshipOverlays().forEach(resolver::loadRelationshipOverlay);
@@ -93,38 +91,40 @@ public class AgEntityOverlay<T> {
         if (readablePropFilter != null) {
             PropertyFilteringRulesBuilder pa = new PropertyFilteringRulesBuilder();
             readablePropFilter.apply(pa);
-            pa.resolveInaccessible(maybeOverlaid, this).forEach(resolver::setReadAccess);
+            pa.resolveInaccessible(toOverlay, this).forEach(resolver::setReadAccess);
         }
 
         if (writablePropFilter != null) {
             PropertyFilteringRulesBuilder pa = new PropertyFilteringRulesBuilder();
             writablePropFilter.apply(pa);
-            pa.resolveInaccessible(maybeOverlaid, this).forEach(resolver::setWriteAccess);
+            pa.resolveInaccessible(toOverlay, this).forEach(resolver::setWriteAccess);
         }
 
         ReadFilter<T> readFilter = ignoreOverlaidReadFilter
                 ? this.readFilter
-                : maybeOverlaid.getReadFilter().andThen(this.readFilter);
+                : toOverlay.getReadFilter().andThen(this.readFilter);
 
         CreateAuthorizer<T> createAuthorizer = ignoreOverlaidCreateAuthorizer
                 ? this.createAuthorizer
-                : maybeOverlaid.getCreateAuthorizer().andThen(this.createAuthorizer);
+                : toOverlay.getCreateAuthorizer().andThen(this.createAuthorizer);
 
         UpdateAuthorizer<T> updateAuthorizer = ignoreOverlaidUpdateAuthorizer
                 ? this.updateAuthorizer
-                : maybeOverlaid.getUpdateAuthorizer().andThen(this.updateAuthorizer);
+                : toOverlay.getUpdateAuthorizer().andThen(this.updateAuthorizer);
 
         DeleteAuthorizer<T> deleteAuthorizer = ignoreOverlaidDeleteAuthorizer
                 ? this.deleteAuthorizer
-                : maybeOverlaid.getDeleteAuthorizer().andThen(this.deleteAuthorizer);
+                : toOverlay.getDeleteAuthorizer().andThen(this.deleteAuthorizer);
 
         return new DefaultEntity<>(
-                maybeOverlaid.getName(),
+                toOverlay.getName(),
                 type,
+                toOverlay.isAbstract(),
+                overlaidSubEntities,
                 resolver.ids,
                 resolver.attributes,
                 resolver.relationships,
-                rootDataResolver != null ? rootDataResolver : maybeOverlaid.getDataResolver(),
+                rootDataResolver != null ? rootDataResolver : toOverlay.getDataResolver(),
                 readFilter,
                 createAuthorizer,
                 updateAuthorizer,
@@ -132,16 +132,44 @@ public class AgEntityOverlay<T> {
         );
     }
 
-    private boolean isEmpty() {
+    public boolean isEmpty() {
         return rootDataResolver == null
                 && attributes.isEmpty()
                 && relationships.isEmpty()
                 && readablePropFilter == null
                 && writablePropFilter == null
-                && !ignoreOverlaidReadFilter && readFilter.allowsAll()
+                && !ignoreSuperReadFilter && !ignoreOverlaidReadFilter && readFilter.allowsAll()
                 && !ignoreOverlaidCreateAuthorizer && createAuthorizer.allowsAll()
                 && !ignoreOverlaidUpdateAuthorizer && updateAuthorizer.allowsAll()
                 && !ignoreOverlaidDeleteAuthorizer && deleteAuthorizer.allowsAll();
+    }
+
+    /**
+     * @since 5.0
+     */
+    public <S extends T> AgEntityOverlay<S> clone(Class<S> toType) {
+        AgEntityOverlay<S> clone = new AgEntityOverlay<>(toType);
+
+        clone.rootDataResolver = (RootDataResolver<S>) this.rootDataResolver;
+        clone.attributes.putAll(this.attributes);
+        clone.relationships.putAll(this.relationships);
+        clone.readablePropFilter = this.readablePropFilter;
+        clone.writablePropFilter = this.writablePropFilter;
+
+        clone.ignoreSuperReadFilter = this.ignoreSuperReadFilter;
+        clone.ignoreOverlaidReadFilter = this.ignoreOverlaidReadFilter;
+        clone.readFilter = (ReadFilter<S>) this.readFilter;
+
+        clone.ignoreOverlaidCreateAuthorizer = this.ignoreOverlaidCreateAuthorizer;
+        clone.createAuthorizer = (CreateAuthorizer<S>) this.createAuthorizer;
+
+        clone.ignoreOverlaidUpdateAuthorizer = this.ignoreOverlaidUpdateAuthorizer;
+        clone.updateAuthorizer = (UpdateAuthorizer<S>) this.updateAuthorizer;
+
+        clone.ignoreOverlaidDeleteAuthorizer = this.ignoreOverlaidDeleteAuthorizer;
+        clone.deleteAuthorizer = (DeleteAuthorizer<S>) this.deleteAuthorizer;
+
+        return clone;
     }
 
     /**
@@ -152,6 +180,49 @@ public class AgEntityOverlay<T> {
      * @since 2.10
      */
     public AgEntityOverlay<T> merge(AgEntityOverlay<T> anotherOverlay) {
+        mergeNoObjectFilters(anotherOverlay);
+
+        // When merging filters/authorizers, "ignores" are themselves ignored, and will only have effect on the underlying entity.
+        // This allows to combine multiple overlays in the same scope (e.g. request or AgRuntimeBuilder) without them
+        // messing up each other, and only override things between the scopes
+
+        this.readFilter = this.readFilter.andThen(anotherOverlay.readFilter);
+        this.createAuthorizer = this.createAuthorizer.andThen(anotherOverlay.createAuthorizer);
+        this.updateAuthorizer = this.updateAuthorizer.andThen(anotherOverlay.updateAuthorizer);
+        this.deleteAuthorizer = this.deleteAuthorizer.andThen(anotherOverlay.deleteAuthorizer);
+
+        return this;
+    }
+
+    /**
+     * Combines this overlay with the super-entity overlay.
+     *
+     * @since 5.0
+     */
+    public AgEntityOverlay<T> mergeSuper(AgEntityOverlay<? super T> superOverlay) {
+
+        if (superOverlay == null) {
+            return this;
+        }
+
+        AgEntityOverlay<T> mergedTarget = superOverlay.clone(getType());
+        mergedTarget.mergeNoObjectFilters(this);
+
+        // When merging filters/authorizers, "ignores" are themselves ignored, and will only have effect on the underlying entity.
+        // This allows to combine multiple overlays in the same scope (e.g. request or AgRuntimeBuilder) without them
+        // messing up each other, and only override things between the scopes
+
+        mergedTarget.readFilter = this.ignoreSuperReadFilter ? this.readFilter : mergedTarget.readFilter.andThen(this.readFilter);
+
+        // TODO: "ignoreSuper*" properties similar to "ignoreSuperReadFilter"
+        mergedTarget.createAuthorizer = mergedTarget.createAuthorizer.andThen(this.createAuthorizer);
+        mergedTarget.updateAuthorizer = mergedTarget.updateAuthorizer.andThen(this.updateAuthorizer);
+        mergedTarget.deleteAuthorizer = mergedTarget.deleteAuthorizer.andThen(this.deleteAuthorizer);
+
+        return mergedTarget;
+    }
+
+    private void mergeNoObjectFilters(AgEntityOverlay<T> anotherOverlay) {
         attributes.putAll(anotherOverlay.attributes);
         relationships.putAll(anotherOverlay.relationships);
 
@@ -168,21 +239,12 @@ public class AgEntityOverlay<T> {
         }
 
         // When merging "ignores", a "true" on either side of the merge results in "true" in the merged version
+        this.ignoreSuperReadFilter = anotherOverlay.ignoreSuperReadFilter || this.ignoreSuperReadFilter;
+
         this.ignoreOverlaidReadFilter = anotherOverlay.ignoreOverlaidReadFilter || this.ignoreOverlaidReadFilter;
         this.ignoreOverlaidCreateAuthorizer = anotherOverlay.ignoreOverlaidCreateAuthorizer || this.ignoreOverlaidCreateAuthorizer;
         this.ignoreOverlaidUpdateAuthorizer = anotherOverlay.ignoreOverlaidUpdateAuthorizer || this.ignoreOverlaidUpdateAuthorizer;
         this.ignoreOverlaidDeleteAuthorizer = anotherOverlay.ignoreOverlaidDeleteAuthorizer || this.ignoreOverlaidDeleteAuthorizer;
-
-        // When merging filters/authorizers, "ignores" are themselves ignored, and will only have effect on the underlying entity.
-        // This allows to combine multiple overlays in the same scope (e.g. request or AgRuntimeBuilder) without them
-        // messing up each other, and only override things between the scopes
-
-        this.readFilter = this.readFilter.andThen(anotherOverlay.readFilter);
-        this.createAuthorizer = this.createAuthorizer.andThen(anotherOverlay.createAuthorizer);
-        this.updateAuthorizer = this.updateAuthorizer.andThen(anotherOverlay.updateAuthorizer);
-        this.deleteAuthorizer = this.deleteAuthorizer.andThen(anotherOverlay.deleteAuthorizer);
-
-        return this;
     }
 
     public Class<T> getType() {
@@ -241,6 +303,14 @@ public class AgEntityOverlay<T> {
      */
     public AgEntityOverlay<T> writablePropFilter(PropertyFilter filter) {
         this.writablePropFilter = writablePropFilter != null ? writablePropFilter.andThen(filter) : filter;
+        return this;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public AgEntityOverlay<T> ignoreSuperReadFilter() {
+        this.ignoreSuperReadFilter = true;
         return this;
     }
 
@@ -381,8 +451,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toOne(String, Class, RelatedDataResolverFactory)}
+     * @deprecated in favor of {@link #toOne(String, Class, RelatedDataResolverFactory)}
      */
+    @Deprecated(since = "5.0")
     public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, RelatedDataResolverFactory resolverFactory) {
         return toOne(name, targetType, resolverFactory);
     }
@@ -597,5 +668,10 @@ public class AgEntityOverlay<T> {
             }
         };
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "AgEntityOverlay[" + type.getSimpleName() + "]";
     }
 }

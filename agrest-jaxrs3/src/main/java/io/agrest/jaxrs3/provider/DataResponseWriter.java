@@ -2,6 +2,7 @@ package io.agrest.jaxrs3.provider;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.agrest.DataResponse;
+import io.agrest.encoder.EncodingPolicy;
 import io.agrest.jaxrs3.AgJaxrs;
 import io.agrest.runtime.jackson.IJacksonService;
 import jakarta.ws.rs.core.Configuration;
@@ -19,15 +20,16 @@ import java.lang.reflect.Type;
 @Provider
 public class DataResponseWriter implements MessageBodyWriter<DataResponse<?>> {
 
+    @Context
+    private Configuration config;
+
+    private IJacksonService jacksonService;
+    private EncodingPolicy encodingPolicy;
+
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return DataResponse.class.isAssignableFrom(type);
     }
-
-    private IJacksonService jacksonService;
-
-    @Context
-    private Configuration config;
 
     @Override
     public long getSize(
@@ -50,18 +52,32 @@ public class DataResponseWriter implements MessageBodyWriter<DataResponse<?>> {
             OutputStream entityStream)
             throws IOException {
 
-        getJacksonService().outputJson(out -> writeData(t, out), entityStream);
+        switch (t.getStatus()) {
+            case 304:
+                return;
+            default:
+                boolean skipNullProperties = getEncodingPolicy().skipNullProperties();
+                getJacksonService().outputJson(out -> writeData(t, skipNullProperties, out), entityStream);
+        }
     }
 
     private IJacksonService getJacksonService() {
         if (jacksonService == null) {
-            jacksonService = AgJaxrs.runtime(config).service(IJacksonService.class);;
+            jacksonService = AgJaxrs.runtime(config).service(IJacksonService.class);
         }
 
         return jacksonService;
     }
 
-    protected void writeData(DataResponse<?> t, JsonGenerator out) throws IOException {
-        t.getEncoder().encode(null, t, out);
+    private EncodingPolicy getEncodingPolicy() {
+        if (encodingPolicy == null) {
+            encodingPolicy = AgJaxrs.runtime(config).service(EncodingPolicy.class);
+        }
+
+        return encodingPolicy;
+    }
+
+    protected void writeData(DataResponse<?> t, boolean skipNullProperties, JsonGenerator out) throws IOException {
+        t.getEncoder().encode(null, t, skipNullProperties, out);
     }
 }

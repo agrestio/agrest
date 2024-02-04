@@ -22,7 +22,7 @@ public class ControlParams_v11_Test {
             .build();
 
     @Test
-    public void testSort_SortPathAndDir() {
+    public void sort_SortPathAndDir() {
         ControlParamsTester.test(Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("dir", "DESC")
@@ -31,7 +31,7 @@ public class ControlParams_v11_Test {
     }
 
     @Test
-    public void testSort_Object() {
+    public void sort_Object() {
         ControlParamsTester.test(Pojo.class, tester.runtime())
                 .param("sort", "{\"property\":\"name\",\"direction\":\"ASC_CI\"}")
                 .parseRequest()

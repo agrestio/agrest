@@ -1,26 +1,29 @@
 package io.agrest.jaxrs2.openapi.modelconverter;
 
-import io.agrest.PathConstants;
 import io.agrest.jaxrs2.openapi.TypeWrapper;
-import io.agrest.meta.*;
+import io.agrest.meta.AgAttribute;
+import io.agrest.meta.AgEntity;
+import io.agrest.meta.AgRelationship;
+import io.agrest.meta.AgSchema;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
-import io.swagger.v3.core.util.PrimitiveType;
-import io.swagger.v3.core.util.RefUtils;
-import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Provides OpenAPI Schema conversions for Agrest entity objects
  */
-public class AgEntityModelConverter extends AgModelConverter {
+public class AgEntityModelConverter extends AgEntityAwareModelConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AgEntityModelConverter.class);
 
@@ -56,53 +59,29 @@ public class AgEntityModelConverter extends AgModelConverter {
 
         LOGGER.debug("resolve AgEntity ({}}", wrapped);
 
-        AgEntity<?> agEntity = schema.getEntity(wrapped.getRawClass());
-        String name = agEntity.getName();
+        AgEntity<?> entity = schema.getEntity(wrapped.getRawClass());
+        String name = entity.getName();
 
-        // ensure stable property ordering
-        Map<String, Schema> properties = new LinkedHashMap<>();
+        List<Map.Entry<String, Schema>> entries = new ArrayList<>();
+        PropertyAccessChecker accessChecker = PropertyAccessChecker.checkRead();
 
-        // TODO: multi-key ids must be exposed as maps
-        if (agEntity.getIdParts().size() == 1) {
-            AgIdPart id = agEntity.getIdParts().iterator().next();
-            properties.put(PathConstants.ID_PK_ATTRIBUTE, doResolveValue(id.getType(), context));
+        for (AgAttribute a : entity.getAttributes()) {
+            Schema aSchema = doResolveAttribute(a, context, accessChecker);
+            if (aSchema != null) {
+                entries.add(Map.entry(a.getName(), aSchema));
+            }
         }
 
-        List<AgAttribute> sortedAttributes = new ArrayList<>(agEntity.getAttributes());
-        sortedAttributes.sort(Comparator.comparing(AgAttribute::getName));
-        for (AgAttribute a : sortedAttributes) {
-            properties.put(a.getName(), doResolveValue(a.getType(), context));
+        for (AgRelationship r : entity.getRelationships()) {
+            Schema relSchema = doResolveRelationship(r, context, accessChecker);
+            if (relSchema != null) {
+                entries.add(Map.entry(r.getName(), relSchema));
+            }
         }
 
-        List<AgRelationship> sortedRelationships = new ArrayList<>(agEntity.getRelationships());
-        sortedRelationships.sort(Comparator.comparing(AgRelationship::getName));
-        for (AgRelationship r : sortedRelationships) {
-            properties.put(r.getName(), doResolveRelationship(r, context));
-        }
-
+        Map<String, Schema> properties = doCollectProperties(doResolveId(entity, context, accessChecker), entries);
         Schema<?> schema = new ObjectSchema().name(name).properties(properties);
         return onSchemaResolved(type, context, schema);
-    }
-
-    protected Schema doResolveValue(Class<?> type, ModelConverterContext context) {
-        Schema primitive = PrimitiveType.createProperty(type);
-        return primitive != null
-                ? primitive
-                : context.resolve(new AnnotatedType().type(type));
-    }
-
-    protected Schema doResolveRelationship(AgRelationship relationship, ModelConverterContext context) {
-
-        AgEntity<?> targetEntity = relationship.getTargetEntity();
-
-        // ensure related entity and any other entities reachable from it are resolved
-        context.resolve(new AnnotatedType().type(targetEntity.getType()));
-
-        // link to resolved entity
-        Schema relatedSchemaRef = new Schema().$ref(RefUtils.constructRef(targetEntity.getName()));
-        return relationship.isToMany()
-                ? new ArraySchema().items(relatedSchemaRef)
-                : relatedSchemaRef;
     }
 
     // implementing equals/hashCode to be able to detect previously installed converters in the static context

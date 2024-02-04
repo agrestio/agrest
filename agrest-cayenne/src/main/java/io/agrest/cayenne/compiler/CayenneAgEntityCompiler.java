@@ -29,14 +29,14 @@ public class CayenneAgEntityCompiler implements AgEntityCompiler {
     private static final Logger LOGGER = LoggerFactory.getLogger(CayenneAgEntityCompiler.class);
 
     private final EntityResolver cayenneEntityResolver;
-    private final Map<String, AgEntityOverlay> entityOverlays;
+    private final Map<String, AgEntityOverlay<?>> entityOverlays;
     private final RootDataResolver<?> defaultRootResolver;
     private final RelatedDataResolver<?> defaultRelatedDataResolver;
 
     public CayenneAgEntityCompiler(
             @Inject ICayennePersister cayennePersister,
             @Inject ICayenneQueryAssembler queryAssembler,
-            @Inject Map<String, AgEntityOverlay> entityOverlays) {
+            @Inject Map<String, AgEntityOverlay<?>> entityOverlays) {
 
         this.cayenneEntityResolver = cayennePersister.entityResolver();
         this.entityOverlays = entityOverlays;
@@ -73,10 +73,11 @@ public class CayenneAgEntityCompiler implements AgEntityCompiler {
 
     private <T> AgEntity<T> doCompile(Class<T> type, AgSchema schema) {
         LOGGER.debug("compiling Cayenne entity for type: {}", type);
+
         return new CayenneAgEntityBuilder<>(type, schema, cayenneEntityResolver)
-                .overlay(entityOverlays.get(type.getName()))
-                .dataResolver(defaultRootResolver)
-                .relatedDataResolver(defaultRelatedDataResolver)
+                .overlays(entityOverlays)
+                .dataResolver((RootDataResolver<T>) defaultRootResolver)
+                .relatedDataResolver((RelatedDataResolver<T>) defaultRelatedDataResolver)
                 .build();
     }
 }

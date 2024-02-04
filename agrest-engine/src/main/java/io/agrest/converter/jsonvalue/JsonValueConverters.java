@@ -1,8 +1,8 @@
 package io.agrest.converter.jsonvalue;
 
-import io.agrest.reflect.Types;
 import io.agrest.reflect.BeanAnalyzer;
 import io.agrest.reflect.PropertySetter;
+import io.agrest.reflect.Types;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

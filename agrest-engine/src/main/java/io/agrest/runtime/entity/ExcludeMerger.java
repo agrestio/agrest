@@ -56,11 +56,11 @@ public class ExcludeMerger implements IExcludeMerger {
 
     private boolean exclude(ResourceEntity<?> entity, String name) {
 
-        if (entity.removeAttribute(name) != null) {
+        if (entity.removeAttribute(name)) {
             return true;
         }
 
-        if (entity.removeChild(name) != null) {
+        if (entity.removeChild(name)) {
             return true;
         }
 

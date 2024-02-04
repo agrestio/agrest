@@ -1,23 +1,31 @@
 package io.agrest.jaxrs2.openapi.modelconverter;
 
-import io.agrest.*;
+import io.agrest.AgException;
+import io.agrest.DataResponse;
+import io.agrest.EntityUpdate;
+import io.agrest.SimpleResponse;
 import io.agrest.jaxrs2.openapi.TypeWrapper;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgIdPart;
+import io.agrest.meta.AgRelationship;
+import io.agrest.meta.AgSchema;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
-import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.RefUtils;
-import io.swagger.v3.oas.models.media.*;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.ObjectSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -26,7 +34,7 @@ import static java.util.Arrays.asList;
 /**
  * Provides OpenAPI Schema conversions for Agrest protocol objects. The object is stateless singleton.
  */
-public class AgProtocolModelConverter extends AgModelConverter {
+public class AgProtocolModelConverter extends AgEntityAwareModelConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AgProtocolModelConverter.class);
     private final static String BASE_AG_PACKAGE = AgException.class.getPackage().getName();
@@ -143,35 +151,29 @@ public class AgProtocolModelConverter extends AgModelConverter {
     protected Schema resolveAsParameterizedEntityUpdate(AnnotatedType type, ModelConverterContext context, TypeWrapper wrapped) {
 
         TypeWrapper entityType = wrapped.containedType(0);
-        AgEntity<?> agEntity = schema.getEntity(entityType.getRawClass());
-        String name = "EntityUpdate(" + agEntity.getName() + ")";
-        Map<String, Schema> properties = new HashMap<>();
+        AgEntity<?> entity = schema.getEntity(entityType.getRawClass());
+        String name = "EntityUpdate(" + entity.getName() + ")";
 
-        // TODO: multi-key ids must be exposed as maps
-        if (agEntity.getIdParts().size() == 1) {
-            AgIdPart id = agEntity.getIdParts().iterator().next();
-            properties.put(PathConstants.ID_PK_ATTRIBUTE, doResolveValue(
-                    PathConstants.ID_PK_ATTRIBUTE,
-                    id.getType(),
-                    context));
+        List<Map.Entry<String, Schema>> entries = new ArrayList<>();
+        PropertyAccessChecker accessChecker = PropertyAccessChecker.checkWrite();
+
+        for (AgAttribute a : entity.getAttributes()) {
+            Schema aSchema = doResolveAttribute(a, context, accessChecker);
+            if (aSchema != null) {
+                entries.add(Map.entry(a.getName(), aSchema));
+            }
         }
 
-        for (AgAttribute a : agEntity.getAttributes()) {
-            properties.put(a.getName(), doResolveValue(a.getName(), a.getType(), context));
+        for (AgRelationship r : entity.getRelationships()) {
+            Schema relIdSchema = doResolveRelationshipRef(r, context, accessChecker);
+            if (relIdSchema != null) {
+                entries.add(Map.entry(r.getName(), relIdSchema));
+            }
         }
 
-        // TODO: include FKs of to-one and to many ids collections
-
+        Map<String, Schema> properties = doCollectProperties(doResolveId(entity, context, accessChecker), entries);
         Schema<?> schema = new ObjectSchema().name(name).properties(properties);
         return onSchemaResolved(type, context, schema);
-    }
-
-    // TODO: duplicate of a method in AgEntityModelConverter
-    protected Schema doResolveValue(String name, Class<?> type, ModelConverterContext context) {
-        Schema primitive = PrimitiveType.createProperty(type);
-        return primitive != null
-                ? primitive
-                : context.resolve(new AnnotatedType().type(type));
     }
 
     @Override

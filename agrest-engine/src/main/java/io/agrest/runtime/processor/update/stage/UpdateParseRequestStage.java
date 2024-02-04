@@ -6,7 +6,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.update.UpdateContext;
-import io.agrest.runtime.protocol.IEntityUpdateParser;
+import io.agrest.runtime.protocol.IUpdateRequestParser;
 import org.apache.cayenne.di.Inject;
 
 import java.util.Collection;
@@ -17,9 +17,9 @@ import java.util.Collection;
 public class UpdateParseRequestStage implements Processor<UpdateContext<?>> {
 
     private AgSchema schema;
-    private IEntityUpdateParser updateParser;
+    private IUpdateRequestParser updateParser;
 
-    public UpdateParseRequestStage(@Inject AgSchema schema, @Inject IEntityUpdateParser updateParser) {
+    public UpdateParseRequestStage(@Inject AgSchema schema, @Inject IUpdateRequestParser updateParser) {
         this.updateParser = updateParser;
         this.schema = schema;
     }

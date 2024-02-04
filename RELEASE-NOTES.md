@@ -1,6 +1,94 @@
+## Release 5.0-M20
+
+* #651 Exp: numeric scalars to support "_"
+* #655 Exp syntax: deprecate case-insensitivity of NULL and booleans
+* #658 DeleteBuilder: byIds(..), byMultiIds(..)
+* #659 Idempotent DELETE by ids, optimizing performance
+* #660 Builders: auto-detect multi-column IDs
+* #662 Update expression parser with JavaCC 7.0.13
+
+## Release 5.0.M19
+
+* #648 NPE in CayenneExpParser for a combination of null and positional parameter
+* #649 AgExpression internal cleanup
+
+## Release 5.0.M18
+
+* #602 Expressions - immutable parameter binding
+* #603 Expressions: compact and/or chains
+* #638 EntityUpdate.getToMany(String) should return null if the key is not a part of update
+* #640 DataResponse<T> to support "304 Not Modified"
+* #641 Cayenne IPathResolver may get "poisoned" by per-request overlayed AgEntities
+* #642 TokenMgrException is not handled by Agrest
+* #643 Static factory methods in Exp for conditions
+* #646 org.apache.cayenne.exp.ExpressionException: [v.4.2 May 16 2023 08:31:12] In: invalid parent - Equal
+ 
+## Release 5.0.M17
+
+* #630 POST/PUT breaks for Short and BigInteger types
+* #631 POST/PUT - can't update multi-key relationships
+* #632 POST/PUT gets confused when relationship is passed as object
+* #633 Optimize and clean up update parser
+* #634 Recursive EntityUpdate parser
+* #635 Write constraint only applied to "id" in the path, but not in the body
+* #636 Clean up the API of EntityUpdate
+
+## Release 5.0.M16
+
+* #601 Exp.keyValue() only works with a narrow range of value types
+* #621 Problem with timestamp formatting
+* #622 Upgrade Jackson to 2.14.2 
+* #624 Optimization: "relatedViaQueryWithParentIds" strategy when limit is involved
+* #629 Upgrade to Cayenne 4.2 GA
+
+## Release 5.0.M15
+
+* #614 Improve support for Java records as Agrest entities
+* #618 Expand the definition of "getter" and "setter"
+* #619 Swagger: do not expose UriInfo unless annotated with @Parameter
+
+## Release 5.0.M14
+
+* #613 Exception on include when entity id is unreadable
+* #615 Swagger: ignore UriInfo if @Parameter(hidden=true) is set
+* #616 Swagger: duplicate param properties
+* #617 Proper handling of ObjectId annotated with @AgId
+
+## Release 5.0.M13
+
+* #607 OpenAPI docs for EntityUpdate should include relationships
+* #610 OpenAPI descriptors should be able to resolve multi-column AgId
+* #611 OpenAPI: properties must be sorted in same order as responses
+* #612 OpenAPI descriptors - exclude inaccessible properties
+
+## Release 5.0.M12
+
+* #606 Jackson upgrade, dependency management
+* #608 "Path exceeds the max allowed depth" exception for attribute sort and 0 depth
+* #609 EntityUpdate-style endpoints behave differently from String and List<EntityUpdate>
+
+## Release 5.0.M11
+
+* #604 Allow to exclude null properties in responses
+* #605 Hide deprecated protocol keys from OpenAPI descriptors
+
+## Release 5.0.M10
+
+* #582 AgRest own full-featured expression parser
+* #594 Support for escape char in "like" expressions
+* #597 Upgrade Cayenne to 4.2.RC2
+* #598 Max path depth for "Include"
+* #600 Max path depth for "mapBy", "sort"
+
+## Release 5.0.M9
+
+* #590 Can't use inherited relationships in includes
+
 ## Release 5.0.M8
-* 
+ 
 * #583 Upgrade jackson-databind to 2.13.4.2
+* #584 GET - Inheritance support - Cayenne backend
+* #587 Inheritance-aware AgEntityOverlay
 
 ## Release 5.0.M7
 

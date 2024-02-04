@@ -3,25 +3,24 @@ package io.agrest.runtime.entity;
 import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
+import io.agrest.access.PathChecker;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
-import io.agrest.protocol.Include;
 import io.agrest.compiler.AgEntityCompiler;
 import io.agrest.compiler.AnnotationsAgEntityCompiler;
-import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgEntityOverlay;
+import io.agrest.meta.AgSchema;
 import io.agrest.meta.LazySchema;
+import io.agrest.protocol.Include;
 import io.agrest.resolver.ThrowingRelatedDataResolver;
+import io.agrest.runtime.meta.RequestSchema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,49 +38,49 @@ public class IncludeMergerTest {
 
         IExpMerger expMerger = new ExpMerger();
         ISortMerger sortMerger = new SortMerger();
-        IMapByMerger mapByMerger = new MapByMerger(schema);
+        IMapByMerger mapByMerger = new MapByMerger();
         ISizeMerger sizeMerger = new SizeMerger();
-        this.includeMerger = new IncludeMerger(schema, expMerger, sortMerger, mapByMerger, sizeMerger);
+        this.includeMerger = new IncludeMerger(expMerger, sortMerger, mapByMerger, sizeMerger);
     }
 
     @Test
-    public void testMergeNothing() {
+    public void mergeNothing() {
 
         AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
-        includeMerger.merge(root, asList(), Collections.emptyMap());
+        includeMerger.merge(root, asList(), new RequestSchema(schema), PathChecker.ofDefault());
 
-        assertEquals(entity.getAttributes().size(), root.getAttributes().size());
+        assertEquals(entity.getAttributes().size(), root.getBaseProjection().getAttributes().size());
         assertTrue(root.isIdIncluded());
         assertEquals(0, root.getChildren().size());
     }
 
     @Test
-    public void testMergeAttributes() {
+    public void mergeAttributes() {
 
         AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
-        includeMerger.merge(root, asList(new Include("name")), Collections.emptyMap());
+        includeMerger.merge(root, asList(new Include("name")), new RequestSchema(schema), PathChecker.ofDefault());
 
-        assertEquals(1, root.getAttributes().size());
+        assertEquals(1, root.getBaseProjection().getAttributes().size());
         assertFalse(root.isIdIncluded());
         assertEquals(0, root.getChildren().size());
     }
 
     @Test
-    public void testMergeAttributesAndRelationships() {
+    public void mergeAttributesAndRelationships() {
 
         AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
-        includeMerger.merge(root, asList(new Include("name"), new Include("ys")), Collections.emptyMap());
+        includeMerger.merge(root, asList(new Include("name"), new Include("ys")), new RequestSchema(schema), PathChecker.ofDefault());
 
-        assertEquals(1, root.getAttributes().size());
+        assertEquals(1, root.getBaseProjection().getAttributes().size());
         assertFalse(root.isIdIncluded());
         assertEquals(1, root.getChildren().size());
     }
 
     @Test
-    public void testMerge_AttributesAndRelationships_OverlappedPath() {
+    public void merge_AttributesAndRelationships_OverlappedPath() {
 
         AgEntity<X> entity = schema.getEntity(X.class);
         ResourceEntity<X> root = new RootResourceEntity<>(entity);
@@ -89,60 +88,57 @@ public class IncludeMergerTest {
                 new Include("name"),
                 new Include("ys.name"),
                 new Include("ys.z")
-        ), Collections.emptyMap());
+        ), new RequestSchema(schema), PathChecker.ofDefault());
 
-        assertEquals(1, root.getAttributes().size());
+        assertEquals(1, root.getBaseProjection().getAttributes().size());
         assertFalse(root.isIdIncluded());
         assertEquals(1, root.getChildren().size());
 
         RelatedResourceEntity<?> yChild = root.getChild("ys");
         assertNotNull(yChild);
-        assertEquals(1, yChild.getAttributes().size());
+        assertEquals(1, yChild.getBaseProjection().getAttributes().size());
         assertFalse(yChild.isIdIncluded());
         assertEquals(1, yChild.getChildren().size());
 
         RelatedResourceEntity<?> zChild = yChild.getChild("z");
         assertNotNull(zChild);
-        assertEquals(schema.getEntity(Z.class).getAttributes().size(), zChild.getAttributes().size());
+        assertEquals(schema.getEntity(Z.class).getAttributes().size(), zChild.getBaseProjection().getAttributes().size());
         assertTrue(zChild.isIdIncluded());
         assertEquals(0, zChild.getChildren().size());
     }
 
     @Test
-    public void testMerge_AttributesAndRelationships_OverlappedPath_Overlays() {
+    public void merge_AttributesAndRelationships_OverlappedPath_Overlays() {
 
-        Map<Class<?>, AgEntityOverlay<?>> overlays = new HashMap<>();
-        overlays.put(X.class, AgEntity
+        RequestSchema requestSchema = new RequestSchema(schema);
+        requestSchema.addOverlay(AgEntity
                 .overlay(X.class)
                 .relatedDataResolver("ys", (t, r) -> ThrowingRelatedDataResolver.getInstance()));
-
-        overlays.put(Y.class, AgEntity
+        requestSchema.addOverlay(AgEntity
                 .overlay(Y.class)
                 .relatedDataResolver("z", (t, r) -> ThrowingRelatedDataResolver.getInstance()));
 
-        AgEntity<X> entity = schema.getEntity(X.class);
-        AgEntity<X> entityOverlaid = ((AgEntityOverlay<X>) overlays.get(X.class)).resolve(schema, entity);
-        ResourceEntity<X> root = new RootResourceEntity<>(entityOverlaid);
+        ResourceEntity<X> root = new RootResourceEntity<>(requestSchema.getEntity(X.class));
 
         includeMerger.merge(root, asList(
                 new Include("name"),
                 new Include("ys.name"),
                 new Include("ys.z")
-        ), overlays);
+        ), requestSchema, PathChecker.ofDefault());
 
-        assertEquals(1, root.getAttributes().size());
+        assertEquals(1, root.getBaseProjection().getAttributes().size());
         assertFalse(root.isIdIncluded());
         assertEquals(1, root.getChildren().size());
 
         RelatedResourceEntity<?> yChild = root.getChild("ys");
         assertNotNull(yChild);
-        assertEquals(1, yChild.getAttributes().size());
+        assertEquals(1, yChild.getBaseProjection().getAttributes().size());
         assertFalse(yChild.isIdIncluded());
         assertEquals(1, yChild.getChildren().size());
 
         RelatedResourceEntity<?> zChild = yChild.getChild("z");
         assertNotNull(zChild);
-        assertEquals(schema.getEntity(Z.class).getAttributes().size(), zChild.getAttributes().size());
+        assertEquals(schema.getEntity(Z.class).getAttributes().size(), zChild.getBaseProjection().getAttributes().size());
         assertTrue(zChild.isIdIncluded());
         assertEquals(0, zChild.getChildren().size());
     }

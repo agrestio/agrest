@@ -1,23 +1,24 @@
 package io.agrest.runtime.processor.update;
 
 import io.agrest.AgException;
-import io.agrest.id.AgObjectId;
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
 import io.agrest.DataResponse;
-import io.agrest.runtime.EntityParent;
 import io.agrest.EntityUpdate;
+import io.agrest.HttpStatus;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.RootResourceEntity;
+import io.agrest.access.PathChecker;
 import io.agrest.encoder.Encoder;
-import io.agrest.meta.AgEntityOverlay;
+import io.agrest.id.AgObjectId;
 import io.agrest.processor.BaseProcessingContext;
+import io.agrest.runtime.EntityParent;
+import io.agrest.runtime.meta.RequestSchema;
 import org.apache.cayenne.di.Injector;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,22 +30,36 @@ import java.util.Map;
  */
 public class UpdateContext<T> extends BaseProcessingContext<T> {
 
+    private final RequestSchema schema;
+
     private RootResourceEntity<T> entity;
+    private Object unresolvedId;
     private AgObjectId id;
     private EntityParent<?> parent;
     private boolean includingDataInResponse;
     private ObjectMapperFactory mapper;
     private String entityData;
-    private boolean idUpdatesDisallowed;
+
     private Collection<EntityUpdate<T>> updates;
     private Encoder encoder;
-    private Map<Class<?>, AgEntityOverlay<?>> entityOverlays;
+    private PathChecker pathChecker;
 
     private final AgRequestBuilder requestBuilder;
     private final Map<ChangeOperationType, List<ChangeOperation<T>>> changeOperations;
 
-    public UpdateContext(Class<T> type, AgRequestBuilder requestBuilder, Injector injector) {
+    @Deprecated
+    private boolean idUpdatesDisallowed;
+
+    public UpdateContext(
+            Class<T> type,
+            RequestSchema schema,
+            AgRequestBuilder requestBuilder,
+            PathChecker pathChecker,
+            Injector injector) {
+
         super(type, injector);
+
+        this.schema = schema;
 
         this.changeOperations = new EnumMap<>(ChangeOperationType.class);
         this.changeOperations.put(ChangeOperationType.CREATE, Collections.emptyList());
@@ -52,6 +67,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
         this.changeOperations.put(ChangeOperationType.DELETE, Collections.emptyList());
 
         this.requestBuilder = requestBuilder;
+        this.pathChecker = pathChecker;
     }
 
     /**
@@ -59,26 +75,17 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
      *
      * @return a newly created DataResponse object reflecting the context state.
      * @since 1.24
+     * @deprecated unused anymore, as the context should not be creating a response. It is the responsibility of a
+     * pipeline
      */
+    @Deprecated(since = "5.0")
     public DataResponse<T> createDataResponse() {
+        int status = getResponseStatus() != null ? getResponseStatus() : HttpStatus.OK;
+
         // support null ResourceEntity for cases with custom terminal stages
         return entity != null
-                ? DataResponse.of(entity.getDataWindow()).status(getStatus()).total(entity.getData().size()).encoder(encoder).build()
-                : DataResponse.of(Collections.<T>emptyList()).status(getStatus()).build();
-    }
-
-    /**
-     * @since 1.19
-     */
-    public boolean hasChanges() {
-
-        for (EntityUpdate<T> u : updates) {
-            if (u.hasChanges()) {
-                return true;
-            }
-        }
-
-        return false;
+                ? DataResponse.of(status, entity.getDataWindow()).total(entity.getData().size()).encoder(encoder).build()
+                : DataResponse.of(status, Collections.<T>emptyList()).build();
     }
 
     /**
@@ -109,8 +116,23 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
         return updates.iterator().next();
     }
 
+
+    /**
+     * @since 5.0
+     */
+    public Object getUnresolvedId() {
+        return unresolvedId;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public void setUnresolvedId(Object unresolvedId) {
+        this.unresolvedId = unresolvedId;
+    }
+
     public boolean isById() {
-        return id != null;
+        return unresolvedId != null;
     }
 
     public AgObjectId getId() {
@@ -145,34 +167,6 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
         this.mapper = mapper;
     }
 
-    /**
-     * @since 4.8
-     */
-    public Map<Class<?>, AgEntityOverlay<?>> getEntityOverlays() {
-        return entityOverlays != null ? entityOverlays : Collections.emptyMap();
-    }
-
-    /**
-     * @since 4.8
-     */
-    public <A> AgEntityOverlay<A> getEntityOverlay(Class<A> type) {
-        return entityOverlays != null ? (AgEntityOverlay<A>) entityOverlays.get(type) : null;
-    }
-
-    /**
-     * @since 4.8
-     */
-    public <A> void addEntityOverlay(AgEntityOverlay<A> overlay) {
-        getOrCreateOverlay(overlay.getType()).merge(overlay);
-    }
-
-    private <A> AgEntityOverlay<A> getOrCreateOverlay(Class<A> type) {
-        if (entityOverlays == null) {
-            entityOverlays = new HashMap<>();
-        }
-
-        return (AgEntityOverlay<A>) entityOverlays.computeIfAbsent(type, AgEntityOverlay::new);
-    }
 
     public String getEntityData() {
         return entityData;
@@ -184,14 +178,20 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 
     /**
      * @since 1.19
+     * @deprecated not initialized and unused since 5.0, as ID permissions checking happens elsewhere, and doesn't need
+     * to be in the context
      */
+    @Deprecated(since = "5.0")
     public boolean isIdUpdatesDisallowed() {
         return idUpdatesDisallowed;
     }
 
     /**
      * @since 1.19
+     * @deprecated not initialized and unused since 5.0, as ID permissions checking happens elsewhere, and doesn't need
+     * to be in the context
      */
+    @Deprecated(since = "5.0")
     public void setIdUpdatesDisallowed(boolean idUpdatesDisallowed) {
         this.idUpdatesDisallowed = idUpdatesDisallowed;
     }
@@ -257,11 +257,32 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     }
 
     /**
+     * @since 5.0
+     */
+    public PathChecker getMaxPathDepth() {
+        return pathChecker;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public void setMaxPathDepth(PathChecker pathChecker) {
+        this.pathChecker = pathChecker;
+    }
+
+    /**
      * Merges provided request object with any previously stored protocol parameters.
      *
      * @since 5.0
      */
     public void mergeClientParameters(Map<String, List<String>> params) {
         requestBuilder.mergeClientParams(params);
+    }
+
+    /**
+     * @since 5.0
+     */
+    public RequestSchema getSchema() {
+        return schema;
     }
 }

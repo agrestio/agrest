@@ -1,27 +1,17 @@
 package io.agrest.jaxrs2.junit;
 
-import io.agrest.jaxrs2.pojo.model.P1;
-import io.agrest.jaxrs2.pojo.model.P10;
-import io.agrest.jaxrs2.pojo.model.P2;
-import io.agrest.jaxrs2.pojo.model.P4;
-import io.agrest.jaxrs2.pojo.model.P6;
-import io.agrest.jaxrs2.pojo.model.P8;
-import io.agrest.jaxrs2.pojo.model.P9;
-import io.agrest.jaxrs2.pojo.runtime.PojoFetchStage;
-import io.agrest.jaxrs2.pojo.runtime.PojoSelectProcessorFactoryProvider;
-import io.agrest.jaxrs2.pojo.runtime.PojoStore;
-import io.agrest.meta.AgSchema;
-import io.agrest.meta.AgEntity;
+import io.agrest.jaxrs2.junit.pojo.P1;
+import io.agrest.jaxrs2.junit.pojo.P10;
+import io.agrest.jaxrs2.junit.pojo.P2;
+import io.agrest.jaxrs2.junit.pojo.P3;
+import io.agrest.jaxrs2.junit.pojo.P4;
+import io.agrest.jaxrs2.junit.pojo.P6;
+import io.agrest.jaxrs2.junit.pojo.P7;
+import io.agrest.jaxrs2.junit.pojo.P8;
+import io.agrest.jaxrs2.junit.pojo.P9;
+import io.agrest.meta.AgEntityOverlay;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.AgRuntimeBuilder;
-import io.agrest.runtime.processor.delete.DeleteProcessorFactory;
-import io.agrest.runtime.processor.select.SelectProcessorFactory;
-import io.agrest.runtime.processor.unrelate.UnrelateProcessorFactory;
-import io.agrest.runtime.processor.update.CreateOrUpdateProcessorFactory;
-import io.agrest.runtime.processor.update.CreateProcessorFactory;
-import io.agrest.runtime.processor.update.IdempotentCreateOrUpdateProcessorFactory;
-import io.agrest.runtime.processor.update.IdempotentFullSyncProcessorFactory;
-import io.agrest.runtime.processor.update.UpdateProcessorFactory;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.command.CommandOutcome;
@@ -46,8 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
-
-import static org.mockito.Mockito.mock;
 
 public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
 
@@ -83,14 +71,6 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
      */
     public WebTarget internalTarget() {
         return getJettyInScope().getTarget();
-    }
-
-    public AgRuntime runtime() {
-        return getAppInScope().getInstance(AgRuntime.class);
-    }
-
-    public <T> AgEntity<T> entity(Class<T> type) {
-        return runtime().service(AgSchema.class).getEntity(type);
     }
 
     public <T> Map<Object, T> bucket(Class<T> type) {
@@ -129,10 +109,6 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         return Objects.requireNonNull(jettyInScope, "Not in test scope");
     }
 
-    protected BQRuntime getAppInScope() {
-        return Objects.requireNonNull(appInScope, "Not in test scope");
-    }
-
     protected PojoStore getPojoStoreInScope() {
         return Objects.requireNonNull(pojoStoreInScope, "Not in test scope");
     }
@@ -145,7 +121,7 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         this.appInScope = createAppInScope(this.jettyInScope, this.pojoStoreInScope);
 
         CommandOutcome result = appInScope.run();
-        Assertions.assertTrue(result.isSuccess(), () -> result.toString());
+        Assertions.assertTrue(result.isSuccess(), result::toString);
         Assertions.assertTrue(result.forkedToBackground());
     }
 
@@ -188,11 +164,6 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
             return this;
         }
 
-        public Builder bqModule(BQModule module) {
-            tester.bqModules.add(module);
-            return this;
-        }
-
         public AgPojoTester build() {
             return tester;
         }
@@ -228,16 +199,17 @@ public class AgPojoTester implements BQBeforeScopeCallback, BQAfterScopeCallback
         }
 
         private void configureAg(org.apache.cayenne.di.Binder agBinder) {
-            agBinder.bind(SelectProcessorFactory.class).toProvider(PojoSelectProcessorFactoryProvider.class);
-            agBinder.bind(DeleteProcessorFactory.class).toInstance(mock(DeleteProcessorFactory.class));
-            agBinder.bind(CreateProcessorFactory.class).toInstance(mock(CreateProcessorFactory.class));
-            agBinder.bind(UpdateProcessorFactory.class).toInstance(mock(UpdateProcessorFactory.class));
-            agBinder.bind(CreateOrUpdateProcessorFactory.class).toInstance(mock(CreateOrUpdateProcessorFactory.class));
-            agBinder.bind(IdempotentCreateOrUpdateProcessorFactory.class).toInstance(mock(IdempotentCreateOrUpdateProcessorFactory.class));
-            agBinder.bind(IdempotentFullSyncProcessorFactory.class).toInstance(mock(IdempotentFullSyncProcessorFactory.class));
-            agBinder.bind(UnrelateProcessorFactory.class).toInstance(mock(UnrelateProcessorFactory.class));
-            agBinder.bind(PojoFetchStage.class).to(PojoFetchStage.class);
             agBinder.bind(PojoStore.class).toInstance(pojoStore);
+            agBinder.bindMap(AgEntityOverlay.class)
+                    .put(P1.class.getName(), new PojoOverlay<>(P1.class, pojoStore))
+                    .put(P2.class.getName(), new PojoOverlay<>(P2.class, pojoStore))
+                    .put(P3.class.getName(), new PojoOverlay<>(P3.class, pojoStore))
+                    .put(P4.class.getName(), new PojoOverlay<>(P4.class, pojoStore))
+                    .put(P6.class.getName(), new PojoOverlay<>(P6.class, pojoStore))
+                    .put(P7.class.getName(), new PojoOverlay<>(P7.class, pojoStore))
+                    .put(P8.class.getName(), new PojoOverlay<>(P8.class, pojoStore))
+                    .put(P9.class.getName(), new PojoOverlay<>(P9.class, pojoStore))
+                    .put(P10.class.getName(), new PojoOverlay<>(P10.class, pojoStore));
         }
     }
 }

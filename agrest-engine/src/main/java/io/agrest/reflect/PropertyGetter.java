@@ -9,13 +9,13 @@ import java.lang.reflect.Method;
  */
 public class PropertyGetter {
 
-    private String name;
-    private Class<?> type;
-    private Method method;
+    private final String name;
+    private final Class<?> type;
+    private final Method method;
 
-    public PropertyGetter(String name, Class<?> type, Method method) {
+    public PropertyGetter(String name, Method method) {
         this.name = name;
-        this.type = type;
+        this.type = method.getReturnType();
         this.method = method;
     }
 

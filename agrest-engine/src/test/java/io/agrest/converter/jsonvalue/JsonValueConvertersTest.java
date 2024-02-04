@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 public class JsonValueConvertersTest {
 
     @Test
-    public void testConverter() {
+    public void converter() {
 
         JsonValueConverter<?> c1 = mock(JsonValueConverter.class);
         JsonValueConverter<?> c2 = mock(JsonValueConverter.class);
@@ -27,7 +27,7 @@ public class JsonValueConvertersTest {
     }
 
     @Test
-    public void testConverter_Enum() {
+    public void converter_Enum() {
 
         JsonValueConverter<?> c1 = mock(JsonValueConverter.class);
         JsonValueConverter<?> c2 = mock(JsonValueConverter.class);

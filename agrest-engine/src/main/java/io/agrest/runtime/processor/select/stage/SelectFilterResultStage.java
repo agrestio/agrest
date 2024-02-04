@@ -31,7 +31,7 @@ public class SelectFilterResultStage implements Processor<SelectContext<?>> {
         resultFilter.filterTree(context.getEntity());
 
         // TODO: this check is out of place here... Needs its own SelectStage?
-        checkObjectNotFound(context, context.getEntity().getResult());
+        checkObjectNotFound(context, context.getEntity().getData());
     }
 
     protected void checkObjectNotFound(SelectContext<?> context, List<?> result) {

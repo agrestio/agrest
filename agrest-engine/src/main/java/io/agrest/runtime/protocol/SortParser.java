@@ -3,9 +3,9 @@ package io.agrest.runtime.protocol;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
 import io.agrest.PathConstants;
+import io.agrest.access.PathChecker;
 import io.agrest.protocol.Direction;
 import io.agrest.protocol.Sort;
-import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.jackson.IJacksonService;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
@@ -109,7 +109,7 @@ public class SortParser implements ISortParser {
     }
 
     private void appendPath(List<Sort> orderings, String path, String unparsedDirection) {
-        IncludeMerger.checkTooLong(path);
+        PathChecker.exceedsLength(path);
 
         int dot = path.indexOf(PathConstants.DOT);
 

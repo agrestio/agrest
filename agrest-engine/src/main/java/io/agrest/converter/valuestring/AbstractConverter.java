@@ -1,10 +1,10 @@
 package io.agrest.converter.valuestring;
 
 
-public abstract class AbstractConverter implements ValueStringConverter {
+public abstract class AbstractConverter<T> implements ValueStringConverter<T> {
 
 	@Override
-	public String asString(Object object) {
+	public String asString(T object) {
 		if (object == null) {
 			throw new NullPointerException("Null object");
 		}
@@ -12,5 +12,5 @@ public abstract class AbstractConverter implements ValueStringConverter {
 		return asStringNonNull(object);
 	}
 
-	protected abstract String asStringNonNull(Object object);
+	protected abstract String asStringNonNull(T object);
 }

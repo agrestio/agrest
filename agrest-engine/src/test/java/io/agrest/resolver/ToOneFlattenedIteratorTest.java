@@ -1,7 +1,7 @@
 package io.agrest.resolver;
 
-import io.agrest.pojo.model.P3;
-import io.agrest.pojo.model.P4;
+import io.agrest.junit.pojo.P3;
+import io.agrest.junit.pojo.P4;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -16,14 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class ToOneFlattenedIteratorTest {
 
     @Test
-    public void testIterator_Empty() {
+    public void iterator_Empty() {
         List<P4> parents = Collections.emptyList();
         ToOneFlattenedIterator<P4> children = new ToOneFlattenedIterator<>(parents.iterator(), p -> ((P4) p).getP3());
         assertFalse(children.hasNext());
     }
 
     @Test
-    public void testIterator() {
+    public void iterator() {
 
         List<P4> parents = asList(
                 newP4("a", true),

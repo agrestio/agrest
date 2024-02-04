@@ -1,15 +1,15 @@
 package io.agrest.cayenne.processor.update.stage;
 
 import io.agrest.AgException;
-import io.agrest.id.MultiValueId;
-import io.agrest.runtime.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneUtil;
+import io.agrest.id.MultiValueId;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgRelationship;
 import io.agrest.processor.ProcessorOutcome;
+import io.agrest.runtime.EntityParent;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -18,6 +18,7 @@ import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.DataRow;
 import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.ObjectId;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.parser.ASTPath;
@@ -26,15 +27,15 @@ import org.apache.cayenne.map.DbEntity;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.ObjectSelect;
-import org.apache.cayenne.reflect.ClassDescriptor;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * A processor invoked for {@link io.agrest.UpdateStage#MERGE_CHANGES} stage.
@@ -65,13 +66,13 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
             return;
         }
 
-        ObjectRelator relator = createRelator(context);
+        Consumer<DataObject> parentRelator = createParentRelator(context);
         for (ChangeOperation<T> op : ops.get(ChangeOperationType.CREATE)) {
-            create(context, relator, op.getUpdate());
+            create(context, parentRelator, op.getUpdate());
         }
 
         for (ChangeOperation<T> op : ops.get(ChangeOperationType.UPDATE)) {
-            update(relator, op.getObject(), op.getUpdate());
+            update(parentRelator, op.getObject(), op.getUpdate());
         }
 
         for (ChangeOperation<T> op : ops.get(ChangeOperationType.DELETE)) {
@@ -83,45 +84,39 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
         o.getObjectContext().deleteObject(o);
     }
 
-    protected <T extends DataObject> void create(UpdateContext<T> context, ObjectRelator relator, EntityUpdate<T> update) {
+    protected <T extends DataObject> void create(UpdateContext<T> context, Consumer<DataObject> parentRelator, EntityUpdate<T> update) {
 
         ObjectContext objectContext = CayenneUpdateStartStage.cayenneContext(context);
-        DataObject o = objectContext.newObject(context.getType());
+        T o = objectContext.newObject(context.getType());
 
-
-        Map<String, Object> idByAgAttribute = update.getId();
+        Map<String, Object> idParts = update.getIdParts();
 
         // set explicit ID
-        if (idByAgAttribute != null) {
-
-            if (context.isIdUpdatesDisallowed() && update.isExplicitId()) {
-                throw AgException.badRequest("Setting ID explicitly is not allowed: %s", idByAgAttribute);
-            }
+        if (!idParts.isEmpty()) {
 
             ObjEntity objEntity = objectContext.getEntityResolver().getObjEntity(context.getType());
             DbEntity dbEntity = objEntity.getDbEntity();
             AgEntity agEntity = context.getEntity().getAgEntity();
 
-            Map<DbAttribute, Object> idByDbAttribute = mapToDbAttributes(agEntity, idByAgAttribute);
+            Map<DbAttribute, Object> idByDbAttribute = mapToDbAttributes(agEntity, idParts);
 
             // need to make an additional check that the AgId is unique
-            checkExisting(objectContext, agEntity, idByDbAttribute, idByAgAttribute);
+            checkExisting(objectContext, agEntity, idByDbAttribute, idParts);
 
             if (isPrimaryKey(dbEntity, idByDbAttribute.keySet())) {
                 createSingleFromPk(objEntity, idByDbAttribute, o);
             } else {
-                createSingleFromIdValues(objEntity, idByDbAttribute, idByAgAttribute, o);
+                createSingleFromIdValues(objEntity, idByDbAttribute, idParts, o);
             }
         }
 
-        mergeChanges(update, o, relator);
-
-        relator.relateToParent(o);
+        mergeChanges(update, o);
+        parentRelator.accept(o);
     }
 
-    protected <T extends DataObject> void update(ObjectRelator relator, T o, EntityUpdate<T> update) {
-        mergeChanges(update, o, relator);
-        relator.relateToParent(o);
+    protected <T extends DataObject> void update(Consumer<DataObject> parentRelator, T o, EntityUpdate<T> update) {
+        mergeChanges(update, o);
+        parentRelator.accept(o);
     }
 
     // translate "id" expressed in terms on public Ag names to Cayenne DbAttributes
@@ -237,180 +232,142 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
         return countPk >= pkSize;
     }
 
-    private <T extends DataObject> void mergeChanges(EntityUpdate<T> entityUpdate, DataObject o, ObjectRelator relator) {
+    private <T extends DataObject> void mergeChanges(EntityUpdate<T> entityUpdate, T o) {
 
         // attributes
-        for (Map.Entry<String, Object> e : entityUpdate.getValues().entrySet()) {
+        for (Map.Entry<String, Object> e : entityUpdate.getAttributes().entrySet()) {
             o.writeProperty(e.getKey(), e.getValue());
         }
 
         // relationships
         ObjectContext context = o.getObjectContext();
 
-        ObjEntity entity = context.getEntityResolver().getObjEntity(o);
+        for (Map.Entry<String, Object> e : entityUpdate.getToOneIds().entrySet()) {
 
-        for (Map.Entry<String, Set<Object>> e : entityUpdate.getRelatedIds().entrySet()) {
-
-            ObjRelationship relationship = entity.getRelationship(e.getKey());
-            AgRelationship agRelationship = entityUpdate.getEntity().getRelationship(e.getKey());
-
-            // sanity check
-            if (agRelationship == null) {
+            String name = e.getKey();
+            AgRelationship relationship = entityUpdate.getEntity().getRelationship(name);
+            if (relationship == null) {
                 continue;
             }
 
-            final Set<Object> relatedIds = e.getValue();
-            if (relatedIds == null || relatedIds.isEmpty() || allElementsNull(relatedIds)) {
-
-                relator.unrelateAll(agRelationship, o);
+            Object relatedId = e.getValue();
+            if (relatedId == null) {
+                o.setToOneTarget(name, null, true);
                 continue;
             }
 
-            if (!agRelationship.isToMany() && relatedIds.size() > 1) {
-                throw AgException.badRequest(
-                        "Relationship is to-one, but received update with multiple objects: %s",
-                        agRelationship.getName());
+            ObjectId relatedCayenneId = CayenneUtil.toObjectId(
+                    pathResolver,
+                    context,
+                    relationship.getTargetEntity(),
+                    relatedId);
+
+            DataObject oldRelated = (DataObject) o.readProperty(name);
+
+            // TODO: a bug (but mostly just dead code) - this check does not work, as we are comparing "relatedId"
+            //  scalar with ObjectId, so it will return false no matter what
+            if (oldRelated != null && oldRelated.getObjectId().equals(relatedId)) {
+                continue;
             }
 
-            ClassDescriptor relatedDescriptor = context.getEntityResolver().getClassDescriptor(
-                    relationship.getTargetEntityName());
+            // TODO: Note that "parent" (a special flavor of related object) is resolved via CayenneUtil. So
+            //  here we should use CayenneUtil as well for consistency, and preferably batch-faulting related objects
+            DataObject related = (DataObject) Cayenne.objectForPK(context, relatedCayenneId);
+            if (related == null) {
+                throw AgException.notFound("Related object '%s' with id of '%s' is not found",
+                        relationship.getTargetEntity().getName(),
+                        e.getValue());
+            }
 
-            relator.unrelateAll(agRelationship, o, new RelationshipUpdate() {
-                @Override
-                public boolean containsRelatedObject(DataObject relatedObject) {
-                    return relatedIds.contains(Cayenne.pkForObject(relatedObject));
+            o.setToOneTarget(name, related, true);
+        }
+
+
+        for (Map.Entry<String, Set<Object>> e : entityUpdate.getToManyIds().entrySet()) {
+
+            String name = e.getKey();
+            AgRelationship relationship = entityUpdate.getEntity().getRelationship(name);
+            if (relationship == null) {
+                continue;
+            }
+
+            // using set with predictable order that gives a predictable state of the final relationship list
+            Set<ObjectId> relatedCayenneIds = new LinkedHashSet<>(e.getValue().size() * 2);
+            for (Object id : e.getValue()) {
+                if (id != null) {
+                    relatedCayenneIds.add(CayenneUtil.toObjectId(
+                            pathResolver,
+                            context,
+                            relationship.getTargetEntity(),
+                            id));
                 }
+            }
 
-                @Override
-                public void removeUpdateForRelatedObject(DataObject relatedObject) {
-                    relatedIds.remove(Cayenne.pkForObject(relatedObject));
+            // unrelate objects no longer in relationship
+            List<DataObject> relatedObjects = (List<DataObject>) o.readProperty(name);
+            for (int i = 0; i < relatedObjects.size(); i++) {
+                DataObject relatedObject = relatedObjects.get(i);
+                if (!relatedCayenneIds.remove(relatedObject.getObjectId())) {
+                    o.removeToManyTarget(relationship.getName(), relatedObject, true);
+                    // a hack: we removed an object from relationship list, so need to reset the iteration index
+                    i--;
                 }
-            });
+            }
 
-            for (Object relatedId : relatedIds) {
+            // link remaining added objects
+            for (ObjectId id : relatedCayenneIds) {
 
-                if (relatedId == null) {
-                    continue;
-                }
-
-                DataObject related = (DataObject) Cayenne.objectForPK(context, relatedDescriptor.getObjectClass(),
-                        relatedId);
+                // TODO: Note that "parent" (a special flavor of related object) is resolved via CayenneUtil. So
+                //  here we should use CayenneUtil as well for consistency, and preferably batch-faulting related objects
+                DataObject related = (DataObject) Cayenne.objectForPK(context, id);
 
                 if (related == null) {
-                    throw AgException.notFound("Related object '%s' with ID '%s' is not found",
-                            relationship.getTargetEntityName(),
+                    throw AgException.notFound("Related object '%s' with id of '%s' is not found",
+                            relationship.getTargetEntity().getName(),
                             e.getValue());
                 }
 
-                relator.relate(agRelationship, o, related);
+                o.addToManyTarget(name, related, true);
             }
         }
 
-        entityUpdate.setMergedTo(o);
+        entityUpdate.setTargetObject(o);
     }
 
-    private boolean allElementsNull(Collection<?> elements) {
-
-        for (Object element : elements) {
-            if (element != null) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    protected <T extends DataObject> ObjectRelator createRelator(UpdateContext<T> context) {
-
-        final EntityParent<?> parent = context.getParent();
-
+    protected Consumer<DataObject> createParentRelator(UpdateContext<? extends DataObject> context) {
+        EntityParent<?> parent = context.getParent();
         if (parent == null) {
-            return new ObjectRelator();
+            return o -> {
+            };
         }
 
-        ObjectContext objectContext = CayenneUpdateStartStage.cayenneContext(context);
+        AgEntity<?> parentAgEntity = context.getSchema().getEntity(parent.getType());
 
-        ObjEntity parentEntity = objectContext.getEntityResolver().getObjEntity(parent.getEntity().getType());
-        AgEntity<?> parentAgEntity = parent.getEntity();
-        final DataObject parentObject = (DataObject) CayenneUtil.findById(
+        DataObject parentObject = findParent(context, parentAgEntity, parent);
+        return parentAgEntity.getRelationship(parent.getRelationship()).isToMany()
+                ? o -> parentObject.addToManyTarget(parent.getRelationship(), o, true)
+                : o -> parentObject.setToOneTarget(parent.getRelationship(), o, true);
+    }
+
+    private DataObject findParent(UpdateContext<?> context, AgEntity<?> parentAgEntity, EntityParent<?> parent) {
+        DataObject parentObject = (DataObject) CayenneUtil.findById(
                 pathResolver,
-                objectContext,
+                CayenneUpdateStartStage.cayenneContext(context),
                 parentAgEntity,
                 parent.getId());
 
         if (parentObject == null) {
-            throw AgException.notFound("No parent object for ID '%s' and entity '%s'", parent.getId(), parentEntity.getName());
+            throw AgException.notFound("No parent object for ID '%s' and entity '%s'",
+                    parent.getId(),
+                    parentAgEntity.getName());
         }
 
-        // TODO: check that relationship target is the same as <T> ??
-        if (parentEntity.getRelationship(parent.getRelationship()).isToMany()) {
-            return new ObjectRelator() {
-                @Override
-                public void relateToParent(DataObject object) {
-                    parentObject.addToManyTarget(parent.getRelationship(), object, true);
-                }
-            };
-        } else {
-            return new ObjectRelator() {
-                @Override
-                public void relateToParent(DataObject object) {
-                    parentObject.setToOneTarget(parent.getRelationship(), object, true);
-                }
-            };
-        }
+        return parentObject;
     }
 
     protected DbAttribute dbAttributeForAgAttribute(AgEntity<?> agEntity, String attributeName) {
-        ASTPath path = pathResolver.resolve(agEntity, attributeName).getPathExp();
+        ASTPath path = pathResolver.resolve(agEntity.getName(), attributeName).getPathExp();
         Object attribute = path.evaluate(entityResolver.getObjEntity(agEntity.getName()));
         return attribute instanceof ObjAttribute ? ((ObjAttribute) attribute).getDbAttribute() : (DbAttribute) attribute;
-    }
-
-    interface RelationshipUpdate {
-        boolean containsRelatedObject(DataObject o);
-
-        void removeUpdateForRelatedObject(DataObject o);
-    }
-
-    static class ObjectRelator {
-
-        void relateToParent(DataObject object) {
-            // do nothing
-        }
-
-        void relate(AgRelationship agRelationship, DataObject object, DataObject relatedObject) {
-            if (agRelationship.isToMany()) {
-                object.addToManyTarget(agRelationship.getName(), relatedObject, true);
-            } else {
-                object.setToOneTarget(agRelationship.getName(), relatedObject, true);
-            }
-        }
-
-        void unrelateAll(AgRelationship agRelationship, DataObject object) {
-            unrelateAll(agRelationship, object, null);
-        }
-
-        void unrelateAll(AgRelationship agRelationship, DataObject object, RelationshipUpdate relationshipUpdate) {
-
-            if (agRelationship.isToMany()) {
-
-                @SuppressWarnings("unchecked")
-                List<? extends DataObject> relatedObjects =
-                        (List<? extends DataObject>) object.readProperty(agRelationship.getName());
-
-                for (int i = 0; i < relatedObjects.size(); i++) {
-                    DataObject relatedObject = relatedObjects.get(i);
-                    if (relationshipUpdate == null || !relationshipUpdate.containsRelatedObject(relatedObject)) {
-                        object.removeToManyTarget(agRelationship.getName(), relatedObject, true);
-                        i--;
-                    } else {
-                        relationshipUpdate.removeUpdateForRelatedObject(relatedObject);
-                    }
-                }
-
-            } else {
-                object.setToOneTarget(agRelationship.getName(), null, true);
-            }
-        }
     }
 }

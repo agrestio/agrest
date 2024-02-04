@@ -20,28 +20,28 @@ public class AgRuntimeBuilder_ModuleProviderTest {
     static final String CONVERTER_KEY = X.class.getName();
 
     @Test
-    public void testAgModule_Provider() {
+    public void agModule_Provider() {
         inRuntime(
                 new AgRuntimeBuilder().module(new LocalTestModuleProvider()),
                 this::assertLocalTestModuleActive);
     }
 
     @Test
-    public void testModule() {
+    public void module() {
         inRuntime(
                 new AgRuntimeBuilder().module(new LocalTestModule()),
                 this::assertLocalTestModuleActive);
     }
 
     @Test
-    public void testAutoLoading() {
+    public void autoLoading() {
         inRuntime(
                 new AgRuntimeBuilder(),
                 this::assertTestModuleActive);
     }
 
     @Test
-    public void testSuppressAutoLoading() {
+    public void suppressAutoLoading() {
         inRuntime(
                 new AgRuntimeBuilder().doNotAutoLoadModules(),
                 this::assertTestModuleNotActive);

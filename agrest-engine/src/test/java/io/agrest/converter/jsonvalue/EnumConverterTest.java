@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EnumConverterTest {
 
     @Test
-    public void testConvert() {
+    public void convert() {
         EnumConverter c = new EnumConverter(E1.class);
 
         assertSame(E1.e11, c.value(new TextNode("e11")));
@@ -19,7 +19,7 @@ public class EnumConverterTest {
     }
 
     @Test
-    public void testConvert_Invalid() {
+    public void convert_Invalid() {
         EnumConverter c = new EnumConverter(E1.class);
         assertThrows(AgException.class, () -> c.value(new TextNode("invalid")));
     }

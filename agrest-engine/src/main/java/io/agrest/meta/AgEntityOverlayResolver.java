@@ -3,7 +3,6 @@ package io.agrest.meta;
 import io.agrest.PathConstants;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 class AgEntityOverlayResolver {
@@ -37,10 +36,7 @@ class AgEntityOverlayResolver {
     void setReadAccess(String name, boolean readable) {
         if (PathConstants.ID_PK_ATTRIBUTE.equals(name)) {
 
-            Iterator<Map.Entry<String, AgIdPart>> it = ids.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, AgIdPart> e = it.next();
-
+            for (Map.Entry<String, AgIdPart> e : ids.entrySet()) {
                 AgIdPart oldPart = e.getValue();
                 boolean wasReadable = oldPart.isReadable();
                 if (wasReadable && !readable) {
@@ -95,10 +91,7 @@ class AgEntityOverlayResolver {
 
         if (PathConstants.ID_PK_ATTRIBUTE.equals(name)) {
 
-            Iterator<Map.Entry<String, AgIdPart>> it = ids.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, AgIdPart> e = it.next();
-
+            for (Map.Entry<String, AgIdPart> e : ids.entrySet()) {
                 AgIdPart oldPart = e.getValue();
                 boolean wasWritable = oldPart.isWritable();
                 if (wasWritable && !writable) {
