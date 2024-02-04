@@ -66,9 +66,20 @@ public class EntityPathCacheTest {
         PathDescriptor pd = cache.getOrCreate("id");
         assertNotNull(pd);
         assertTrue(pd.isAttributeOrId());
-        assertEquals("java.lang.Integer", pd.getType());
-        assertEquals("id", pd.getPathExp().getPath());
+        assertEquals("java.lang.String", pd.getType());
+        assertEquals("pkx1", pd.getPathExp().getPath());
         assertSame(pd, cache.getOrCreate("id"));
+    }
+
+    @Test
+    public void getOrCreate_RelatedId() {
+        EntityPathCache cache = new EntityPathCache(x);
+        PathDescriptor pd = cache.getOrCreate("y.db:pk1");
+        assertNotNull(pd);
+        assertTrue(pd.isAttributeOrId());
+        assertEquals("java.lang.Integer", pd.getType());
+        assertEquals("pk1", pd.getPathExp().getPath());
+        assertSame(pd, cache.getOrCreate("y.db:pk1"));
     }
 
     @Test
@@ -91,17 +102,6 @@ public class EntityPathCacheTest {
         assertEquals("java.lang.String", pd.getType());
         assertEquals("y.name", pd.getPathExp().getPath());
         assertSame(pd, cache.getOrCreate("y.name"));
-    }
-
-    @Test
-    public void getOrCreate_RelatedId() {
-        EntityPathCache cache = new EntityPathCache(x);
-        PathDescriptor pd = cache.getOrCreate("y.id");
-        assertNotNull(pd);
-        assertTrue(pd.isAttributeOrId());
-        assertEquals("java.lang.Integer", pd.getType());
-        assertEquals("y.id", pd.getPathExp().getPath());
-        assertSame(pd, cache.getOrCreate("y.id"));
     }
 
     @Test
