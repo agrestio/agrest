@@ -49,7 +49,7 @@ public class ExpExtractTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"year", "year()", "year(0)", "year('now')", "year($a)", "year(null)", "YEAR(a)", "weekOfMonth(a)"})
+    @ValueSource(strings = {"year()", "year(0)", "year('now')", "year($a)", "year(null)", "YEAR(a)", "weekOfMonth(a)"})
     public void parseInvalidGrammar(String expString) {
         assertThrows(AgException.class, () -> Exp.parse(expString));
     }

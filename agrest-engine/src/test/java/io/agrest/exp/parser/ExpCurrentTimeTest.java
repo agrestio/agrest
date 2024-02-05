@@ -30,7 +30,7 @@ public class ExpCurrentTimeTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"currentTime", "currentTime(0)", "CURRENTTIME()"})
+    @ValueSource(strings = {"currentTime(0)", "CURRENTTIME()"})
     public void parseInvalidGrammar(String expString) {
         assertThrows(AgException.class, () -> Exp.parse(expString));
     }

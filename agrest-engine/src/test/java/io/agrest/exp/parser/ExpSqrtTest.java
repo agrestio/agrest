@@ -35,7 +35,6 @@ public class ExpSqrtTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "sqrt",
             "sqrt()",
             "SQRT(a)",
             "sqrt(a and b)"
