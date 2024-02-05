@@ -15,7 +15,6 @@ public class ExpNamedParameterTest {
     @ValueSource(strings = {
             "$a",
             "$1",
-            "$ a",
             "$a.b"
     })
     void parse(String expString) {
@@ -25,7 +24,6 @@ public class ExpNamedParameterTest {
     @ParameterizedTest
     @CsvSource(delimiter = '|', value = {
             "$a|$a",
-            "$ a|$a",
             "$a.b|$a.b"
     })
     public void parsedToString(String expString, String expected) {
@@ -35,6 +33,7 @@ public class ExpNamedParameterTest {
     @ParameterizedTest
     @ValueSource(strings = {
             "$",
+            "$ a",
             "$$a"
     })
     public void parseInvalidGrammar(String expString) {
