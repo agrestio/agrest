@@ -30,9 +30,7 @@ class ExpMultiply extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? "(" + children[0] + ") * (" + children[1] + ")"
-            : "? * ?";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=6ca0df20d086adb54be14cd41b93ed59 (do not edit this line) */

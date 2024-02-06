@@ -32,9 +32,7 @@ class ExpMod extends SimpleNode {
 
     @Override
     public String toString() {
-        return children != null
-                ? "mod(" + children[0] + ", " + children[1] + ")"
-                : "mod(?, ?)";
+        return ExpStringConverter.convert(this);
     }
 }
 /* JavaCC - OriginalChecksum=6563b330904d626ec86b2bd306259dd3 (do not edit this line) */

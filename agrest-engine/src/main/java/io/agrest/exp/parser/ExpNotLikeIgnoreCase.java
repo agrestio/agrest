@@ -32,9 +32,7 @@ class ExpNotLikeIgnoreCase extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? children[0] + " not likeIgnoreCase " + children[1] + (children.length > 2 ? " escape " + children[2] : "")
-            : "? not likeIgnoreCase ?";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=d8fe9f940e276eee5cebf87aaffb7afb (do not edit this line) */

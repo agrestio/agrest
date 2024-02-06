@@ -30,9 +30,7 @@ class ExpExtract extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? value + "(" + children[0] + ")"
-            : value + "(?)";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=58cc7e1d25270e1d515170647eb54773 (do not edit this line) */

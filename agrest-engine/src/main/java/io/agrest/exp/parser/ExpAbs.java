@@ -30,7 +30,7 @@ class ExpAbs extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null ? "abs(" + children[0] + ")" : "abs(?)";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=01d2266f2e2852f0cc30cb38133844d2 (do not edit this line) */

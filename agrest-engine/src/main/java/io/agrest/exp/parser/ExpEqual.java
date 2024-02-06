@@ -30,9 +30,7 @@ class ExpEqual extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? "(" + children[0] + ") = (" + children[1] + ")"
-            : "? = ?";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=5d0a19fd37d62fae2718cc73973efde7 (do not edit this line) */

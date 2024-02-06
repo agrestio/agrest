@@ -30,9 +30,7 @@ class ExpLength extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? "length(" + children[0] + ")"
-            : "length(?)";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=f19b92880659daa8634dd190871429c4 (do not edit this line) */

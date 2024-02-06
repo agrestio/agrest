@@ -30,9 +30,7 @@ class ExpNegate extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? "-(" + children[0] + ")"
-            : "-?";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=100942f12f6576bdafd2b6051325e733 (do not edit this line) */

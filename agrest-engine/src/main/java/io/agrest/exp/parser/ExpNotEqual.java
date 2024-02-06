@@ -32,9 +32,7 @@ class ExpNotEqual extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? "(" + children[0] + ") != (" + children[1] + ")"
-            : "? != ?";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=cd31a8834ec599e6eb06535df7a2b157 (do not edit this line) */

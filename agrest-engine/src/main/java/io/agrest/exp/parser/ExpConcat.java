@@ -30,9 +30,7 @@ class ExpConcat extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? "concat(" + children[0] + ", " + children[1] + ")"
-            : "concat(?, ?)";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=2de2c03e3db046b2f2cdd50df8e4a48e (do not edit this line) */

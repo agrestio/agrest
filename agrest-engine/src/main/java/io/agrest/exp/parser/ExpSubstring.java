@@ -31,9 +31,7 @@ class ExpSubstring extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? "substring(" + children[0] + ", " + children[1] + (children.length > 2 ? ", " + children[2] : "") + ")"
-            : "substring(?, ?)";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=b4242b007471c91ebcaa890a9eac531d (do not edit this line) */

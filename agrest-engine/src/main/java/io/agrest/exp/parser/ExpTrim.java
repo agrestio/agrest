@@ -31,9 +31,7 @@ class ExpTrim extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? "trim(" + children[0] + ")"
-            : "trim(?)";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=ccfdd54aef305779d90fa4c832c4339a (do not edit this line) */
