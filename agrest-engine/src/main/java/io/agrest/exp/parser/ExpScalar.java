@@ -8,16 +8,14 @@ import java.util.function.Function;
 
 public class ExpScalar extends ExpBaseScalar<Object> {
 
-    private String scalarImage;
+    private String scalarImage = String.valueOf(value);
 
     public ExpScalar(int id) {
         super(id);
-        syncScalarImage(value);
     }
 
     public ExpScalar(AgExpressionParser p, int id) {
         super(p, id);
-        syncScalarImage(value);
     }
 
     public ExpScalar() {
