@@ -67,9 +67,7 @@ public final class ExpStringConverter {
     }
 
     public static String convert(ExpConcat exp) {
-        return exp.children != null
-                ? "concat(" + exp.children[0] + ", " + exp.children[1] + ")"
-                : "concat(?, ?)";
+        return "concat(" + (exp.children != null ? exp.children[0] + ", " + exp.children[1] : "?, ?") + ")";
     }
 
     public static String convert(ExpCurrentDate exp) {
@@ -153,21 +151,18 @@ public final class ExpStringConverter {
     }
 
     public static String convert(ExpLocate exp) {
-        return exp.children != null
-                ? "locate(" + exp.children[0] + ", " + exp.children[1] + (exp.children.length > 2 ? ", (" + exp.children[2] + ")" : "") + ")"
-                : "locate(?, ?)";
+        return "locate(" + (exp.children != null
+                ? exp.children[0] + ", " + exp.children[1] + (exp.children.length > 2 ? ", (" + exp.children[2] + ")" : "") + ")"
+                : "?, ?"
+        ) + ")";
     }
 
     public static String convert(ExpLower exp) {
-        return exp.children != null
-                ? "lower(" + exp.children[0] + ")"
-                : "lower(?)";
+        return "lower(" + (exp.children != null ? exp.children[0] : "?") + ")";
     }
 
     public static String convert(ExpMod exp) {
-        return exp.children != null
-                ? "mod(" + exp.children[0] + ", " + exp.children[1] + ")"
-                : "mod(?, ?)";
+        return "mod(" + (exp.children != null ? exp.children[0] + ", " + exp.children[1] : "?, ?") + ")";
     }
 
     public static String convert(ExpMultiply exp) {
@@ -178,7 +173,7 @@ public final class ExpStringConverter {
 
     public static String convert(ExpNamedParameter exp) {
         String name = exp.getName();
-        return name != null ? "$" + name : "null";
+        return name != null ? "$" + name : "?";
     }
 
     public static String convert(ExpNegate exp) {
@@ -188,9 +183,7 @@ public final class ExpStringConverter {
     }
 
     public static String convert(ExpNot exp) {
-        return exp.children != null
-                ? "not (" + exp.children[0] + ")"
-                : "not ?";
+        return "not " + (exp.children != null ? "(" + exp.children[0] + ")" : "?");
     }
 
     public static String convert(ExpNotBetween exp) {
@@ -252,9 +245,10 @@ public final class ExpStringConverter {
     }
 
     public static String convert(ExpSubstring exp) {
-        return exp.children != null
-                ? "substring(" + exp.children[0] + ", " + exp.children[1] + (exp.children.length > 2 ? ", " + exp.children[2] : "") + ")"
-                : "substring(?, ?)";
+        return "substring(" + (exp.children != null
+                ? exp.children[0] + ", " + exp.children[1] + (exp.children.length > 2 ? ", " + exp.children[2] : "")
+                : "?, ?"
+        ) + ")";
     }
 
     public static String convert(ExpSubtract exp) {
