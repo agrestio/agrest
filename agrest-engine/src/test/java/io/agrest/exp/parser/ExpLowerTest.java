@@ -32,7 +32,6 @@ public class ExpLowerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "lower",
             "lower()",
             "lower(1)",
             "lower($a)",

@@ -32,7 +32,7 @@ public class ExpLengthTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"length", "length()", "length(1)", "length($a)", "LENGTH(a)"})
+    @ValueSource(strings = {"length()", "length(1)", "length($a)", "LENGTH(a)"})
     public void parseInvalidGrammar(String expString) {
         assertThrows(AgException.class, () -> Exp.parse(expString));
     }

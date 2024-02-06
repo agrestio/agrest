@@ -34,7 +34,7 @@ public class ExpAbsTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"abs", "abs()", "ABS(a)", "abs(a and b)"})
+    @ValueSource(strings = {"abs()", "ABS(a)", "abs(a and b)"})
     public void parseInvalidGrammar(String expString) {
         assertThrows(AgException.class, () -> Exp.parse(expString));
     }

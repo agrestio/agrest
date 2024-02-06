@@ -34,7 +34,6 @@ public class ExpLocateTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "locate",
             "locate()",
             "locate(a)",
             "locate(a, 1)",

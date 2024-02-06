@@ -21,7 +21,34 @@ public class ExpPathTest {
             "a0",
             "a$",
             "a+",
-            "a0$b+._c#d+"
+            "a0$b+._c#d+",
+
+            "year",
+            "month",
+            "week",
+            "day_of_year",
+            "day",
+            "day_of_month",
+            "day_of_week",
+            "hour",
+            "minute",
+            "second",
+
+            "current_date",
+            "current_time",
+            "current_timestamp",
+
+            "concat",
+            "substring",
+            "trim",
+            "lower",
+            "upper",
+
+            "length",
+            "locate",
+            "abs",
+            "sqrt",
+            "mod"
     })
     void parse(String expString) {
         assertEquals(ExpPath.class, Exp.parse(expString).getClass());
