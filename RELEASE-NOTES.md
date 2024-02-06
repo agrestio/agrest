@@ -1,6 +1,7 @@
 ## Release 5.0-M20
 
 * #651 Exp: numeric scalars to support "_"
+* #653 Exp syntax: do not support space in the named parameter token  
 * #655 Exp syntax: deprecate case-insensitivity of NULL and booleans
 * #658 DeleteBuilder: byIds(..), byMultiIds(..)
 * #659 Idempotent DELETE by ids, optimizing performance
