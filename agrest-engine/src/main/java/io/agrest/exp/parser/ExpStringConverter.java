@@ -97,14 +97,17 @@ public final class ExpStringConverter {
         return "concat(" + (exp.children != null ? exp.children[0] + ", " + exp.children[1] : "?, ?") + ")";
     }
 
+    @SuppressWarnings("unused")
     public static String convert(ExpCurrentDate exp) {
         return "currentDate()";
     }
 
+    @SuppressWarnings("unused")
     public static String convert(ExpCurrentTime exp) {
         return "currentTime()";
     }
 
+    @SuppressWarnings("unused")
     public static String convert(ExpCurrentTimestamp exp) {
         return "currentTimestamp()";
     }
@@ -127,6 +130,7 @@ public final class ExpStringConverter {
                 : exp.value + "(?)";
     }
 
+    @SuppressWarnings("unused")
     public static String convert(ExpFalse exp) {
         return "false";
     }
@@ -290,6 +294,7 @@ public final class ExpStringConverter {
         return "trim(" + (exp.children != null ? exp.children[0] : "?") + ")";
     }
 
+    @SuppressWarnings("unused")
     public static String convert(ExpTrue exp) {
         return "true";
     }
