@@ -1,9 +1,34 @@
 package io.agrest.exp.parser;
 
+import io.agrest.protocol.Exp;
+
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class ExpStringConverter {
+
+    private static final Set<Class<? extends Exp>> parenthesesUnnecessaryExps = new HashSet<>(List.of(
+            ExpAbs.class,
+            ExpCurrentDate.class,
+            ExpCurrentTime.class,
+            ExpCurrentTimestamp.class,
+            ExpExtract.class,
+            ExpFalse.class,
+            ExpLength.class,
+            ExpLocate.class,
+            ExpLower.class,
+            ExpNamedParameter.class,
+            ExpPath.class,
+            ExpScalar.class,
+            ExpSqrt.class,
+            ExpSubstring.class,
+            ExpTrim.class,
+            ExpTrue.class,
+            ExpUpper.class
+    ));
 
     private ExpStringConverter() {
     }
@@ -13,14 +38,16 @@ public final class ExpStringConverter {
     }
 
     public static String convert(ExpAdd exp) {
-        return exp.children != null ? "(" + exp.children[0] + ") + (" + exp.children[1] + ")" : "? + ?";
+        return exp.children != null
+                ? tryParenthesize(exp.children[0]) + " + " + tryParenthesize(exp.children[1])
+                : "? + ?";
     }
 
     public static String convert(ExpAnd exp) {
         return exp.children != null
                 ? Arrays.stream(exp.children)
-                .map(String::valueOf)
-                .collect(Collectors.joining(") and (", "(", ")"))
+                .map(ExpStringConverter::tryParenthesize)
+                .collect(Collectors.joining(" and "))
                 : "? and ?";
     }
 
@@ -32,37 +59,37 @@ public final class ExpStringConverter {
 
     public static String convert(ExpBitwiseAnd exp) {
         return exp.children != null
-                ? "(" + exp.children[0] + ") & (" + exp.children[1] + ")"
+                ? tryParenthesize(exp.children[0]) + " & " + tryParenthesize(exp.children[1])
                 : "? & ?";
     }
 
     public static String convert(ExpBitwiseLeftShift exp) {
         return exp.children != null
-                ? "(" + exp.children[0] + ") << (" + exp.children[1] + ")"
+                ? tryParenthesize(exp.children[0]) + " << " + tryParenthesize(exp.children[1])
                 : "? << ?";
     }
 
     public static String convert(ExpBitwiseNot exp) {
         return exp.children != null
-                ? "~(" + exp.children[0] + ")"
+                ? "~" + tryParenthesize(exp.children[0])
                 : "~ ?";
     }
 
     public static String convert(ExpBitwiseOr exp) {
         return exp.children != null
-                ? "(" + exp.children[0] + ") | (" + exp.children[1] + ")"
+                ? tryParenthesize(exp.children[0]) + " | " + tryParenthesize(exp.children[1])
                 : "? | ?";
     }
 
     public static String convert(ExpBitwiseRightShift exp) {
         return exp.children != null
-                ? "(" + exp.children[0] + ") >> (" + exp.children[1] + ")"
+                ? tryParenthesize(exp.children[0]) + " >> " + tryParenthesize(exp.children[1])
                 : "? >> ?";
     }
 
     public static String convert(ExpBitwiseXor exp) {
         return exp.children != null
-                ? "(" + exp.children[0] + ") ^ (" + exp.children[1] + ")"
+                ? tryParenthesize(exp.children[0]) + " ^ " + tryParenthesize(exp.children[1])
                 : "? ^ ?";
     }
 
@@ -84,13 +111,13 @@ public final class ExpStringConverter {
 
     public static String convert(ExpDivide exp) {
         return exp.children != null
-                ? "(" + exp.children[0] + ") / (" + exp.children[1] + ")"
+                ? tryParenthesize(exp.children[0]) + " / " + tryParenthesize(exp.children[1])
                 : "? / ?";
     }
 
     public static String convert(ExpEqual exp) {
         return exp.children != null
-                ? "(" + exp.children[0] + ") = (" + exp.children[1] + ")"
+                ? tryParenthesize(exp.children[0]) + " = " + tryParenthesize(exp.children[1])
                 : "? = ?";
     }
 
@@ -106,13 +133,13 @@ public final class ExpStringConverter {
 
     public static String convert(ExpGreater exp) {
         return exp.children != null
-                ? "(" + exp.children[0] + ") > (" + exp.children[1] + ")"
+                ? tryParenthesize(exp.children[0]) + " > " + tryParenthesize(exp.children[1])
                 : "? > ?";
     }
 
     public static String convert(ExpGreaterOrEqual exp) {
         return exp.children != null
-                ? "(" + exp.children[0] + ") >= (" + exp.children[1] + ")"
+                ? tryParenthesize(exp.children[0]) + " >= " + tryParenthesize(exp.children[1])
                 : "? >= ?";
     }
 
@@ -128,13 +155,13 @@ public final class ExpStringConverter {
 
     public static String convert(ExpLess exp) {
         return exp.children != null
-                ? "(" + exp.children[0] + ") < (" + exp.children[1] + ")"
+                ? tryParenthesize(exp.children[0]) + " < " + tryParenthesize(exp.children[1])
                 : "? < ?";
     }
 
     public static String convert(ExpLessOrEqual exp) {
         return exp.children != null
-                ? "(" + exp.children[0] + ") <= (" + exp.children[1] + ")"
+                ? tryParenthesize(exp.children[0]) + " <= " + tryParenthesize(exp.children[1])
                 : "? <= ?";
     }
 
@@ -152,7 +179,7 @@ public final class ExpStringConverter {
 
     public static String convert(ExpLocate exp) {
         return "locate(" + (exp.children != null
-                ? exp.children[0] + ", " + exp.children[1] + (exp.children.length > 2 ? ", (" + exp.children[2] + ")" : "") + ")"
+                ? exp.children[0] + ", " + exp.children[1] + (exp.children.length > 2 ? ", (" + exp.children[2] + ")" : "")
                 : "?, ?"
         ) + ")";
     }
@@ -167,7 +194,7 @@ public final class ExpStringConverter {
 
     public static String convert(ExpMultiply exp) {
         return exp.children != null
-                ? "(" + exp.children[0] + ") * (" + exp.children[1] + ")"
+                ? tryParenthesize(exp.children[0]) + " * " + tryParenthesize(exp.children[1])
                 : "? * ?";
     }
 
@@ -178,12 +205,12 @@ public final class ExpStringConverter {
 
     public static String convert(ExpNegate exp) {
         return exp.children != null
-                ? "-(" + exp.children[0] + ")"
+                ? "-" + tryParenthesize(exp.children[0])
                 : "-?";
     }
 
     public static String convert(ExpNot exp) {
-        return "not " + (exp.children != null ? "(" + exp.children[0] + ")" : "?");
+        return "not " + (exp.children != null ? tryParenthesize(exp.children[0]) : "?");
     }
 
     public static String convert(ExpNotBetween exp) {
@@ -194,7 +221,7 @@ public final class ExpStringConverter {
 
     public static String convert(ExpNotEqual exp) {
         return exp.children != null
-                ? "(" + exp.children[0] + ") != (" + exp.children[1] + ")"
+                ? tryParenthesize(exp.children[0]) + " != " + tryParenthesize(exp.children[1])
                 : "? != ?";
     }
 
@@ -218,7 +245,9 @@ public final class ExpStringConverter {
 
     public static String convert(ExpOr exp) {
         return exp.children != null
-                ? Arrays.stream(exp.children).map(String::valueOf).collect(Collectors.joining(") or (", "(", ")"))
+                ? Arrays.stream(exp.children)
+                .map(ExpStringConverter::tryParenthesize)
+                .collect(Collectors.joining(" or "))
                 : "? or ?";
     }
 
@@ -253,7 +282,7 @@ public final class ExpStringConverter {
 
     public static String convert(ExpSubtract exp) {
         return exp.children != null
-                ? "(" + exp.children[0] + ") - (" + exp.children[1] + ")"
+                ? tryParenthesize(exp.children[0]) + " - " + tryParenthesize(exp.children[1])
                 : "? - ?";
     }
 
@@ -267,5 +296,12 @@ public final class ExpStringConverter {
 
     public static String convert(ExpUpper exp) {
         return "upper(" + (exp.children != null ? exp.children[0] : "?") + ")";
+    }
+
+    private static String tryParenthesize(Object object) {
+        if (parenthesesUnnecessaryExps.contains(object.getClass())) {
+            return String.valueOf(object);
+        }
+        return "(" + object + ")";
     }
 }

@@ -29,8 +29,8 @@ public class ExpEqualTest {
 
     @ParameterizedTest
     @CsvSource(delimiter = '|', value = {
-            "a=b|(a) = (b)",
-            "a = b|(a) = (b)"
+            "a=b|a = b",
+            "a = b|a = b"
     })
     public void parsedToString(String expString, String expected) {
         assertEquals(expected, Exp.parse(expString).toString());

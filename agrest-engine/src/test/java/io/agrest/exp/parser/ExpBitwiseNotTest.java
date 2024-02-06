@@ -26,8 +26,8 @@ public class ExpBitwiseNotTest {
 
     @ParameterizedTest
     @CsvSource(delimiter = '|', value = {
-            "~2|~(2)",
-            "~ 2|~(2)"
+            "~2|~2",
+            "~ 2|~2"
     })
     public void parsedToString(String expString, String expected) {
         assertEquals(expected, Exp.parse(expString).toString());
