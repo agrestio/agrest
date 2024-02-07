@@ -30,9 +30,7 @@ class ExpBetween extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? children[0] + " between " + children[1] + " and " + children[2]
-            : "? between ? and ?";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=c43b74b247f96290e1207f5b0fcef774 (do not edit this line) */

@@ -61,7 +61,7 @@ class ExpPath extends SimpleNode {
 
   @Override
   public String toString() {
-    return String.valueOf(value);
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=ffcf3b869e9e5d281a4b47d7ac3ebd15 (do not edit this line) */

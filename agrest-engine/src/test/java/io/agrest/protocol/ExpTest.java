@@ -26,7 +26,7 @@ public class ExpTest {
         params.put("d", 16);
 
         assertEquals(
-                "(((a) = (2)) and ((b) = (4))) or (((c) = (null)) and (not ((d) = (16))))",
+                "((a = 2) and (b = 4)) or ((c = null) and (not (d = 16)))",
                 exp.namedParams(params).toString());
     }
 
@@ -35,15 +35,15 @@ public class ExpTest {
         Exp exp = Exp.parse("a = $a and b = $b or c = $c and not d = $d");
 
         Map<String, Object> params1 = Map.of("a", 2, "b", 4, "c", 8);
-        assertEquals("(((a) = (2)) and ((b) = (4))) or ((c) = (8))", exp.namedParams(params1).toString());
+        assertEquals("((a = 2) and (b = 4)) or (c = 8)", exp.namedParams(params1).toString());
 
         Map<String, Object> params2 = Map.of("c", 8);
-        assertEquals("(c) = (8)", exp.namedParams(params2).toString());
+        assertEquals("c = 8", exp.namedParams(params2).toString());
 
         Map<String, Object> params3 = new HashMap<>();
         params3.put("a", null);
         params3.put("c", 8);
-        assertEquals("((a) = (null)) or ((c) = (8))", exp.namedParams(params3).toString());
+        assertEquals("(a = null) or (c = 8)", exp.namedParams(params3).toString());
     }
 
     @Test
@@ -51,13 +51,13 @@ public class ExpTest {
         Exp exp = Exp.parse("a = $a and b = $b or c = $c and not d = $d");
 
         Map<String, Object> params1 = Map.of("a", 2, "b", 4, "c", 8);
-        assertEquals("(((a) = (2)) and ((b) = (4))) or (((c) = (8)) and (not ((d) = ($d))))",
+        assertEquals("((a = 2) and (b = 4)) or ((c = 8) and (not (d = $d)))",
                 exp.namedParams(params1, false).toString());
 
         Map<String, Object> params2 = new HashMap<>();
         params2.put("a", null);
         params2.put("c", 8);
-        assertEquals("(((a) = (null)) and ((b) = ($b))) or (((c) = (8)) and (not ((d) = ($d))))",
+        assertEquals("((a = null) and (b = $b)) or ((c = 8) and (not (d = $d)))",
                 exp.namedParams(params2, false).toString());
     }
 
@@ -85,9 +85,9 @@ public class ExpTest {
         Exp e1 = raw.positionalParams("b");
         Exp e2 = raw.namedParams(Map.of("1", "c"));
 
-        assertEquals("(a) = ($1)", raw.toString());
-        assertEquals("(a) = ('b')", e1.toString());
-        assertEquals("(a) = ('c')", e2.toString());
+        assertEquals("a = $1", raw.toString());
+        assertEquals("a = 'b'", e1.toString());
+        assertEquals("a = 'c'", e2.toString());
     }
 
     @Test
@@ -102,11 +102,11 @@ public class ExpTest {
         assertEquals(5, new ArrayList<>(new HashSet<>(all)).size(), "Some expressions were reused");
 
 
-        assertEquals("(1) > (2)", e1.toString());
-        assertEquals("((1) > (2)) and ((3) < (4))", e2.toString());
-        assertEquals("((1) > (2)) or ((5) = (6))", e3.toString());
-        assertEquals("(((1) > (2)) and ((3) < (4))) or ((7) > (8))", e4.toString());
-        assertEquals("(((1) > (2)) or ((5) = (6))) and ((9) < (10))", e5.toString());
+        assertEquals("1 > 2", e1.toString());
+        assertEquals("(1 > 2) and (3 < 4)", e2.toString());
+        assertEquals("(1 > 2) or (5 = 6)", e3.toString());
+        assertEquals("((1 > 2) and (3 < 4)) or (7 > 8)", e4.toString());
+        assertEquals("((1 > 2) or (5 = 6)) and (9 < 10)", e5.toString());
     }
 
     @Test
@@ -118,10 +118,10 @@ public class ExpTest {
     public void namedParams_PartialResolution() {
 
         Exp p1 = Exp.parse("a = $a").namedParams(Collections.emptyMap(), false);
-        assertEquals("(a) = ($a)", p1.toString());
+        assertEquals("a = $a", p1.toString());
 
         Exp p2 = Exp.parse("a = $a and b = $b").namedParams(Map.of("b", 1), false);
-        assertEquals("((a) = ($a)) and ((b) = (1))", p2.toString());
+        assertEquals("(a = $a) and (b = 1)", p2.toString());
     }
 
     @Test
@@ -146,17 +146,17 @@ public class ExpTest {
 
     @Test
     public void equal() {
-        assertEquals("(a) = ('b')", Exp.equal("a", "b").toString());
+        assertEquals("a = 'b'", Exp.equal("a", "b").toString());
     }
 
     @Test
     public void notEqual() {
-        assertEquals("(a) != ('b')", Exp.notEqual("a", "b").toString());
+        assertEquals("a != 'b'", Exp.notEqual("a", "b").toString());
     }
 
     @Test
     public void lessOrEqual() {
-        assertEquals("(a) <= (5)", Exp.lessOrEqual("a", 5).toString());
+        assertEquals("a <= 5", Exp.lessOrEqual("a", 5).toString());
     }
 
     @Test
@@ -201,7 +201,7 @@ public class ExpTest {
 
     @Test
     public void not() {
-        assertEquals("not ((a) = (5))", Exp.not(Exp.equal("a", 5)).toString());
-        assertEquals("(a) = (5)", Exp.not(Exp.not(Exp.equal("a", 5))).toString());
+        assertEquals("not (a = 5)", Exp.not(Exp.equal("a", 5)).toString());
+        assertEquals("a = 5", Exp.not(Exp.not(Exp.equal("a", 5))).toString());
     }
 }

@@ -33,9 +33,7 @@ class ExpAnd extends ExpCondition {
 
   @Override
   public String toString() {
-    return children != null
-            ? Arrays.stream(children).map(String::valueOf).collect(Collectors.joining(") and (", "(", ")"))
-            : "? and ?";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=8fe8825e52daaa8c28bda97ebce7e8ec (do not edit this line) */

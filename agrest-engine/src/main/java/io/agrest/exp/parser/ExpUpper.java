@@ -31,9 +31,7 @@ class ExpUpper extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? "upper(" + children[0] + ")"
-            : "upper(?)";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=579bc67a9a18bf15184b23f2649cc451 (do not edit this line) */

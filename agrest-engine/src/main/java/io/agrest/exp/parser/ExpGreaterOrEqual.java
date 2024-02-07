@@ -30,9 +30,7 @@ class ExpGreaterOrEqual extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? "(" + children[0] + ") >= (" + children[1] + ")"
-            : "? >= ?";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=723bcd56cadc1762fd2460f1ab9c988f (do not edit this line) */

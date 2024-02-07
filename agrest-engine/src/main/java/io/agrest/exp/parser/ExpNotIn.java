@@ -32,9 +32,7 @@ class ExpNotIn extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? children[0] + " not in " + (children[1].getClass() == ExpNamedParameter.class ? children[1] : "(" + children[1] + ")")
-            : "? not in (?)";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=49ec5ffe4a961c9a3e6170dbd0f7ad1f (do not edit this line) */

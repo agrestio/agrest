@@ -29,10 +29,10 @@ public class ExpAndTest {
 
     @ParameterizedTest
     @CsvSource(delimiter = '|', value = {
-            "a and b|(a) and (b)",
-            "a and  b|(a) and (b)",
-            "a and b and c|(a) and (b) and (c)",
-            "(a or b) and (c or d)|((a) or (b)) and ((c) or (d))"
+            "a and b|a and b",
+            "a and  b|a and b",
+            "a and b and c|a and b and c",
+            "(a or b) and (c or d)|(a or b) and (c or d)"
     })
     public void parsedToString(String expString, String expected) {
         assertEquals(expected, Exp.parse(expString).toString());

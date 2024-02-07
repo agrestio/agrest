@@ -69,11 +69,7 @@ class ExpScalarList extends ExpBaseScalar<Collection<?>> {
 
   @Override
   public String toString() {
-      // children can be either an internal collection, or child nodes, so must use "getValue()"
-      return getValue()
-              .stream()
-              .map(v -> v instanceof CharSequence ? "'" + v + "'" : String.valueOf(v))
-              .collect(Collectors.joining(", "));
+    return ExpStringConverter.convert(this);
   }
 
   private static class ListValueVisitor extends AgExpressionParserDefaultVisitor<List<Object>> {

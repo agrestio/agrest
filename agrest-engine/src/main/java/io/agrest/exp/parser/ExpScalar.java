@@ -42,11 +42,7 @@ public class ExpScalar extends ExpBaseScalar<Object> {
 
     @Override
     public String toString() {
-        if (value instanceof CharSequence) {
-            return "'" + value + "'";
-        } else {
-            return String.valueOf(value);
-        }
+        return ExpStringConverter.convert(this);
     }
 }
 /* JavaCC - OriginalChecksum=21004db13a44c6b16cc9797a6f36a4af (do not edit this line) */

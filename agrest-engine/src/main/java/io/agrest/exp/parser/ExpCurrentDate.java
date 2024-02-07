@@ -30,7 +30,7 @@ class ExpCurrentDate extends SimpleNode {
 
   @Override
   public String toString() {
-    return "currentDate()";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=e13391251cba769cc41551502e16e0ac (do not edit this line) */

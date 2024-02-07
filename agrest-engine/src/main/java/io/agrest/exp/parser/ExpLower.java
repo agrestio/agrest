@@ -30,9 +30,7 @@ class ExpLower extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? "lower(" + children[0] + ")"
-            : "lower(?)";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=46a8609164b2bd56451f930c7b2db122 (do not edit this line) */

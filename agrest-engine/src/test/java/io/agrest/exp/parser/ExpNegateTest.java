@@ -26,8 +26,8 @@ public class ExpNegateTest {
 
     @ParameterizedTest
     @CsvSource(delimiter = '|', value = {
-            "-a|-(a)",
-            "- a|-(a)"
+            "-a|-a",
+            "- a|-a"
     })
     public void parsedToString(String expString, String expected) {
         assertEquals(expected, Exp.parse(expString).toString());

@@ -30,7 +30,7 @@ class ExpCurrentTimestamp extends SimpleNode {
 
   @Override
   public String toString() {
-    return "currentTimestamp()";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=c3ddadaa60478d01d051d9fd5b1f87c7 (do not edit this line) */

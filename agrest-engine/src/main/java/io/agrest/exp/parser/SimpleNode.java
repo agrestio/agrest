@@ -280,7 +280,6 @@ public abstract class SimpleNode implements Node {
         result = 31 * result + Arrays.hashCode(children);
         return result;
     }
-
 }
 
 /* JavaCC - OriginalChecksum=5b582160ae0ddf8fccabd52a1f82953e (do not edit this line) */

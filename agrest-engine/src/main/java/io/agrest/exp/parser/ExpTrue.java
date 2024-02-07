@@ -31,7 +31,7 @@ class ExpTrue extends SimpleNode {
 
   @Override
   public String toString() {
-    return "true";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=bffdc7c3290d2409a6389b3cea4985d3 (do not edit this line) */
