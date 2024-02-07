@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public final class ExpStringConverter {
 
-    private static final Set<Class<? extends Exp>> parenthesesUnnecessaryExps = new HashSet<>(List.of(
+    private static final Set<Class<? extends Exp>> parenthesesUnnecessaryExps = Set.of(
             ExpAbs.class,
             ExpCurrentDate.class,
             ExpCurrentTime.class,
@@ -28,7 +28,7 @@ public final class ExpStringConverter {
             ExpTrim.class,
             ExpTrue.class,
             ExpUpper.class
-    ));
+    );
 
     private ExpStringConverter() {
     }
