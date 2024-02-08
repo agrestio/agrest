@@ -124,6 +124,12 @@ public final class ExpStringConverter {
                 : "? = ?";
     }
 
+    public static String convert(ExpExists exp) {
+        return "exists " + (exp.children != null
+                ? tryParenthesize(exp.children[0])
+                : "?");
+    }
+
     public static String convert(ExpExtract exp) {
         return exp.children != null
                 ? exp.value + "(" + exp.children[0] + ")"
@@ -227,6 +233,12 @@ public final class ExpStringConverter {
         return exp.children != null
                 ? tryParenthesize(exp.children[0]) + " != " + tryParenthesize(exp.children[1])
                 : "? != ?";
+    }
+
+    public static String convert(ExpNotExists exp) {
+        return "not exists " + (exp.children != null
+                ? tryParenthesize(exp.children[0])
+                : "?");
     }
 
     public static String convert(ExpNotIn exp) {

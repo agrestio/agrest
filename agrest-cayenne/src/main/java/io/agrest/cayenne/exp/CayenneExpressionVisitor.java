@@ -6,6 +6,7 @@ import io.agrest.exp.parser.*;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionParameter;
 import org.apache.cayenne.exp.parser.*;
+import org.apache.cayenne.query.ObjectSelect;
 
 import java.lang.reflect.Constructor;
 import java.util.Collection;
@@ -49,8 +50,18 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
     }
 
     @Override
+    public Expression visit(ExpExists node, Expression parent) {
+        throw new UnsupportedOperationException("Not implemented for cayenne < 5.0");
+    }
+
+    @Override
     public Expression visit(ExpNotEqual node, Expression data) {
         return process(node, data, new ASTNotEqual());
+    }
+
+    @Override
+    public Expression visit(ExpNotExists node, Expression data) {
+        throw new UnsupportedOperationException("Not implemented for cayenne < 5.0");
     }
 
     @Override

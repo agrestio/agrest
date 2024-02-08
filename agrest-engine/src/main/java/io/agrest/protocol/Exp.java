@@ -86,6 +86,14 @@ public interface Exp {
         return scalar;
     }
 
+    static Exp exists(String subExp) {
+        return new ExpExists(subExp);
+    }
+
+    static Exp notExists(String subExp) {
+        return new ExpNotExists(subExp);
+    }
+
     /**
      * @since 5.0
      */
