@@ -260,9 +260,7 @@ public final class ExpStringConverter {
     }
 
     public static String convert(ExpScalar exp) {
-        return exp.value instanceof CharSequence
-                ? "'" + exp.value + "'"
-                : String.valueOf(exp.value);
+        return exp.scalarImage;
     }
 
     public static String convert(ExpScalarList exp) {
