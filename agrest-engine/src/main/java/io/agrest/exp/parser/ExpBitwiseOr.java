@@ -30,9 +30,7 @@ class ExpBitwiseOr extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? "(" + children[0] + ") | (" + children[1] + ")"
-            : "? | ?";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=9e655d2e49f2f89cbfc0290e3c55eaaa (do not edit this line) */

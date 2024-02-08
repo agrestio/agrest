@@ -32,7 +32,6 @@ public class ExpTrimTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "trim",
             "trim()",
             "trim(1)",
             "trim($a)",

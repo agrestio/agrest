@@ -35,7 +35,6 @@ public class ExpSubstringTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "substring",
             "substring()",
             "substring(a)",
             "substring(a, '1')",

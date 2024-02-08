@@ -27,8 +27,8 @@ public class ExpAddTest {
 
     @ParameterizedTest
     @CsvSource(delimiter = '|', value = {
-            "1+2|(1) + (2)",
-            "1 +  2|(1) + (2)"
+            "1+2|1 + 2",
+            "1 +  2|1 + 2"
     })
     public void parsedToString(String expString, String expected) {
         assertEquals(expected, Exp.parse(expString).toString());

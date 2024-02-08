@@ -52,6 +52,7 @@ import io.agrest.AgException;
   *
   * @since 5.0
   */
+@SuppressWarnings("all")
 public class AgExpressionParser {
 
     public static SimpleNode parse(String expressionString) {
@@ -156,20 +157,23 @@ void conditionExpression() : {}
         // Path without any operator will go to numeric expression.
         // This done intentionally to remove lookahead that leads
         // to dramatically perfomance degradation (parser can become 3 times slower)
-		numericExpression()
-    |
+        LOOKAHEAD( stringFuncName() "(" | <SINGLE_QUOTED_STRING> | <DOUBLE_QUOTED_STRING> )
         stringExpression()
+    |
+        LOOKAHEAD( datetimeFuncName() "(" )
+        dateTimeFunction()
 	|
 		<NULL> #Scalar(0)
     |
-        dateTimeFunction()
+		numericExpression()
 }
 
 void stringParameter() : {}
 {
-        pathExpression()
-    |
+        LOOKAHEAD( stringFuncName() "(" | <SINGLE_QUOTED_STRING> | <DOUBLE_QUOTED_STRING> )
         stringExpression()
+    |
+        pathExpression()
 }
 
 void stringLiteral() :  {}
@@ -309,6 +313,7 @@ void numericPrimary() : {}
 	|
         namedParameter()
     |
+        LOOKAHEAD( ( dateTimePartFuncName() | numericFuncName() ) "(" )
         functionsReturningNumerics()
 	|
         pathExpression()
@@ -409,21 +414,65 @@ void dateTimeExtractingFunction() #Extract(1) : {
     Token t;
 }
 {
-    (
-        t = <YEAR>
-        | t = <MONTH>
-        | t = <WEEK>
-        | t = <DAY_OF_YEAR>
-        | t = <DAY>
-        | t = <DAY_OF_MONTH>
-        | t = <DAY_OF_WEEK>
-        | t = <HOUR>
-        | t = <MINUTE>
-        | t = <SECOND>
-    ) {
+    t = dateTimePartFuncName() {
         jjtThis.jjtSetValue(t.image);
     }
     "(" pathExpression() ")"
+}
+
+Token stringFuncName() : {
+    Token t;
+}
+{
+    (
+    t = <CONCAT>
+    | t = <SUBSTRING>
+    | t = <TRIM>
+    | t = <LOWER>
+    | t = <UPPER>
+    ) { return t; }
+}
+
+Token numericFuncName() : {
+    Token t;
+}
+{
+    (
+    t = <LENGTH>
+    | t = <LOCATE>
+    | t = <ABS>
+    | t = <SQRT>
+    | t = <MOD>
+    ) { return t; }
+}
+
+Token datetimeFuncName() : {
+    Token t;
+}
+{
+    (
+    t = <CURRENT_DATE>
+    | t = <CURRENT_TIME>
+    | t = <CURRENT_TIMESTAMP>
+    ) { return t; }
+}
+
+Token dateTimePartFuncName() : {
+    Token t;
+}
+{
+    (
+    t = <YEAR>
+    | t = <MONTH>
+    | t = <WEEK>
+    | t = <DAY_OF_YEAR>
+    | t = <DAY>
+    | t = <DAY_OF_MONTH>
+    | t = <DAY_OF_WEEK>
+    | t = <HOUR>
+    | t = <MINUTE>
+    | t = <SECOND>
+    ) { return t; }
 }
 
 TOKEN_MGR_DECLS:
@@ -574,7 +623,7 @@ TOKEN : /* functions returning datetime */
 }
 
 /*
-    Data/time parts extracting functions' names.
+    Date/time parts extracting functions' names.
     MUST be in sync with enum ASTExtract.DateTimePart.
 */
 TOKEN :
@@ -595,22 +644,26 @@ void namedParameter() :{
 	Token t;
 }
 {
-	"$" (
-        t = <PROPERTY_PATH>
-        | t = <INT_LITERAL>
-    ) {
-        jjtThis.jjtSetValue(t.image);
-    } #NamedParameter(0)
+    t = <NAMED_PARAMETER> { jjtThis.jjtSetValue(t.image.substring(1)); } #NamedParameter(0)
 }
 
 void pathExpression() : {
    Token t;
 }
 {
-   t = <PROPERTY_PATH> { jjtThis.jjtSetValue(t.image); } #Path(0)
+   (
+   t = <PROPERTY_PATH>
+   | t = dateTimePartFuncName()
+   | t = datetimeFuncName()
+   | t = stringFuncName()
+   | t = numericFuncName()
+   ) { jjtThis.jjtSetValue(t.image); } #Path(0)
 }
 
-TOKEN : {
+TOKEN :
+{
+	<NAMED_PARAMETER: "$" ( <PROPERTY_PATH> | <INT_LITERAL> ) >
+	|
 	<PROPERTY_PATH: <IDENTIFIER> ( "." <IDENTIFIER>) *>
 }
 

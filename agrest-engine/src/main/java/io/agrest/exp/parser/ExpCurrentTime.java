@@ -30,7 +30,7 @@ class ExpCurrentTime extends SimpleNode {
 
   @Override
   public String toString() {
-    return "currentTime()";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=1f84b3754ed74e9ae5b7eca31d84f0ae (do not edit this line) */

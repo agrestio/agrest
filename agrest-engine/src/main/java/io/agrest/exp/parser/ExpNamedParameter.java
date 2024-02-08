@@ -50,10 +50,9 @@ class ExpNamedParameter extends SimpleNode {
     return copy;
   }
 
-    @Override
-    public String toString() {
-        String name = getName();
-        return name != null ? "$" + name : "null";
-    }
+  @Override
+  public String toString() {
+    return ExpStringConverter.convert(this);
+  }
 }
 /* JavaCC - OriginalChecksum=7b4e7b4225063fe3b24686d5b6a2ada2 (do not edit this line) */

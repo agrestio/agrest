@@ -37,9 +37,7 @@ class ExpNot extends ExpCondition {
 
   @Override
   public String toString() {
-    return children != null
-            ? "not (" + children[0] + ")"
-            : "not ?";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=0fe2b3f475a020609f2cfa348e9fe03d (do not edit this line) */

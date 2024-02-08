@@ -32,9 +32,7 @@ class ExpNotLike extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? children[0] + " not like " + children[1] + (children.length > 2 ? " escape " + children[2] : "")
-            : "? not like ?";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=9551a6b7ade4165e58bcc54093cfb9dd (do not edit this line) */

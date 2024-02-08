@@ -32,9 +32,7 @@ class ExpNotBetween extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? children[0] + " not between " + children[1] + " and " + children[2]
-            : "? not between ? and ?";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=1af9c63e271dbd73a0ef825dda231d68 (do not edit this line) */

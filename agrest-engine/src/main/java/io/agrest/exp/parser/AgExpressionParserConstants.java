@@ -63,6 +63,8 @@ public interface AgExpressionParserConstants {
   /** RegularExpression Id. */
   int SECOND = 60;
   /** RegularExpression Id. */
+  int NAMED_PARAMETER = 61;
+  /** RegularExpression Id. */
   int PROPERTY_PATH = 62;
   /** RegularExpression Id. */
   int IDENTIFIER = 63;
@@ -177,7 +179,7 @@ public interface AgExpressionParserConstants {
     "\"hour\"",
     "\"minute\"",
     "\"second\"",
-    "\"$\"",
+    "<NAMED_PARAMETER>",
     "<PROPERTY_PATH>",
     "<IDENTIFIER>",
     "<LETTER>",

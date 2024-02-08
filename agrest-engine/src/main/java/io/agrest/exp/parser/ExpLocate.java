@@ -30,9 +30,7 @@ class ExpLocate extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null
-            ? "locate(" + children[0] + ", " + children[1] + (children.length > 2 ? ", (" + children[2] + ")" : "") + ")"
-            : "locate(?, ?)";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=f84e448f9a20bd2e9cfcd100ef030c8a (do not edit this line) */

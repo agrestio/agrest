@@ -31,7 +31,7 @@ class ExpSqrt extends SimpleNode {
 
   @Override
   public String toString() {
-    return children != null ? "sqrt(" + children[0] + ")" : "sqrt(?)";
+    return ExpStringConverter.convert(this);
   }
 }
 /* JavaCC - OriginalChecksum=e749d50dc99d6d7acc161593f5e1b43e (do not edit this line) */

@@ -32,7 +32,6 @@ public class ExpUpperTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "upper",
             "upper()",
             "upper(1)",
             "upper($a)",

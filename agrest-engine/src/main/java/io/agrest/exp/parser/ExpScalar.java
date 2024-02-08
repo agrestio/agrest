@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 public class ExpScalar extends ExpBaseScalar<Object> {
 
-    private String scalarImage = String.valueOf(value);
+    protected String scalarImage = String.valueOf(value);
 
     public ExpScalar(int id) {
         super(id);
@@ -69,6 +69,7 @@ public class ExpScalar extends ExpBaseScalar<Object> {
      * Accept the visitor.
      **/
     public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
+
         return visitor.visit(this, data);
     }
 
@@ -105,7 +106,7 @@ public class ExpScalar extends ExpBaseScalar<Object> {
 
     @Override
     public String toString() {
-        return scalarImage;
+        return ExpStringConverter.convert(this);
     }
 }
 /* JavaCC - OriginalChecksum=21004db13a44c6b16cc9797a6f36a4af (do not edit this line) */

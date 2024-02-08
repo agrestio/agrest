@@ -34,7 +34,6 @@ public class ExpModTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "mod",
             "mod()",
             "mod(a)",
             "mod(, b)",

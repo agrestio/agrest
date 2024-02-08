@@ -24,10 +24,10 @@ public class ExpNotTest {
 
     @ParameterizedTest
     @CsvSource(delimiter = '|', value = {
-            "!a|not (a)",
-            "! a|not (a)",
-            "not a|not (a)",
-            "not (a)|not (a)"
+            "!a|not a",
+            "! a|not a",
+            "not a|not a",
+            "not (a)|not a"
     })
     public void parsedToString(String expString, String expected) {
         assertEquals(expected, Exp.parse(expString).toString());

@@ -35,7 +35,7 @@ public class ExpConcatTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"concat()", "concat", "concat(1, 2)", "concat($a, $b)", "CONCAT(a)", "concat(a, and)"})
+    @ValueSource(strings = {"concat()", "concat(1, 2)", "concat($a, $b)", "CONCAT(a)", "concat(a, and)"})
     public void parseInvalidGrammar(String expString) {
         assertThrows(AgException.class, () -> Exp.parse(expString));
     }
