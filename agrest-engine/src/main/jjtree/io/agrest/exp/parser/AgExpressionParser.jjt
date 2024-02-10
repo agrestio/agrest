@@ -142,7 +142,7 @@ void notExists() : { }
 
 void exists() : { }
 {
-    "exists" ( pathExpression() | "(" orCondition() ")" )
+    "exists" pathExpression()
 }
 
 void simpleNotCondition() : {
