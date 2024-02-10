@@ -13,9 +13,7 @@ class ExpExistsTest {
     @ParameterizedTest
     @ValueSource(strings = {
             "exists a",
-            "exists (a)",
-            "exists (1)",
-            "exists (a.b = b)"})
+            "exists a.b"})
     public void parse(String expString) {
         assertEquals(ExpExists.class, Exp.parse(expString).getClass());
     }
@@ -23,8 +21,7 @@ class ExpExistsTest {
     @ParameterizedTest
     @CsvSource(delimiter = '|', value = {
             "exists a|exists a",
-            "exists (a)|exists a",
-            "exists (a.b = b)|exists (a.b = b)"
+            "exists a.b|exists a.b"
     })
     public void parsedToString(String expString, String expected) {
         assertEquals(expected, Exp.parse(expString).toString());

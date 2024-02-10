@@ -16,9 +16,7 @@ class ExpNotExistsTest {
             "not exists a",
             "! exists a",
             "!exists a",
-            "not exists (a)",
-            "not exists (1)",
-            "not exists (a.b = b)"})
+            "not exists a.b"})
     public void parse(String expString) {
         assertEquals(ExpNotExists.class, Exp.parse(expString).getClass());
     }
@@ -26,8 +24,7 @@ class ExpNotExistsTest {
     @ParameterizedTest
     @CsvSource(delimiter = '|', value = {
             "not exists a|not exists a",
-            "not exists (a)|not exists a",
-            "not exists (a.b = b)|not exists (a.b = b)"
+            "not exists a.b|not exists a.b"
     })
     public void parsedToString(String expString, String expected) {
         assertEquals(expected, Exp.parse(expString).toString());
