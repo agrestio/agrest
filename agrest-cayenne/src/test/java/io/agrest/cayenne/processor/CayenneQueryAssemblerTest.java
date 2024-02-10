@@ -1,6 +1,7 @@
 package io.agrest.cayenne.processor;
 
 import io.agrest.access.PathChecker;
+import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.id.AgObjectId;
 import io.agrest.AgRequestBuilder;
 import io.agrest.RootResourceEntity;
@@ -13,6 +14,8 @@ import io.agrest.protocol.Sort;
 import io.agrest.runtime.meta.RequestSchema;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Injector;
+import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.query.ObjectSelect;
 import org.junit.jupiter.api.Test;
 
@@ -101,6 +104,29 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
         entity.andExp(Exp.parse("name in ('a', 'b')"));
         ObjectSelect<E1> q2 = queryAssembler.createRootQuery(c);
         assertEquals(E1.NAME.eq("X").andExp(E1.NAME.in("a", "b")), q2.getWhere());
+    }
+
+    @Test
+    public void createRootQuery_Qualifier_Exists() {
+        RootResourceEntity<E3> entity = getResourceEntity(E3.class);
+
+        SelectContext<E3> c = new SelectContext<>(
+                E3.class,
+                new RequestSchema(mock(AgSchema.class)),
+                mock(AgRequestBuilder.class),
+                PathChecker.ofDefault(),
+                mock(Injector.class));
+
+        c.setEntity(entity);
+
+        entity.andExp(Exp.parse("exists e2"));
+        ObjectSelect<E3> q1 = queryAssembler.createRootQuery(c);
+        Expression expectedQ1 = ExpressionFactory.exists(ObjectSelect.query(E3.class).column(E3.E2));
+        assertEquals(expectedQ1, q1.getWhere());
+
+        entity.andExp(Exp.parse("not exists e5"));
+        ObjectSelect<E3> q2 = queryAssembler.createRootQuery(c);
+        assertEquals(expectedQ1.andExp(ExpressionFactory.notExists(ObjectSelect.query(E3.class).column(E3.E5))), q2.getWhere());
     }
 
     @Test
