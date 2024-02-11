@@ -21,6 +21,14 @@ public class CayenneExpParserTest {
     }
 
     @Test
+    public void parsePathAliases() {
+        Expression e = parser.parse(Exp.parse("a.b.c#p1.d#p2"));
+        Expression expected = ExpressionFactory.exp("a.b.c#p1.d#p2");
+        assertEquals(expected, e);
+        assertEquals(expected.getPathAliases(), e.getPathAliases());
+    }
+
+    @Test
     public void parsePositionalParams() {
         Expression e = parser.parse(Exp.parse("a = $a").positionalParams("x"));
         assertEquals(ExpressionFactory.exp("a = 'x'"), e);

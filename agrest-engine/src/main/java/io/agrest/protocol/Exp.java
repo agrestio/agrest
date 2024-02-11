@@ -54,9 +54,7 @@ public interface Exp {
      * @since 5.0
      */
     static Exp path(String path) {
-        ExpPath pathExp = new ExpPath();
-        pathExp.jjtSetValue(Objects.requireNonNull(path));
-        return pathExp;
+        return new ExpPath(Objects.requireNonNull(path));
     }
 
     /**
