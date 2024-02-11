@@ -86,11 +86,31 @@ public interface Exp {
         return scalar;
     }
 
+    /**
+     * @since 5.0
+     */
     static Exp exists(String subExp) {
+        return exists(Exp.parse(subExp));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp exists(Exp subExp) {
         return new ExpExists(subExp);
     }
 
+    /**
+     * @since 5.0
+     */
     static Exp notExists(String subExp) {
+        return notExists(Exp.parse(subExp));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp notExists(Exp subExp) {
         return new ExpNotExists(subExp);
     }
 

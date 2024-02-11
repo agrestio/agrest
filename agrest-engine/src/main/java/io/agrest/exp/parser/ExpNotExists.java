@@ -18,9 +18,9 @@ class ExpNotExists extends SimpleNode {
     super(AgExpressionParser.JJTNOTEXISTS);
   }
 
-  public ExpNotExists(String subExp) {
+  public ExpNotExists(Exp subExp) {
     this();
-    children = new Node[] {(Node) Exp.parse(subExp)};
+    jjtAddChild((Node) subExp, 0);
   }
 
   /** Accept the visitor. **/

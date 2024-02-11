@@ -18,9 +18,9 @@ class ExpExists extends SimpleNode {
     super(AgExpressionParser.JJTEXISTS);
   }
 
-  public ExpExists(String subExp) {
+  public ExpExists(Exp subExp) {
       this();
-      children = new Node[] {(Node) Exp.parse(subExp)};
+      jjtAddChild((Node) subExp, 0);
   }
 
   /** Accept the visitor. **/
