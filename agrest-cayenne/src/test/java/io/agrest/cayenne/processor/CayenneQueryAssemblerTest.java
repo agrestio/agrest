@@ -15,6 +15,7 @@ import io.agrest.runtime.meta.RequestSchema;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.exp.ExpressionException;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.query.ObjectSelect;
 import org.junit.jupiter.api.Test;
@@ -127,6 +128,23 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
         entity.andExp(Exp.parse("not exists e5"));
         ObjectSelect<E3> q2 = queryAssembler.createRootQuery(c);
         assertEquals(expectedQ1.andExp(ExpressionFactory.notExists(ObjectSelect.query(E3.class).column(E3.E5))), q2.getWhere());
+    }
+
+    @Test
+    public void createRootQuery_Qualifier_Exists_Invalid_Condition() {
+        RootResourceEntity<E3> entity = getResourceEntity(E3.class);
+
+        SelectContext<E3> c = new SelectContext<>(
+                E3.class,
+                new RequestSchema(mock(AgSchema.class)),
+                mock(AgRequestBuilder.class),
+                PathChecker.ofDefault(),
+                mock(Injector.class));
+
+        c.setEntity(entity);
+
+        entity.andExp(Exp.exists("name = 'test1'"));
+        assertThrows(ExpressionException.class, () -> queryAssembler.createRootQuery(c));
     }
 
     @Test

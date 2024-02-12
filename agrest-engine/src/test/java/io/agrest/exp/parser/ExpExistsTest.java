@@ -28,7 +28,7 @@ class ExpExistsTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"exists", "exists()"})
+    @ValueSource(strings = {"exists", "exists()", "exists (name == 'test')"})
     public void parseInvalidGrammar(String expString) {
         assertThrows(AgException.class, () -> Exp.parse(expString));
     }

@@ -16,6 +16,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
+
 import java.time.LocalDateTime;
 
 public class ExpIT extends MainDbTest {
@@ -377,6 +378,30 @@ public class ExpIT extends MainDbTest {
                 .queryParam("sort", "id")
                 .get()
                 .wasOk().bodyEquals(1, "{\"id\":4}");
+    }
+
+    @Test
+    public void exists_Path_Relationship() {
+
+        tester.e2().insertColumns("id_", "name")
+                .values(1, "qwe")
+                .values(2, "try")
+                .exec();
+
+        tester.e3().insertColumns("id_", "name", "e2_id")
+                .values(1, "xxx", 1)
+                .values(2, "yxy", 2)
+                .values(3, "y_y", 2)
+                .values(4, "y_ay", null)
+                .exec();
+
+        tester.target("/e3")
+                .queryParam("include", "id")
+                .queryParam("exp", "exists e2")
+                .queryParam("sort", "id")
+                .get()
+                .wasOk()
+                .bodyEquals(3, "{\"id\":1}", "{\"id\":2}", "{\"id\":3}");
     }
 
     @Test
