@@ -111,7 +111,10 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
                     parentNode.setOperand(childIndex, replacement);
                 }
             }
-            if ((parentNode instanceof ASTExists || parentNode instanceof ASTNotExists) && childNode instanceof ASTPath) {
+            if (parentNode instanceof ASTExists || parentNode instanceof ASTNotExists) {
+                if (!(childNode instanceof ASTPath)) {
+                    throw AgException.badRequest("%s only supports path value", parentNode.expName());
+                }
                 ObjPathMarker marker = createPathMarker(entity, (ASTPath) childNode);
                 Expression pathExistExp = markerToExpression(marker);
                 ((ConditionNode) parentNode).jjtAddChild(
