@@ -20,7 +20,7 @@ class ExpNotExists extends SimpleNode {
 
   public ExpNotExists(Exp subExp) {
     this();
-    jjtAddChild((Node) subExp, 0);
+    setOperand(0, subExp);
   }
 
   /** Accept the visitor. **/
