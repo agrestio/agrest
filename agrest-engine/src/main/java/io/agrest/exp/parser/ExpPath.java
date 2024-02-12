@@ -2,8 +2,16 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
+import io.agrest.exp.AgExpressionException;
+
+import java.util.Collections;
+import java.util.Map;
+
 public
 class ExpPath extends SimpleNode {
+
+  protected Map<String, String> pathAliases = Collections.emptyMap();
+
   public ExpPath(int id) {
     super(id);
   }
@@ -16,6 +24,11 @@ class ExpPath extends SimpleNode {
     super(AgExpressionParserTreeConstants.JJTPATH);
   }
 
+  public ExpPath(String path) {
+    this();
+    setPath(path);
+  }
+
   public String getPath() {
     return (String)jjtGetValue();
   }
@@ -24,11 +37,33 @@ class ExpPath extends SimpleNode {
     jjtSetValue(path);
   }
 
+  public Map<String, String> getPathAliases() {
+    return pathAliases;
+  }
+
+  public void setPathAliases(Map<String, String> pathAliases) {
+    this.pathAliases = pathAliases;
+  }
+
+  @Override
+  public void jjtSetValue(Object value) {
+    super.jjtSetValue(value);
+    syncAliases();
+  }
+
   /** Accept the visitor. **/
   public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 
     return
     visitor.visit(this, data);
+  }
+
+  protected void syncAliases() {
+    try {
+      ParsingUtils.processPathAliases(this);
+    } catch (ParseException e) {
+      throw new AgExpressionException(e);
+    }
   }
 
   @Override
