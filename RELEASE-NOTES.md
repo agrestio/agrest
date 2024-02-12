@@ -4,6 +4,7 @@
 * #653 Exp syntax: do not support space in the named parameter token
 * #654 Exp syntax: function names should not be keywords  
 * #655 Exp syntax: deprecate case-insensitivity of NULL and booleans
+* #657 Expression parser to support path aliases
 * #658 DeleteBuilder: byIds(..), byMultiIds(..)
 * #659 Idempotent DELETE by ids, optimizing performance
 * #660 Builders: auto-detect multi-column IDs
