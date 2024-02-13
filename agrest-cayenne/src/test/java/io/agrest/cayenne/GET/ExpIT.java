@@ -405,6 +405,29 @@ public class ExpIT extends MainDbTest {
     }
 
     @Test
+    public void exists_Path_NoRelationship() {
+
+        tester.e2().insertColumns("id_", "name")
+                .values(1, "qwe")
+                .values(2, "try")
+                .exec();
+
+        tester.e3().insertColumns("id_", "name")
+                .values(1, "xxx")
+                .values(2, "yxy")
+                .values(3, null)
+                .exec();
+
+        tester.target("/e3")
+                .queryParam("include", "id")
+                .queryParam("exp", "exists name")
+                .queryParam("sort", "id")
+                .get()
+                .wasOk()
+                .bodyEquals(2, "{\"id\":1}", "{\"id\":2}");
+    }
+
+    @Test
     public void like_MultiChar_Pattern_Escape() {
 
         tester.e2().insertColumns("id_", "name")

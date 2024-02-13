@@ -72,11 +72,26 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
             exp = pathCache.resolve(entity.getName(), ((ASTObjPath) exp).getPath()).getPathExp();
         }
 
+        // process root ASTExits|ASTNotExists that can't be properly handled by ExpressionProcessor.
+        if (exp instanceof ASTExists || exp instanceof ASTNotExists) {
+            return optimizeExistsExp(exp);
+        }
+
         return exp;
     }
 
     private ExpressionProcessor getOrCreateExpressionProcessor(ObjEntity entity) {
         return postProcessors.computeIfAbsent(entity.getName(), e -> new ExpressionProcessor(entity));
+    }
+
+    private static Expression optimizeExistsExp(Expression exp) {
+        Expression pathExistExp = ((Expression) exp.getOperand(0));
+        if (pathExistExp instanceof ASTSubquery) {
+            return exp;
+        }
+        return exp instanceof ASTExists
+                ? pathExistExp
+                : pathExistExp.notExp();
     }
 
     private class ExpressionProcessor extends TraversalHelper {
@@ -123,6 +138,9 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
                                 : (Node) pathExistExp,
                         childIndex
                 );
+            }
+            if (childNode instanceof ASTExists || childNode instanceof ASTNotExists) {
+                parentNode.setOperand(childIndex, optimizeExistsExp((Expression) childNode));
             }
         }
 
