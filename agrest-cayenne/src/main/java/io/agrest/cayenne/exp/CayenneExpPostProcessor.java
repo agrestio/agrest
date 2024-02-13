@@ -16,12 +16,27 @@ import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.TraversalHelper;
-import org.apache.cayenne.exp.parser.*;
-import org.apache.cayenne.map.*;
+import org.apache.cayenne.exp.parser.ASTDbPath;
+import org.apache.cayenne.exp.parser.ASTExists;
+import org.apache.cayenne.exp.parser.ASTNotExists;
+import org.apache.cayenne.exp.parser.ASTObjPath;
+import org.apache.cayenne.exp.parser.ASTPath;
+import org.apache.cayenne.exp.parser.ASTSubquery;
+import org.apache.cayenne.exp.parser.ConditionNode;
+import org.apache.cayenne.exp.parser.Node;
+import org.apache.cayenne.exp.parser.SimpleNode;
+import org.apache.cayenne.map.DbJoin;
+import org.apache.cayenne.map.DbRelationship;
+import org.apache.cayenne.map.EntityResolver;
+import org.apache.cayenne.map.ObjEntity;
+import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.FluentSelect;
 import org.apache.cayenne.query.ObjectSelect;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
