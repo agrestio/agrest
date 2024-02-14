@@ -315,20 +315,5 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
             super(path);
             this.relationship = relationship;
         }
-
-        @Override
-        public Expression shallowCopy() {
-            return new ObjPathMarker(getPath(), relationship);
-        }
-
-        @Override
-        public boolean equals(Object object) {
-            return this == object;
-        }
-
-        @Override
-        public int hashCode() {
-            return System.identityHashCode(this);
-        }
     }
 }

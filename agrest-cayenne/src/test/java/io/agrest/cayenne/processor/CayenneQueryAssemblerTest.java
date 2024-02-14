@@ -2,6 +2,7 @@ package io.agrest.cayenne.processor;
 
 import io.agrest.access.PathChecker;
 import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.exp.AgExpressionException;
 import io.agrest.id.AgObjectId;
 import io.agrest.AgRequestBuilder;
 import io.agrest.RootResourceEntity;
@@ -15,7 +16,6 @@ import io.agrest.runtime.meta.RequestSchema;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.ExpressionException;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.query.ObjectSelect;
 import org.junit.jupiter.api.Test;
@@ -144,7 +144,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
         c.setEntity(entity);
 
         entity.andExp(Exp.exists("name = 'test1'"));
-        assertThrows(ExpressionException.class, () -> queryAssembler.createRootQuery(c));
+        assertThrows(AgExpressionException.class, () -> queryAssembler.createRootQuery(c));
     }
 
     @Test

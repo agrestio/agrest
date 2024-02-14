@@ -1,9 +1,11 @@
 package io.agrest.cayenne.exp;
 
 import io.agrest.cayenne.path.PathOps;
+import io.agrest.exp.AgExpressionException;
 import io.agrest.exp.parser.SimpleNode;
 import io.agrest.exp.parser.*;
 import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.exp.ExpressionException;
 import org.apache.cayenne.exp.ExpressionParameter;
 import org.apache.cayenne.exp.parser.*;
 
@@ -323,7 +325,11 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
     }
 
     private Expression addToParent(Expression parent, Expression child) {
-        parent.setOperand(parent.getOperandCount(), child);
+        try {
+            parent.setOperand(parent.getOperandCount(), child);
+        } catch (ExpressionException e) {
+            throw new AgExpressionException(e);
+        }
         return parent;
     }
 
