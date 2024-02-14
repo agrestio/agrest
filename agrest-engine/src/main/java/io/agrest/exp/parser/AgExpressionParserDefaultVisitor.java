@@ -54,6 +54,12 @@ public class AgExpressionParserDefaultVisitor<T> implements AgExpressionParserVi
   public T visit(ExpBetween node, T data){
     return defaultVisit(node, data);
   }
+  public T visit(ExpNotExists node, T data){
+    return defaultVisit(node, data);
+  }
+  public T visit(ExpExists node, T data){
+    return defaultVisit(node, data);
+  }
   public T visit(ExpNotLike node, T data){
     return defaultVisit(node, data);
   }
@@ -154,4 +160,4 @@ public class AgExpressionParserDefaultVisitor<T> implements AgExpressionParserVi
     return defaultVisit(node, data);
   }
 }
-/* JavaCC - OriginalChecksum=7842ba2f7866318b36a9aa9c5ff4efa3 (do not edit this line) */
+/* JavaCC - OriginalChecksum=513ab353add5aa50faf9e7386eee6c00 (do not edit this line) */
