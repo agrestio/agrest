@@ -9,6 +9,7 @@
 * #659 Idempotent DELETE by ids, optimizing performance
 * #660 Builders: auto-detect multi-column IDs
 * #662 Update expression parser with JavaCC 7.0.13
+* #673 OpenAPI should have an "array of string" schema for "include" and "exclude"
 
 ## Release 5.0.M19
 
