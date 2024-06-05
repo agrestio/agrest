@@ -27,25 +27,25 @@ public interface Exp {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #parse(String)}
+     * @deprecated in favor of {@link #parse(String)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     static Exp simple(String template) {
         return parse(template);
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #parse(String)} and {@link #namedParams(Map)}
+     * @deprecated in favor of {@link #parse(String)} and {@link #namedParams(Map)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     static Exp witNamedParams(String template, Map<String, Object> params) {
         return parse(template).namedParams(params);
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #parse(String)} and {@link #positionalParams(Object...)}
+     * @deprecated in favor of {@link #parse(String)} and {@link #positionalParams(Object...)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     static Exp withPositionalParams(String template, Object... params) {
         return parse(template).positionalParams(params);
     }
@@ -277,9 +277,9 @@ public interface Exp {
      * non-recursive even for composite expressions. If the visitor needs to descend into expression tree, it will
      * need to implement this logic on its own.
      *
-     * @deprecated since 5.0 in favor of {@link #accept(AgExpressionParserVisitor, Object)}
+     * @deprecated in favor of {@link #accept(AgExpressionParserVisitor, Object)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     default void visit(ExpVisitor visitor) {
         // DO NOTHING
     }

@@ -11,6 +11,6 @@ public interface PathConstants {
      * @deprecated in favor of {@link PathChecker#exceedsLength(String)}. The new size
      * limit is 1000 chars.
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     int MAX_PATH_LENGTH = 300;
 }

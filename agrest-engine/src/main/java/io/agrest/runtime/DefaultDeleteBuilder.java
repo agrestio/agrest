@@ -37,14 +37,14 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
         return this;
     }
 
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     @Override
     public DeleteBuilder<T> id(Object id) {
         context.addId(AgObjectId.of(id));
         return this;
     }
 
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     @Override
     public DeleteBuilder<T> id(Map<String, Object> id) {
         context.addId(AgObjectId.ofMap(id));

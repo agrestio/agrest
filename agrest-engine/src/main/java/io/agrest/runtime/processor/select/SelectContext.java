@@ -58,7 +58,7 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
      * @deprecated unused anymore, as the context should not be creating a response. It is the responsibility of a
      * pipeline
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public DataResponse<T> createDataResponse() {
         int status = getResponseStatus() != null ? getResponseStatus() : HttpStatus.OK;
 

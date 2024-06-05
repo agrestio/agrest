@@ -35,17 +35,17 @@ public interface UpdateBuilder<T> {
     UpdateBuilder<T> byId(Object id);
 
     /**
-     * @deprecated since 5.0 in favor of {@link #byId(Object)}
+     * @deprecated in favor of {@link #byId(Object)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     default UpdateBuilder<T> id(Object id) {
         return byId(id);
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #byId(Object)}.
+     * @deprecated in favor of {@link #byId(Object)}.
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     default UpdateBuilder<T> id(Map<String, Object> id) {
         return byId(id);
     }

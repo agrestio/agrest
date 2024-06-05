@@ -27,7 +27,7 @@ public class SortParser implements ISortParser {
     /**
      * @deprecated since protocol v1.2, Agrest 5.0
      */
-    @Deprecated
+    @Deprecated(forRemoval = false)
     private static final String JSON_KEY_PROPERTY = "property";
 
     private static final String JSON_KEY_DIRECTION = "direction";

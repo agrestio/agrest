@@ -140,7 +140,7 @@ public abstract class ResourceEntity<T> {
     /**
      * @deprecated in favor of {@link #getExp()}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public Exp getQualifier() {
         return getExp();
     }
@@ -155,7 +155,7 @@ public abstract class ResourceEntity<T> {
     /**
      * @deprecated in favor of {@link #andExp(Exp)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public void andQualifier(Exp qualifier) {
         andExp(qualifier);
     }
@@ -281,7 +281,7 @@ public abstract class ResourceEntity<T> {
      * @since 1.1
      * @deprecated in favor of {@link #mapBy(ResourceEntity)}. mapByPath parameter is ignored.
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public ResourceEntity<T> mapBy(ResourceEntity<?> mapBy, String mapByPath) {
         return mapBy(mapBy);
     }
@@ -304,7 +304,7 @@ public abstract class ResourceEntity<T> {
     /**
      * @deprecated in favor of {@link #getStart()}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public int getFetchOffset() {
         return getStart();
     }
@@ -319,7 +319,7 @@ public abstract class ResourceEntity<T> {
     /**
      * @deprecated in favor of {@link #setStart(int)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public void setFetchOffset(int fetchOffset) {
         setStart(fetchOffset);
     }
@@ -334,7 +334,7 @@ public abstract class ResourceEntity<T> {
     /**
      * @deprecated in favor of {@link #getLimit()}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public int getFetchLimit() {
         return getLimit();
     }
@@ -349,7 +349,7 @@ public abstract class ResourceEntity<T> {
     /**
      * @deprecated in favor of {@link #setLimit(int)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public void setFetchLimit(int fetchLimit) {
         setLimit(fetchLimit);
     }
@@ -370,7 +370,7 @@ public abstract class ResourceEntity<T> {
     /**
      * @deprecated in favor of {@link #getProperty(String)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public <P> P getRequestProperty(String name) {
         return getProperty(name);
     }
@@ -378,7 +378,7 @@ public abstract class ResourceEntity<T> {
     /**
      * @deprecated in favor of {@link #setProperty(String, Object)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public void setRequestProperty(String name, Object value) {
         setProperty(name, value);
     }

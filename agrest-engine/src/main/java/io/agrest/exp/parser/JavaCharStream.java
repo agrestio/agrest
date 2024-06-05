@@ -351,19 +351,16 @@ class JavaCharStream
   }
 
   /**
-   * @deprecated
    * @see #getEndColumn
    */
-  @Deprecated
-  public int getColumn() {
+  @Deprecated(since = "5.0", forRemoval = true)  public int getColumn() {
     return bufcolumn[bufpos];
   }
 
   /**
-   * @deprecated
    * @see #getEndLine
    */
-  @Deprecated
+  @Deprecated(since = "5.0", forRemoval = true)
   public int getLine() {
     return bufline[bufpos];
   }

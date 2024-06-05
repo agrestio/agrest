@@ -178,9 +178,9 @@ public class AgRuntime {
 
     /**
      * @since 5.0
-     * @deprecated since 5.0 as DELETE HTTP method should have no body. Can be replaced with "delete(Class).byId(id1).byId(id2)"
+     * @deprecated as DELETE HTTP method should have no body. Can be replaced with "delete(Class).byId(id1).byId(id2)"
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <T> SimpleResponse delete(Class<T> root, Collection<EntityDelete<T>> deleted) {
         DeleteBuilder<T> builder = delete(root);
         deleted.forEach(entityDelete -> builder.byId(entityDelete.getId()));
