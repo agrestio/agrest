@@ -38,8 +38,7 @@
         <jackson.version>2.14.2</jackson.version>
         <jackson.databind.version>2.14.2</jackson.databind.version>
 
-        <!-- TODO: replace with release version as soon as possible -->
-        <bq.version>3.0.M2-SNAPSHOT</bq.version>
+        <bq.version>3.0-M4</bq.version>
 
         <junit5.version>5.9.1</junit5.version>
         <swagger.version>2.1.12</swagger.version>
@@ -75,21 +74,6 @@
         <url>https://github.com/agrestio/agrest</url>
         <tag>agrest-parent-5.0.M4</tag>
     </scm>
-
-
-    <repositories>
-        <!-- TODO: remove this repo declaration once Bootuque 3.0.M2 is released and we can reference it in tests -->
-        <repository>
-            <id>bootique-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <distributionManagement>
         <repository>
