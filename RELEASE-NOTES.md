@@ -1,6 +1,6 @@
 ## Release 5.0-M20
 
-* #651 Exp: numeric scalars to support "_"
+* #651 Exp: numeric scalars to support underscore
 * #653 Exp syntax: do not support space in the named parameter token
 * #654 Exp syntax: function names should not be keywords  
 * #655 Exp syntax: deprecate case-insensitivity of NULL and booleans
@@ -10,6 +10,7 @@
 * #660 Builders: auto-detect multi-column IDs
 * #662 Update expression parser with JavaCC 7.0.13
 * #673 OpenAPI should have an "array of string" schema for "include" and "exclude"
+* #677 Upgrading JUnit to 5.10.2
 
 ## Release 5.0.M19
 
