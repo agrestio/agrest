@@ -12,6 +12,7 @@
 * #673 OpenAPI should have an "array of string" schema for "include" and "exclude"
 * #677 Upgrading JUnit to 5.10.2
 * #678 Upgrading Swagger to 2.2.2
+* #679 Upgrading Jackson to 2.15.4
 
 ## Release 5.0.M19
 
