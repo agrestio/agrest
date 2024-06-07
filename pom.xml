@@ -41,7 +41,7 @@
         <bq.version>3.0-M4</bq.version>
 
         <junit5.version>5.10.2</junit5.version>
-        <swagger.version>2.1.12</swagger.version>
+        <swagger.version>2.2.2</swagger.version>
         <mockito.version>3.9.0</mockito.version>
 
         <gpg.pinentry.mode>loopback</gpg.pinentry.mode>
