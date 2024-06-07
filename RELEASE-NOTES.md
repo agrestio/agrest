@@ -10,6 +10,7 @@
 * #660 Builders: auto-detect multi-column IDs
 * #662 Update expression parser with JavaCC 7.0.13
 * #673 OpenAPI should have an "array of string" schema for "include" and "exclude"
+* #676 Multi-column ObjectMapper
 * #677 Upgrading JUnit to 5.10.2
 * #678 Upgrading Swagger to 2.2.2
 * #679 Upgrading Jackson to 2.15.4

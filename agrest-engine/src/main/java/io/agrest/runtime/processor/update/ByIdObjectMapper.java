@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-class ByIdObjectMapper<T> implements ObjectMapper<T> {
+public class ByIdObjectMapper<T> implements ObjectMapper<T> {
 
     private final AgEntity<T> entity;
 
