@@ -25,21 +25,17 @@
 
     <properties>
 
-        <!-- standard Maven properties -->
         <maven.compiler.release>11</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <!-- Custom properties (mostly framework versions) -->
-        <slf4j.version>1.7.25</slf4j.version>
+        <slf4j.version>2.0.7</slf4j.version>
         <cayenne.version>4.2</cayenne.version>
         <jaxrs2.version>2.1.6</jaxrs2.version>
         <jaxrs3.version>3.0.0</jaxrs3.version>
         <jackson.version>2.15.4</jackson.version>
         <jackson.databind.version>2.15.4</jackson.databind.version>
-
         <bq.version>3.0-M4</bq.version>
-
         <junit5.version>5.10.2</junit5.version>
         <swagger.version>2.2.2</swagger.version>
         <mockito.version>3.9.0</mockito.version>
