@@ -71,6 +71,13 @@
         <tag>HEAD</tag>
     </scm>
 
+    <repositories>
+        <repository>
+          <id>cayenne-release</id>
+          <url>https://repository.apache.org/content/repositories/orgapachecayenne-1054/</url>
+        </repository>
+    </repositories>
+
     <distributionManagement>
         <repository>
             <uniqueVersion>false</uniqueVersion>
