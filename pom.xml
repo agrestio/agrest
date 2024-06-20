@@ -30,7 +30,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <slf4j.version>2.0.7</slf4j.version>
-        <cayenne.version>4.2</cayenne.version>
+        <cayenne.version>4.2.1</cayenne.version>
         <jaxrs2.version>2.1.6</jaxrs2.version>
         <jaxrs3.version>3.0.0</jaxrs3.version>
         <jackson.version>2.15.4</jackson.version>
