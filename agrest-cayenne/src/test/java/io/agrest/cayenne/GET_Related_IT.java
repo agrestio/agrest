@@ -9,9 +9,12 @@ import io.agrest.cayenne.cayenne.main.E17;
 import io.agrest.cayenne.cayenne.main.E18;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.cayenne.main.E32;
+import io.agrest.cayenne.cayenne.main.E33;
 import io.agrest.cayenne.unit.AgCayenneTester;
 import io.agrest.cayenne.unit.DbTest;
 import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.GET;
@@ -28,8 +31,7 @@ public class GET_Related_IT extends DbTest {
 
     @BQTestTool
     static final AgCayenneTester tester = tester(Resource.class)
-            .entities(E2.class, E3.class, E17.class, E18.class)
-            .entitiesAndDependencies(E12.class, E13.class)
+            .entitiesAndDependencies(E2.class, E3.class, E17.class, E18.class, E12.class, E13.class, E32.class, E33.class)
             .build();
 
     @Test
@@ -134,6 +136,26 @@ public class GET_Related_IT extends DbTest {
                 .bodyEquals(1, "{\"id\":{\"e12_id\":12,\"e13_id\":16},\"e12\":{\"id\":12},\"e13\":{\"id\":16}}");
     }
 
+    @Test
+    @Disabled("This is a problem in 4.x, that was fixed in 5.x")
+    public void testCompoundRootKey() {
+
+        tester.e33().insertColumns("p_id", "name")
+                .values(11, "n33_1")
+                .values(12, "n33_2").exec();
+
+        tester.e32().insertColumns("p_id", "s_id", "t_id", "name")
+                .values(11, 101, 1001, "n32_1")
+                .values(12, 102, 1002, "n32_2").exec();
+
+        tester.target("/e32")
+                .queryParam("include", "e33")
+                .get()
+                .wasOk()
+                .bodyEquals(2, "{\"id\":{\"p_id\":11,\"s_id\":101,\"t_id\":1001},\"e33\":{},\"name\":\"n32_1\"}," +
+                        "{\"id\":{\"p_id\":12,\"s_id\":102,\"t_id\":1002},\"e33\":{},\"name\":\"n32_2\"}");
+    }
+
     @Path("")
     public static class Resource {
 
@@ -182,6 +204,12 @@ public class GET_Related_IT extends DbTest {
             parentIds.put(E17.ID2_PK_COLUMN, parentId2);
 
             return Ag.select(E18.class, config).parent(E17.class, parentIds, E17.E18S.getName()).uri(uriInfo).get();
+        }
+
+        @GET
+        @Path("e32")
+        public DataResponse<E32> getE32(@Context UriInfo uriInfo) {
+            return Ag.select(E32.class, config).uri(uriInfo).get();
         }
     }
 }

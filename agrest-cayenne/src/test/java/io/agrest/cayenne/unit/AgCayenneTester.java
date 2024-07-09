@@ -222,6 +222,14 @@ public class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallb
         return db.getTable("e31");
     }
 
+    public Table e32() {
+        return db.getTable("e32");
+    }
+
+    public Table e33() {
+        return db.getTable("e33");
+    }
+
     protected CayenneTester getCayenneInScope() {
         return Objects.requireNonNull(cayenneInScope, "Not in test scope");
     }
