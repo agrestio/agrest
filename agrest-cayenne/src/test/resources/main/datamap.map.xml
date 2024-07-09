@@ -163,6 +163,16 @@
 		<db-attribute name="id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 	</db-entity>
+	<db-entity name="e32">
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+		<db-attribute name="p_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="s_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="t_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
+	<db-entity name="e33">
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+		<db-attribute name="p_id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
 	<db-entity name="e4">
 		<db-attribute name="c_boolean" type="BOOLEAN"/>
 		<db-attribute name="c_date" type="DATE"/>
@@ -305,6 +315,12 @@
 		<obj-attribute name="id" type="java.lang.Long" db-attribute-path="id"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
+	<obj-entity name="E32" className="io.agrest.cayenne.cayenne.main.E32" dbEntityName="e32">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="E33" className="io.agrest.cayenne.cayenne.main.E33" dbEntityName="e33">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
 	<obj-entity name="E4" className="io.agrest.cayenne.cayenne.main.E4" dbEntityName="e4">
 		<obj-attribute name="cBoolean" type="java.lang.Boolean" db-attribute-path="c_boolean"/>
 		<obj-attribute name="cDate" type="java.util.Date" db-attribute-path="c_date"/>
@@ -416,6 +432,12 @@
 		<db-attribute-pair source="e29_id1" target="id1"/>
 		<db-attribute-pair source="e29_id2" target="id2"/>
 	</db-relationship>
+	<db-relationship name="e33" source="e32" target="e33">
+		<db-attribute-pair source="p_id" target="p_id"/>
+	</db-relationship>
+	<db-relationship name="e32s" source="e33" target="e32" toDependentPK="true" toMany="true">
+		<db-attribute-pair source="p_id" target="p_id"/>
+	</db-relationship>
 	<db-relationship name="e15e5" source="e5" target="e15_e5" toDependentPK="true" toMany="true">
 		<db-attribute-pair source="id" target="e5_id"/>
 	</db-relationship>
@@ -458,6 +480,7 @@
 	<obj-relationship name="e2" source="E3" target="E2" deleteRule="Nullify" db-relationship-path="e2"/>
 	<obj-relationship name="e5" source="E3" target="E5" deleteRule="Nullify" db-relationship-path="e5"/>
 	<obj-relationship name="e29" source="E30" target="E29" deleteRule="Nullify" db-relationship-path="e29"/>
+	<obj-relationship name="e33" source="E32" target="E33" deleteRule="Nullify" db-relationship-path="e33"/>
 	<obj-relationship name="e15s" source="E5" target="E15" db-relationship-path="e15e5.e15"/>
 	<obj-relationship name="e3s" source="E5" target="E3" deleteRule="Deny" db-relationship-path="e2s"/>
 	<obj-relationship name="e8" source="E7" target="E8" deleteRule="Nullify" db-relationship-path="e8"/>
