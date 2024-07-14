@@ -8,7 +8,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+
 
 public class CayenneExpressionVisitorTest {
 
@@ -32,6 +33,7 @@ public class CayenneExpressionVisitorTest {
             "currentTimestamp()_|org.apache.cayenne.exp.parser.ASTCurrentTimestamp",
             "t.value / 2_|org.apache.cayenne.exp.parser.ASTDivide",
             "t.v1 = t.v2_|org.apache.cayenne.exp.parser.ASTEqual",
+            "exists details_|org.apache.cayenne.exp.parser.ASTExists",
             "day(t.dateTime)_|org.apache.cayenne.exp.parser.ASTExtract",
             "false_|org.apache.cayenne.exp.parser.ASTFalse",
             "t.v > 0_|org.apache.cayenne.exp.parser.ASTGreater",
@@ -51,6 +53,7 @@ public class CayenneExpressionVisitorTest {
             "!(t.a = 1 and t.b = 3)_|org.apache.cayenne.exp.parser.ASTNot",
             "t.value !between 10 and 20_|org.apache.cayenne.exp.parser.ASTNotBetween",
             "t.v1 != t.v2_|org.apache.cayenne.exp.parser.ASTNotEqual",
+            "not exists details_|org.apache.cayenne.exp.parser.ASTNotExists",
             "t.v !in (0, 5)_|org.apache.cayenne.exp.parser.ASTNotIn",
             "t.name !like '%s'_|org.apache.cayenne.exp.parser.ASTNotLike",
             "t.name !likeIgnoreCase '%s'_|org.apache.cayenne.exp.parser.ASTNotLikeIgnoreCase",
@@ -86,7 +89,7 @@ public class CayenneExpressionVisitorTest {
             "a not likeIgnoreCase 'bcd' escape '$'"})
     public void accept_escapeChar(String agrestExp) {
         Expression cayenneExp = Exp.parse(agrestExp).accept(visitor, null);
-        assertTrue(cayenneExp instanceof PatternMatchNode);
+        assertInstanceOf(PatternMatchNode.class, cayenneExp);
         PatternMatchNode matchNode = (PatternMatchNode) cayenneExp;
         assertEquals('$', matchNode.getEscapeChar());
     }
