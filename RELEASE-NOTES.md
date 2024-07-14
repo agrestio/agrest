@@ -15,6 +15,7 @@
 * #678 Upgrading Swagger to 2.2.2
 * #679 Upgrading Jackson to 2.15.4
 * #680 Upgrading SLF4J to 2.0.7
+* #681 Exp: regression in processing (not)in with empty list
 * #683 Upgrade Cayenne to 4.2.1 
 * #684 GET with includes can't match children to parent when parent has a compound key
 
