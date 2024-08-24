@@ -17,10 +17,10 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgSchema;
 import io.agrest.meta.LazySchema;
 import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.configuration.server.DataSourceFactory;
-import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.configuration.runtime.DataSourceFactory;
 import org.apache.cayenne.di.Module;
 import org.apache.cayenne.map.ObjEntity;
+import org.apache.cayenne.runtime.CayenneRuntime;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.util.Collections;
@@ -41,20 +41,20 @@ public abstract class NoDbTest {
     protected AgSchema schema;
     protected CayenneQueryAssembler queryAssembler;
 
-    protected static ServerRuntime createRuntime(String project) {
+    protected static CayenneRuntime createRuntime(String project) {
         Module module = binder -> {
             DataSourceFactory dsf = mock(DataSourceFactory.class);
             binder.bind(DataSourceFactory.class).toInstance(dsf);
         };
 
-        return ServerRuntime
+        return CayenneRuntime
                 .builder()
                 .addConfig(project)
                 .addModule(module)
                 .build();
     }
 
-    protected abstract ServerRuntime getRuntime();
+    protected abstract CayenneRuntime getRuntime();
 
     @BeforeEach
     public void initAgSchema() {

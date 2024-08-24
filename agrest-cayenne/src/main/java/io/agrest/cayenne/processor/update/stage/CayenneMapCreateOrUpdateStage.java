@@ -7,7 +7,7 @@ import io.agrest.cayenne.exp.ICayenneExpParser;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
-import org.apache.cayenne.DataObject;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.di.Inject;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class CayenneMapCreateOrUpdateStage extends CayenneMapUpdateStage {
     }
 
     @Override
-    protected <T extends DataObject> void collectCreateOps(
+    protected <T extends Persistent> void collectCreateOps(
             UpdateContext<T> context,
             UpdateMap<T> updateMap) {
 

@@ -76,7 +76,7 @@ public class Resolvers_AutoDetectIT extends MainDbTest {
                         "{\"id\":9,\"e2\":null,\"name\":\"zzz\"}",
                         "{\"id\":10,\"e2\":{\"name\":\"yyy\"},\"name\":\"aaa\"}");
 
-        tester.assertQueryCount(3);
+        tester.assertQueryCount(4);
     }
 
     @Path("")

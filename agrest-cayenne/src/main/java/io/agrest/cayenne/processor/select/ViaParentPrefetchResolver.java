@@ -5,8 +5,8 @@ import io.agrest.RelatedResourceEntity;
 import io.agrest.ResourceEntity;
 import io.agrest.RootResourceEntity;
 import io.agrest.cayenne.compiler.DataObjectDataReader;
-import io.agrest.cayenne.processor.CayenneRelatedResourceEntityExt;
 import io.agrest.cayenne.processor.CayenneProcessor;
+import io.agrest.cayenne.processor.CayenneRelatedResourceEntityExt;
 import io.agrest.cayenne.processor.CayenneRootResourceEntityExt;
 import io.agrest.processor.ProcessingContext;
 import io.agrest.reader.DataReader;
@@ -14,7 +14,7 @@ import io.agrest.resolver.BaseRelatedDataResolver;
 import io.agrest.resolver.ToManyFlattenedIterator;
 import io.agrest.resolver.ToOneFlattenedIterator;
 import io.agrest.runtime.processor.select.SelectContext;
-import org.apache.cayenne.DataObject;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.query.ColumnSelect;
 import org.apache.cayenne.query.ObjectSelect;
 
@@ -24,7 +24,7 @@ import org.apache.cayenne.query.ObjectSelect;
  *
  * @since 3.4
  */
-public class ViaParentPrefetchResolver extends BaseRelatedDataResolver<DataObject> {
+public class ViaParentPrefetchResolver extends BaseRelatedDataResolver<Persistent> {
 
     private final int prefetchSemantics;
 
@@ -33,7 +33,7 @@ public class ViaParentPrefetchResolver extends BaseRelatedDataResolver<DataObjec
     }
 
     @Override
-    protected void doOnParentQueryAssembled(RelatedResourceEntity<DataObject> entity, SelectContext<?> context) {
+    protected void doOnParentQueryAssembled(RelatedResourceEntity<Persistent> entity, SelectContext<?> context) {
         // add prefetch to the (grand)parent query
 
         ResourceEntity<?> parent = entity.getParent();
@@ -46,11 +46,11 @@ public class ViaParentPrefetchResolver extends BaseRelatedDataResolver<DataObjec
     }
 
     @Override
-    protected Iterable<DataObject> doOnParentDataResolved(
-            RelatedResourceEntity<DataObject> entity,
+    protected Iterable<Persistent> doOnParentDataResolved(
+            RelatedResourceEntity<Persistent> entity,
             Iterable<?> parentData,
             SelectContext<?> context) {
-        return iterableData(entity, (Iterable<DataObject>) parentData, context);
+        return iterableData(entity, (Iterable<Persistent>) parentData, context);
     }
 
     protected void addRelatedPrefetch(RelatedResourceEntity<?> entity, String path, int prefetchSemantics) {
@@ -101,7 +101,7 @@ public class ViaParentPrefetchResolver extends BaseRelatedDataResolver<DataObjec
 
 
     @Override
-    public DataReader dataReader(RelatedResourceEntity<DataObject> entity, ProcessingContext<?> context) {
+    public DataReader dataReader(RelatedResourceEntity<Persistent> entity, ProcessingContext<?> context) {
 
         // TODO: what about multi-step prefetches? How do we locate parent then?
 
@@ -109,9 +109,9 @@ public class ViaParentPrefetchResolver extends BaseRelatedDataResolver<DataObjec
         return DataObjectDataReader.reader(entity.getIncoming().getName());
     }
 
-    protected Iterable<DataObject> iterableData(
-            RelatedResourceEntity<DataObject> entity,
-            Iterable<? extends DataObject> parentData,
+    protected Iterable<Persistent> iterableData(
+            RelatedResourceEntity<Persistent> entity,
+            Iterable<? extends Persistent> parentData,
             ProcessingContext<?> context) {
         DataReader reader = this.dataReader(entity, context);
         return entity.getIncoming().isToMany()

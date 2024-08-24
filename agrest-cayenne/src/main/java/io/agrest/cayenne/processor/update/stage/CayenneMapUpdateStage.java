@@ -18,8 +18,8 @@ import io.agrest.protocol.Exp;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
-import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
@@ -55,7 +55,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         this.entityResolver = persister.entityResolver();
     }
 
-    protected <T extends DataObject> void map(UpdateContext<T> context) {
+    protected <T extends Persistent> void map(UpdateContext<T> context) {
 
         ObjectMapper<T> mapper = createObjectMapper(context);
 
@@ -65,7 +65,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         collectCreateOps(context, updateMap);
     }
 
-    protected <T extends DataObject> void collectUpdateDeleteOps(
+    protected <T extends Persistent> void collectUpdateDeleteOps(
             UpdateContext<T> context,
             ObjectMapper<T> mapper,
             UpdateMap<T> updateMap) {
@@ -91,7 +91,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         context.setChangeOperations(ChangeOperationType.UPDATE, updateOps);
     }
 
-    protected <T extends DataObject> void collectCreateOps(
+    protected <T extends Persistent> void collectCreateOps(
             UpdateContext<T> context,
             UpdateMap<T> updateMap) {
 
@@ -108,14 +108,14 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         }
     }
 
-    protected <T extends DataObject> ObjectMapper<T> createObjectMapper(UpdateContext<T> context) {
+    protected <T extends Persistent> ObjectMapper<T> createObjectMapper(UpdateContext<T> context) {
         ObjectMapperFactory mapper = context.getMapper() != null
                 ? context.getMapper()
                 : ObjectMapperFactory.matchById();
         return mapper.createMapper(context);
     }
 
-    protected <T extends DataObject> UpdateMap<T> mutableUpdatesByKey(
+    protected <T extends Persistent> UpdateMap<T> mutableUpdatesByKey(
             UpdateContext<T> context,
             ObjectMapper<T> mapper) {
 
@@ -141,7 +141,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
         return new UpdateMap<>(withId, noId);
     }
 
-    protected <T extends DataObject> List<T> existingObjects(
+    protected <T extends Persistent> List<T> existingObjects(
             UpdateContext<T> context,
             Collection<Object> keys,
             ObjectMapper<T> mapper) {

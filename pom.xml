@@ -30,12 +30,14 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <slf4j.version>2.0.7</slf4j.version>
-        <cayenne.version>4.2.1</cayenne.version>
+        <cayenne.version>5.0-M1</cayenne.version>
         <jaxrs2.version>2.1.6</jaxrs2.version>
         <jaxrs3.version>3.0.0</jaxrs3.version>
         <jackson.version>2.15.4</jackson.version>
         <jackson.databind.version>2.15.4</jackson.databind.version>
-        <bq.version>3.0-M4</bq.version>
+
+        <!-- TODO: switch to 3.0-M5 or newer when ready -->
+        <bq.version>3.0-SNAPSHOT</bq.version>
         <junit5.version>5.10.2</junit5.version>
         <swagger.version>2.2.23</swagger.version>
         <mockito.version>3.9.0</mockito.version>
@@ -74,7 +76,7 @@
     <repositories>
         <repository>
           <id>cayenne-release</id>
-          <url>https://repository.apache.org/content/repositories/orgapachecayenne-1054/</url>
+          <url>https://repository.apache.org/content/repositories/orgapachecayenne-1058/</url>
         </repository>
     </repositories>
 
@@ -161,7 +163,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.cayenne</groupId>
-                <artifactId>cayenne-server</artifactId>
+                <artifactId>cayenne</artifactId>
                 <version>${cayenne.version}</version>
             </dependency>
             <!--
@@ -175,7 +177,7 @@
             </dependency>
             <dependency>
                 <groupId>io.bootique.cayenne</groupId>
-                <artifactId>bootique-cayenne42-junit5</artifactId>
+                <artifactId>bootique-cayenne50-junit5</artifactId>
                 <version>${bq.version}</version>
                 <exclusions>
                     <exclusion>

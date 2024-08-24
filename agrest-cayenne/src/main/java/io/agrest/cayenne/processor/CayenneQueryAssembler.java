@@ -209,7 +209,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
                     entity.getName());
         }
 
-        FluentSelect<?> parentSelect = parentExt.getSelect();
+        FluentSelect<?, ?> parentSelect = parentExt.getSelect();
 
         if (parentSelect != null) {
 
@@ -247,7 +247,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         // we can pick "relationshipName" from anywhere in the inheritance hierarchy, as it will be converted to a db path,
         // which is inheritance agnostic (at least until Cayenne starts supporting horizontal inheritance)
 
-        return objRelationshipInInheritanceHierarchy(entityType, relationshipName).getDbRelationshipPath();
+        return objRelationshipInInheritanceHierarchy(entityType, relationshipName).getDbRelationshipPath().value();
     }
 
     private ObjRelationship objRelationshipInInheritanceHierarchy(Class<?> superclassType, String relationshipName) {
@@ -287,7 +287,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
         ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getName());
         ObjRelationship objRelationship = parentObjEntity.getRelationship(entity.getIncoming().getName());
-        String reversePath = objRelationship.getReverseDbRelationshipPath();
+        String reversePath = objRelationship.getReverseDbRelationshipPath().value();
 
         consumeRange(parentData, entity.getParent().getStart(), entity.getParent().getLimit(),
                 // TODO: this only works for single column ids

@@ -15,10 +15,10 @@ import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.stage.UpdateMergeChangesStage;
 import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.DataObject;
 import org.apache.cayenne.DataRow;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.ObjectId;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.parser.ASTPath;
@@ -56,17 +56,17 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
 
     @Override
     public ProcessorOutcome execute(UpdateContext<?> context) {
-        merge((UpdateContext<DataObject>) context);
+        merge((UpdateContext<Persistent>) context);
         return ProcessorOutcome.CONTINUE;
     }
 
-    protected <T extends DataObject> void merge(UpdateContext<T> context) {
+    protected <T extends Persistent> void merge(UpdateContext<T> context) {
         Map<ChangeOperationType, List<ChangeOperation<T>>> ops = context.getChangeOperations();
         if (ops.isEmpty()) {
             return;
         }
 
-        Consumer<DataObject> parentRelator = createParentRelator(context);
+        Consumer<Persistent> parentRelator = createParentRelator(context);
         for (ChangeOperation<T> op : ops.get(ChangeOperationType.CREATE)) {
             create(context, parentRelator, op.getUpdate());
         }
@@ -80,11 +80,11 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
         }
     }
 
-    protected <T extends DataObject> void delete(T o) {
+    protected <T extends Persistent> void delete(T o) {
         o.getObjectContext().deleteObject(o);
     }
 
-    protected <T extends DataObject> void create(UpdateContext<T> context, Consumer<DataObject> parentRelator, EntityUpdate<T> update) {
+    protected <T extends Persistent> void create(UpdateContext<T> context, Consumer<Persistent> parentRelator, EntityUpdate<T> update) {
 
         ObjectContext objectContext = CayenneUpdateStartStage.cayenneContext(context);
         T o = objectContext.newObject(context.getType());
@@ -114,7 +114,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
         parentRelator.accept(o);
     }
 
-    protected <T extends DataObject> void update(Consumer<DataObject> parentRelator, T o, EntityUpdate<T> update) {
+    protected <T extends Persistent> void update(Consumer<Persistent> parentRelator, T o, EntityUpdate<T> update) {
         mergeChanges(update, o);
         parentRelator.accept(o);
     }
@@ -137,13 +137,13 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
         return idByDbAttribute;
     }
 
-    private void createSingleFromPk(ObjEntity objEntity, Map<DbAttribute, Object> idByDbAttribute, DataObject o) {
+    private void createSingleFromPk(ObjEntity objEntity, Map<DbAttribute, Object> idByDbAttribute, Persistent o) {
         for (Map.Entry<DbAttribute, Object> e : idByDbAttribute.entrySet()) {
             setPrimaryKey(o, objEntity, e.getKey(), e.getValue());
         }
     }
 
-    private <T extends DataObject> void checkExisting(
+    private <T extends Persistent> void checkExisting(
             ObjectContext objectContext,
             AgEntity<T> agEntity,
             Map<DbAttribute, Object> idByDbAttribute,
@@ -165,7 +165,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
             ObjEntity entity,
             Map<DbAttribute, Object> idByDbAttribute,
             Map<String, Object> idByAgAttribute,
-            DataObject o) {
+            Persistent o) {
 
         for (Map.Entry<DbAttribute, Object> idPart : idByDbAttribute.entrySet()) {
 
@@ -194,7 +194,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
         }
     }
 
-    private void setPrimaryKey(DataObject o, ObjEntity entity, DbAttribute pk, Object idValue) {
+    private void setPrimaryKey(Persistent o, ObjEntity entity, DbAttribute pk, Object idValue) {
 
         // 1. meaningful ID
         // TODO: must precompile all this... figuring this on the fly is slow
@@ -232,7 +232,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
         return countPk >= pkSize;
     }
 
-    private <T extends DataObject> void mergeChanges(EntityUpdate<T> entityUpdate, T o) {
+    private <T extends Persistent> void mergeChanges(EntityUpdate<T> entityUpdate, T o) {
 
         // attributes
         for (Map.Entry<String, Object> e : entityUpdate.getAttributes().entrySet()) {
@@ -262,7 +262,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
                     relationship.getTargetEntity(),
                     relatedId);
 
-            DataObject oldRelated = (DataObject) o.readProperty(name);
+            Persistent oldRelated = (Persistent) o.readProperty(name);
 
             // TODO: a bug (but mostly just dead code) - this check does not work, as we are comparing "relatedId"
             //  scalar with ObjectId, so it will return false no matter what
@@ -272,7 +272,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
 
             // TODO: Note that "parent" (a special flavor of related object) is resolved via CayenneUtil. So
             //  here we should use CayenneUtil as well for consistency, and preferably batch-faulting related objects
-            DataObject related = (DataObject) Cayenne.objectForPK(context, relatedCayenneId);
+            Persistent related = (Persistent) Cayenne.objectForPK(context, relatedCayenneId);
             if (related == null) {
                 throw AgException.notFound("Related object '%s' with id of '%s' is not found",
                         relationship.getTargetEntity().getName(),
@@ -304,9 +304,9 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
             }
 
             // unrelate objects no longer in relationship
-            List<DataObject> relatedObjects = (List<DataObject>) o.readProperty(name);
+            List<Persistent> relatedObjects = (List<Persistent>) o.readProperty(name);
             for (int i = 0; i < relatedObjects.size(); i++) {
-                DataObject relatedObject = relatedObjects.get(i);
+                Persistent relatedObject = relatedObjects.get(i);
                 if (!relatedCayenneIds.remove(relatedObject.getObjectId())) {
                     o.removeToManyTarget(relationship.getName(), relatedObject, true);
                     // a hack: we removed an object from relationship list, so need to reset the iteration index
@@ -319,7 +319,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
 
                 // TODO: Note that "parent" (a special flavor of related object) is resolved via CayenneUtil. So
                 //  here we should use CayenneUtil as well for consistency, and preferably batch-faulting related objects
-                DataObject related = (DataObject) Cayenne.objectForPK(context, id);
+                Persistent related = (Persistent) Cayenne.objectForPK(context, id);
 
                 if (related == null) {
                     throw AgException.notFound("Related object '%s' with id of '%s' is not found",
@@ -334,7 +334,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
         entityUpdate.setTargetObject(o);
     }
 
-    protected Consumer<DataObject> createParentRelator(UpdateContext<? extends DataObject> context) {
+    protected Consumer<Persistent> createParentRelator(UpdateContext<? extends Persistent> context) {
         EntityParent<?> parent = context.getParent();
         if (parent == null) {
             return o -> {
@@ -343,14 +343,14 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
 
         AgEntity<?> parentAgEntity = context.getSchema().getEntity(parent.getType());
 
-        DataObject parentObject = findParent(context, parentAgEntity, parent);
+        Persistent parentObject = findParent(context, parentAgEntity, parent);
         return parentAgEntity.getRelationship(parent.getRelationship()).isToMany()
                 ? o -> parentObject.addToManyTarget(parent.getRelationship(), o, true)
                 : o -> parentObject.setToOneTarget(parent.getRelationship(), o, true);
     }
 
-    private DataObject findParent(UpdateContext<?> context, AgEntity<?> parentAgEntity, EntityParent<?> parent) {
-        DataObject parentObject = (DataObject) CayenneUtil.findById(
+    private Persistent findParent(UpdateContext<?> context, AgEntity<?> parentAgEntity, EntityParent<?> parent) {
+        Persistent parentObject = (Persistent) CayenneUtil.findById(
                 pathResolver,
                 CayenneUpdateStartStage.cayenneContext(context),
                 parentAgEntity,

@@ -9,9 +9,9 @@ import io.agrest.processor.ProcessorOutcome;
 import io.agrest.reader.DataReader;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.stage.UpdateFillResponseStage;
-import org.apache.cayenne.DataObject;
 import org.apache.cayenne.Fault;
 import org.apache.cayenne.ObjectId;
+import org.apache.cayenne.Persistent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,14 +27,14 @@ public abstract class CayenneFillResponseStage extends UpdateFillResponseStage {
 
     @Override
     public ProcessorOutcome execute(UpdateContext<?> context) {
-        doExecute((UpdateContext<DataObject>) context);
+        doExecute((UpdateContext<Persistent>) context);
         return ProcessorOutcome.CONTINUE;
     }
 
-    protected abstract <T extends DataObject> int getHttpStatus(UpdateContext<T> context);
+    protected abstract <T extends Persistent> int getHttpStatus(UpdateContext<T> context);
 
     @SuppressWarnings("unchecked")
-    protected <T extends DataObject> void doExecute(UpdateContext<T> context) {
+    protected <T extends Persistent> void doExecute(UpdateContext<T> context) {
 
         context.setResponseStatus(getHttpStatus(context));
 
@@ -65,7 +65,7 @@ public abstract class CayenneFillResponseStage extends UpdateFillResponseStage {
         }
     }
 
-    protected void assignChildrenToParent(DataObject root, ResourceEntity<?> entity) {
+    protected void assignChildrenToParent(Persistent root, ResourceEntity<?> entity) {
 
         DataReader idReader = entity.getAgEntity().getIdReader();
         Collection<RelatedResourceEntity<?>> children = entity.getChildren();
@@ -90,12 +90,12 @@ public abstract class CayenneFillResponseStage extends UpdateFillResponseStage {
 
                     ((ToManyResourceEntity) childEntity).setData(id, r);
                     for (Object ro : r) {
-                        assignChildrenToParent((DataObject) ro, childEntity);
+                        assignChildrenToParent((Persistent) ro, childEntity);
                     }
 
                 } else {
                     childEntity.addData(id, result);
-                    assignChildrenToParent((DataObject) result, childEntity);
+                    assignChildrenToParent((Persistent) result, childEntity);
                 }
             }
         }

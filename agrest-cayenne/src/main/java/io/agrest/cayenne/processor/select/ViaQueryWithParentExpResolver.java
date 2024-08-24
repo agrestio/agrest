@@ -16,7 +16,7 @@ import io.agrest.reader.ToManyEntityResultReader;
 import io.agrest.reader.ToOneEntityResultReader;
 import io.agrest.resolver.BaseRelatedDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
-import org.apache.cayenne.DataObject;
+import org.apache.cayenne.Persistent;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -30,7 +30,7 @@ import java.util.Map;
  *
  * @since 3.4
  */
-public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseRelatedDataResolver<T> {
+public class ViaQueryWithParentExpResolver<T extends Persistent> extends BaseRelatedDataResolver<T> {
 
     protected ICayenneQueryAssembler queryAssembler;
     protected ICayennePersister persister;

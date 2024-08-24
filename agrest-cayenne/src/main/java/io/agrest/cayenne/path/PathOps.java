@@ -65,10 +65,10 @@ public class PathOps {
 
         switch (p2.getType()) {
             case Expression.DB_PATH:
-                return new ASTDbPath(p1.getPath() + "." + p2.getPath());
+                return new ASTDbPath(p1.getPath().value() + "." + p2.getPath().value());
             case Expression.OBJ_PATH:
                 ASTDbPath p2DB = resolveAsDbPath(entity, (ASTObjPath) p2);
-                return new ASTDbPath(p1.getPath() + "." + p2DB.getPath());
+                return new ASTDbPath(p1.getPath().value() + "." + p2DB.getPath().value());
             default:
                 throw new IllegalArgumentException("Unexpected p2 type: " + p2.getType());
         }
@@ -83,7 +83,7 @@ public class PathOps {
             case Expression.DB_PATH:
                 return concatWithDbPath(entity, resolveAsDbPath(entity, p1), p2);
             case Expression.OBJ_PATH:
-                return new ASTObjPath(p1.getPath() + "." + p2.getPath());
+                return new ASTObjPath(p1.getPath().value() + "." + p2.getPath().value());
             default:
                 throw new IllegalArgumentException("Unexpected p2 type: " + p2.getType());
         }

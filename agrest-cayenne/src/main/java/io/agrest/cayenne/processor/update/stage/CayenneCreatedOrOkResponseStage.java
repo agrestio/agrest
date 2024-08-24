@@ -4,7 +4,7 @@ import io.agrest.HttpStatus;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
-import org.apache.cayenne.DataObject;
+import org.apache.cayenne.Persistent;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +15,7 @@ import java.util.Map;
 public class CayenneCreatedOrOkResponseStage extends CayenneFillResponseStage {
 
     @Override
-    protected <T extends DataObject> int getHttpStatus(UpdateContext<T> context) {
+    protected <T extends Persistent> int getHttpStatus(UpdateContext<T> context) {
 
         Map<ChangeOperationType, List<ChangeOperation<T>>> ops = context.getChangeOperations();
 

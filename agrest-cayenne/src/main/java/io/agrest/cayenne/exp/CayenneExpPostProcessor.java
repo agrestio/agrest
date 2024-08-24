@@ -13,7 +13,7 @@ import io.agrest.converter.jsonvalue.SqlTimestampConverter;
 import io.agrest.converter.jsonvalue.UtilDateConverter;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.TraversalHelper;
+import org.apache.cayenne.exp.TraversalHandler;
 import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTPath;
@@ -70,7 +70,7 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
         // 'expressionPostProcessor'. If it happens to be "id", it will be
         // converted to "db:id".
         if (exp instanceof ASTObjPath) {
-            exp = pathCache.resolve(entity.getName(), ((ASTObjPath) exp).getPath()).getPathExp();
+            exp = pathCache.resolve(entity.getName(), ((ASTObjPath) exp).getPath().value()).getPathExp();
         }
 
         return exp;
@@ -80,7 +80,7 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
         return postProcessors.computeIfAbsent(entity.getName(), e -> new ExpressionProcessor(entity));
     }
 
-    private class ExpressionProcessor extends TraversalHelper {
+    private class ExpressionProcessor implements TraversalHandler {
 
         private final ObjEntity entity;
 
@@ -108,7 +108,7 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
                 // validate and replace if needed ... note that we can only
                 // replace non-root nodes during the traversal. Root node is
                 // validated and replaced explicitly by the caller.
-                ASTPath replacement = pathCache.resolve(entity.getName(), ((ASTObjPath) childNode).getPath()).getPathExp();
+                ASTPath replacement = pathCache.resolve(entity.getName(), ((ASTObjPath) childNode).getPath().value()).getPathExp();
                 if (replacement != childNode) {
                     parentNode.setOperand(childIndex, replacement);
                 }
@@ -196,7 +196,7 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
 
         private String findChildPath(Expression exp) {
             if (exp instanceof ASTObjPath) {
-                return ((ASTObjPath) exp).getPath();
+                return ((ASTObjPath) exp).getPath().value();
             }
 
             int len = exp.getOperandCount();

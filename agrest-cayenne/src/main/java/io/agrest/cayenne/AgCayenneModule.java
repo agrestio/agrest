@@ -52,10 +52,10 @@ import io.agrest.runtime.processor.update.stage.UpdateMergeChangesStage;
 import io.agrest.runtime.processor.update.stage.UpdateStartStage;
 import io.agrest.spi.AgExceptionMapper;
 import org.apache.cayenne.CayenneRuntimeException;
-import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.Key;
 import org.apache.cayenne.di.Module;
+import org.apache.cayenne.runtime.CayenneRuntime;
 import org.apache.cayenne.validation.ValidationException;
 import org.apache.cayenne.value.Json;
 
@@ -79,14 +79,14 @@ public class AgCayenneModule implements Module {
      * Creates a builder of the {@link AgCayenneModule}, setting its Cayenne runtime. The caller can continue customizing
      * the returned builder.
      */
-    public static Builder builder(ServerRuntime cayenneRuntime) {
+    public static Builder builder(CayenneRuntime cayenneRuntime) {
         return builder().runtime(cayenneRuntime);
     }
 
     /**
      * Creates a Agrest Cayenne extension based on Cayenne runtime and default settings.
      */
-    public static AgCayenneModule build(ServerRuntime cayenneRuntime) {
+    public static AgCayenneModule build(CayenneRuntime cayenneRuntime) {
         return builder(cayenneRuntime).build();
     }
 
@@ -154,7 +154,7 @@ public class AgCayenneModule implements Module {
         private Builder() {
         }
 
-        public Builder runtime(ServerRuntime cayenneRuntime) {
+        public Builder runtime(CayenneRuntime cayenneRuntime) {
             this.persister = new CayennePersister(cayenneRuntime);
             return this;
         }

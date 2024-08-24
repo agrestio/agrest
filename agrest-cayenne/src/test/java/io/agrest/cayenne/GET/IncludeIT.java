@@ -132,8 +132,7 @@ public class IncludeIT extends MainDbTest {
                         "{\"id\":10,\"e2\":{\"id\":1}}",
                         "{\"id\":11,\"e2\":{\"id\":1}}");
 
-        // There are 3 queries, while our counter catches only 2 (the last query in paginated result is not reported).
-        tester.assertQueryCount(2);
+        tester.assertQueryCount(3);
 
         tester.target("/e3")
                 .queryParam("include", "id", "e2.id")
@@ -146,7 +145,7 @@ public class IncludeIT extends MainDbTest {
                         "{\"id\":10,\"e2\":{\"id\":1}}");
 
         // not aligned with Cayenne "page" boundaries ... extra query
-        tester.assertQueryCount(2 + 3);
+        tester.assertQueryCount(3 + 4);
     }
 
 

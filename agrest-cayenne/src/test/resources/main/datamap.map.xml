@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<data-map xmlns="http://cayenne.apache.org/schema/10/modelMap"
+<data-map xmlns="http://cayenne.apache.org/schema/11/modelMap"
 	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="http://cayenne.apache.org/schema/10/modelMap https://cayenne.apache.org/schema/10/modelMap.xsd"
-	 project-version="10">
+	 xsi:schemaLocation="http://cayenne.apache.org/schema/11/modelMap https://cayenne.apache.org/schema/11/modelMap.xsd"
+	 project-version="11">
 	<property name="defaultPackage" value="io.agrest.cayenne.cayenne.main"/>
 	<property name="quoteSqlIdentifiers" value="true"/>
 	<db-entity name="e1">
@@ -487,34 +487,21 @@
 	<obj-relationship name="e7s" source="E8" target="E7" deleteRule="Deny" db-relationship-path="e7s"/>
 	<obj-relationship name="e9" source="E8" target="E9" deleteRule="Nullify" db-relationship-path="e9"/>
 	<obj-relationship name="e8" source="E9" target="E8" deleteRule="Nullify" db-relationship-path="e8"/>
-	<dbImport xmlns="http://cayenne.apache.org/schema/10/dbimport">
-		<tableTypes>
-			<tableType>TABLE</tableType>
-			<tableType>VIEW</tableType>
-		</tableTypes>
-		<forceDataMapCatalog>false</forceDataMapCatalog>
-		<forceDataMapSchema>false</forceDataMapSchema>
-		<namingStrategy>org.apache.cayenne.dbsync.naming.DefaultObjectNameGenerator</namingStrategy>
-		<skipPrimaryKeyLoading>false</skipPrimaryKeyLoading>
-		<skipRelationshipsLoading>false</skipRelationshipsLoading>
-		<useJava7Types>false</useJava7Types>
-		<usePrimitives>true</usePrimitives>
-	</dbImport>
-	<cgen xmlns="http://cayenne.apache.org/schema/10/cgen">
+	<cgen xmlns="http://cayenne.apache.org/schema/11/cgen">
+		<name>Default</name>
 		<destDir>../../java</destDir>
 		<mode>entity</mode>
 		<template>templates/v4_1/subclass.vm</template>
 		<superTemplate>templates/v4_1/superclass.vm</superTemplate>
 		<embeddableTemplate>templates/v4_1/embeddable-subclass.vm</embeddableTemplate>
 		<embeddableSuperTemplate>templates/v4_1/embeddable-superclass.vm</embeddableSuperTemplate>
-		<queryTemplate>templates/v4_1/datamap-subclass.vm</queryTemplate>
-		<querySuperTemplate>templates/v4_1/datamap-superclass.vm</querySuperTemplate>
+		<dataMapTemplate>templates/v4_1/datamap-subclass.vm</dataMapTemplate>
+		<dataMapSuperTemplate>templates/v4_1/datamap-superclass.vm</dataMapSuperTemplate>
 		<outputPattern>*.java</outputPattern>
 		<makePairs>true</makePairs>
 		<usePkgPath>true</usePkgPath>
 		<overwrite>false</overwrite>
 		<createPropertyNames>false</createPropertyNames>
 		<createPKProperties>false</createPKProperties>
-		<client>false</client>
 	</cgen>
 </data-map>
