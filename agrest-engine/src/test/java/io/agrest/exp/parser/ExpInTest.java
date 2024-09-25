@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,6 +52,18 @@ public class ExpInTest {
             "a IN ('b', 'c')"})
     public void parseInvalidGrammar(String expString) {
         assertThrows(AgException.class, () -> Exp.parse(expString));
+    }
+
+    @Test
+    public void emptyIn() {
+        Exp exp = Exp.parse("a in $a").namedParams(Map.of("a", List.of()));
+        assertEquals("false", exp.toString());
+    }
+
+    @Test
+    public void emptyNotIn() {
+        Exp exp = Exp.parse("a not in $a").namedParams(Map.of("a", List.of()));
+        assertEquals("true", exp.toString());
     }
 
     @Test

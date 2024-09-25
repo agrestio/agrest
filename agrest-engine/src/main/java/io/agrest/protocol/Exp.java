@@ -101,14 +101,20 @@ public interface Exp {
     /**
      * @since 5.0
      */
-    static Exp in(String path, Object... values) {
-        return ExpUtils.composeBinary(new ExpIn(), path(path), ExpUtils.scalarArray(values));
+    static Exp in(String path, Object... scalars) {
+        if(scalars.length == 0){
+            return new ExpFalse();
+        }
+        return ExpUtils.composeBinary(new ExpIn(), path(path), ExpUtils.scalarArray(scalars));
     }
 
     /**
      * @since 5.0
      */
     static Exp notIn(String path, Object... scalars) {
+        if(scalars.length == 0){
+            return new ExpTrue();
+        }
         return ExpUtils.composeBinary(new ExpNotIn(), path(path), ExpUtils.scalarArray(scalars));
     }
 
