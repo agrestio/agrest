@@ -21,8 +21,8 @@ public abstract class _E32 extends BaseDataObject {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String S_ID_PK_COLUMN = "s_id";
     public static final String P_ID_PK_COLUMN = "p_id";
+    public static final String S_ID_PK_COLUMN = "s_id";
     public static final String T_ID_PK_COLUMN = "t_id";
 
     public static final StringProperty<String> NAME = PropertyFactory.createString("name", String.class);

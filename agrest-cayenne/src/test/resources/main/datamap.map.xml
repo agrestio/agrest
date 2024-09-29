@@ -56,6 +56,8 @@
 	</db-entity>
 	<db-entity name="e16">
 		<db-attribute name="c_date" type="DATE"/>
+		<db-attribute name="c_local_date" type="DATE"/>
+		<db-attribute name="c_local_date_time" type="TIMESTAMP"/>
 		<db-attribute name="c_time" type="TIME"/>
 		<db-attribute name="c_timestamp" type="TIMESTAMP"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
@@ -234,6 +236,8 @@
 	<obj-entity name="E15E1" className="io.agrest.cayenne.cayenne.main.E15E1" dbEntityName="e15_e1"/>
 	<obj-entity name="E16" className="io.agrest.cayenne.cayenne.main.E16" dbEntityName="e16">
 		<obj-attribute name="cDate" type="java.sql.Date" db-attribute-path="c_date"/>
+		<obj-attribute name="cLocalDate" type="java.time.LocalDate" db-attribute-path="c_local_date"/>
+		<obj-attribute name="cLocalDateTime" type="java.time.LocalDateTime" db-attribute-path="c_local_date_time"/>
 		<obj-attribute name="cTime" type="java.sql.Time" db-attribute-path="c_time"/>
 		<obj-attribute name="cTimestamp" type="java.sql.Timestamp" db-attribute-path="c_timestamp"/>
 	</obj-entity>
