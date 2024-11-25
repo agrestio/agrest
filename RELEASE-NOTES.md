@@ -1,3 +1,7 @@
+## Release 5.0-M21
+
+* #681 Exp: regression in processing (not)in with empty list
+
 ## Release 5.0-M20
 
 * #651 Exp: numeric scalars to support underscore
