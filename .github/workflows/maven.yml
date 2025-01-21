@@ -14,19 +14,14 @@ jobs:
 
     steps:
       - name: Checkout...
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up JDK...
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.java }}
-
-      - name: Retrieve mvn repo cache...
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-build-v1
-          restore-keys: ${{ runner.os }}-maven
+          distribution: 'temurin'
+          cache: 'maven'
 
       - name: Build and test...
         run: mvn clean verify
@@ -37,27 +32,20 @@ jobs:
 
     steps:
       - name: Checkout...
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # this action exports env.POM_VERSION variable
       - name: Export Maven coordinates...
         uses: bootique-tools/export-maven-coordinates-action@v1
 
       - name: Set up JDK...
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         # skip this for the release versions
         if: contains(env.POM_VERSION, '-SNAPSHOT')
         with:
           java-version: 11
-
-      - name: Retrieve mvn repo cache...
-        uses: actions/cache@v2
-        # skip this for the release versions
-        if: contains(env.POM_VERSION, '-SNAPSHOT')
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-build-v1
-          restore-keys: ${{ runner.os }}-maven
+          distribution: 'temurin'
+          cache: 'maven'
 
       - name: Deploy...
         run: mvn clean source:jar-no-fork javadoc:jar deploy -DskipTests --settings .github/workflows/maven_settings.xml
