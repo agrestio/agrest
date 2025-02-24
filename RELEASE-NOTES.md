@@ -1,4 +1,4 @@
-## Release 5.0-M21
+## Release 5.0-RC1
 
 * #681 Exp: regression in processing (not)in with empty list
 
