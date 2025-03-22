@@ -2,6 +2,7 @@
 
 * #650 Exp: scalar encoding is incompatible with the parser rules
 * #681 Exp: regression in processing (not)in with empty list
+* #691 Upgrade Cayenne to 4.2.2
 
 ## Release 5.0-M20
 
