@@ -7,8 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'agrestio/agrest'
 
-    name: JDK ${{ matrix.java }}
-
     strategy:
       matrix:
         java: [ 11, 17, 21 ]
