@@ -1,5 +1,6 @@
 ## Release 5.0-RC1
 
+* #650 Exp: scalar encoding is incompatible with the parser rules
 * #681 Exp: regression in processing (not)in with empty list
 
 ## Release 5.0-M20
