@@ -3,6 +3,7 @@
 * #650 Exp: scalar encoding is incompatible with the parser rules
 * #681 Exp: regression in processing (not)in with empty list
 * #691 Upgrade Cayenne to 4.2.2
+* #692 Upgrade SLF4J to 2.0.17
 
 ## Release 5.0-M20
 
