@@ -2,9 +2,14 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=Exp,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package io.agrest.exp.parser;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.function.Function;
 
 public class ExpScalar extends ExpBaseScalar<Object> {
+
+    protected String scalarImage = String.valueOf(value);
+
     public ExpScalar(int id) {
         super(id);
     }
@@ -27,12 +32,71 @@ public class ExpScalar extends ExpBaseScalar<Object> {
         return transformer.apply(new ExpScalar(getValue()));
     }
 
+    protected void syncScalarImage(CharSequence value) {
+        if (value.length() < 2) {
+            scalarImage = "'" + value + "'";
+            return;
+        }
+        String stringValue = value.toString();
+        char firstChar = stringValue.charAt(0);
+        if (firstChar != '\'' && firstChar != '"') {
+            scalarImage = "'" + value + "'";
+            return;
+        }
+        String escapedContent = stringValue
+                .substring(1, stringValue.length() - 1)
+                .replaceAll(String.valueOf(firstChar), "\\\\" + firstChar);
+        scalarImage = firstChar + escapedContent + firstChar;
+    }
+
+    protected void syncScalarImage(Long value) {
+        scalarImage = value + "L";
+    }
+
+    protected void syncScalarImage(BigInteger value) {
+        scalarImage = value + "H";
+    }
+
+    protected void syncScalarImage(BigDecimal value) {
+        scalarImage = value + "B";
+    }
+
+    protected void syncScalarImage(Object value) {
+        scalarImage = String.valueOf(value);
+    }
+
     /**
      * Accept the visitor.
      **/
     public <T> T jjtAccept(AgExpressionParserVisitor<T> visitor, T data) {
 
         return visitor.visit(this, data);
+    }
+
+    @Override
+    public void jjtSetValue(Object value) {
+        super.jjtSetValue(value);
+        if (value == null) {
+            scalarImage = "null";
+            return;
+        }
+        if (value instanceof CharSequence) {
+            syncScalarImage(((CharSequence) value));
+            return;
+        }
+        if (value.getClass() == Long.class) {
+            syncScalarImage(((Long) value));
+            return;
+        }
+        if (value.getClass() == BigInteger.class) {
+            syncScalarImage(((BigInteger) value));
+            return;
+        }
+        if (value.getClass() == BigDecimal.class) {
+            syncScalarImage(((BigDecimal) value));
+            return;
+        }
+        syncScalarImage(value);
     }
 
     @Override
