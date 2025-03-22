@@ -110,7 +110,7 @@ public abstract class AgCayenneTester implements BQBeforeScopeCallback, BQAfterS
         this.appInScope = createAppInScope(this.jettyInScope, this.cayenneInScope);
 
         CommandOutcome result = appInScope.run();
-        assertTrue(result.isSuccess());
+        assertTrue(result.isSuccess(), () -> result.getMessage());
         assertTrue(result.forkedToBackground());
     }
 
