@@ -16,7 +16,6 @@ import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.TraversalHelper;
 import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.exp.parser.ConditionNode;
 import org.apache.cayenne.exp.parser.SimpleNode;
 import org.apache.cayenne.map.EntityResolver;
@@ -61,23 +60,21 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
 
     private Expression validateAndCleanup(ObjEntity entity, Expression exp) {
 
-        // change expression in-place
-        // note - this will not fully handle an expression whose root is
-        // ASTObjPath, so will manually process it below
+        // Normalize paths in-place. Will not be able to change the root note that is handled explicitly below
         exp.traverse(getOrCreateExpressionProcessor(entity));
 
-        // process root ASTObjPath that can't be properly handled by
-        // 'expressionPostProcessor'. If it happens to be "id", it will be
-        // converted to "db:id".
-        if (exp instanceof ASTObjPath) {
-            exp = pathCache.resolve(entity.getName(), ((ASTObjPath) exp).getPath()).getPathExp();
-        }
-
-        return exp;
+        // Now process the root
+        return (Expression) normalizeIfPath(entity, exp);
     }
 
     private ExpressionProcessor getOrCreateExpressionProcessor(ObjEntity entity) {
         return postProcessors.computeIfAbsent(entity.getName(), e -> new ExpressionProcessor(entity));
+    }
+
+    private Object normalizeIfPath(ObjEntity entity, Object expNode) {
+        return expNode instanceof ASTObjPath
+                ? pathCache.resolve(entity.getName(), ((ASTObjPath) expNode).getPath()).getPathExp()
+                : expNode;
     }
 
     private class ExpressionProcessor extends TraversalHelper {
@@ -96,22 +93,14 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
                         "Expression contains a DB_PATH expression that is not allowed here: %s",
                         parentNode);
             }
-
         }
 
         @Override
         public void finishedChild(Expression parentNode, int childIndex, boolean hasMoreChildren) {
-
             Object childNode = parentNode.getOperand(childIndex);
-            if (childNode instanceof ASTObjPath) {
-
-                // validate and replace if needed ... note that we can only
-                // replace non-root nodes during the traversal. Root node is
-                // validated and replaced explicitly by the caller.
-                ASTPath replacement = pathCache.resolve(entity.getName(), ((ASTObjPath) childNode).getPath()).getPathExp();
-                if (replacement != childNode) {
-                    parentNode.setOperand(childIndex, replacement);
-                }
+            Object replacementNode = normalizeIfPath(entity, childNode);
+            if (replacementNode != childNode) {
+                parentNode.setOperand(childIndex, replacementNode);
             }
         }
 

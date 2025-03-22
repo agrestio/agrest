@@ -10,7 +10,9 @@ import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,77 +43,101 @@ class EntityPathCache {
     }
 
     PathDescriptor getOrCreate(String agPath) {
-        return pathCache.computeIfAbsent(agPath, p -> computePathDescriptor(agPath));
+        return pathCache.computeIfAbsent(agPath, p -> create(agPath, agPath, entity));
     }
 
-    private PathDescriptor computePathDescriptor(String agPath) {
+    private PathDescriptor create(
+            String path,
+            String remainingPath,
+            ObjEntity remainingPathRootEntity,
+            ObjRelationship... processedPath) {
 
-        Object last = lastPathComponent(entity, agPath);
-
-        if (last instanceof ObjAttribute) {
-            ObjAttribute a = (ObjAttribute) last;
-            return a.isPrimaryKey()
-                    ? new PathDescriptor(a.getType(), new ASTDbPath(a.getDbAttributePath()), true)
-                    : new PathDescriptor(a.getType(), new ASTObjPath(agPath), true);
-        }
-
-        if (last instanceof DbAttribute) {
-            DbAttribute a = (DbAttribute) last;
-            return new PathDescriptor(TypesMapping.getJavaBySqlType(a.getType()), new ASTDbPath(a.getName()), true);
-        }
-
-        ObjRelationship relationship = (ObjRelationship) last;
-        return new PathDescriptor(relationship.getTargetEntity().getClassName(), new ASTObjPath(agPath), false);
-    }
-
-    Object lastPathComponent(ObjEntity entity, String path) {
-
-        int dot = path.indexOf(PathConstants.DOT);
+        int dot = remainingPath.indexOf(PathConstants.DOT);
 
         if (dot == 0) {
-            throw AgException.badRequest("Invalid path '%s' for '%s' - can't start with a dot", path, entity.getName());
+            throw AgException.badRequest("Invalid path '%s' for '%s' - can't start with a dot", remainingPath, remainingPathRootEntity.getName());
         }
 
-        if (dot == path.length() - 1) {
-            throw AgException.badRequest("Invalid path '%s' for '%s' - can't end with a dot", path, entity.getName());
+        if (dot == remainingPath.length() - 1) {
+            throw AgException.badRequest("Invalid path '%s' for '%s' - can't end with a dot", remainingPath, remainingPathRootEntity.getName());
         }
 
         if (dot > 0) {
-            String segment = toRelationshipName(path.substring(0, dot));
+            String segment = toRelationshipName(remainingPath.substring(0, dot));
 
             // followed by dot, so must be a relationship
-            ObjRelationship relationship = entity.getRelationship(segment);
+            ObjRelationship relationship = remainingPathRootEntity.getRelationship(segment);
             if (relationship == null) {
                 throw AgException.badRequest("Invalid path '%s' for '%s'. Not a relationship",
-                        path,
-                        entity.getName());
+                        remainingPath,
+                        remainingPathRootEntity.getName());
             }
 
-            ObjEntity targetEntity = relationship.getTargetEntity();
-            return lastPathComponent(targetEntity, path.substring(dot + 1));
+            return create(
+                    path,
+                    remainingPath.substring(dot + 1),
+                    relationship.getTargetEntity(),
+                    push(processedPath, relationship));
         }
 
-        ObjAttribute attribute = entity.getAttribute(path);
+        ObjAttribute attribute = remainingPathRootEntity.getAttribute(remainingPath);
         if (attribute != null) {
-            return attribute;
+            return attribute.isPrimaryKey()
+                    ? new PathDescriptor(attribute.getType(), new ASTDbPath(toDbPath(processedPath, attribute.getDbAttributePath())), true)
+                    : new PathDescriptor(attribute.getType(), new ASTObjPath(path), true);
         }
 
-        ObjRelationship relationship = entity.getRelationship(toRelationshipName(path));
+        ObjRelationship relationship = remainingPathRootEntity.getRelationship(toRelationshipName(remainingPath));
         if (relationship != null) {
-            return relationship;
+            return new PathDescriptor(relationship.getTargetEntity().getClassName(), new ASTObjPath(path), false);
         }
 
-        if (path.startsWith(ASTDbPath.DB_PREFIX)) {
-            DbAttribute dbAttribute = entity.getDbEntity().getAttribute(path.substring(ASTDbPath.DB_PREFIX.length()));
+        if (remainingPath.startsWith(ASTDbPath.DB_PREFIX)) {
+            DbAttribute dbAttribute = remainingPathRootEntity.getDbEntity().getAttribute(remainingPath.substring(ASTDbPath.DB_PREFIX.length()));
             if (dbAttribute != null) {
-                return dbAttribute;
+                return new PathDescriptor(
+                        TypesMapping.getJavaBySqlType(dbAttribute.getType()),
+                        new ASTDbPath(toDbPath(processedPath, dbAttribute.getName())),
+                        true);
             }
         }
 
-        throw AgException.badRequest("Invalid path '%s' for '%s'", path, entity.getName());
+        // if a path is a relationship with an ".id" suffix, simply use the relationship
+        if (PathConstants.ID_PK_ATTRIBUTE.equals(remainingPath) && processedPath != null && processedPath.length > 0) {
+            ObjRelationship lastProcessed = processedPath[processedPath.length - 1];
+            String strippedPath = path.substring(0, path.length() - PathConstants.ID_PK_ATTRIBUTE.length() - 1);
+            return new PathDescriptor(lastProcessed.getTargetEntity().getClassName(), new ASTObjPath(strippedPath), false);
+        }
+
+        throw AgException.badRequest("Invalid path '%s' for '%s'", remainingPath, remainingPathRootEntity.getName());
     }
 
     private String toRelationshipName(String pathSegment) {
         return pathSegment.endsWith("+") ? pathSegment.substring(0, pathSegment.length() - 1) : pathSegment;
+    }
+
+    private static ObjRelationship[] push(ObjRelationship[] a, ObjRelationship r) {
+
+        if (a == null || a.length == 0) {
+            return new ObjRelationship[]{r};
+        }
+
+        ObjRelationship[] a1 = new ObjRelationship[a.length + 1];
+        System.arraycopy(a, 0, a1, 0, a.length);
+        a1[a.length] = r;
+        return a1;
+    }
+
+    private static String toDbPath(ObjRelationship[] a, String lastDbAttribute) {
+        if (a == null || a.length == 0) {
+            return lastDbAttribute;
+        }
+
+        StringBuilder path = new StringBuilder();
+        for (int i = 0; i < a.length; i++) {
+            path.append(a[i].getDbRelationshipPath()).append(PathConstants.DOT);
+        }
+
+        return path.append(lastDbAttribute).toString();
     }
 }
