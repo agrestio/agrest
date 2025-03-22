@@ -12,7 +12,9 @@ import java.util.Collection;
  * property, and becomes accessible via {@link AgJaxrs} static methods.
  *
  * @since 5.0
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
  */
+@Deprecated(since = "5.0", forRemoval = true)
 public class AgJaxrsFeature implements Feature {
 
     private static final String JAXRS_AGREST_RUNTIME_PROPERTY = "agrest.runtime";
@@ -23,7 +25,7 @@ public class AgJaxrsFeature implements Feature {
 
     /**
      * Builds an AgJaxrsFeature with the provided runtime.
-     * 
+     *
      * @see #builder(AgRuntime)
      */
     public static AgJaxrsFeature build(AgRuntime runtime) {

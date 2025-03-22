@@ -12,6 +12,10 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+/**
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
+ */
+@Deprecated(since = "5.0", forRemoval = true)
 @Provider
 public class JaxrsAgExceptionMapper implements ExceptionMapper<AgException> {
 

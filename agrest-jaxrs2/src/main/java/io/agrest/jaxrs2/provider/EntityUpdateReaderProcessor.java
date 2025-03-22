@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
+@Deprecated(since = "5.0", forRemoval = true)
 class EntityUpdateReaderProcessor {
 
 	private final IUpdateRequestParser parser;

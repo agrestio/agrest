@@ -9,6 +9,10 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
+ */
+@Deprecated(since = "5.0", forRemoval = true)
 public class AgSwaggerModule implements Module {
 
     private final Set<String> entityPackages;

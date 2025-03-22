@@ -22,7 +22,10 @@ import java.util.Objects;
 
 /**
  * Provides OpenAPI Schema conversions for Agrest entity objects
+ *
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
  */
+@Deprecated(since = "5.0", forRemoval = true)
 public class AgEntityModelConverter extends AgEntityAwareModelConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AgEntityModelConverter.class);

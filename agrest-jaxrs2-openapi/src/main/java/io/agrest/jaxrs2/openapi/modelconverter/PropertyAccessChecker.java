@@ -4,6 +4,10 @@ import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgRelationship;
 
+/**
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
+ */
+@Deprecated(since = "5.0", forRemoval = true)
 interface PropertyAccessChecker {
 
     static PropertyAccessChecker allowAll() {

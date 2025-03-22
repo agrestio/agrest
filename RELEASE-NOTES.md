@@ -4,6 +4,7 @@
 * #681 Exp: regression in processing (not)in with empty list
 * #691 Upgrade Cayenne to 4.2.2
 * #692 Upgrade SLF4J to 2.0.17
+* #693 Deprecate javax (JAX-RS 2) integration
 
 ## Release 5.0-M20
 

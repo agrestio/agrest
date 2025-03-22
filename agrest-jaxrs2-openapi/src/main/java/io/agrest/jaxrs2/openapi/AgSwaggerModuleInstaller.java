@@ -15,7 +15,10 @@ import javax.ws.rs.core.Feature;
 
 /**
  * Installs {@link AgEntityModelConverter} in the Swagger runtime via the {@link AgFeatureProvider} mechanism.
+ *
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
  */
+@Deprecated(since = "5.0", forRemoval = true)
 public class AgSwaggerModuleInstaller implements AgFeatureProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AgSwaggerModuleInstaller.class);

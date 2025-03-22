@@ -25,9 +25,11 @@ import java.util.Collection;
  * A provider of {@link MessageBodyReader} for Collections of {@link EntityUpdate} parameters.
  *
  * @since 1.20
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
  */
 @Provider
 @Consumes(MediaType.APPLICATION_JSON)
+@Deprecated(since = "5.0", forRemoval = true)
 public class EntityUpdateCollectionReader<T> implements MessageBodyReader<Collection<EntityUpdate<T>>> {
 
     private EntityUpdateReaderProcessor reader;

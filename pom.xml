@@ -32,7 +32,10 @@
         <!-- Upstream dependency versions (including "test" dependencies) -->
         <slf4j.version>2.0.17</slf4j.version>
         <cayenne.version>4.2.2</cayenne.version>
+
+        <!-- JAX-RS 2 is deprecated -->
         <jaxrs2.version>2.1.6</jaxrs2.version>
+
         <jaxrs3.version>3.0.0</jaxrs3.version>
         <jackson.version>2.15.4</jackson.version>
         <jackson.databind.version>2.15.4</jackson.databind.version>
