@@ -61,6 +61,28 @@ public class EntityPathCacheTest {
     }
 
     @Test
+    public void getOrCreate_Id() {
+        EntityPathCache cache = new EntityPathCache(x);
+        PathDescriptor pd = cache.getOrCreate("id");
+        assertNotNull(pd);
+        assertTrue(pd.isAttributeOrId());
+        assertEquals("java.lang.String", pd.getType());
+        assertEquals("pkx1", pd.getPathExp().getPath());
+        assertSame(pd, cache.getOrCreate("id"));
+    }
+
+    @Test
+    public void getOrCreate_RelatedId() {
+        EntityPathCache cache = new EntityPathCache(x);
+        PathDescriptor pd = cache.getOrCreate("y.db:pk1");
+        assertNotNull(pd);
+        assertTrue(pd.isAttributeOrId());
+        assertEquals("java.lang.Integer", pd.getType());
+        assertEquals("pk1", pd.getPathExp().getPath());
+        assertSame(pd, cache.getOrCreate("y.db:pk1"));
+    }
+
+    @Test
     public void getOrCreate_Relationship() {
         EntityPathCache cache = new EntityPathCache(x);
         PathDescriptor pd = cache.getOrCreate("y");
@@ -83,7 +105,7 @@ public class EntityPathCacheTest {
     }
 
     @Test
-    public void tesGetOrCreate_BadPath() {
+    public void getOrCreate_BadPath() {
         EntityPathCache cache = new EntityPathCache(x);
         assertThrows(AgException.class, () -> cache.getOrCreate("y.xyz"));
     }
