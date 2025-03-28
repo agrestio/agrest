@@ -1,5 +1,6 @@
 ## Release 5.0-RC1
 
+* #647 `(not) exists` expressions
 * #650 Exp: scalar encoding is incompatible with the parser rules
 * #681 Exp: regression in processing (not)in with empty list
 * #690 Matching on to-one related ID throws an exception

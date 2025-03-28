@@ -79,20 +79,21 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
         exp.traverse(getOrCreateExpressionProcessor(entity));
 
         // process root ASTExits|ASTNotExists that can't be properly handled by ExpressionProcessor.
-        if (exp instanceof ASTExists || exp instanceof ASTNotExists) {
-            exp = optimizeExistsExp(exp);
-        }
+        Object processed = processExistsExp(exp);
 
         // Now process the root
-        return (Expression) normalizeIfPath(entity, exp);
+        return (Expression) normalizeIfPath(entity, processed);
     }
 
     private ExpressionProcessor getOrCreateExpressionProcessor(ObjEntity entity) {
         return postProcessors.computeIfAbsent(entity.getName(), e -> new ExpressionProcessor(entity));
     }
 
-    private static Expression optimizeExistsExp(Expression exp) {
-        Expression pathExistExp = ((Expression) exp.getOperand(0));
+    private static Object processExistsExp(Object exp) {
+        if (!(exp instanceof ASTExists || exp instanceof ASTNotExists)) {
+            return exp;
+        }
+        Expression pathExistExp = (Expression)(((Expression) exp).getOperand(0));
         if (pathExistExp instanceof ASTSubquery) {
             return exp;
         }
@@ -129,25 +130,28 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
         public void finishedChild(Expression parentNode, int childIndex, boolean hasMoreChildren) {
             Object childNode = parentNode.getOperand(childIndex);
             Object replacementNode = normalizeIfPath(entity, childNode);
+            replacementNode = processExistsExp(replacementNode);
             if (replacementNode != childNode) {
                 parentNode.setOperand(childIndex, replacementNode);
             }
-            if (parentNode instanceof ASTExists || parentNode instanceof ASTNotExists) {
-                if (!(childNode instanceof ASTPath)) {
-                    throw AgException.badRequest("%s only supports path value", parentNode.expName());
-                }
-                ObjPathMarker marker = createPathMarker(entity, (ASTPath) childNode);
-                Expression pathExistExp = markerToExpression(marker);
-                ((ConditionNode) parentNode).jjtAddChild(
-                        marker.relationship != null
-                                ? new ASTSubquery(subquery(marker.relationship, pathExistExp))
-                                : (Node) pathExistExp,
-                        childIndex
-                );
+            prepareExistsPathOperand(parentNode, childNode);
+        }
+
+        private void prepareExistsPathOperand(Expression parentNode, Object childNode) {
+            if (!(parentNode instanceof ASTExists || parentNode instanceof ASTNotExists)) {
+                return;
             }
-            if (childNode instanceof ASTExists || childNode instanceof ASTNotExists) {
-                parentNode.setOperand(childIndex, optimizeExistsExp((Expression) childNode));
+            if (!(childNode instanceof ASTPath)) {
+                throw AgException.badRequest("%s only supports path value as an argument", parentNode.expName());
             }
+            ObjPathMarker marker = createPathMarker(entity, (ASTPath) childNode);
+            Expression pathExistExp = markerToExpression(marker);
+            ((ConditionNode) parentNode).jjtAddChild(
+                    marker.relationship != null
+                            ? new ASTSubquery(subquery(marker.relationship, pathExistExp))
+                            : (Node) pathExistExp,
+                    0
+            );
         }
 
         @Override
