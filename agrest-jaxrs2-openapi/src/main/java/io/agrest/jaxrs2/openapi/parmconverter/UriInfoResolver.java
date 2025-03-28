@@ -17,6 +17,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
+ */
+@Deprecated(since = "5.0", forRemoval = true)
 public class UriInfoResolver {
 
     /**

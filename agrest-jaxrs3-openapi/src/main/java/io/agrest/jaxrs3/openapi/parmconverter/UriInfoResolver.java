@@ -5,6 +5,7 @@ import io.agrest.protocol.ControlParams;
 import io.agrest.protocol.Direction;
 import io.swagger.v3.jaxrs2.ResolvedParameter;
 import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
@@ -81,12 +82,11 @@ public class UriInfoResolver {
     }
 
     protected Parameter createIncludeParam() {
-        // TODO: detailed schema
-        return queryParam(ControlParams.include);
+        return queryParam(ControlParams.include).schema(new ArraySchema().items(new StringSchema()));
     }
 
     protected Parameter createExcludeParam() {
-        return queryParam(ControlParams.exclude);
+        return queryParam(ControlParams.exclude).schema(new ArraySchema().items(new StringSchema()));
     }
 
     protected Parameter createSortParam() {

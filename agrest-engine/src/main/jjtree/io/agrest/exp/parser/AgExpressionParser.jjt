@@ -193,9 +193,17 @@ void stringParameter() : {}
 
 void stringLiteral() :  {}
 {
-    <SINGLE_QUOTED_STRING> { jjtThis.jjtSetValue(token_source.literalValue); } #Scalar(0)
+    <SINGLE_QUOTED_STRING>
+    {
+        jjtThis.jjtSetValue(token_source.literalValue);
+        jjtThis.syncScalarImage("'" + token_source.literalValue + "'");
+    } #Scalar(0)
     |
-    <DOUBLE_QUOTED_STRING> { jjtThis.jjtSetValue(token_source.literalValue); } #Scalar(0)
+    <DOUBLE_QUOTED_STRING>
+    {
+        jjtThis.jjtSetValue(token_source.literalValue);
+        jjtThis.syncScalarImage("\"" + token_source.literalValue + "\"");
+    } #Scalar(0)
 }
 
 void stringExpression() : {}

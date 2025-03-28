@@ -21,6 +21,14 @@ public class CayenneExpParserTest {
     }
 
     @Test
+    public void parsePathAliases() {
+        Expression e = parser.parse(Exp.parse("a.b.c#p1.d#p2"));
+        Expression expected = ExpressionFactory.exp("a.b.c#p1.d#p2");
+        assertEquals(expected, e);
+        assertEquals(expected.getPathAliases(), e.getPathAliases());
+    }
+
+    @Test
     public void parsePositionalParams() {
         Expression e = parser.parse(Exp.parse("a = $a").positionalParams("x"));
         assertEquals(ExpressionFactory.exp("a = 'x'"), e);
@@ -69,6 +77,24 @@ public class CayenneExpParserTest {
 
         Expression e3 = parser.parse(Exp.in("a", 5, 6, 7));
         assertEquals(ExpressionFactory.exp("a in (5, 6, 7)"), e3);
+
+        Expression e4 = parser.parse(Exp.in("a"));
+        assertEquals(ExpressionFactory.exp("false"), e4);
+    }
+
+    @Test
+    public void parseNotIn() {
+        Expression e1 = parser.parse(Exp.notIn("a", 5, 6, 7));
+        assertEquals(ExpressionFactory.exp("a not in (5, 6, 7)"), e1);
+
+        Expression e2 = parser.parse(Exp.notIn("a", "x", "y", "z"));
+        assertEquals(ExpressionFactory.exp("a not in ('x','y','z')"), e2);
+
+        Expression e3 = parser.parse(Exp.notIn("a", 5, 6, 7));
+        assertEquals(ExpressionFactory.exp("a not in (5, 6, 7)"), e3);
+
+        Expression e4 = parser.parse(Exp.notIn("a"));
+        assertEquals(ExpressionFactory.exp("true"), e4);
     }
 
     @Test

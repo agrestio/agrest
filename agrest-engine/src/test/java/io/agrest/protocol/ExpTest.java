@@ -167,6 +167,21 @@ public class ExpTest {
     }
 
     @Test
+    public void greater() {
+        assertEquals("a > 5", Exp.greater("a", 5).toString());
+    }
+
+    @Test
+    public void greaterOrEqual() {
+        assertEquals("a >= 5", Exp.greaterOrEqual("a", 5).toString());
+    }
+
+    @Test
+    public void less() {
+        assertEquals("a < 5", Exp.less("a", 5).toString());
+    }
+
+    @Test
     public void lessOrEqual() {
         assertEquals("a <= 5", Exp.lessOrEqual("a", 5).toString());
     }

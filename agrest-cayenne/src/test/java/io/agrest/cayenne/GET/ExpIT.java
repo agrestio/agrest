@@ -132,6 +132,61 @@ public class ExpIT extends MainDbTest {
     }
 
     @Test
+    public void id_Equals() {
+
+        tester.e2().insertColumns("id_", "name")
+                .values(1, "xxx")
+                .values(2, "yyy")
+                .values(3, "zzzz").exec();
+
+        tester.target("/e2")
+                .queryParam("include", "id")
+                .queryParam("exp", "id = 2")
+                .get()
+                .wasOk().bodyEquals(1, "{\"id\":2}");
+    }
+
+    @Test
+    public void toOne_Equals() {
+
+        tester.e2().insertColumns("id_", "name")
+                .values(1, "xxx")
+                .values(2, "yyy")
+                .values(3, "zzzz").exec();
+
+        tester.e3().insertColumns("id_", "name", "e2_id")
+                .values(6, "yyy", 3)
+                .values(8, "yyy", 1)
+                .values(9, "zzz", 2).exec();
+
+        tester.target("/e3")
+                .queryParam("include", "id")
+                .queryParam("exp", "e2 = 3")
+                .get()
+                .wasOk().bodyEquals(1, "{\"id\":6}");
+    }
+
+    @Test
+    public void toOne_Id_Equals() {
+
+        tester.e2().insertColumns("id_", "name")
+                .values(1, "xxx")
+                .values(2, "yyy")
+                .values(3, "zzzz").exec();
+
+        tester.e3().insertColumns("id_", "name", "e2_id")
+                .values(6, "yyy", 3)
+                .values(8, "yyy", 1)
+                .values(9, "zzz", 2).exec();
+
+        tester.target("/e3")
+                .queryParam("include", "id")
+                .queryParam("exp", "e2.id = 3")
+                .get()
+                .wasOk().bodyEquals(1, "{\"id\":6}");
+    }
+
+    @Test
     public void in_Array() {
 
         tester.e2().insertColumns("id_", "name")

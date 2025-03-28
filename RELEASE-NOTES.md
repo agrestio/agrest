@@ -1,13 +1,32 @@
+## Release 5.0-RC1
+
+* #650 Exp: scalar encoding is incompatible with the parser rules
+* #681 Exp: regression in processing (not)in with empty list
+* #690 Matching on to-one related ID throws an exception
+* #691 Upgrade Cayenne to 4.2.2
+* #692 Upgrade SLF4J to 2.0.17
+* #693 Deprecate javax (JAX-RS 2) integration
+
 ## Release 5.0-M20
 
-* #651 Exp: numeric scalars to support "_"
+* #651 Exp: numeric scalars to support underscore
 * #653 Exp syntax: do not support space in the named parameter token
 * #654 Exp syntax: function names should not be keywords  
 * #655 Exp syntax: deprecate case-insensitivity of NULL and booleans
+* #657 Expression parser to support path aliases
 * #658 DeleteBuilder: byIds(..), byMultiIds(..)
 * #659 Idempotent DELETE by ids, optimizing performance
 * #660 Builders: auto-detect multi-column IDs
 * #662 Update expression parser with JavaCC 7.0.13
+* #673 OpenAPI should have an "array of string" schema for "include" and "exclude"
+* #676 Multi-column ObjectMapper
+* #677 Upgrading JUnit to 5.10.2
+* #678 Upgrading Swagger to 2.2.2
+* #679 Upgrading Jackson to 2.15.4
+* #680 Upgrading SLF4J to 2.0.7
+* #683 Upgrade Cayenne to 4.2.1 
+* #684 GET with includes can't match children to parent when parent has a compound key
+* #687 Upgrade Swagger to 2.2.23 
 
 ## Release 5.0.M19
 

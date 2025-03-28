@@ -7,12 +7,12 @@ import io.agrest.jaxrs3.junit.AgHttpTester;
 import io.agrest.jaxrs3.junit.AgTestJaxrsFeature;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.AgRuntimeBuilder;
+import io.bootique.BQModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.cayenne.v42.CayenneModule;
 import io.bootique.cayenne.v42.junit5.CayenneTester;
 import io.bootique.command.CommandOutcome;
-import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.jdbc.junit5.DbTester;
@@ -110,7 +110,7 @@ public abstract class AgCayenneTester implements BQBeforeScopeCallback, BQAfterS
         this.appInScope = createAppInScope(this.jettyInScope, this.cayenneInScope);
 
         CommandOutcome result = appInScope.run();
-        assertTrue(result.isSuccess());
+        assertTrue(result.isSuccess(), () -> result.getMessage());
         assertTrue(result.forkedToBackground());
     }
 

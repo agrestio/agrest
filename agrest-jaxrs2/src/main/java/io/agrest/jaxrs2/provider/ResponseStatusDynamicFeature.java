@@ -11,7 +11,9 @@ import javax.ws.rs.core.FeatureContext;
  * DataResponse.
  *
  * @since 1.1
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
  */
+@Deprecated(since = "5.0", forRemoval = true)
 public class ResponseStatusDynamicFeature implements DynamicFeature {
 
     @Override

@@ -1070,32 +1070,34 @@ if (jjtc001) {
     case SINGLE_QUOTED_STRING:{
       jj_consume_token(SINGLE_QUOTED_STRING);
 ExpScalar jjtn001 = new ExpScalar(JJTSCALAR);
-                             boolean jjtc001 = true;
-                             jjtree.openNodeScope(jjtn001);
+      boolean jjtc001 = true;
+      jjtree.openNodeScope(jjtn001);
       try {
 jjtree.closeNodeScope(jjtn001,  0);
-                             jjtc001 = false;
+      jjtc001 = false;
 jjtn001.jjtSetValue(token_source.literalValue);
+        jjtn001.syncScalarImage("'" + token_source.literalValue + "'");
       } finally {
 if (jjtc001) {
-                               jjtree.closeNodeScope(jjtn001,  0);
-                             }
+        jjtree.closeNodeScope(jjtn001,  0);
+      }
       }
       break;
       }
     case DOUBLE_QUOTED_STRING:{
       jj_consume_token(DOUBLE_QUOTED_STRING);
 ExpScalar jjtn002 = new ExpScalar(JJTSCALAR);
-                             boolean jjtc002 = true;
-                             jjtree.openNodeScope(jjtn002);
+      boolean jjtc002 = true;
+      jjtree.openNodeScope(jjtn002);
       try {
 jjtree.closeNodeScope(jjtn002,  0);
-                             jjtc002 = false;
+      jjtc002 = false;
 jjtn002.jjtSetValue(token_source.literalValue);
+        jjtn002.syncScalarImage("\"" + token_source.literalValue + "\"");
       } finally {
 if (jjtc002) {
-                               jjtree.closeNodeScope(jjtn002,  0);
-                             }
+        jjtree.closeNodeScope(jjtn002,  0);
+      }
       }
       break;
       }

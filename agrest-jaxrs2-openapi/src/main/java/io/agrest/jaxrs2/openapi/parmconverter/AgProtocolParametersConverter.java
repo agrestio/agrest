@@ -19,7 +19,10 @@ import java.util.Set;
 
 /**
  * A Swagger extension that expands {@link UriInfo} to a set of Agrest protocol parameter models.
+ *
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
  */
+@Deprecated(since = "5.0", forRemoval = true)
 public class AgProtocolParametersConverter extends AbstractOpenAPIExtension {
 
     private final UriInfoResolver uriInfoResolver;

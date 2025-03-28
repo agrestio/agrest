@@ -8,7 +8,9 @@ import org.apache.cayenne.di.Module;
 
 /**
  * @since 5.0
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
  */
+@Deprecated(since = "5.0", forRemoval = true)
 public class AgSwaggerDefaultsModule implements Module {
 
     @Override

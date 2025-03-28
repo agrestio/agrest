@@ -394,9 +394,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #attribute(String, Class, Function)}
+     * @deprecated in favor of {@link #attribute(String, Class, Function)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineAttribute(String name, Class<V> valueType, Function<T, V> reader) {
         return attribute(name, valueType, reader);
     }
@@ -412,9 +412,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #attribute(String, Class, boolean, boolean, Function)}
+     * @deprecated in favor of {@link #attribute(String, Class, boolean, boolean, Function)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineAttribute(String name, Class<V> valueType, boolean readable, boolean writable, Function<T, V> reader) {
         return attribute(name, valueType, readable, writable, reader);
     }
@@ -471,9 +471,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toOne(String, Class, boolean, boolean, RelatedDataResolverFactory)}
+     * @deprecated in favor of {@link #toOne(String, Class, boolean, boolean, RelatedDataResolverFactory)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, boolean readable, boolean writable, RelatedDataResolverFactory resolverFactory) {
         return toOne(name, targetType, readable, writable, resolverFactory);
     }
@@ -491,9 +491,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toOne(String, Class, Function)}
+     * @deprecated in favor of {@link #toOne(String, Class, Function)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, Function<T, V> reader) {
         return toOne(name, targetType, reader);
     }
@@ -512,9 +512,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toOne(String, Class, boolean, boolean, Function)}
+     * @deprecated in favor of {@link #toOne(String, Class, boolean, boolean, Function)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, boolean readable, boolean writable, Function<T, V> reader) {
         return toOne(name, targetType, readable, writable, reader);
     }
@@ -533,9 +533,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toMany(String, Class, RelatedDataResolverFactory)}
+     * @deprecated in favor of {@link #toMany(String, Class, RelatedDataResolverFactory)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, RelatedDataResolverFactory resolverFactory) {
         return toMany(name, targetType, resolverFactory);
     }
@@ -553,9 +553,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toMany(String, Class, boolean, boolean, RelatedDataResolverFactory)}
+     * @deprecated in favor of {@link #toMany(String, Class, boolean, boolean, RelatedDataResolverFactory)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, boolean readable, boolean writable, RelatedDataResolverFactory resolverFactory) {
         return toMany(name, targetType, readable, writable, resolverFactory);
     }
@@ -573,9 +573,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toMany(String, Class, Function)}
+     * @deprecated in favor of {@link #toMany(String, Class, Function)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, Function<T, List<V>> reader) {
         return toMany(name, targetType, reader);
     }
@@ -594,9 +594,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toMany(String, Class, boolean, boolean, Function)}
+     * @deprecated in favor of {@link #toMany(String, Class, boolean, boolean, Function)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, boolean readable, boolean writable, Function<T, List<V>> reader) {
         return toMany(name, targetType, readable, writable, reader);
     }
@@ -615,9 +615,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #dataResolverFactory(RootDataResolverFactory)}
+     * @deprecated in favor of {@link #dataResolverFactory(RootDataResolverFactory)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public AgEntityOverlay<T> redefineDataResolverFactory(RootDataResolverFactory rootDataResolverFactory) {
         return dataResolverFactory(rootDataResolverFactory);
     }
@@ -631,9 +631,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #dataResolver(RootDataResolver)}
+     * @deprecated in favor of {@link #dataResolver(RootDataResolver)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public AgEntityOverlay<T> redefineDataResolver(RootDataResolver<T> rootDataResolver) {
         return dataResolver(rootDataResolver);
     }
@@ -647,9 +647,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #dataResolver(Function)}
+     * @deprecated in favor of {@link #dataResolver(Function)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public AgEntityOverlay<T> redefineDataResolver(Function<SelectContext<T>, List<T>> reader) {
         return dataResolver(reader);
     }

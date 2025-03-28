@@ -1,7 +1,6 @@
 package io.agrest.cayenne.processor.update.stage;
 
 import io.agrest.AgException;
-import io.agrest.id.AgObjectId;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
@@ -13,9 +12,9 @@ import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.CayenneRelatedResourceEntityExt;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
+import io.agrest.id.AgObjectId;
 import io.agrest.meta.AgIdPart;
 import io.agrest.protocol.Exp;
-import io.agrest.runtime.processor.update.ByIdObjectMapperFactory;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -112,7 +111,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
     protected <T extends DataObject> ObjectMapper<T> createObjectMapper(UpdateContext<T> context) {
         ObjectMapperFactory mapper = context.getMapper() != null
                 ? context.getMapper()
-                : ByIdObjectMapperFactory.mapper();
+                : ObjectMapperFactory.matchById();
         return mapper.createMapper(context);
     }
 

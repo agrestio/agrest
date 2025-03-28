@@ -4,8 +4,7 @@ import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
 
 /**
- * A default singleton implementation of the {@link ObjectMapperFactory} that
- * looks up objects based on their IDs.
+ * A default implementation of the {@link ObjectMapperFactory} that looks up objects based on their IDs.
  *
  * @since 1.4
  */

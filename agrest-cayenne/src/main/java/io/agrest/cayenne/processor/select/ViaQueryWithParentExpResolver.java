@@ -84,6 +84,11 @@ public class ViaQueryWithParentExpResolver<T extends DataObject> extends BaseRel
 
     protected void indexResultByParentId(RelatedResourceEntity<T> entity, List<Object[]> result) {
 
+        // implicit ID ordering ... It must match that of CayenneQueryAssembler.queryColumns, or the values will
+        // be assigned to the wrong columns.
+
+        // TODO: be extra paranoid and sort the key columns in both places?
+
         AgIdPart[] idAttributes = entity.getParent().getAgEntity().getIdParts().toArray(new AgIdPart[0]);
 
         for (Object[] row : result) {

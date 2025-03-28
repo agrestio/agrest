@@ -27,25 +27,25 @@ public interface Exp {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #parse(String)}
+     * @deprecated in favor of {@link #parse(String)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     static Exp simple(String template) {
         return parse(template);
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #parse(String)} and {@link #namedParams(Map)}
+     * @deprecated in favor of {@link #parse(String)} and {@link #namedParams(Map)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     static Exp witNamedParams(String template, Map<String, Object> params) {
         return parse(template).namedParams(params);
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #parse(String)} and {@link #positionalParams(Object...)}
+     * @deprecated in favor of {@link #parse(String)} and {@link #positionalParams(Object...)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     static Exp withPositionalParams(String template, Object... params) {
         return parse(template).positionalParams(params);
     }
@@ -54,9 +54,7 @@ public interface Exp {
      * @since 5.0
      */
     static Exp path(String path) {
-        ExpPath pathExp = new ExpPath();
-        pathExp.jjtSetValue(Objects.requireNonNull(path));
-        return pathExp;
+        return new ExpPath(Objects.requireNonNull(path));
     }
 
     /**
@@ -64,26 +62,27 @@ public interface Exp {
      */
     static Exp scalar(Object value) {
         if (value == null) {
-            return new ExpScalar(AgExpressionParserTreeConstants.JJTSCALAR);
+            return new ExpScalar();
         }
 
         ExpBaseScalar<?> scalar;
         if (value instanceof Collection) {
-            scalar = new ExpScalarList(AgExpressionParserTreeConstants.JJTSCALARLIST);
-        } else if (value.getClass().isArray()) {
+            scalar = new ExpScalarList((Collection<?>) value);
+            return scalar;
+        }
+        if (value.getClass().isArray()) {
             Class<?> componentType = value.getClass().getComponentType();
             if (componentType.isPrimitive()) {
                 value = ExpUtils.wrapPrimitiveArray(value);
             } else {
                 value = Arrays.asList((Object[]) value);
             }
-            scalar = new ExpScalarList(AgExpressionParserTreeConstants.JJTSCALARLIST);
-        } else {
-            scalar = new ExpScalar(AgExpressionParserTreeConstants.JJTSCALAR);
+            scalar = new ExpScalarList();
+            scalar.jjtSetValue(value);
+            return scalar;
         }
 
-        scalar.jjtSetValue(value);
-        return scalar;
+        return new ExpScalar(value);
     }
 
     /**
@@ -131,14 +130,20 @@ public interface Exp {
     /**
      * @since 5.0
      */
-    static Exp in(String path, Object... values) {
-        return ExpUtils.composeBinary(new ExpIn(), path(path), ExpUtils.scalarArray(values));
+    static Exp in(String path, Object... scalars) {
+        if(scalars.length == 0){
+            return new ExpFalse();
+        }
+        return ExpUtils.composeBinary(new ExpIn(), path(path), ExpUtils.scalarArray(scalars));
     }
 
     /**
      * @since 5.0
      */
     static Exp notIn(String path, Object... scalars) {
+        if(scalars.length == 0){
+            return new ExpTrue();
+        }
         return ExpUtils.composeBinary(new ExpNotIn(), path(path), ExpUtils.scalarArray(scalars));
     }
 
@@ -307,9 +312,9 @@ public interface Exp {
      * non-recursive even for composite expressions. If the visitor needs to descend into expression tree, it will
      * need to implement this logic on its own.
      *
-     * @deprecated since 5.0 in favor of {@link #accept(AgExpressionParserVisitor, Object)}
+     * @deprecated in favor of {@link #accept(AgExpressionParserVisitor, Object)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     default void visit(ExpVisitor visitor) {
         // DO NOTHING
     }

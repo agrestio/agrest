@@ -35,7 +35,7 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
     /**
      * @deprecated in favor of the new builder created via {@link #of(int, List)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public static <T> DataResponse<T> forObject(T object) {
         Objects.requireNonNull(object);
         return of(HttpStatus.OK, List.of(object)).build();
@@ -44,7 +44,7 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
     /**
      * @deprecated in favor of the new builder created via {@link #of(int, List)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public static <T> DataResponse<T> forObjects(List<T> data) {
         return of(HttpStatus.OK, data).build();
     }
@@ -73,9 +73,9 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #getData()}.
+     * @deprecated in favor of {@link #getData()}.
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public List<? extends T> getObjects() {
         return data;
     }
@@ -115,13 +115,13 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
             return this;
         }
 
-        @Deprecated(since = "5.0")
+        @Deprecated(since = "5.0", forRemoval = true)
         public Builder<T> data(List<? extends T> data) {
             this.data = data;
             return this;
         }
 
-        @Deprecated(since = "5.0")
+        @Deprecated(since = "5.0", forRemoval = true)
         public Builder<T> status(int status) {
             this.status = status;
             return this;

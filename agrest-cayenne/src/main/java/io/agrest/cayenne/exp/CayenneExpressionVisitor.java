@@ -299,6 +299,7 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
     @Override
     public Expression visit(ExpPath node, Expression parent) {
         ASTPath path = PathOps.parsePath((String) node.jjtGetValue());
+        path.setPathAliases(node.getPathAliases());
         return process(node, parent, path);
     }
 

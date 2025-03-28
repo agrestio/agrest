@@ -16,6 +16,10 @@ import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
+/**
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
+ */
+@Deprecated(since = "5.0", forRemoval = true)
 @Provider
 public class SimpleResponseWriter implements MessageBodyWriter<SimpleResponse> {
 

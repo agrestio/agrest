@@ -47,7 +47,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     private final AgRequestBuilder requestBuilder;
     private final Map<ChangeOperationType, List<ChangeOperation<T>>> changeOperations;
 
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     private boolean idUpdatesDisallowed;
 
     public UpdateContext(
@@ -78,7 +78,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
      * @deprecated unused anymore, as the context should not be creating a response. It is the responsibility of a
      * pipeline
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public DataResponse<T> createDataResponse() {
         int status = getResponseStatus() != null ? getResponseStatus() : HttpStatus.OK;
 
@@ -181,7 +181,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
      * @deprecated not initialized and unused since 5.0, as ID permissions checking happens elsewhere, and doesn't need
      * to be in the context
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public boolean isIdUpdatesDisallowed() {
         return idUpdatesDisallowed;
     }
@@ -191,7 +191,7 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
      * @deprecated not initialized and unused since 5.0, as ID permissions checking happens elsewhere, and doesn't need
      * to be in the context
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public void setIdUpdatesDisallowed(boolean idUpdatesDisallowed) {
         this.idUpdatesDisallowed = idUpdatesDisallowed;
     }

@@ -10,7 +10,6 @@ import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.protocol.ControlParams;
-import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
 
 import java.util.Collection;
@@ -35,17 +34,17 @@ public interface UpdateBuilder<T> {
     UpdateBuilder<T> byId(Object id);
 
     /**
-     * @deprecated since 5.0 in favor of {@link #byId(Object)}
+     * @deprecated in favor of {@link #byId(Object)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     default UpdateBuilder<T> id(Object id) {
         return byId(id);
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #byId(Object)}.
+     * @deprecated in favor of {@link #byId(Object)}.
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     default UpdateBuilder<T> id(Map<String, Object> id) {
         return byId(id);
     }
@@ -147,8 +146,8 @@ public interface UpdateBuilder<T> {
     <A> UpdateBuilder<T> entityOverlay(AgEntityOverlay<A> overlay);
 
     /**
-     * Sets a custom mapper that locates existing objects based on request data.
-     * If not set, objects will be located by their IDs.
+     * Sets a custom mapper that locates existing objects based on request data. If not set explicitly, objects will
+     * be matched by their IDs.
      */
     UpdateBuilder<T> mapper(ObjectMapperFactory mapper);
 
@@ -158,8 +157,8 @@ public interface UpdateBuilder<T> {
      *
      * @since 1.20
      */
-    default UpdateBuilder<T> mapper(String propertyName) {
-        return mapper(ByKeyObjectMapperFactory.byKey(propertyName));
+    default UpdateBuilder<T> mapper(String... propertyNames) {
+        return mapper(ObjectMapperFactory.matchByProperties(propertyNames));
     }
 
     /**

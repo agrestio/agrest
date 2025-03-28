@@ -108,22 +108,22 @@ public interface SelectBuilder<T> {
     SelectBuilder<T> start(int start);
 
     /**
-     * @since 1.2
+     * @since 5.0
      */
     SelectBuilder<T> limit(int limit);
 
     /**
-     * @deprecated since 5.0 in favor of {@link #start(int)} to match the name of the Ag protocol parameter.
+     * @deprecated in favor of {@link #start(int)} to match the name of the Ag protocol parameter.
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     default SelectBuilder<T> fetchOffset(int offset) {
         return start(offset);
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #limit(int)} to match the name of the Ag protocol parameter.
+     * @deprecated in favor of {@link #limit(int)} to match the name of the Ag protocol parameter.
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     default SelectBuilder<T> fetchLimit(int limit) {
         return limit(limit);
     }

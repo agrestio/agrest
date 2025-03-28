@@ -80,8 +80,25 @@ public class ConvertersIT extends MainDbTest {
                 .queryParam("include", "cTimestamp")
                 .post("{\"cTimestamp\":\"2015-03-14T19:00:00.000\"}")
                 .wasCreated()
-                // TODO: why is time returned back without a "T" prefix?
                 .bodyEquals(1, "{\"cTimestamp\":\"2015-03-14T19:00:00\"}");
+    }
+
+    @Test
+    public void localDate() {
+        tester.target("e16")
+                .queryParam("include", "cLocalDate")
+                .post("{\"cLocalDate\":\"2015-03-14\"}")
+                .wasCreated()
+                .bodyEquals(1, "{\"cLocalDate\":\"2015-03-14\"}");
+    }
+
+    @Test
+    public void localDateTime() {
+        tester.target("e16")
+                .queryParam("include", "cLocalDateTime")
+                .post("{\"cLocalDateTime\":\"2015-03-14T19:00:00.000\"}")
+                .wasCreated()
+                .bodyEquals(1, "{\"cLocalDateTime\":\"2015-03-14T19:00:00\"}");
     }
 
     @Test

@@ -8,7 +8,10 @@ import java.lang.reflect.Type;
 /**
  * A wrapper of a {@link Type}. Needed as a common API for one of the following cases: {@link JavaType},
  * {@link ParameterizedType} or {@link Class}.
+ *
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
  */
+@Deprecated(since = "5.0", forRemoval = true)
 public interface TypeWrapper {
 
     static TypeWrapper forType(Type type) {

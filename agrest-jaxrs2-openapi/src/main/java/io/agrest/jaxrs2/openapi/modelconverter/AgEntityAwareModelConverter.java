@@ -21,7 +21,9 @@ import java.util.Map;
 
 /**
  * @since 5.0
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
  */
+@Deprecated(since = "5.0", forRemoval = true)
 public abstract class AgEntityAwareModelConverter extends AgModelConverter {
 
     protected Schema doResolveValue(Class<?> type, ModelConverterContext context) {

@@ -1,16 +1,40 @@
 package io.agrest;
 
+import io.agrest.runtime.processor.update.ByIdObjectMapperFactory;
+import io.agrest.runtime.processor.update.ByPropertiesObjectMapperFactory;
+import io.agrest.runtime.processor.update.ByPropertyObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
 
 /**
- * A strategy for mapping update operations to existing objects.
- * 
+ * A factory of a strategy for mapping update operations to existing objects.
+ *
  * @since 1.7
  */
 public interface ObjectMapperFactory {
 
-	/**
-	 * Returns a mapper to handle objects of a given response.
-	 */
-	<T> ObjectMapper<T> createMapper(UpdateContext<T> context);
+    /**
+     * @since 5.0
+     */
+    static ObjectMapperFactory matchById() {
+        return ByIdObjectMapperFactory.mapper();
+    }
+
+    /**
+     * @since 5.0
+     */
+    static ObjectMapperFactory matchByProperties(String... properties) {
+        switch (properties.length) {
+            case 0:
+                throw new IllegalArgumentException("No properties specified for ObjectMapperFactory");
+            case 1:
+                return new ByPropertyObjectMapperFactory(properties[0]);
+            default:
+                return new ByPropertiesObjectMapperFactory(properties);
+        }
+    }
+
+    /**
+     * Returns a mapper to handle objects of a given response.
+     */
+    <T> ObjectMapper<T> createMapper(UpdateContext<T> context);
 }

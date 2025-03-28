@@ -50,14 +50,14 @@ public interface DeleteBuilder<T> {
     DeleteBuilder<T> byIds(Collection<?> ids);
 
     /**
-     * @deprecated since 5.0 in favor of {@link #byId(Object)}, but keep in mind that the new API does not append the
+     * @deprecated in favor of {@link #byId(Object)}, but keep in mind that the new API does not append the
      * ID to the internal collection, but rather replaces it. See also {@link #byIds(Object...)}.
      */
     @Deprecated(since = "5.0", forRemoval = true)
     DeleteBuilder<T> id(Object id);
 
     /**
-     * @deprecated since 5.0 in favor of {@link #byId(Object)}, but keep in mind that the new API does not append the
+     * @deprecated in favor of {@link #byId(Object)}, but keep in mind that the new API does not append the
      * ID to the internal collection, but rather replaces it. See also {@link #byIds(Object...)}
      */
     @Deprecated(since = "5.0", forRemoval = true)

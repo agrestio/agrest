@@ -33,7 +33,10 @@ import static java.util.Arrays.asList;
 
 /**
  * Provides OpenAPI Schema conversions for Agrest protocol objects. The object is stateless singleton.
+ *
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
  */
+@Deprecated(since = "5.0", forRemoval = true)
 public class AgProtocolModelConverter extends AgEntityAwareModelConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AgProtocolModelConverter.class);

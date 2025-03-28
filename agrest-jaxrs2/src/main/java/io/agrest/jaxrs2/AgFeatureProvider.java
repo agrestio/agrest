@@ -9,7 +9,10 @@ import javax.ws.rs.core.Feature;
  * This object is either installed directly via {@link AgJaxrsFeatureBuilder#feature(AgFeatureProvider)} or is
  * referenced in "META-INF/services/io.agrest.jaxrs2.AgFeatureProvider" to be auto-loaded via
  * {@link java.util.ServiceLoader}.
+ *
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
  */
+@Deprecated(since = "5.0", forRemoval = true)
 public interface AgFeatureProvider {
 
     /**

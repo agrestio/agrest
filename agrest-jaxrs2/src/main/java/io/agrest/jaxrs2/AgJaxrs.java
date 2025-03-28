@@ -14,7 +14,9 @@ import javax.ws.rs.core.Configuration;
  * JAX-RS-compatible Agrest runtime and use Agrest in the JAX-RS environment.
  *
  * @since 5.0
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
  */
+@Deprecated(since = "5.0", forRemoval = true)
 public class AgJaxrs {
 
     /**

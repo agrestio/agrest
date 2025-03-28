@@ -28,7 +28,7 @@ public interface ProcessingContext<T> {
     /**
      * @deprecated in favor of {@link #getProperty(String)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     default Object getAttribute(String name) {
         return getProperty(name);
     }
@@ -36,7 +36,7 @@ public interface ProcessingContext<T> {
     /**
      * @deprecated in favor of {@link #setProperty(String, Object)}
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     default void setAttribute(String name, Object value) {
         setProperty(name, value);
     }

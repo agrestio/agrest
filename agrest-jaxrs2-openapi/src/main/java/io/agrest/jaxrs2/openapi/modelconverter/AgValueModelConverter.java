@@ -14,6 +14,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
+/**
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
+ */
+@Deprecated(since = "5.0", forRemoval = true)
 public class AgValueModelConverter extends AgModelConverter {
 
     private static final AgValueModelConverter instance = new AgValueModelConverter();

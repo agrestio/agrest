@@ -1,6 +1,7 @@
 package io.agrest.cayenne.PUT;
 
 import io.agrest.DataResponse;
+import io.agrest.ObjectMapperFactory;
 import io.agrest.cayenne.cayenne.main.E14;
 import io.agrest.cayenne.cayenne.main.E15;
 import io.agrest.cayenne.cayenne.main.E3;
@@ -9,15 +10,13 @@ import io.agrest.cayenne.cayenne.main.E8;
 import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs3.AgJaxrs;
-import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
 import io.bootique.junit5.BQTestTool;
-import org.junit.jupiter.api.Test;
-
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.Context;
+import org.junit.jupiter.api.Test;
 
 public class Parent_MapperIT extends MainDbTest {
 
@@ -38,7 +37,7 @@ public class Parent_MapperIT extends MainDbTest {
                 .values(8, "yyy", 15)
                 .values(9, "aaa", 15).exec();
 
-        tester.target("/e8/bykey/15/e7s")
+        tester.target("/e8/custommapper/15/e7s")
                 .put("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]")
                 .wasOk()
                 .replaceId("XID")
@@ -48,7 +47,7 @@ public class Parent_MapperIT extends MainDbTest {
 
         // testing idempotency
 
-        tester.target("/e8/bykey/15/e7s")
+        tester.target("/e8/custommapper/15/e7s")
                 .put("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]")
                 .wasOk().replaceId("XID")
                 .bodyEquals(2,
@@ -70,7 +69,7 @@ public class Parent_MapperIT extends MainDbTest {
                 .values(8, "yyy", 15)
                 .values(9, "aaa", 15).exec();
 
-        tester.target("/e8/bypropkey/15/e7s")
+        tester.target("/e8/propmapper/15/e7s")
                 .put("[  {\"name\":\"newname\"}, {\"name\":\"aaa\"} ]")
                 .wasOk().replaceId("XID")
                 .bodyEquals(2, "{\"id\":XID,\"name\":\"newname\"},{\"id\":9,\"name\":\"aaa\"}");
@@ -110,16 +109,16 @@ public class Parent_MapperIT extends MainDbTest {
         private Configuration config;
 
         @PUT
-        @Path("e8/bykey/{id}/e7s")
+        @Path("e8/custommapper/{id}/e7s")
         public DataResponse<E7> e8CreateOrUpdateE7sByKey_Idempotent(@PathParam("id") int id, String entityData) {
             return AgJaxrs.idempotentCreateOrUpdate(E7.class, config)
-                    .mapper(ByKeyObjectMapperFactory.byKey(E7.NAME.getName()))
+                    .mapper(ObjectMapperFactory.matchByProperties(E7.NAME.getName()))
                     .parent(E8.class, id, E8.E7S.getName())
                     .syncAndSelect(entityData);
         }
 
         @PUT
-        @Path("e8/bypropkey/{id}/e7s")
+        @Path("e8/propmapper/{id}/e7s")
         public DataResponse<E7> e8CreateOrUpdateE7sByPropKey_Idempotent(@PathParam("id") int id, String entityData) {
             return AgJaxrs.idempotentCreateOrUpdate(E7.class, config)
                     .mapper(E7.NAME.getName())

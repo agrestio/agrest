@@ -14,9 +14,9 @@ public class BeanAnalyzer {
 
     private static final Set<String> NOT_GETTERS = Set.of("getClass", "hashCode", "notify", "notifyAll", "toString");
 
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     private static final Pattern SETTER = Pattern.compile("^set([A-Z].*)$");
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     private static final Pattern GETTER = Pattern.compile("^(get|is)([A-Z].*)$");
 
     private enum GetterType {
@@ -42,7 +42,7 @@ public class BeanAnalyzer {
     /**
      * @deprecated no longer in use
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public static Optional<String> propertyNameFromGetter(String maybeGetter) {
         Matcher matcher = GETTER.matcher(maybeGetter);
         if (!matcher.find()) {
@@ -61,7 +61,7 @@ public class BeanAnalyzer {
     /**
      * @deprecated no longer in use
      */
-    @Deprecated(since = "5.0")
+    @Deprecated(since = "5.0", forRemoval = true)
     public static Optional<String> propertyNameFromSetter(String maybeSetter) {
         Matcher matcher = SETTER.matcher(maybeSetter);
         if (!matcher.find()) {

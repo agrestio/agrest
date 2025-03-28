@@ -3,6 +3,8 @@ package io.agrest.cayenne.GET;
 import io.agrest.DataResponse;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
+import io.agrest.cayenne.cayenne.main.E32;
+import io.agrest.cayenne.cayenne.main.E33;
 import io.agrest.cayenne.cayenne.main.E4;
 import io.agrest.cayenne.cayenne.main.E5;
 import io.agrest.cayenne.unit.main.MainDbTest;
@@ -21,7 +23,7 @@ public class IncludeObjectIT extends MainDbTest {
 
     @BQTestTool
     static final MainModelTester tester = tester(Resource.class)
-            .entitiesAndDependencies(E2.class, E3.class, E4.class, E5.class)
+            .entitiesAndDependencies(E2.class, E3.class, E4.class, E5.class, E32.class, E33.class)
             .build();
 
     @Test
@@ -205,9 +207,9 @@ public class IncludeObjectIT extends MainDbTest {
                 .queryParam("include", "{\"path\":\"e3s\",\"sort\":\"name\"}")
                 .queryParam("include", "id")
                 .get().wasOk().bodyEquals(1, "{\"id\":1,\"e3s\":["
-                + "{\"id\":7,\"name\":\"b\",\"phoneNumber\":null},"
-                + "{\"id\":9,\"name\":\"s\",\"phoneNumber\":null},"
-                + "{\"id\":8,\"name\":\"z\",\"phoneNumber\":null}]}");
+                        + "{\"id\":7,\"name\":\"b\",\"phoneNumber\":null},"
+                        + "{\"id\":9,\"name\":\"s\",\"phoneNumber\":null},"
+                        + "{\"id\":8,\"name\":\"z\",\"phoneNumber\":null}]}");
     }
 
     @Test
@@ -410,6 +412,25 @@ public class IncludeObjectIT extends MainDbTest {
                         + "{\"e5\":{\"name\":\"A\"},\"name\":\"m\"}]}");
     }
 
+    @Test
+    public void testCompoundRootKey() {
+
+        tester.e33().insertColumns("p_id", "name")
+                .values(11, "n33_1")
+                .values(12, "n33_2").exec();
+
+        tester.e32().insertColumns("p_id", "s_id", "t_id", "name")
+                .values(11, 101, 1001, "n32_1")
+                .values(12, 102, 1002, "n32_2").exec();
+
+        tester.target("/e32")
+                .queryParam("include", "e33")
+                .get()
+                .wasOk()
+                .bodyEquals(2, "{\"id\":{\"db:p_id\":11,\"db:s_id\":101,\"db:t_id\":1001},\"e33\":{\"id\":11,\"name\":\"n33_1\"},\"name\":\"n32_1\"}," +
+                        "{\"id\":{\"db:p_id\":12,\"db:s_id\":102,\"db:t_id\":1002},\"e33\":{\"id\":12,\"name\":\"n33_2\"},\"name\":\"n32_2\"}");
+    }
+
     @Path("")
     public static class Resource {
 
@@ -432,6 +453,12 @@ public class IncludeObjectIT extends MainDbTest {
         @Path("e4")
         public DataResponse<E4> getE4(@Context UriInfo uriInfo) {
             return AgJaxrs.select(E4.class, config).clientParams(uriInfo.getQueryParameters()).get();
+        }
+
+        @GET
+        @Path("e32")
+        public DataResponse<E32> getE32(@Context UriInfo uriInfo) {
+            return AgJaxrs.select(E32.class, config).clientParams(uriInfo.getQueryParameters()).get();
         }
     }
 }

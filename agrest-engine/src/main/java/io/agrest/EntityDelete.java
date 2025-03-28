@@ -4,9 +4,9 @@ import io.agrest.id.AgObjectId;
 import io.agrest.meta.AgEntity;
 
 /**
- * @deprecated since 5.0 as DELETE HTTP method has no body.
+ * @deprecated as DELETE HTTP method has no body.
  */
-@Deprecated
+@Deprecated(since = "5.0", forRemoval = true)
 public class EntityDelete<T> {
 
     private final AgEntity<T> entity;
