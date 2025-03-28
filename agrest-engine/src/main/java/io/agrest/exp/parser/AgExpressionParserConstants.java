@@ -11,103 +11,103 @@ public interface AgExpressionParserConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int NULL = 35;
+  int NULL = 36;
   /** RegularExpression Id. */
-  int TRUE = 36;
+  int TRUE = 37;
   /** RegularExpression Id. */
-  int FALSE = 37;
+  int FALSE = 38;
   /** RegularExpression Id. */
-  int CONCAT = 38;
+  int CONCAT = 39;
   /** RegularExpression Id. */
-  int SUBSTRING = 39;
+  int SUBSTRING = 40;
   /** RegularExpression Id. */
-  int TRIM = 40;
+  int TRIM = 41;
   /** RegularExpression Id. */
-  int LOWER = 41;
+  int LOWER = 42;
   /** RegularExpression Id. */
-  int UPPER = 42;
+  int UPPER = 43;
   /** RegularExpression Id. */
-  int LENGTH = 43;
+  int LENGTH = 44;
   /** RegularExpression Id. */
-  int LOCATE = 44;
+  int LOCATE = 45;
   /** RegularExpression Id. */
-  int ABS = 45;
+  int ABS = 46;
   /** RegularExpression Id. */
-  int SQRT = 46;
+  int SQRT = 47;
   /** RegularExpression Id. */
-  int MOD = 47;
+  int MOD = 48;
   /** RegularExpression Id. */
-  int CURRENT_DATE = 48;
+  int CURRENT_DATE = 49;
   /** RegularExpression Id. */
-  int CURRENT_TIME = 49;
+  int CURRENT_TIME = 50;
   /** RegularExpression Id. */
-  int CURRENT_TIMESTAMP = 50;
+  int CURRENT_TIMESTAMP = 51;
   /** RegularExpression Id. */
-  int YEAR = 51;
+  int YEAR = 52;
   /** RegularExpression Id. */
-  int MONTH = 52;
+  int MONTH = 53;
   /** RegularExpression Id. */
-  int WEEK = 53;
+  int WEEK = 54;
   /** RegularExpression Id. */
-  int DAY_OF_YEAR = 54;
+  int DAY_OF_YEAR = 55;
   /** RegularExpression Id. */
-  int DAY = 55;
+  int DAY = 56;
   /** RegularExpression Id. */
-  int DAY_OF_MONTH = 56;
+  int DAY_OF_MONTH = 57;
   /** RegularExpression Id. */
-  int DAY_OF_WEEK = 57;
+  int DAY_OF_WEEK = 58;
   /** RegularExpression Id. */
-  int HOUR = 58;
+  int HOUR = 59;
   /** RegularExpression Id. */
-  int MINUTE = 59;
+  int MINUTE = 60;
   /** RegularExpression Id. */
-  int SECOND = 60;
+  int SECOND = 61;
   /** RegularExpression Id. */
-  int NAMED_PARAMETER = 61;
+  int NAMED_PARAMETER = 62;
   /** RegularExpression Id. */
-  int PROPERTY_PATH = 62;
+  int PROPERTY_PATH = 63;
   /** RegularExpression Id. */
-  int IDENTIFIER = 63;
+  int IDENTIFIER = 64;
   /** RegularExpression Id. */
-  int LETTER = 64;
+  int LETTER = 65;
   /** RegularExpression Id. */
-  int DIGIT = 65;
+  int DIGIT = 66;
   /** RegularExpression Id. */
-  int DOLLAR_SIGN = 66;
+  int DOLLAR_SIGN = 67;
   /** RegularExpression Id. */
-  int ESC = 69;
+  int ESC = 70;
   /** RegularExpression Id. */
-  int SINGLE_QUOTED_STRING = 71;
+  int SINGLE_QUOTED_STRING = 72;
   /** RegularExpression Id. */
-  int STRING_ESC = 72;
+  int STRING_ESC = 73;
   /** RegularExpression Id. */
-  int DOUBLE_QUOTED_STRING = 74;
+  int DOUBLE_QUOTED_STRING = 75;
   /** RegularExpression Id. */
-  int INT_LITERAL = 75;
+  int INT_LITERAL = 76;
   /** RegularExpression Id. */
-  int FLOAT_LITERAL = 76;
+  int FLOAT_LITERAL = 77;
   /** RegularExpression Id. */
-  int DEC_DIGIT_UNDERSCORE = 77;
+  int DEC_DIGIT_UNDERSCORE = 78;
   /** RegularExpression Id. */
-  int DEC_DIGIT = 78;
+  int DEC_DIGIT = 79;
   /** RegularExpression Id. */
-  int OCTAL_DIGIT_UNDERSCORE = 79;
+  int OCTAL_DIGIT_UNDERSCORE = 80;
   /** RegularExpression Id. */
-  int OCTAL_DIGIT = 80;
+  int OCTAL_DIGIT = 81;
   /** RegularExpression Id. */
-  int HEX_DIGIT_UNDERSCORE = 81;
+  int HEX_DIGIT_UNDERSCORE = 82;
   /** RegularExpression Id. */
-  int HEX_DIGIT = 82;
+  int HEX_DIGIT = 83;
   /** RegularExpression Id. */
-  int DEC_FLT = 83;
+  int DEC_FLT = 84;
   /** RegularExpression Id. */
-  int DEC_DIGITS_INNER_UNDERSCORE = 84;
+  int DEC_DIGITS_INNER_UNDERSCORE = 85;
   /** RegularExpression Id. */
-  int EXPONENT = 85;
+  int EXPONENT = 86;
   /** RegularExpression Id. */
-  int INT_SUFF = 86;
+  int INT_SUFF = 87;
   /** RegularExpression Id. */
-  int FLT_SUFF = 87;
+  int FLT_SUFF = 88;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -123,6 +123,7 @@ public interface AgExpressionParserConstants {
     "\"and\"",
     "\"not\"",
     "\"!\"",
+    "\"exists\"",
     "\"=\"",
     "\"==\"",
     "\"!=\"",
@@ -188,10 +189,10 @@ public interface AgExpressionParserConstants {
     "\"\\\'\"",
     "\"\\\"\"",
     "<ESC>",
-    "<token of kind 70>",
+    "<token of kind 71>",
     "\"\\\'\"",
     "<STRING_ESC>",
-    "<token of kind 73>",
+    "<token of kind 74>",
     "\"\\\"\"",
     "<INT_LITERAL>",
     "<FLOAT_LITERAL>",

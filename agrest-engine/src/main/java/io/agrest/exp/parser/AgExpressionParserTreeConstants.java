@@ -19,39 +19,41 @@ public interface AgExpressionParserTreeConstants
   public int JJTLIKEIGNORECASE = 13;
   public int JJTIN = 14;
   public int JJTBETWEEN = 15;
-  public int JJTNOTLIKE = 16;
-  public int JJTNOTLIKEIGNORECASE = 17;
-  public int JJTNOTIN = 18;
-  public int JJTNOTBETWEEN = 19;
-  public int JJTSCALARLIST = 20;
-  public int JJTSCALAR = 21;
-  public int JJTBITWISEOR = 22;
-  public int JJTBITWISEXOR = 23;
-  public int JJTBITWISEAND = 24;
-  public int JJTBITWISELEFTSHIFT = 25;
-  public int JJTBITWISERIGHTSHIFT = 26;
-  public int JJTADD = 27;
-  public int JJTSUBTRACT = 28;
-  public int JJTMULTIPLY = 29;
-  public int JJTDIVIDE = 30;
-  public int JJTBITWISENOT = 31;
-  public int JJTNEGATE = 32;
-  public int JJTCONCAT = 33;
-  public int JJTSUBSTRING = 34;
-  public int JJTTRIM = 35;
-  public int JJTLOWER = 36;
-  public int JJTUPPER = 37;
-  public int JJTLENGTH = 38;
-  public int JJTLOCATE = 39;
-  public int JJTABS = 40;
-  public int JJTSQRT = 41;
-  public int JJTMOD = 42;
-  public int JJTCURRENTDATE = 43;
-  public int JJTCURRENTTIME = 44;
-  public int JJTCURRENTTIMESTAMP = 45;
-  public int JJTEXTRACT = 46;
-  public int JJTNAMEDPARAMETER = 47;
-  public int JJTPATH = 48;
+  public int JJTNOTEXISTS = 16;
+  public int JJTEXISTS = 17;
+  public int JJTNOTLIKE = 18;
+  public int JJTNOTLIKEIGNORECASE = 19;
+  public int JJTNOTIN = 20;
+  public int JJTNOTBETWEEN = 21;
+  public int JJTSCALARLIST = 22;
+  public int JJTSCALAR = 23;
+  public int JJTBITWISEOR = 24;
+  public int JJTBITWISEXOR = 25;
+  public int JJTBITWISEAND = 26;
+  public int JJTBITWISELEFTSHIFT = 27;
+  public int JJTBITWISERIGHTSHIFT = 28;
+  public int JJTADD = 29;
+  public int JJTSUBTRACT = 30;
+  public int JJTMULTIPLY = 31;
+  public int JJTDIVIDE = 32;
+  public int JJTBITWISENOT = 33;
+  public int JJTNEGATE = 34;
+  public int JJTCONCAT = 35;
+  public int JJTSUBSTRING = 36;
+  public int JJTTRIM = 37;
+  public int JJTLOWER = 38;
+  public int JJTUPPER = 39;
+  public int JJTLENGTH = 40;
+  public int JJTLOCATE = 41;
+  public int JJTABS = 42;
+  public int JJTSQRT = 43;
+  public int JJTMOD = 44;
+  public int JJTCURRENTDATE = 45;
+  public int JJTCURRENTTIME = 46;
+  public int JJTCURRENTTIMESTAMP = 47;
+  public int JJTEXTRACT = 48;
+  public int JJTNAMEDPARAMETER = 49;
+  public int JJTPATH = 50;
 
 
   public String[] jjtNodeName = {
@@ -71,6 +73,8 @@ public interface AgExpressionParserTreeConstants
     "LikeIgnoreCase",
     "In",
     "Between",
+    "NotExists",
+    "Exists",
     "NotLike",
     "NotLikeIgnoreCase",
     "NotIn",
@@ -106,4 +110,4 @@ public interface AgExpressionParserTreeConstants
     "Path",
   };
 }
-/* JavaCC - OriginalChecksum=57348cdda463a745977f3a242a91800e (do not edit this line) */
+/* JavaCC - OriginalChecksum=f3b1ff7ef3c532dcd0ff352552cce4d8 (do not edit this line) */

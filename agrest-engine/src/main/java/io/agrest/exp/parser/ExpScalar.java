@@ -23,7 +23,7 @@ public class ExpScalar extends ExpBaseScalar<Object> {
     }
 
     public ExpScalar(Object value) {
-        super(AgExpressionParserTreeConstants.JJTSCALAR);
+        this();
         setValue(value);
     }
 

@@ -135,6 +135,18 @@ public class ExpTest {
     }
 
     @Test
+    public void exists() {
+        assertEquals("exists (details.value between 5 and 6)",
+                Exp.exists("details.value between 5 and 6").toString());
+    }
+
+    @Test
+    public void notExists() {
+        assertEquals("not exists (details.value between 5 and 6)",
+                Exp.notExists("details.value between 5 and 6").toString());
+    }
+
+    @Test
     public void between() {
         assertEquals("a between 5 and 10", Exp.between("a", 5, 10).toString());
     }

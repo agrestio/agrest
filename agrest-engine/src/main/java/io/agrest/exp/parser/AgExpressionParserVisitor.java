@@ -19,6 +19,8 @@ public interface AgExpressionParserVisitor<T>
   public T visit(ExpLikeIgnoreCase node, T data);
   public T visit(ExpIn node, T data);
   public T visit(ExpBetween node, T data);
+  public T visit(ExpNotExists node, T data);
+  public T visit(ExpExists node, T data);
   public T visit(ExpNotLike node, T data);
   public T visit(ExpNotLikeIgnoreCase node, T data);
   public T visit(ExpNotIn node, T data);
@@ -53,4 +55,4 @@ public interface AgExpressionParserVisitor<T>
   public T visit(ExpNamedParameter node, T data);
   public T visit(ExpPath node, T data);
 }
-/* JavaCC - OriginalChecksum=bbbd1fbe3d9eeaf8fa5337263e445eda (do not edit this line) */
+/* JavaCC - OriginalChecksum=b580dcade977da8d675450ea63d239df (do not edit this line) */

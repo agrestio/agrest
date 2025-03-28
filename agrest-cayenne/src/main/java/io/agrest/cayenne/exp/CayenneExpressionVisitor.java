@@ -1,9 +1,11 @@
 package io.agrest.cayenne.exp;
 
 import io.agrest.cayenne.path.PathOps;
+import io.agrest.exp.AgExpressionException;
 import io.agrest.exp.parser.SimpleNode;
 import io.agrest.exp.parser.*;
 import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.exp.ExpressionException;
 import org.apache.cayenne.exp.ExpressionParameter;
 import org.apache.cayenne.exp.parser.*;
 
@@ -49,8 +51,18 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
     }
 
     @Override
+    public Expression visit(ExpExists node, Expression parent) {
+        return process(node, parent, constructExpression(ASTExists.class));
+    }
+
+    @Override
     public Expression visit(ExpNotEqual node, Expression data) {
         return process(node, data, new ASTNotEqual());
+    }
+
+    @Override
+    public Expression visit(ExpNotExists node, Expression parent) {
+        return process(node, parent, constructExpression(ASTNotExists.class));
     }
 
     @Override
@@ -314,7 +326,11 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
     }
 
     private Expression addToParent(Expression parent, Expression child) {
-        parent.setOperand(parent.getOperandCount(), child);
+        try {
+            parent.setOperand(parent.getOperandCount(), child);
+        } catch (ExpressionException e) {
+            throw new AgExpressionException(e);
+        }
         return parent;
     }
 
@@ -341,10 +357,10 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
     // A hack - must use reflection to create Cayenne expressions, as the common int constructor is not public
     // in any of them.
     // TODO: refactor this in Cayenne to provide public constructors
-    private Expression constructExpression(Class<? extends Expression> expClass) {
-        Expression exp;
+    private <T extends Expression> T constructExpression(Class<T> expClass) {
+        T exp;
         try {
-            Constructor<? extends Expression> constructor = expClass.getDeclaredConstructor(int.class);
+            Constructor<T> constructor = expClass.getDeclaredConstructor(int.class);
             constructor.setAccessible(true);
             exp = constructor.newInstance(0);
         } catch (Exception e) {

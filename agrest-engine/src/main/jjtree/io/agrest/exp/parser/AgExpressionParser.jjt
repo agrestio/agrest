@@ -90,6 +90,9 @@ void andCondition() : {}
 
 void notCondition() : {}
 {
+        LOOKAHEAD( ( "not" | "!" )? "exists" )
+        notExists()
+    |
 		( "not" | "!" ) simpleCondition() #Not(1)
 	|
 		simpleCondition()
@@ -128,6 +131,18 @@ void simpleCondition() : {
         |
           simpleNotCondition()
 	)?
+}
+
+void notExists() : { }
+{
+        ( "not" | "!" ) exists() #NotExists(1)
+    |
+        exists() #Exists(1)
+}
+
+void exists() : { }
+{
+    "exists" pathExpression()
 }
 
 void simpleNotCondition() : {
