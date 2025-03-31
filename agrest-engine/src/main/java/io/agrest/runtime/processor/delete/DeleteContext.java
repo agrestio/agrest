@@ -1,10 +1,10 @@
 package io.agrest.runtime.processor.delete;
 
 import io.agrest.id.AgObjectId;
-import io.agrest.runtime.EntityParent;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.BaseProcessingContext;
+import io.agrest.runtime.EntityParent;
+import io.agrest.runtime.meta.RequestSchema;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import org.apache.cayenne.di.Injector;
 
@@ -18,25 +18,63 @@ import java.util.List;
  */
 public class DeleteContext<T> extends BaseProcessingContext<T> {
 
+    private final RequestSchema schema;
     protected AgEntity<T> agEntity;
+    protected Collection<?> unresolvedIds;
     protected Collection<AgObjectId> ids;
     protected EntityParent<?> parent;
-    protected AgEntityOverlay<T> entityOverlay;
     private List<ChangeOperation<T>> deleteOperations;
 
-    public DeleteContext(Class<T> type, Injector injector) {
+    public DeleteContext(Class<T> type, RequestSchema schema, Injector injector) {
         super(type, injector);
+        this.schema = schema;
         this.deleteOperations = Collections.emptyList();
     }
 
+    /**
+     * @since 5.0
+     */
+    public boolean isByIds() {
+        return unresolvedIds != null && !unresolvedIds.isEmpty();
+    }
+
+    /**
+     * @deprecated in favor of {@link #isByIds()}
+     */
+    @Deprecated(since = "5.0", forRemoval = true)
     public boolean isById() {
-        return ids != null && !ids.isEmpty();
+        return isByIds();
+    }
+
+    /**
+     * @since 5.0
+     */
+    public Collection<?> getUnresolvedIds() {
+        return unresolvedIds != null ? unresolvedIds : Collections.emptyList();
+    }
+
+    /**
+     * @since 5.0
+     */
+    public void setUnresolvedIds(Collection<?> unresolvedIds) {
+        this.unresolvedIds = unresolvedIds;
     }
 
     public Collection<AgObjectId> getIds() {
-        return ids;
+        return ids != null ? ids : Collections.emptyList();
     }
 
+    /**
+     * @since 5.0
+     */
+    public void setIds(Collection<AgObjectId> ids) {
+        this.ids = ids;
+    }
+
+    /**
+     * @deprecated in favor of {@link #setIds(Collection)}
+     */
+    @Deprecated(since = "5.0", forRemoval = true)
     public void addId(AgObjectId id) {
         if (this.ids == null) {
             this.ids = new ArrayList<>();
@@ -69,21 +107,6 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
     /**
      * @since 4.8
      */
-    public void addEntityOverlay(AgEntityOverlay<T> overlay) {
-        AgEntityOverlay<T> base = this.entityOverlay != null ? this.entityOverlay : new AgEntityOverlay<>(getType());
-        this.entityOverlay = base.merge(overlay);
-    }
-
-    /**
-     * @since 4.8
-     */
-    public AgEntityOverlay<T> getEntityOverlay() {
-        return entityOverlay;
-    }
-
-    /**
-     * @since 4.8
-     */
     public List<ChangeOperation<T>> getDeleteOperations() {
         return deleteOperations;
     }
@@ -93,5 +116,12 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
      */
     public void setDeleteOperations(List<ChangeOperation<T>> deleteOperations) {
         this.deleteOperations = deleteOperations;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public RequestSchema getSchema() {
+        return schema;
     }
 }

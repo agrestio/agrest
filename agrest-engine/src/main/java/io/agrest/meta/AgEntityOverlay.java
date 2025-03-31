@@ -38,6 +38,8 @@ public class AgEntityOverlay<T> {
     private PropertyFilter readablePropFilter;
     private PropertyFilter writablePropFilter;
 
+    private boolean ignoreSuperReadFilter;
+
     private boolean ignoreOverlaidReadFilter;
     private boolean ignoreOverlaidCreateAuthorizer;
     private boolean ignoreOverlaidUpdateAuthorizer;
@@ -75,7 +77,7 @@ public class AgEntityOverlay<T> {
     /**
      * Resolves entity overlay to an entity.
      *
-     * @since 4.8
+     * @since 5.0
      */
     public AgEntity<T> resolve(AgSchema schema, AgEntity<T> toOverlay, Collection<AgEntity<? extends T>> overlaidSubEntities) {
 
@@ -136,10 +138,38 @@ public class AgEntityOverlay<T> {
                 && relationships.isEmpty()
                 && readablePropFilter == null
                 && writablePropFilter == null
-                && !ignoreOverlaidReadFilter && readFilter.allowsAll()
+                && !ignoreSuperReadFilter && !ignoreOverlaidReadFilter && readFilter.allowsAll()
                 && !ignoreOverlaidCreateAuthorizer && createAuthorizer.allowsAll()
                 && !ignoreOverlaidUpdateAuthorizer && updateAuthorizer.allowsAll()
                 && !ignoreOverlaidDeleteAuthorizer && deleteAuthorizer.allowsAll();
+    }
+
+    /**
+     * @since 5.0
+     */
+    public <S extends T> AgEntityOverlay<S> clone(Class<S> toType) {
+        AgEntityOverlay<S> clone = new AgEntityOverlay<>(toType);
+
+        clone.rootDataResolver = (RootDataResolver<S>) this.rootDataResolver;
+        clone.attributes.putAll(this.attributes);
+        clone.relationships.putAll(this.relationships);
+        clone.readablePropFilter = this.readablePropFilter;
+        clone.writablePropFilter = this.writablePropFilter;
+
+        clone.ignoreSuperReadFilter = this.ignoreSuperReadFilter;
+        clone.ignoreOverlaidReadFilter = this.ignoreOverlaidReadFilter;
+        clone.readFilter = (ReadFilter<S>) this.readFilter;
+
+        clone.ignoreOverlaidCreateAuthorizer = this.ignoreOverlaidCreateAuthorizer;
+        clone.createAuthorizer = (CreateAuthorizer<S>) this.createAuthorizer;
+
+        clone.ignoreOverlaidUpdateAuthorizer = this.ignoreOverlaidUpdateAuthorizer;
+        clone.updateAuthorizer = (UpdateAuthorizer<S>) this.updateAuthorizer;
+
+        clone.ignoreOverlaidDeleteAuthorizer = this.ignoreOverlaidDeleteAuthorizer;
+        clone.deleteAuthorizer = (DeleteAuthorizer<S>) this.deleteAuthorizer;
+
+        return clone;
     }
 
     /**
@@ -150,6 +180,49 @@ public class AgEntityOverlay<T> {
      * @since 2.10
      */
     public AgEntityOverlay<T> merge(AgEntityOverlay<T> anotherOverlay) {
+        mergeNoObjectFilters(anotherOverlay);
+
+        // When merging filters/authorizers, "ignores" are themselves ignored, and will only have effect on the underlying entity.
+        // This allows to combine multiple overlays in the same scope (e.g. request or AgRuntimeBuilder) without them
+        // messing up each other, and only override things between the scopes
+
+        this.readFilter = this.readFilter.andThen(anotherOverlay.readFilter);
+        this.createAuthorizer = this.createAuthorizer.andThen(anotherOverlay.createAuthorizer);
+        this.updateAuthorizer = this.updateAuthorizer.andThen(anotherOverlay.updateAuthorizer);
+        this.deleteAuthorizer = this.deleteAuthorizer.andThen(anotherOverlay.deleteAuthorizer);
+
+        return this;
+    }
+
+    /**
+     * Combines this overlay with the super-entity overlay.
+     *
+     * @since 5.0
+     */
+    public AgEntityOverlay<T> mergeSuper(AgEntityOverlay<? super T> superOverlay) {
+
+        if (superOverlay == null) {
+            return this;
+        }
+
+        AgEntityOverlay<T> mergedTarget = superOverlay.clone(getType());
+        mergedTarget.mergeNoObjectFilters(this);
+
+        // When merging filters/authorizers, "ignores" are themselves ignored, and will only have effect on the underlying entity.
+        // This allows to combine multiple overlays in the same scope (e.g. request or AgRuntimeBuilder) without them
+        // messing up each other, and only override things between the scopes
+
+        mergedTarget.readFilter = this.ignoreSuperReadFilter ? this.readFilter : mergedTarget.readFilter.andThen(this.readFilter);
+
+        // TODO: "ignoreSuper*" properties similar to "ignoreSuperReadFilter"
+        mergedTarget.createAuthorizer = mergedTarget.createAuthorizer.andThen(this.createAuthorizer);
+        mergedTarget.updateAuthorizer = mergedTarget.updateAuthorizer.andThen(this.updateAuthorizer);
+        mergedTarget.deleteAuthorizer = mergedTarget.deleteAuthorizer.andThen(this.deleteAuthorizer);
+
+        return mergedTarget;
+    }
+
+    private void mergeNoObjectFilters(AgEntityOverlay<T> anotherOverlay) {
         attributes.putAll(anotherOverlay.attributes);
         relationships.putAll(anotherOverlay.relationships);
 
@@ -166,21 +239,12 @@ public class AgEntityOverlay<T> {
         }
 
         // When merging "ignores", a "true" on either side of the merge results in "true" in the merged version
+        this.ignoreSuperReadFilter = anotherOverlay.ignoreSuperReadFilter || this.ignoreSuperReadFilter;
+
         this.ignoreOverlaidReadFilter = anotherOverlay.ignoreOverlaidReadFilter || this.ignoreOverlaidReadFilter;
         this.ignoreOverlaidCreateAuthorizer = anotherOverlay.ignoreOverlaidCreateAuthorizer || this.ignoreOverlaidCreateAuthorizer;
         this.ignoreOverlaidUpdateAuthorizer = anotherOverlay.ignoreOverlaidUpdateAuthorizer || this.ignoreOverlaidUpdateAuthorizer;
         this.ignoreOverlaidDeleteAuthorizer = anotherOverlay.ignoreOverlaidDeleteAuthorizer || this.ignoreOverlaidDeleteAuthorizer;
-
-        // When merging filters/authorizers, "ignores" are themselves ignored, and will only have effect on the underlying entity.
-        // This allows to combine multiple overlays in the same scope (e.g. request or AgRuntimeBuilder) without them
-        // messing up each other, and only override things between the scopes
-
-        this.readFilter = this.readFilter.andThen(anotherOverlay.readFilter);
-        this.createAuthorizer = this.createAuthorizer.andThen(anotherOverlay.createAuthorizer);
-        this.updateAuthorizer = this.updateAuthorizer.andThen(anotherOverlay.updateAuthorizer);
-        this.deleteAuthorizer = this.deleteAuthorizer.andThen(anotherOverlay.deleteAuthorizer);
-
-        return this;
     }
 
     public Class<T> getType() {
@@ -239,6 +303,14 @@ public class AgEntityOverlay<T> {
      */
     public AgEntityOverlay<T> writablePropFilter(PropertyFilter filter) {
         this.writablePropFilter = writablePropFilter != null ? writablePropFilter.andThen(filter) : filter;
+        return this;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public AgEntityOverlay<T> ignoreSuperReadFilter() {
+        this.ignoreSuperReadFilter = true;
         return this;
     }
 
@@ -322,9 +394,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #attribute(String, Class, Function)}
+     * @deprecated in favor of {@link #attribute(String, Class, Function)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineAttribute(String name, Class<V> valueType, Function<T, V> reader) {
         return attribute(name, valueType, reader);
     }
@@ -340,9 +412,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #attribute(String, Class, boolean, boolean, Function)}
+     * @deprecated in favor of {@link #attribute(String, Class, boolean, boolean, Function)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineAttribute(String name, Class<V> valueType, boolean readable, boolean writable, Function<T, V> reader) {
         return attribute(name, valueType, readable, writable, reader);
     }
@@ -379,8 +451,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toOne(String, Class, RelatedDataResolverFactory)}
+     * @deprecated in favor of {@link #toOne(String, Class, RelatedDataResolverFactory)}
      */
+    @Deprecated(since = "5.0")
     public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, RelatedDataResolverFactory resolverFactory) {
         return toOne(name, targetType, resolverFactory);
     }
@@ -398,9 +471,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toOne(String, Class, boolean, boolean, RelatedDataResolverFactory)}
+     * @deprecated in favor of {@link #toOne(String, Class, boolean, boolean, RelatedDataResolverFactory)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, boolean readable, boolean writable, RelatedDataResolverFactory resolverFactory) {
         return toOne(name, targetType, readable, writable, resolverFactory);
     }
@@ -418,9 +491,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toOne(String, Class, Function)}
+     * @deprecated in favor of {@link #toOne(String, Class, Function)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, Function<T, V> reader) {
         return toOne(name, targetType, reader);
     }
@@ -439,9 +512,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toOne(String, Class, boolean, boolean, Function)}
+     * @deprecated in favor of {@link #toOne(String, Class, boolean, boolean, Function)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, boolean readable, boolean writable, Function<T, V> reader) {
         return toOne(name, targetType, readable, writable, reader);
     }
@@ -460,9 +533,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toMany(String, Class, RelatedDataResolverFactory)}
+     * @deprecated in favor of {@link #toMany(String, Class, RelatedDataResolverFactory)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, RelatedDataResolverFactory resolverFactory) {
         return toMany(name, targetType, resolverFactory);
     }
@@ -480,9 +553,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toMany(String, Class, boolean, boolean, RelatedDataResolverFactory)}
+     * @deprecated in favor of {@link #toMany(String, Class, boolean, boolean, RelatedDataResolverFactory)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, boolean readable, boolean writable, RelatedDataResolverFactory resolverFactory) {
         return toMany(name, targetType, readable, writable, resolverFactory);
     }
@@ -500,9 +573,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toMany(String, Class, Function)}
+     * @deprecated in favor of {@link #toMany(String, Class, Function)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, Function<T, List<V>> reader) {
         return toMany(name, targetType, reader);
     }
@@ -521,9 +594,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #toMany(String, Class, boolean, boolean, Function)}
+     * @deprecated in favor of {@link #toMany(String, Class, boolean, boolean, Function)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, boolean readable, boolean writable, Function<T, List<V>> reader) {
         return toMany(name, targetType, readable, writable, reader);
     }
@@ -542,9 +615,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #dataResolverFactory(RootDataResolverFactory)}
+     * @deprecated in favor of {@link #dataResolverFactory(RootDataResolverFactory)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public AgEntityOverlay<T> redefineDataResolverFactory(RootDataResolverFactory rootDataResolverFactory) {
         return dataResolverFactory(rootDataResolverFactory);
     }
@@ -558,9 +631,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #dataResolver(RootDataResolver)}
+     * @deprecated in favor of {@link #dataResolver(RootDataResolver)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public AgEntityOverlay<T> redefineDataResolver(RootDataResolver<T> rootDataResolver) {
         return dataResolver(rootDataResolver);
     }
@@ -574,9 +647,9 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #dataResolver(Function)}
+     * @deprecated in favor of {@link #dataResolver(Function)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public AgEntityOverlay<T> redefineDataResolver(Function<SelectContext<T>, List<T>> reader) {
         return dataResolver(reader);
     }
@@ -595,5 +668,10 @@ public class AgEntityOverlay<T> {
             }
         };
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "AgEntityOverlay[" + type.getSimpleName() + "]";
     }
 }

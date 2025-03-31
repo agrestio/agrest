@@ -13,18 +13,18 @@ public enum ControlParams {
      * @deprecated in the protocol v.1.1 (Agrest 4.1) in favor of {@link ControlParams#exp}. Will be supported indefinitely
      * for backwards compatibility.
      */
-    @Deprecated
+    @Deprecated(forRemoval = false)
     cayenneExp("A deprecated alias for 'exp' parameter. Expression used to filter a select result"),
 
     /**
-     * A deprecated alis for the 'direction' parameter. Sort direction. Can be one of 'ASC','ASC_CI', 'DESC', 'DESC_CI'.
+     * A deprecated alias for the 'direction' parameter. Sort direction. Can be one of 'ASC','ASC_CI', 'DESC', 'DESC_CI'.
      * Used in conjunction with 'sort'.
      *
      * @deprecated in the protocol v.1.2 (Agrest 5.0) in favor of {@link ControlParams#direction}. Will be supported
      * indefinitely for backwards compatibility.
      */
-    @Deprecated
-    dir("A deprecated alis for the 'direction' parameter. Sort direction. Can be one of 'ASC','ASC_CI', 'DESC', 'DESC_CI'. Used in conjunction with 'sort'."),
+    @Deprecated(forRemoval = false)
+    dir("A deprecated alias for the 'direction' parameter. Sort direction. Can be one of 'ASC','ASC_CI', 'DESC', 'DESC_CI'. Used in conjunction with 'sort'."),
 
     /**
      * Sort direction. Can be one of 'ASC','ASC_CI', 'DESC', 'DESC_CI'. Used in conjunction with 'sort'.
@@ -79,7 +79,7 @@ public enum ControlParams {
      * @deprecated in the protocol v.1.1 (Agrest 4.1) in favor of {@link #EXP}. Will be supported indefinitely
      * for backwards compatibility.
      */
-    @Deprecated
+    @Deprecated(forRemoval = false)
     public static final String CAYENNE_EXP = "cayenneExp";
 
     /**
@@ -87,7 +87,7 @@ public enum ControlParams {
      * @deprecated in the protocol v.1.2 (Agrest 5.0) in favor of {@link #direction}. Will be supported
      * indefinitely for backwards compatibility.
      */
-    @Deprecated
+    @Deprecated(forRemoval = false)
     public static final String DIR = "dir";
 
     /**

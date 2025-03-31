@@ -11,11 +11,16 @@ import io.agrest.meta.AgEntity;
  * that have a unique property within parent.
  *
  * @since 1.4
+ * @deprecated in favor of {@link ByPropertyObjectMapperFactory}
  */
+@Deprecated(since = "5.0", forRemoval = true)
 public class ByKeyObjectMapperFactory implements ObjectMapperFactory {
 
-    private String property;
+    private final String property;
 
+    /**
+     * @deprecated in favor of {@link ObjectMapperFactory#matchByProperties(String...)}
+     */
     public static ByKeyObjectMapperFactory byKey(String key) {
         return new ByKeyObjectMapperFactory(key);
     }
@@ -30,6 +35,6 @@ public class ByKeyObjectMapperFactory implements ObjectMapperFactory {
 
         // TODO: should we account for "id" attributes here?
         AgAttribute attribute = entity.getAttribute(property);
-        return new ByKeyObjectMapper<>(attribute);
+        return new ByPropertyObjectMapper<>(attribute);
     }
 }

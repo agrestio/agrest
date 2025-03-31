@@ -5,7 +5,7 @@ import io.agrest.EntityUpdate;
 import io.agrest.jaxrs2.AgJaxrs;
 import io.agrest.meta.AgSchema;
 import io.agrest.reflect.Types;
-import io.agrest.runtime.protocol.IEntityUpdateParser;
+import io.agrest.runtime.protocol.IUpdateRequestParser;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
@@ -25,16 +25,18 @@ import java.util.Collection;
  * A provider of {@link MessageBodyReader} for Collections of {@link EntityUpdate} parameters.
  *
  * @since 1.20
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
  */
 @Provider
 @Consumes(MediaType.APPLICATION_JSON)
+@Deprecated(since = "5.0", forRemoval = true)
 public class EntityUpdateCollectionReader<T> implements MessageBodyReader<Collection<EntityUpdate<T>>> {
 
     private EntityUpdateReaderProcessor reader;
 
     public EntityUpdateCollectionReader(@Context Configuration config) {
         this.reader = new EntityUpdateReaderProcessor(
-                AgJaxrs.runtime(config).service(IEntityUpdateParser.class),
+                AgJaxrs.runtime(config).service(IUpdateRequestParser.class),
                 AgJaxrs.runtime(config).service(AgSchema.class));
     }
 

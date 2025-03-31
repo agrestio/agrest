@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class SortTest {
 
     @Test
-    public void testEquals() {
+    public void equals() {
         Sort s1 = new Sort("a", Direction.asc);
         Sort s2 = new Sort("a", Direction.asc);
         Sort s3 = new Sort("b", Direction.asc);

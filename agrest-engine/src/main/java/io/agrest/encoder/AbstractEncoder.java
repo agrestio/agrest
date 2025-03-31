@@ -7,17 +7,24 @@ import java.io.IOException;
 public abstract class AbstractEncoder implements Encoder {
 
     @Override
-    public void encode(String propertyName, Object object, JsonGenerator out) throws IOException {
-        if (propertyName != null) {
-            out.writeFieldName(propertyName);
-        }
+    public void encode(String propertyName, Object object, boolean skipNullProperties, JsonGenerator out) throws IOException {
 
         if (object == null) {
-            out.writeNull();
+            if (!skipNullProperties) {
+                encodePropertyName(propertyName, out);
+                out.writeNull();
+            }
         } else {
-            encodeNonNullObject(object, out);
+            encodePropertyName(propertyName, out);
+            encodeNonNullObject(object, skipNullProperties, out);
         }
     }
 
-    protected abstract void encodeNonNullObject(Object object, JsonGenerator out) throws IOException;
+    protected void encodePropertyName(String propertyName, JsonGenerator out) throws IOException {
+        if (propertyName != null) {
+            out.writeFieldName(propertyName);
+        }
+    }
+
+    protected abstract void encodeNonNullObject(Object object, boolean skipNullProperties, JsonGenerator out) throws IOException;
 }

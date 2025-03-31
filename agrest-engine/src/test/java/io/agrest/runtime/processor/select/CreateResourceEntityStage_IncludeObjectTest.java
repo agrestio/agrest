@@ -1,6 +1,7 @@
 package io.agrest.runtime.processor.select;
 
 import io.agrest.ResourceEntity;
+import io.agrest.access.PathChecker;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
@@ -17,10 +18,12 @@ import io.agrest.runtime.entity.IIncludeMerger;
 import io.agrest.runtime.entity.IMapByMerger;
 import io.agrest.runtime.entity.ISizeMerger;
 import io.agrest.runtime.entity.ISortMerger;
+import io.agrest.runtime.entity.IdResolver;
 import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.entity.MapByMerger;
 import io.agrest.runtime.entity.SizeMerger;
 import io.agrest.runtime.entity.SortMerger;
+import io.agrest.runtime.meta.RequestSchema;
 import io.agrest.runtime.processor.select.stage.SelectCreateResourceEntityStage;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IExpParser;
@@ -41,25 +44,26 @@ import static org.mockito.Mockito.mock;
 
 public class CreateResourceEntityStage_IncludeObjectTest {
 
-    private static SelectCreateResourceEntityStage stage;
-    private static IAgRequestBuilderFactory requestBuilderFactory;
+    static SelectCreateResourceEntityStage stage;
+    static IAgRequestBuilderFactory requestBuilderFactory;
+    static AgSchema schema;
 
     @BeforeAll
     public static void beforeAll() {
 
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Map.of());
-        AgSchema schema = new LazySchema(List.of(compiler));
+        schema = new LazySchema(List.of(compiler));
 
         // prepare create entity stage
         IExpMerger expConstructor = new ExpMerger();
         ISortMerger sortConstructor = new SortMerger();
-        IMapByMerger mapByConstructor = new MapByMerger(schema);
+        IMapByMerger mapByConstructor = new MapByMerger();
         ISizeMerger sizeConstructor = new SizeMerger();
-        IIncludeMerger includeConstructor = new IncludeMerger(schema, expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
+        IIncludeMerger includeConstructor = new IncludeMerger(expConstructor, sortConstructor, mapByConstructor, sizeConstructor);
         IExcludeMerger excludeConstructor = new ExcludeMerger();
 
         stage = new SelectCreateResourceEntityStage(
-                schema,
+                new IdResolver(),
                 expConstructor,
                 sortConstructor,
                 mapByConstructor,
@@ -76,11 +80,13 @@ public class CreateResourceEntityStage_IncludeObjectTest {
     }
 
     @Test
-    public void testExecute_IncludeObject_Path() {
+    public void execute_IncludeObject_Path() {
 
         SelectContext<Tr> context = new SelectContext<>(
                 Tr.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory.builder().addInclude(new Include("rtss")).build());
 
@@ -91,14 +97,16 @@ public class CreateResourceEntityStage_IncludeObjectTest {
         assertTrue(resourceEntity.isIdIncluded());
 
         assertEquals(1, resourceEntity.getChildren().size());
-        assertTrue(resourceEntity.getChildren().containsKey("rtss"));
+        assertNotNull(resourceEntity.getChild("rtss"));
     }
 
     @Test
-    public void testExecute_IncludeObject_MapBy() {
+    public void execute_IncludeObject_MapBy() {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
 
         Include include = new Include("rtss", null, Collections.emptyList(), "rtt", null, null);
@@ -109,9 +117,9 @@ public class CreateResourceEntityStage_IncludeObjectTest {
         ResourceEntity<Tr> resourceEntity = context.getEntity();
         assertNotNull(resourceEntity);
 
-        ResourceEntity<?> reMapBy = resourceEntity.getChildren().get("rtss").getMapBy();
+        ResourceEntity<?> reMapBy = resourceEntity.getChild("rtss").getMapBy();
         assertNotNull(reMapBy);
-        assertNotNull(reMapBy.getChildren().get("rtt"));
+        assertNotNull(reMapBy.getChild("rtt"));
     }
 
     public static class Tr {

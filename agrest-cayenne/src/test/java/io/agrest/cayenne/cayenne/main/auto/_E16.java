@@ -6,6 +6,8 @@ import java.io.ObjectOutputStream;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.apache.cayenne.BaseDataObject;
 import org.apache.cayenne.exp.property.DateProperty;
@@ -24,10 +26,14 @@ public abstract class _E16 extends BaseDataObject {
     public static final String ID_PK_COLUMN = "id";
 
     public static final DateProperty<Date> C_DATE = PropertyFactory.createDate("cDate", Date.class);
+    public static final DateProperty<LocalDate> C_LOCAL_DATE = PropertyFactory.createDate("cLocalDate", LocalDate.class);
+    public static final DateProperty<LocalDateTime> C_LOCAL_DATE_TIME = PropertyFactory.createDate("cLocalDateTime", LocalDateTime.class);
     public static final DateProperty<Time> C_TIME = PropertyFactory.createDate("cTime", Time.class);
     public static final DateProperty<Timestamp> C_TIMESTAMP = PropertyFactory.createDate("cTimestamp", Timestamp.class);
 
     protected Date cDate;
+    protected LocalDate cLocalDate;
+    protected LocalDateTime cLocalDateTime;
     protected Time cTime;
     protected Timestamp cTimestamp;
 
@@ -40,6 +46,26 @@ public abstract class _E16 extends BaseDataObject {
     public Date getCDate() {
         beforePropertyRead("cDate");
         return this.cDate;
+    }
+
+    public void setCLocalDate(LocalDate cLocalDate) {
+        beforePropertyWrite("cLocalDate", this.cLocalDate, cLocalDate);
+        this.cLocalDate = cLocalDate;
+    }
+
+    public LocalDate getCLocalDate() {
+        beforePropertyRead("cLocalDate");
+        return this.cLocalDate;
+    }
+
+    public void setCLocalDateTime(LocalDateTime cLocalDateTime) {
+        beforePropertyWrite("cLocalDateTime", this.cLocalDateTime, cLocalDateTime);
+        this.cLocalDateTime = cLocalDateTime;
+    }
+
+    public LocalDateTime getCLocalDateTime() {
+        beforePropertyRead("cLocalDateTime");
+        return this.cLocalDateTime;
     }
 
     public void setCTime(Time cTime) {
@@ -71,6 +97,10 @@ public abstract class _E16 extends BaseDataObject {
         switch(propName) {
             case "cDate":
                 return this.cDate;
+            case "cLocalDate":
+                return this.cLocalDate;
+            case "cLocalDateTime":
+                return this.cLocalDateTime;
             case "cTime":
                 return this.cTime;
             case "cTimestamp":
@@ -89,6 +119,12 @@ public abstract class _E16 extends BaseDataObject {
         switch (propName) {
             case "cDate":
                 this.cDate = (Date)val;
+                break;
+            case "cLocalDate":
+                this.cLocalDate = (LocalDate)val;
+                break;
+            case "cLocalDateTime":
+                this.cLocalDateTime = (LocalDateTime)val;
                 break;
             case "cTime":
                 this.cTime = (Time)val;
@@ -113,6 +149,8 @@ public abstract class _E16 extends BaseDataObject {
     protected void writeState(ObjectOutputStream out) throws IOException {
         super.writeState(out);
         out.writeObject(this.cDate);
+        out.writeObject(this.cLocalDate);
+        out.writeObject(this.cLocalDateTime);
         out.writeObject(this.cTime);
         out.writeObject(this.cTimestamp);
     }
@@ -121,6 +159,8 @@ public abstract class _E16 extends BaseDataObject {
     protected void readState(ObjectInputStream in) throws IOException, ClassNotFoundException {
         super.readState(in);
         this.cDate = (Date)in.readObject();
+        this.cLocalDate = (LocalDate)in.readObject();
+        this.cLocalDateTime = (LocalDateTime)in.readObject();
         this.cTime = (Time)in.readObject();
         this.cTimestamp = (Timestamp)in.readObject();
     }

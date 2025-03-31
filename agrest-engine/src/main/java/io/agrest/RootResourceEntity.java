@@ -10,9 +10,9 @@ import java.util.List;
  * @param <T>
  * @since 3.4
  */
-public class RootResourceEntity<T> extends BaseResourceEntity<T> {
+public class RootResourceEntity<T> extends ResourceEntity<T> {
 
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     private String applicationBase;
     private List<T> data;
 
@@ -38,9 +38,9 @@ public class RootResourceEntity<T> extends BaseResourceEntity<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #getData()}
+     * @deprecated in favor of {@link #getData()}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public List<T> getResult() {
         return data;
     }
@@ -53,27 +53,27 @@ public class RootResourceEntity<T> extends BaseResourceEntity<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #setData(List)}
+     * @deprecated in favor of {@link #setData(List)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public void setResult(List<T> data) {
         this.data = data;
     }
 
     /**
      * @since 1.20
-     * @deprecated since 5.0 as metadata encoding that uses this will soon be removed from Agrest
+     * @deprecated as metadata encoding that used this was removed from Agrest
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public String getApplicationBase() {
         return applicationBase;
     }
 
     /**
      * @since 1.20
-     * @deprecated since 5.0 as metadata encoding that uses this will soon be removed from Agrest
+     * @deprecated as metadata encoding that used this was removed from Agrest
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public void setApplicationBase(String applicationBase) {
         this.applicationBase = applicationBase;
     }

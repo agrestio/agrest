@@ -4,7 +4,7 @@ import io.agrest.AgException;
 import io.agrest.DataResponse;
 import io.agrest.jaxrs2.junit.AgPojoTester;
 import io.agrest.jaxrs2.junit.PojoTest;
-import io.agrest.jaxrs2.pojo.model.P1;
+import io.agrest.jaxrs2.junit.pojo.P1;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +21,7 @@ public class JaxrsAgExceptionMapperIT extends PojoTest {
     static final AgPojoTester tester = PojoTest.tester(Resource.class).build();
 
     @Test
-    public void testException() {
+    public void exception() {
         tester.target("/p1").get()
                 .wasForbidden()
                 .bodyEquals("{\"message\":\"_was_forbidden_\"}");

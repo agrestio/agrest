@@ -24,7 +24,7 @@ public class LazySchemaTest {
 	}
 
 	@Test
-	public void testGetAgEntity_NoRelationships() {
+	public void getAgEntity_NoRelationships() {
 
 		AgEntity<Tr> tr = schema.getEntity(Tr.class);
 		assertNotNull(tr);
@@ -39,7 +39,7 @@ public class LazySchemaTest {
 	}
 
 	@Test
-	public void testGetAgEntity_Relationships() {
+	public void getAgEntity_Relationships() {
 
 		AgEntity<Ts> ts = schema.getEntity(Ts.class);
 		assertNotNull(ts);

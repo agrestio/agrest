@@ -19,7 +19,7 @@ public class ValueEncoder extends AbstractEncoder {
     }
 
     @Override
-    protected void encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
+    protected void encodeNonNullObject(Object object, boolean skipNullProperties, JsonGenerator out) throws IOException {
         out.writeObject(converter.asString(object));
     }
 }

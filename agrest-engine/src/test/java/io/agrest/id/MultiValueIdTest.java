@@ -10,12 +10,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MultiValueIdTest {
 
     @Test
-    public void testEquals() {
+    public void equals() {
 
         assertTrue(new MultiValueId(new HashMap<>()).equals(new MultiValueId(new HashMap<>())));
 
         Map<String, Object> ids1 = new HashMap<>();
-        ids1.put("id1", new Integer(1));
+        ids1.put("id1", 1);
         ids1.put("id2", "2");
         MultiValueId objectId1 = new MultiValueId(ids1);
 
@@ -26,7 +26,7 @@ public class MultiValueIdTest {
         assertTrue(objectId1.equals(objectId2));
 
         Map<String, Object> ids3 = new HashMap<>();
-        ids3.put("id1", new Integer(1));
+        ids3.put("id1", 1);
         ids3.put("id2", "2");
         MultiValueId objectId3 = new MultiValueId(ids3);
 
@@ -35,10 +35,10 @@ public class MultiValueIdTest {
     }
 
     @Test
-    public void testNotEquals() {
+    public void notEquals() {
 
         Map<String, Object> ids1 = new HashMap<>();
-        ids1.put("id1", new Integer(1));
+        ids1.put("id1", 1);
         ids1.put("id2", "2");
         MultiValueId objectId1 = new MultiValueId(ids1);
 
@@ -47,7 +47,7 @@ public class MultiValueIdTest {
         assertFalse(objectId1.equals(new MultiValueId(new HashMap<>())));
 
         Map<String, Object> ids2 = new HashMap<>();
-        ids2.put("id1", new Integer(-1));
+        ids2.put("id1", -1);
         ids2.put("id2", "2");
         MultiValueId objectId2 = new MultiValueId(ids2);
 
@@ -55,12 +55,12 @@ public class MultiValueIdTest {
     }
 
     @Test
-    public void testHashcode() {
+    public void _hashCode() {
 
         assertEquals(new MultiValueId(new HashMap<>()), new MultiValueId(new HashMap<>()));
 
         Map<String, Object> ids1 = new HashMap<>();
-        ids1.put("id1", new Integer(1));
+        ids1.put("id1", 1);
         ids1.put("id2", "2");
         MultiValueId objectId1 = new MultiValueId(ids1);
 
@@ -69,7 +69,7 @@ public class MultiValueIdTest {
         assertEquals(objectId1.hashCode(), objectId2.hashCode());
 
         Map<String, Object> ids3 = new HashMap<>();
-        ids3.put("id1", new Integer(1));
+        ids3.put("id1", 1);
         ids3.put("id2", "2");
         MultiValueId objectId3 = new MultiValueId(ids3);
 
@@ -78,7 +78,7 @@ public class MultiValueIdTest {
         assertNotEquals(objectId1.hashCode(), new MultiValueId(new HashMap<>()));
 
         Map<String, Object> ids4 = new HashMap<>();
-        ids4.put("id1", new Integer(1));
+        ids4.put("id1", 1);
         ids4.put("id2", "22");
         MultiValueId objectId4 = new MultiValueId(ids4);
 

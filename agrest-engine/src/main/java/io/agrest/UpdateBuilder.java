@@ -10,7 +10,6 @@ import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.protocol.ControlParams;
-import io.agrest.runtime.processor.update.ByKeyObjectMapperFactory;
 import io.agrest.runtime.processor.update.UpdateContext;
 
 import java.util.Collection;
@@ -35,24 +34,17 @@ public interface UpdateBuilder<T> {
     UpdateBuilder<T> byId(Object id);
 
     /**
-     * @deprecated since 5.0 in favor of {@link #byId(Object)}
+     * @deprecated in favor of {@link #byId(Object)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     default UpdateBuilder<T> id(Object id) {
         return byId(id);
     }
 
     /**
-     * Set an explicit multi-value id for the update. In this case only a single object is allowed in the update.
-     *
-     * @since 5.0
+     * @deprecated in favor of {@link #byId(Object)}.
      */
-    UpdateBuilder<T> byId(Map<String, Object> id);
-
-    /**
-     * @deprecated since 5.0 in favor of {@link #byId(Map)}.
-     */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     default UpdateBuilder<T> id(Map<String, Object> id) {
         return byId(id);
     }
@@ -154,8 +146,8 @@ public interface UpdateBuilder<T> {
     <A> UpdateBuilder<T> entityOverlay(AgEntityOverlay<A> overlay);
 
     /**
-     * Sets a custom mapper that locates existing objects based on request data.
-     * If not set, objects will be located by their IDs.
+     * Sets a custom mapper that locates existing objects based on request data. If not set explicitly, objects will
+     * be matched by their IDs.
      */
     UpdateBuilder<T> mapper(ObjectMapperFactory mapper);
 
@@ -165,9 +157,20 @@ public interface UpdateBuilder<T> {
      *
      * @since 1.20
      */
-    default UpdateBuilder<T> mapper(String propertyName) {
-        return mapper(ByKeyObjectMapperFactory.byKey(propertyName));
+    default UpdateBuilder<T> mapper(String... propertyNames) {
+        return mapper(ObjectMapperFactory.matchByProperties(propertyNames));
     }
+
+    /**
+     * Sets the policy for the maximum depth of relationship paths, such as includes. This overrides runtime-defined
+     * policy for this one request. Depth is counted from the root of the request. Only non-negative depths are allowed.
+     * Zero depth blocks all relationships, "1" - blocks anything beyond direct relationships, and so on. Attribute
+     * paths are not counted towards depth (either root or nested).
+     *
+     * @return this builder instance
+     * @since 5.0
+     */
+    UpdateBuilder<T> maxPathDepth(int maxPathDepth);
 
     /**
      * Registers a consumer to be executed after a specified standard execution stage. The consumer can inspect and

@@ -1,7 +1,6 @@
 package io.agrest.cayenne.processor.update.stage;
 
 import io.agrest.AgException;
-import io.agrest.id.AgObjectId;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
 import io.agrest.ObjectMapperFactory;
@@ -13,9 +12,9 @@ import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.CayenneRelatedResourceEntityExt;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
+import io.agrest.id.AgObjectId;
 import io.agrest.meta.AgIdPart;
 import io.agrest.protocol.Exp;
-import io.agrest.runtime.processor.update.ByIdObjectMapperFactory;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
@@ -112,7 +111,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
     protected <T extends DataObject> ObjectMapper<T> createObjectMapper(UpdateContext<T> context) {
         ObjectMapperFactory mapper = context.getMapper() != null
                 ? context.getMapper()
-                : ByIdObjectMapperFactory.mapper();
+                : ObjectMapperFactory.matchById();
         return mapper.createMapper(context);
     }
 
@@ -197,8 +196,8 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
 
         ObjectSelect<T> query = ObjectSelect.query(entity.getType()).where(qualifier);
 
-        for (Map.Entry<String, RelatedResourceEntity<?>> e : entity.getChildren().entrySet()) {
-            buildRelatedQuery(e.getValue(), query.getWhere());
+        for (RelatedResourceEntity<?> e : entity.getChildren()) {
+            buildRelatedQuery(e, query.getWhere());
         }
 
         CayenneProcessor.getRootEntity(entity).setSelect(query);
@@ -221,8 +220,8 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
                 .where(translateExpressionToSource(incomingObjRelationship, parentQualifier))
                 .columns(queryAssembler.queryColumns(entity));
 
-        for (Map.Entry<String, RelatedResourceEntity<?>> e : entity.getChildren().entrySet()) {
-            buildRelatedQuery(e.getValue(), query.getWhere());
+        for (RelatedResourceEntity<?> e : entity.getChildren()) {
+            buildRelatedQuery(e, query.getWhere());
         }
 
         CayenneProcessor.getRelatedEntity(entity).setSelect(query);
@@ -232,7 +231,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
     protected <T> List<T> fetchRootEntity(ObjectContext context, RootResourceEntity<T> entity) {
 
         List<T> objects = CayenneProcessor.getRootEntity(entity).getSelect().select(context);
-        for (RelatedResourceEntity<?> c : entity.getChildren().values()) {
+        for (RelatedResourceEntity<?> c : entity.getChildren()) {
             fetchRelatedEntity(context, c);
         }
 
@@ -246,7 +245,7 @@ public class CayenneMapUpdateStage extends CayenneMapChangesStage {
             List<Object[]> objects = ext.getSelect().select(context);
             assignChildrenToParent(entity, objects);
 
-            for (RelatedResourceEntity<?> c : entity.getChildren().values()) {
+            for (RelatedResourceEntity<?> c : entity.getChildren()) {
                 fetchRelatedEntity(context, c);
             }
         }

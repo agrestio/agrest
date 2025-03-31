@@ -1,15 +1,18 @@
 package io.agrest.runtime;
 
-import io.agrest.id.AgObjectId;
 import io.agrest.AgRequest;
 import io.agrest.DataResponse;
+import io.agrest.HttpStatus;
+import io.agrest.RootResourceEntity;
 import io.agrest.SelectBuilder;
 import io.agrest.SelectStage;
 import io.agrest.SizeConstraints;
+import io.agrest.access.PathChecker;
+import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.Encoder;
+import io.agrest.id.AgObjectId;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.AgSchema;
 import io.agrest.processor.Processor;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.agrest.runtime.processor.select.SelectProcessorFactory;
@@ -41,15 +44,13 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
     @Override
     public SelectBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
-        AgEntity<?> parentEntity = context.service(AgSchema.class).getEntity(parentType);
-        context.setParent(new EntityParent<>(parentEntity, AgObjectId.of(parentId), relationshipFromParent));
+        context.setParent(new EntityParent<>(parentType, AgObjectId.of(parentId), relationshipFromParent));
         return this;
     }
 
     @Override
     public SelectBuilder<T> parent(Class<?> parentType, Map<String, Object> parentIds, String relationshipFromParent) {
-        AgEntity<?> parentEntity = context.service(AgSchema.class).getEntity(parentType);
-        context.setParent(new EntityParent<>(parentEntity, AgObjectId.ofMap(parentIds), relationshipFromParent));
+        context.setParent(new EntityParent<>(parentType, AgObjectId.ofMap(parentIds), relationshipFromParent));
         return this;
     }
 
@@ -62,6 +63,12 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
     @Override
     public SelectBuilder<T> start(int offset) {
         getOrCreateSizeConstraints().fetchOffset(offset);
+        return this;
+    }
+
+    @Override
+    public SelectBuilder<T> maxPathDepth(int maxPathDepth) {
+        context.setMaxPathDepth(PathChecker.of(maxPathDepth));
         return this;
     }
 
@@ -98,14 +105,7 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
 
     @Override
     public SelectBuilder<T> byId(Object id) {
-        // TODO: return a special builder that will preserve 'byId' strategy on select
-        context.setId(AgObjectId.of(id));
-        return this;
-    }
-
-    @Override
-    public SelectBuilder<T> byId(Map<String, Object> id) {
-        context.setId(AgObjectId.ofMap(id));
+        context.setUnresolvedId(id);
         return this;
     }
 
@@ -138,19 +138,36 @@ public class DefaultSelectBuilder<T> implements SelectBuilder<T> {
         // should deprecate eventually
         context.setAtMostOneObject(context.isById());
         processorFactory.createProcessor(processors).execute(context);
-        return context.createDataResponse();
+        return createDataResponse();
     }
 
     @Override
     public DataResponse<T> getOne() {
         context.setAtMostOneObject(true);
         processorFactory.createProcessor(processors).execute(context);
-        return context.createDataResponse();
+        return createDataResponse();
     }
 
     @Override
     public DataResponse<T> getEmpty() {
         return terminalStage(SelectStage.APPLY_SERVER_PARAMS, this::processEmpty).get();
+    }
+
+    private DataResponse<T> createDataResponse() {
+
+        // account for partial context stats for cases with terminal stages invoked prior
+        // to those objects being created
+
+        int status = context.getResponseStatus() != null ? context.getResponseStatus() : HttpStatus.OK;
+
+        RootResourceEntity<T> entity = context.getEntity();
+        List<T> data = entity != null ? entity.getDataWindow() : Collections.emptyList();
+
+        return DataResponse.of(status, data)
+                .headers(context.getResponseHeaders())
+                .total(entity != null ? entity.getData().size() : 0)
+                .encoder(context.getEncoder() != null ? context.getEncoder() : DataResponseEncoder.defaultEncoder())
+                .build();
     }
 
     private void processEmpty(SelectContext<T> context) {

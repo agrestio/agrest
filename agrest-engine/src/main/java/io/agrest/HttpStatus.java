@@ -11,6 +11,13 @@ public final class HttpStatus {
     private HttpStatus() {
     }
 
+    /**
+     * @since 5.0
+     */
+    public static boolean isValid(int status) {
+        return status >= 100 && status <= 599;
+    }
+
     public static final int OK = 200;
     public static final int CREATED = 201;
     public static final int ACCEPTED = 202;

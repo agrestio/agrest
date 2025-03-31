@@ -3,16 +3,16 @@ package io.agrest.cayenne.unit;
 import io.agrest.cayenne.AgCayenneModule;
 import io.agrest.cayenne.persister.CayennePersister;
 import io.agrest.cayenne.persister.ICayennePersister;
-import io.agrest.jaxrs2.junit.AgHttpTester;
-import io.agrest.jaxrs2.junit.AgTestJaxrsFeature;
+import io.agrest.jaxrs3.junit.AgHttpTester;
+import io.agrest.jaxrs3.junit.AgTestJaxrsFeature;
 import io.agrest.runtime.AgRuntime;
 import io.agrest.runtime.AgRuntimeBuilder;
+import io.bootique.BQModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.cayenne.v42.CayenneModule;
 import io.bootique.cayenne.v42.junit5.CayenneTester;
 import io.bootique.command.CommandOutcome;
-import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.jdbc.junit5.DbTester;
@@ -24,19 +24,19 @@ import io.bootique.junit5.scope.BQAfterMethodCallback;
 import io.bootique.junit5.scope.BQAfterScopeCallback;
 import io.bootique.junit5.scope.BQBeforeMethodCallback;
 import io.bootique.junit5.scope.BQBeforeScopeCallback;
+import jakarta.ws.rs.client.WebTarget;
 import org.apache.cayenne.Persistent;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import javax.inject.Singleton;
-import javax.ws.rs.client.WebTarget;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.UnaryOperator;
-import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -103,14 +103,14 @@ public abstract class AgCayenneTester implements BQBeforeScopeCallback, BQAfterS
     }
 
     @Override
-    public void beforeScope(BQTestScope scope, ExtensionContext context) throws Exception {
+    public void beforeScope(BQTestScope scope, ExtensionContext context) {
 
         this.jettyInScope = JettyTester.create();
         this.cayenneInScope = createCayenneInScope();
         this.appInScope = createAppInScope(this.jettyInScope, this.cayenneInScope);
 
         CommandOutcome result = appInScope.run();
-        assertTrue(result.isSuccess());
+        assertTrue(result.isSuccess(), () -> result.getMessage());
         assertTrue(result.forkedToBackground());
     }
 
@@ -172,11 +172,6 @@ public abstract class AgCayenneTester implements BQBeforeScopeCallback, BQAfterS
             return this;
         }
 
-        public Builder<T> doNotCleanData() {
-            tester.doNotCleanData = true;
-            return this;
-        }
-
         @SafeVarargs
         public final Builder<T> entities(Class<? extends Persistent>... entities) {
             tester.entities = Objects.requireNonNull(entities);
@@ -190,7 +185,7 @@ public abstract class AgCayenneTester implements BQBeforeScopeCallback, BQAfterS
         }
 
         public Builder<T> resources(Class<?>... resources) {
-            Stream.of(resources).forEach(tester.resources::add);
+            tester.resources.addAll(asList(resources));
             return this;
         }
 

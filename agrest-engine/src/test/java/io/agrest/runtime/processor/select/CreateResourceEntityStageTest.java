@@ -1,6 +1,7 @@
 package io.agrest.runtime.processor.select;
 
 import io.agrest.ResourceEntity;
+import io.agrest.access.PathChecker;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
@@ -21,10 +22,12 @@ import io.agrest.runtime.entity.IIncludeMerger;
 import io.agrest.runtime.entity.IMapByMerger;
 import io.agrest.runtime.entity.ISizeMerger;
 import io.agrest.runtime.entity.ISortMerger;
+import io.agrest.runtime.entity.IdResolver;
 import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.entity.MapByMerger;
 import io.agrest.runtime.entity.SizeMerger;
 import io.agrest.runtime.entity.SortMerger;
+import io.agrest.runtime.meta.RequestSchema;
 import io.agrest.runtime.processor.select.stage.SelectCreateResourceEntityStage;
 import io.agrest.runtime.protocol.IExcludeParser;
 import io.agrest.runtime.protocol.IExpParser;
@@ -45,25 +48,26 @@ import static org.mockito.Mockito.mock;
 
 public class CreateResourceEntityStageTest {
 
-    private static SelectCreateResourceEntityStage stage;
-    private static IAgRequestBuilderFactory requestBuilderFactory;
+    static SelectCreateResourceEntityStage stage;
+    static IAgRequestBuilderFactory requestBuilderFactory;
+    static AgSchema schema;
 
     @BeforeAll
     public static void beforeAll() {
 
         AgEntityCompiler compiler = new AnnotationsAgEntityCompiler(Map.of());
-        AgSchema schema = new LazySchema(List.of(compiler));
+        schema = new LazySchema(List.of(compiler));
 
         // prepare create entity stage
         IExpMerger expMerger = new ExpMerger();
         ISortMerger sortMerger = new SortMerger();
-        IMapByMerger mapByMerger = new MapByMerger(schema);
+        IMapByMerger mapByMerger = new MapByMerger();
         ISizeMerger sizeMerger = new SizeMerger();
-        IIncludeMerger includeMerger = new IncludeMerger(schema, expMerger, sortMerger, mapByMerger, sizeMerger);
+        IIncludeMerger includeMerger = new IncludeMerger(expMerger, sortMerger, mapByMerger, sizeMerger);
         IExcludeMerger excludeMerger = new ExcludeMerger();
 
         stage = new SelectCreateResourceEntityStage(
-                schema,
+                new IdResolver(),
                 expMerger,
                 sortMerger,
                 mapByMerger,
@@ -80,10 +84,12 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_Default() {
+    public void execute_Default() {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory.builder().build());
         context.mergeClientParameters(new HashMap<>());
@@ -94,15 +100,17 @@ public class CreateResourceEntityStageTest {
 
         assertNotNull(resourceEntity);
         assertTrue(resourceEntity.isIdIncluded());
-        assertEquals(3, resourceEntity.getAttributes().size());
+        assertEquals(3, resourceEntity.getBaseProjection().getAttributes().size());
         assertTrue(resourceEntity.getChildren().isEmpty());
     }
 
     @Test
-    public void testExecute_Include() {
+    public void execute_Include() {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -116,18 +124,20 @@ public class CreateResourceEntityStageTest {
         assertNotNull(resourceEntity);
         assertFalse(resourceEntity.isIdIncluded());
 
-        assertEquals(2, resourceEntity.getAttributes().size());
-        assertTrue(resourceEntity.getAttributes().containsKey("a"));
-        assertTrue(resourceEntity.getAttributes().containsKey("b"));
+        assertEquals(2, resourceEntity.getBaseProjection().getAttributes().size());
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("a"));
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("b"));
 
         assertTrue(resourceEntity.getChildren().isEmpty());
     }
 
     @Test
-    public void testExecute_Exclude() {
+    public void execute_Exclude() {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -141,16 +151,18 @@ public class CreateResourceEntityStageTest {
         assertNotNull(resourceEntity);
         assertTrue(resourceEntity.isIdIncluded());
 
-        assertEquals(1, resourceEntity.getAttributes().size());
-        assertTrue(resourceEntity.getAttributes().containsKey("c"));
+        assertEquals(1, resourceEntity.getBaseProjection().getAttributes().size());
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("c"));
         assertTrue(resourceEntity.getChildren().isEmpty());
     }
 
     @Test
-    public void testExecute_IncludeExcludeAttrs() {
+    public void execute_IncludeExcludeAttrs() {
 
         SelectContext<Tr> context = new SelectContext<>(Tr.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
 
         Include include1 = new Include("a");
@@ -173,17 +185,19 @@ public class CreateResourceEntityStageTest {
 
         assertNotNull(resourceEntity);
         assertTrue(resourceEntity.isIdIncluded());
-        assertEquals(1, resourceEntity.getAttributes().size());
-        assertTrue(resourceEntity.getAttributes().containsKey("b"));
+        assertEquals(1, resourceEntity.getBaseProjection().getAttributes().size());
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("b"));
 
         assertTrue(resourceEntity.getChildren().isEmpty());
     }
 
     @Test
-    public void testExecute_IncludeRels() {
+    public void execute_IncludeRels() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory.builder().addInclude(new Include("rtt")).build());
 
@@ -193,28 +207,30 @@ public class CreateResourceEntityStageTest {
 
         assertNotNull(resourceEntity);
         assertTrue(resourceEntity.isIdIncluded());
-        assertEquals(2, resourceEntity.getAttributes().size());
-        assertTrue(resourceEntity.getAttributes().containsKey("m"));
-        assertTrue(resourceEntity.getAttributes().containsKey("n"));
+        assertEquals(2, resourceEntity.getBaseProjection().getAttributes().size());
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("m"));
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("n"));
 
         assertEquals(1, resourceEntity.getChildren().size());
-        assertEquals(1, resourceEntity.getChildren().entrySet().size());
-        assertTrue(resourceEntity.getChildren().keySet().contains("rtt"));
+        assertEquals(1, resourceEntity.getChildren().size());
+        assertNotNull(resourceEntity.getChild("rtt"));
 
-        ResourceEntity<Tt> ttEntity = (ResourceEntity<Tt>) resourceEntity.getChildren().get("rtt");
+        ResourceEntity<Tt> ttEntity = (ResourceEntity<Tt>) resourceEntity.getChild("rtt");
         assertTrue(ttEntity.isIdIncluded());
-        assertEquals(2, ttEntity.getAttributes().size());
+        assertEquals(2, ttEntity.getBaseProjection().getAttributes().size());
 
-        assertTrue(ttEntity.getAttributes().containsKey("o"));
-        assertTrue(ttEntity.getAttributes().containsKey("p"));
+        assertNotNull(ttEntity.getBaseProjection().getAttribute("o"));
+        assertNotNull(ttEntity.getBaseProjection().getAttribute("p"));
         assertTrue(ttEntity.getChildren().isEmpty());
     }
 
     @Test
-    public void testExecute_IncludeBothAttrs() {
+    public void execute_IncludeBothAttrs() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory.builder()
                 .addInclude(new Include("m"))
@@ -226,26 +242,28 @@ public class CreateResourceEntityStageTest {
 
         assertNotNull(resourceEntity);
         assertFalse(resourceEntity.isIdIncluded());
-        assertEquals(1, resourceEntity.getAttributes().size());
-        assertTrue(resourceEntity.getAttributes().containsKey("m"));
+        assertEquals(1, resourceEntity.getBaseProjection().getAttributes().size());
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("m"));
 
         assertEquals(1, resourceEntity.getChildren().size());
-        assertEquals(1, resourceEntity.getChildren().entrySet().size());
-        assertTrue(resourceEntity.getChildren().keySet().contains("rtt"));
+        assertEquals(1, resourceEntity.getChildren().size());
+        assertNotNull(resourceEntity.getChild("rtt"));
 
-        ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get("rtt");
+        ResourceEntity<?> e3ResourceEntity = resourceEntity.getChild("rtt");
         assertFalse(e3ResourceEntity.isIdIncluded());
-        assertEquals(1, e3ResourceEntity.getAttributes().size());
+        assertEquals(1, e3ResourceEntity.getBaseProjection().getAttributes().size());
 
-        assertTrue(e3ResourceEntity.getAttributes().containsKey("o"));
+        assertNotNull(e3ResourceEntity.getBaseProjection().getAttribute("o"));
         assertTrue(e3ResourceEntity.getChildren().isEmpty());
     }
 
     @Test
-    public void testExecute_IncludeExcludeBothAttrs() {
+    public void execute_IncludeExcludeBothAttrs() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
 
         context.setRequest(requestBuilderFactory
@@ -260,26 +278,28 @@ public class CreateResourceEntityStageTest {
 
         assertNotNull(resourceEntity);
         assertTrue(resourceEntity.isIdIncluded());
-        assertEquals(1, resourceEntity.getAttributes().size());
-        assertTrue(resourceEntity.getAttributes().containsKey("n"));
+        assertEquals(1, resourceEntity.getBaseProjection().getAttributes().size());
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("n"));
 
         assertEquals(1, resourceEntity.getChildren().size());
-        assertEquals(1, resourceEntity.getChildren().entrySet().size());
-        assertTrue(resourceEntity.getChildren().keySet().contains("rtt"));
+        assertEquals(1, resourceEntity.getChildren().size());
+        assertNotNull(resourceEntity.getChild("rtt"));
 
-        ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get("rtt");
+        ResourceEntity<?> e3ResourceEntity = resourceEntity.getChild("rtt");
         assertFalse(e3ResourceEntity.isIdIncluded());
-        assertEquals(1, e3ResourceEntity.getAttributes().size());
+        assertEquals(1, e3ResourceEntity.getBaseProjection().getAttributes().size());
 
-        assertTrue(e3ResourceEntity.getAttributes().containsKey("o"));
+        assertNotNull(e3ResourceEntity.getBaseProjection().getAttribute("o"));
         assertTrue(e3ResourceEntity.getChildren().isEmpty());
     }
 
     @Test
-    public void testExecute_IncludeExcludeBothAttrs2() {
+    public void execute_IncludeExcludeBothAttrs2() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -294,26 +314,28 @@ public class CreateResourceEntityStageTest {
 
         assertNotNull(resourceEntity);
         assertTrue(resourceEntity.isIdIncluded());
-        assertEquals(1, resourceEntity.getAttributes().size());
-        assertTrue(resourceEntity.getAttributes().containsKey("m"));
+        assertEquals(1, resourceEntity.getBaseProjection().getAttributes().size());
+        assertNotNull(resourceEntity.getBaseProjection().getAttribute("m"));
 
         assertEquals(1, resourceEntity.getChildren().size());
-        assertEquals(1, resourceEntity.getChildren().entrySet().size());
-        assertTrue(resourceEntity.getChildren().keySet().contains("rtt"));
+        assertEquals(1, resourceEntity.getChildren().size());
+        assertNotNull(resourceEntity.getChild("rtt"));
 
-        ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get("rtt");
+        ResourceEntity<?> e3ResourceEntity = resourceEntity.getChild("rtt");
         assertTrue(e3ResourceEntity.isIdIncluded());
-        assertEquals(1, e3ResourceEntity.getAttributes().size());
+        assertEquals(1, e3ResourceEntity.getBaseProjection().getAttributes().size());
 
-        assertTrue(e3ResourceEntity.getAttributes().containsKey("p"));
+        assertNotNull(e3ResourceEntity.getBaseProjection().getAttribute("p"));
         assertTrue(e3ResourceEntity.getChildren().isEmpty());
     }
 
     @Test
-    public void testExecute_IncludeRelationshipIds() {
+    public void execute_IncludeRelationshipIds() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -326,23 +348,25 @@ public class CreateResourceEntityStageTest {
 
         assertNotNull(resourceEntity);
         assertTrue(resourceEntity.isIdIncluded());
-        assertTrue(resourceEntity.getAttributes().isEmpty());
+        assertTrue(resourceEntity.getBaseProjection().getAttributes().isEmpty());
 
         assertEquals(1, resourceEntity.getChildren().size());
-        assertEquals(1, resourceEntity.getChildren().entrySet().size());
-        assertTrue(resourceEntity.getChildren().keySet().contains("rtt"));
+        assertEquals(1, resourceEntity.getChildren().size());
+        assertNotNull(resourceEntity.getChild("rtt"));
 
-        ResourceEntity<?> e3ResourceEntity = resourceEntity.getChildren().get("rtt");
+        ResourceEntity<?> e3ResourceEntity = resourceEntity.getChild("rtt");
         assertTrue(e3ResourceEntity.isIdIncluded());
-        assertTrue(e3ResourceEntity.getAttributes().isEmpty());
+        assertTrue(e3ResourceEntity.getBaseProjection().getAttributes().isEmpty());
         assertTrue(e3ResourceEntity.getChildren().isEmpty());
     }
 
     @Test
-    public void testExecute_SortSimple_NoDir() {
+    public void execute_SortSimple_NoDir() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -358,10 +382,12 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_SortSimple_ASC() {
+    public void execute_SortSimple_ASC() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -378,10 +404,12 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_SortSimple_DESC() {
+    public void execute_SortSimple_DESC() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -398,10 +426,12 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_Sort() {
+    public void execute_Sort() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
@@ -418,32 +448,36 @@ public class CreateResourceEntityStageTest {
     }
 
     @Test
-    public void testExecute_Exp_BadSpec() {
+    public void execute_Exp_BadSpec() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
-                .andExp(Exp.simple("x = 12345 and y = 'John Smith' and z = true")).build());
+                .andExp(Exp.parse("x = 12345 and y = 'John Smith' and z = true")).build());
 
         assertDoesNotThrow(() -> stage.execute(context), "Even though the passed spec is invalid, no parsing should occur at this stage");
     }
 
     @Test
-    public void testExecute_Exp() {
+    public void execute_Exp() {
 
         SelectContext<Ts> context = new SelectContext<>(Ts.class,
+                new RequestSchema(schema),
                 requestBuilderFactory.builder(),
+                PathChecker.ofDefault(),
                 mock(Injector.class));
         context.setRequest(requestBuilderFactory
                 .builder()
-                .andExp(Exp.simple("m = 'John Smith'")).build());
+                .andExp(Exp.parse("m = 'John Smith'")).build());
 
         stage.execute(context);
 
         ResourceEntity<Ts> resourceEntity = context.getEntity();
-        assertEquals(Exp.simple("m = 'John Smith'"), resourceEntity.getExp());
+        assertEquals(Exp.parse("m = 'John Smith'"), resourceEntity.getExp());
     }
 
     public static class Tr {

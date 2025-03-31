@@ -56,8 +56,8 @@ public class ChangeAuthorizer implements IChangeAuthorizer {
         // different operations provide different source
 
         if (op.getUpdate() != null) {
-            Map<String, Object> updateId = op.getUpdate().getId();
-            if (updateId != null) {
+            Map<String, Object> updateId = op.getUpdate().getIdParts();
+            if (!updateId.isEmpty()) {
                 return updateId.size() == 1 ? updateId.values().iterator().next() : updateId;
             }
         }

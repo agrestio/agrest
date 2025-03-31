@@ -11,14 +11,16 @@ import javax.ws.rs.core.FeatureContext;
  * DataResponse.
  *
  * @since 1.1
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
  */
+@Deprecated(since = "5.0", forRemoval = true)
 public class ResponseStatusDynamicFeature implements DynamicFeature {
 
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext context) {
 
-        // ignore any other method signatures - in those cases we assume
-        // response status is set by the user on their own..
+        // This check is important to not mess up responses modeled as anything other than DataResponse<T> or
+        // SimpleResponse. This allows users to define their own statuses and headers outside Agrest
         if (AgResponse.class.isAssignableFrom(resourceInfo.getResourceMethod().getReturnType())) {
             context.register(ResponseStatusFilter.class);
         }

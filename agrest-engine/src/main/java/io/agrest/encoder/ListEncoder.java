@@ -15,7 +15,7 @@ public class ListEncoder implements Encoder {
     }
 
     @Override
-    public void encode(String propertyName, Object object, JsonGenerator out) throws IOException {
+    public void encode(String propertyName, Object object, boolean skipNullProperties, JsonGenerator out) throws IOException {
 
         if (propertyName != null) {
             out.writeFieldName(propertyName);
@@ -24,7 +24,7 @@ public class ListEncoder implements Encoder {
         out.writeStartArray();
 
         for (Object o : toList(object)) {
-            elementEncoder.encode(null, o, out);
+            elementEncoder.encode(null, o, skipNullProperties, out);
         }
 
         out.writeEndArray();

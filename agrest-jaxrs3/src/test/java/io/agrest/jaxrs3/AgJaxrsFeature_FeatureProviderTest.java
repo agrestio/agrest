@@ -17,28 +17,28 @@ import static org.mockito.Mockito.when;
 public class AgJaxrsFeature_FeatureProviderTest {
 
     @Test
-    public void testFeature() {
+    public void feature() {
         inRuntime(
                 AgJaxrsFeature.builder(AgRuntime.build()).feature(new LocalTestFeature()),
                 this::assertLocalTestFeatureActive);
     }
 
     @Test
-    public void testFeatureProvider() {
+    public void featureProvider() {
         inRuntime(
                 AgJaxrsFeature.builder(AgRuntime.build()).feature(new LocalTestFeatureProvider()),
                 this::assertLocalTestFeatureActive);
     }
 
     @Test
-    public void testAutoLoadFeaturesDefault() {
+    public void autoLoadFeaturesDefault() {
         inRuntime(
                 AgJaxrsFeature.builder(AgRuntime.build()),
                 this::assertTestFeatureActive);
     }
 
     @Test
-    public void testDoNotAutoLoadFeatures() {
+    public void doNotAutoLoadFeatures() {
         inRuntime(
                 AgJaxrsFeature.builder(AgRuntime.build()).doNotAutoLoadFeatures(),
                 this::assertTestFeatureNotActive);

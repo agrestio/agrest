@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AgExceptionTest {
 
     @Test
-    public void testOf() {
+    public void of() {
         AgException e = AgException.of(101, "a %s b", "X");
         assertEquals("a X b", e.getMessage());
         assertNull(e.getCause());
@@ -15,7 +15,7 @@ public class AgExceptionTest {
     }
 
     @Test
-    public void testOf_Exception() {
+    public void of_Exception() {
         Throwable cause = new Throwable();
         AgException e = AgException.of(101, cause, "a %s b", "X");
         assertEquals("a X b", e.getMessage());
@@ -24,7 +24,7 @@ public class AgExceptionTest {
     }
 
     @Test
-    public void testBadRequest() {
+    public void badRequest() {
         AgException e = AgException.badRequest();
         assertNull(e.getMessage());
         assertNull(e.getCause());
@@ -32,7 +32,7 @@ public class AgExceptionTest {
     }
 
     @Test
-    public void testBadRequest_Message() {
+    public void badRequest_Message() {
         AgException e = AgException.badRequest("a %s b", "X");
         assertEquals("a X b", e.getMessage());
         assertNull(e.getCause());
@@ -40,7 +40,7 @@ public class AgExceptionTest {
     }
 
     @Test
-    public void testBadRequest_Exception() {
+    public void badRequest_Exception() {
         Throwable cause = new Throwable();
         AgException e = AgException.badRequest(cause, "a %s b", "X");
         assertEquals("a X b", e.getMessage());
@@ -49,7 +49,7 @@ public class AgExceptionTest {
     }
 
     @Test
-    public void testForbidden() {
+    public void forbidden() {
         AgException e = AgException.forbidden("a %s b", "X");
         assertEquals("a X b", e.getMessage());
         assertNull(e.getCause());
@@ -57,7 +57,7 @@ public class AgExceptionTest {
     }
 
     @Test
-    public void testForbidden_Exception() {
+    public void forbidden_Exception() {
         Throwable cause = new Throwable();
         AgException e = AgException.forbidden(cause, "a %s b", "X");
         assertEquals("a X b", e.getMessage());

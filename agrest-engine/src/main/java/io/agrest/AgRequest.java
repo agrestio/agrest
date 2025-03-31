@@ -26,9 +26,9 @@ public interface AgRequest {
     List<Sort> getSorts();
 
     /**
-     * @deprecated since 5.0 in favor of {@link #getSorts()}
+     * @deprecated in favor of {@link #getSorts()}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     default List<Sort> getOrderings() {
         return getSorts();
     }

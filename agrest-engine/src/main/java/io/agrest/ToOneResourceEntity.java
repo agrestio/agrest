@@ -27,9 +27,9 @@ public class ToOneResourceEntity<T> extends RelatedResourceEntity<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #getDataByParent()}
+     * @deprecated in favor of {@link #getDataByParent()}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public Map<AgObjectId, T> getResultsByParent() {
         return getDataByParent();
     }
@@ -43,9 +43,9 @@ public class ToOneResourceEntity<T> extends RelatedResourceEntity<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #getData(AgObjectId)}
+     * @deprecated in favor of {@link #getData(AgObjectId)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public T getResult(AgObjectId parentId) {
         return getData(parentId);
     }

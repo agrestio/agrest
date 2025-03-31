@@ -29,9 +29,9 @@ public class ToManyResourceEntity<T> extends RelatedResourceEntity<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #getDataByParent()}
+     * @deprecated in favor of {@link #getDataByParent()}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public Map<AgObjectId, List<T>> getResultsByParent() {
         return getDataByParent();
     }
@@ -44,9 +44,9 @@ public class ToManyResourceEntity<T> extends RelatedResourceEntity<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #getData(AgObjectId)}
+     * @deprecated in favor of {@link #getData(AgObjectId)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public List<T> getResult(AgObjectId parentId) {
         return getData(parentId);
     }
@@ -73,9 +73,9 @@ public class ToManyResourceEntity<T> extends RelatedResourceEntity<T> {
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #setData(AgObjectId, List)}
+     * @deprecated in favor of {@link #setData(AgObjectId, List)}
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public void addResultList(AgObjectId parentId, List<T> objects) {
         setData(parentId, objects);
     }

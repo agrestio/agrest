@@ -1,13 +1,14 @@
 package io.agrest.protocol;
 
-import io.agrest.exp.CompositeExp;
 import io.agrest.exp.ExpVisitor;
-import io.agrest.exp.KeyValueExp;
-import io.agrest.exp.NamedParamsExp;
-import io.agrest.exp.PositionalParamsExp;
-import io.agrest.exp.SimpleExp;
+import io.agrest.exp.parser.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Represents {@link ControlParams#exp} protocol parameter.
@@ -16,37 +17,337 @@ import java.util.Map;
  */
 public interface Exp {
 
+    /**
+     * Creates a new expression, parsing the provided String.
+     *
+     * @since 5.0
+     */
+    static Exp parse(String expString) {
+        return AgExpressionParser.parse(Objects.requireNonNull(expString));
+    }
+
+    /**
+     * @deprecated in favor of {@link #parse(String)}
+     */
+    @Deprecated(since = "5.0", forRemoval = true)
     static Exp simple(String template) {
-        return new SimpleExp(template);
+        return parse(template);
     }
 
+    /**
+     * @deprecated in favor of {@link #parse(String)} and {@link #namedParams(Map)}
+     */
+    @Deprecated(since = "5.0", forRemoval = true)
+    static Exp witNamedParams(String template, Map<String, Object> params) {
+        return parse(template).namedParams(params);
+    }
+
+    /**
+     * @deprecated in favor of {@link #parse(String)} and {@link #positionalParams(Object...)}
+     */
+    @Deprecated(since = "5.0", forRemoval = true)
     static Exp withPositionalParams(String template, Object... params) {
-        return params.length == 0 ? simple(template) : new PositionalParamsExp(template, params);
-    }
-
-    static Exp withNamedParams(String template, Map<String, Object> params) {
-        return params.isEmpty() ? simple(template) : new NamedParamsExp(template, params);
+        return parse(template).positionalParams(params);
     }
 
     /**
      * @since 5.0
      */
-    static Exp keyValue(String key, String op, Object value) {
-        return new KeyValueExp(key, op, value);
+    static Exp path(String path) {
+        return new ExpPath(Objects.requireNonNull(path));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp scalar(Object value) {
+        if (value == null) {
+            return new ExpScalar();
+        }
+
+        ExpBaseScalar<?> scalar;
+        if (value instanceof Collection) {
+            scalar = new ExpScalarList((Collection<?>) value);
+            return scalar;
+        }
+        if (value.getClass().isArray()) {
+            Class<?> componentType = value.getClass().getComponentType();
+            if (componentType.isPrimitive()) {
+                value = ExpUtils.wrapPrimitiveArray(value);
+            } else {
+                value = Arrays.asList((Object[]) value);
+            }
+            scalar = new ExpScalarList();
+            scalar.jjtSetValue(value);
+            return scalar;
+        }
+
+        return new ExpScalar(value);
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp exists(String subExp) {
+        return exists(Exp.parse(subExp));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp exists(Exp subExp) {
+        return new ExpExists(subExp);
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp notExists(String subExp) {
+        return notExists(Exp.parse(subExp));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp notExists(Exp subExp) {
+        return new ExpNotExists(subExp);
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp between(String left, Object right1, Object right2) {
+        return ExpUtils.composeTernary(new ExpBetween(), path(left), scalar(right1), scalar(right2));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp notBetween(String left, Object right1, Object right2) {
+        return ExpUtils.composeTernary(new ExpNotBetween(), path(left), scalar(right1), scalar(right2));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp in(String path, Object... scalars) {
+        if(scalars.length == 0){
+            return new ExpFalse();
+        }
+        return ExpUtils.composeBinary(new ExpIn(), path(path), ExpUtils.scalarArray(scalars));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp notIn(String path, Object... scalars) {
+        if(scalars.length == 0){
+            return new ExpTrue();
+        }
+        return ExpUtils.composeBinary(new ExpNotIn(), path(path), ExpUtils.scalarArray(scalars));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp inCollection(String path, Collection<?> scalars) {
+        return ExpUtils.composeBinary(new ExpIn(), path(path), ExpUtils.scalarArray(scalars));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp notInCollection(String path, Collection<?> scalars) {
+        return ExpUtils.composeBinary(new ExpNotIn(), path(path), ExpUtils.scalarArray(scalars));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp likeIgnoreCase(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpLikeIgnoreCase(), path(path), scalar(scalar));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp notLikeIgnoreCase(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpNotLikeIgnoreCase(), path(path), scalar(scalar));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp like(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpLike(), path(path), scalar(scalar));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp notLike(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpNotLike(), path(path), scalar(scalar));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp greaterOrEqual(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpGreaterOrEqual(), path(path), scalar(scalar));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp lessOrEqual(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpLessOrEqual(), path(path), scalar(scalar));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp greater(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpGreater(), path(path), scalar(scalar));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp less(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpLess(), path(path), scalar(scalar));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp equal(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpEqual(), path(path), scalar(scalar));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp notEqual(String path, Object scalar) {
+        return ExpUtils.composeBinary(new ExpNotEqual(), path(path), scalar(scalar));
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp and(Exp... exps) {
+        int len = exps.length;
+        switch (len) {
+            case 0:
+                return null;
+            case 1:
+                return exps[0];
+            default:
+                List<Node> children = new ArrayList<>(len);
+
+                for (Exp e : exps) {
+                    ExpUtils.appendAndChild(children, ((SimpleNode) e).deepCopy());
+                }
+
+                ExpAnd exp = new ExpAnd();
+                exp.setChildren(children.toArray(new Node[0]));
+
+                return exp;
+        }
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp or(Exp... exps) {
+        int len = exps.length;
+        switch (len) {
+            case 0:
+                return null;
+            case 1:
+                return exps[0];
+            default:
+                List<Node> children = new ArrayList<>(len);
+
+                for (Exp e : exps) {
+                    ExpUtils.appendOrChild(children, ((SimpleNode) e).deepCopy());
+                }
+
+                ExpOr exp = new ExpOr();
+                exp.setChildren(children.toArray(new Node[0]));
+                return exp;
+        }
+    }
+
+    /**
+     * @since 5.0
+     */
+    static Exp not(Exp exp) {
+        // delegating to the object allows polymorphic implementation
+        return exp.not();
+    }
+
+    /**
+     * @since 5.0
+     */
+    default Exp positionalParams(Object... params) {
+        return this;
+    }
+
+    /**
+     * @since 5.0
+     */
+    default Exp namedParams(Map<String, Object> params) {
+        return this;
+    }
+
+    /**
+     * @since 5.0
+     */
+    default Exp namedParams(Map<String, Object> params, boolean pruneMissing) {
+        return this;
     }
 
     /**
      * Invokes a callback on the visitor corresponding to one of the known expression types. The operation is
      * non-recursive even for composite expressions. If the visitor needs to descend into expression tree, it will
      * need to implement this logic on its own.
+     *
+     * @deprecated in favor of {@link #accept(AgExpressionParserVisitor, Object)}
      */
-    void visit(ExpVisitor visitor);
+    @Deprecated(since = "5.0", forRemoval = true)
+    default void visit(ExpVisitor visitor) {
+        // DO NOTHING
+    }
+
+    /**
+     * Invokes a callback on the visitor corresponding to one of the known expression types. The operation is
+     * non-recursive even for composite expressions. If the visitor needs to descend into expression tree, it will
+     * need to implement this logic on its own.
+     *
+     * @param visitor to accept
+     * @param data    that passed down to the expression node
+     * @param <T>     type of the data to pass down the expression tree
+     * @return transformed data
+     * @since 5.0
+     */
+    default <T> T accept(AgExpressionParserVisitor<T> visitor, T data) {
+        return data;
+    }
 
     default Exp and(Exp exp) {
-        return exp != null ? new CompositeExp(CompositeExp.AND, this, exp) : this;
+        return exp != null ? Exp.and(this, exp) : this;
     }
 
     default Exp or(Exp exp) {
-        return exp != null ? new CompositeExp(CompositeExp.OR, this, exp) : this;
+        return exp != null ? Exp.or(this, exp) : this;
+    }
+
+    /**
+     * @since 5.0
+     */
+    default Exp not() {
+        ExpNot not = new ExpNot();
+        not.jjtAddChild((Node) this, 0);
+        return not;
     }
 }

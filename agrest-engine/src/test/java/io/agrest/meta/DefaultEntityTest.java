@@ -61,7 +61,7 @@ public class DefaultEntityTest {
     );
 
     @Test
-    public void testResolveOverlayHierarchy_NoSubclasses() {
+    public void resolveOverlayHierarchy_NoSubclasses() {
         assertSame(e111, e111.resolveOverlayHierarchy(mockSchema, Map.of()));
         assertSame(e111, e111.resolveOverlayHierarchy(mockSchema, Map.of(O111.class, AgEntity.overlay(O111.class))));
 
@@ -72,7 +72,7 @@ public class DefaultEntityTest {
     }
 
     @Test
-    public void testResolveOverlayHierarchy_RootChanges() {
+    public void resolveOverlayHierarchy_RootChanges() {
 
         assertSame(e1, e1.resolveOverlayHierarchy(mockSchema, Map.of()));
         assertSame(e1, e1.resolveOverlayHierarchy(mockSchema, Map.of(O1.class, AgEntity.overlay(O1.class))));
@@ -83,11 +83,13 @@ public class DefaultEntityTest {
         assertEquals("oa1", oe1.getAttributes().stream().map(AgAttribute::getName).collect(Collectors.joining(",")));
 
         assertEquals(2, oe1.getSubEntities().size());
-        assertTrue(oe1.getSubEntities().containsAll(List.of(e11, e12)));
+        assertEquals("o11,o12", oe1.getSubEntities().stream().map(AgEntity::getName).sorted().collect(Collectors.joining(",")));
+        assertFalse(oe1.getSubEntities().contains(e11), "Child entity must have been overlaid with parent changes");
+        assertFalse(oe1.getSubEntities().contains(e12), "Child entity must have been overlaid with parent changes");
     }
 
     @Test
-    public void testResolveOverlayHierarchy_ChildChanges() {
+    public void resolveOverlayHierarchy_ChildChanges() {
 
         AgEntityOverlay<O111> o111 = AgEntity.overlay(O111.class).attribute("a111", String.class, o -> "a111");
 

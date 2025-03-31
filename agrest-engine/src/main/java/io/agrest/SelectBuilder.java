@@ -58,16 +58,10 @@ public interface SelectBuilder<T> {
     <V> SelectBuilder<T> entityAttribute(String name, Class<V> valueType, Function<T, V> reader);
 
     /**
-     * Forces the builder to select a single object by ID.
+     * Forces the builder to select a single object by ID. For single-value ID entities, the ID argument should be a
+     * simple value (e.g. an Integer). For multi-value IDs, it should be a Map of values.
      */
     SelectBuilder<T> byId(Object id);
-
-    /**
-     * Forces the builder to select a single object by compound ID.
-     *
-     * @since 1.20
-     */
-    SelectBuilder<T> byId(Map<String, Object> ids);
 
     /**
      * Appends a {@link PropertyFilter} that defines property access rules for the current request and a given entity. I.e.
@@ -114,25 +108,36 @@ public interface SelectBuilder<T> {
     SelectBuilder<T> start(int start);
 
     /**
-     * @since 1.2
+     * @since 5.0
      */
     SelectBuilder<T> limit(int limit);
 
     /**
-     * @deprecated since 5.0 in favor of {@link #start(int)} to match the name of the Ag protocol parameter.
+     * @deprecated in favor of {@link #start(int)} to match the name of the Ag protocol parameter.
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     default SelectBuilder<T> fetchOffset(int offset) {
         return start(offset);
     }
 
     /**
-     * @deprecated since 5.0 in favor of {@link #limit(int)} to match the name of the Ag protocol parameter.
+     * @deprecated in favor of {@link #limit(int)} to match the name of the Ag protocol parameter.
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     default SelectBuilder<T> fetchLimit(int limit) {
         return limit(limit);
     }
+
+    /**
+     * Sets the policy for the maximum depth of relationship paths, such as includes. This overrides runtime-defined
+     * policy for this one request. Depth is counted from the root of the request. Only non-negative depths are allowed.
+     * Zero depth blocks all relationships, "1" - blocks anything beyond direct relationships, and so on. Attribute
+     * paths are not counted towards depth (either root or nested).
+     *
+     * @return this builder instance
+     * @since 5.0
+     */
+    SelectBuilder<T> maxPathDepth(int maxPathDepth);
 
     /**
      * Registers a consumer to be executed after a specified standard execution stage. The consumer can inspect and

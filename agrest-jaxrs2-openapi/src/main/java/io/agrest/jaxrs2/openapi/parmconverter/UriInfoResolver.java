@@ -4,23 +4,61 @@ import io.agrest.jaxrs2.openapi.TypeWrapper;
 import io.agrest.protocol.ControlParams;
 import io.agrest.protocol.Direction;
 import io.swagger.v3.jaxrs2.ResolvedParameter;
+import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.QueryParameter;
 
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+/**
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
+ */
+@Deprecated(since = "5.0", forRemoval = true)
 public class UriInfoResolver {
+
+    /**
+     * Remove UriInfo parameters from the Operation if they were also explicitly added.
+     */
+    static void removeDuplicatedParams(Operation operation) {
+
+        List<Parameter> params = operation.getParameters();
+        if (params == null) {
+            return;
+        }
+
+        // remove duplicate parameters that may have been added via UriInfo
+        Set<String> nonUriInfoParams = new HashSet<>();
+        List<Parameter> uriInfoParams = new ArrayList<>();
+
+        for (Parameter p : params) {
+            if (p instanceof UriInfoQueryParameter) {
+                uriInfoParams.add(p);
+            } else {
+                nonUriInfoParams.add(p.getName());
+            }
+        }
+
+        for (Parameter p : uriInfoParams) {
+            if (nonUriInfoParams.contains(p.getName())) {
+                params.remove(p);
+            }
+        }
+    }
 
     public boolean willResolve(TypeWrapper wrapper, List<Annotation> annotations) {
         if (wrapper != null && wrapper.getRawClass() == UriInfo.class) {
+
             for (Annotation a : annotations) {
-                if (a instanceof Context) {
-                    return true;
+                if (a instanceof io.swagger.v3.oas.annotations.Parameter) {
+                    io.swagger.v3.oas.annotations.Parameter pa = (io.swagger.v3.oas.annotations.Parameter) a;
+                    return !pa.hidden();
                 }
             }
         }
@@ -38,9 +76,7 @@ public class UriInfoResolver {
         resolved.parameters.add(createExcludeParam());
         resolved.parameters.add(createSortParam());
         resolved.parameters.add(createDirectionParam());
-        resolved.parameters.add(createDirParam());
         resolved.parameters.add(createExpParam());
-        resolved.parameters.add(createCayenneExpParam());
         resolved.parameters.add(createMapByParam());
         resolved.parameters.add(createStartParam());
         resolved.parameters.add(createLimitParam());
@@ -72,32 +108,9 @@ public class UriInfoResolver {
         return queryParam(ControlParams.direction).schema(dirSchema);
     }
 
-    /**
-     * @deprecated since 5.0 {@link ControlParams#dir} was deprecated in favor of {@link ControlParams#direction}
-     */
-    @Deprecated
-    protected Parameter createDirParam() {
-        Schema<String> dirSchema = new StringSchema()
-                .addEnumItem(Direction.asc.name())
-                .addEnumItem(Direction.asc_ci.name())
-                .addEnumItem(Direction.desc.name())
-                .addEnumItem(Direction.desc_ci.name());
-
-        return queryParam(ControlParams.dir).schema(dirSchema).deprecated(true);
-    }
-
     protected Parameter createExpParam() {
         // TODO: detailed schema
         return queryParam(ControlParams.exp);
-    }
-
-    /**
-     * @deprecated since 4.1 {@link ControlParams#cayenneExp} was deprecated in favor of {@link ControlParams#exp}
-     */
-    @Deprecated
-    protected Parameter createCayenneExpParam() {
-        // TODO: detailed schema
-        return queryParam(ControlParams.cayenneExp).deprecated(true);
     }
 
     protected Parameter createMapByParam() {
@@ -113,8 +126,16 @@ public class UriInfoResolver {
     }
 
     protected Parameter queryParam(ControlParams param) {
-        return new QueryParameter()
+        // returning our own subclass of the QueryParameter to be able to analyze duplicate parameters
+        // downstream
+        return new UriInfoQueryParameter()
                 .name(param.name())
                 .description(param.description);
+    }
+
+    /**
+     * A subclass indicating that this is an implicit parameters added via UriInfo
+     */
+    static class UriInfoQueryParameter extends QueryParameter {
     }
 }

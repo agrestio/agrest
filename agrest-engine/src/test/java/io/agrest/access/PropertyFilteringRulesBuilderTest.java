@@ -2,7 +2,7 @@ package io.agrest.access;
 
 import io.agrest.junit.AgPojoTester;
 import io.agrest.meta.AgEntity;
-import io.agrest.pojo.model.P11;
+import io.agrest.junit.pojo.P11;
 import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ public class PropertyFilteringRulesBuilderTest {
     static final AgPojoTester tester = AgPojoTester.builder().build();
 
     @Test
-    public void testDefault_AllAvailable() {
+    public void default_AllAvailable() {
         PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder();
         assertEquals(
                 Map.of(),
@@ -26,7 +26,7 @@ public class PropertyFilteringRulesBuilderTest {
     }
 
     @Test
-    public void testDefault_AllAvailable_WithOverlay() {
+    public void default_AllAvailable_WithOverlay() {
         PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder();
         assertEquals(
                 Map.of(),
@@ -36,7 +36,7 @@ public class PropertyFilteringRulesBuilderTest {
     }
 
     @Test
-    public void testEmpty() {
+    public void empty() {
         PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder().empty();
         assertEquals(
                 Map.of("id", false, "intProp", false, "p6", false),
@@ -44,14 +44,14 @@ public class PropertyFilteringRulesBuilderTest {
     }
 
     @Test
-    public void testIdOnly() {
+    public void idOnly() {
         PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder().idOnly();
         assertEquals(pab.resolveInaccessible(tester.entity(P11.class), AgEntity.overlay(P11.class)),
                 Map.of("intProp", false, "p6", false, "id", true));
     }
 
     @Test
-    public void testId() {
+    public void id() {
         PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder().empty().id(true);
         assertEquals(
                 Map.of("intProp", false, "p6", false, "id", true),
@@ -59,7 +59,7 @@ public class PropertyFilteringRulesBuilderTest {
     }
 
     @Test
-    public void testAllButId() {
+    public void allButId() {
         PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder().empty().attributes(true).relationships(true);
         assertEquals(
                 Map.of("id", false, "p6", true, "intProp", true),
@@ -67,7 +67,7 @@ public class PropertyFilteringRulesBuilderTest {
     }
 
     @Test
-    public void testExcludeByName() {
+    public void excludeByName() {
         PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder().property("intProp", false);
         assertEquals(
                 Map.of("intProp", false),
@@ -75,7 +75,7 @@ public class PropertyFilteringRulesBuilderTest {
     }
 
     @Test
-    public void testExcludeByName_InOverlay() {
+    public void excludeByName_InOverlay() {
         PropertyFilteringRulesBuilder pab = new PropertyFilteringRulesBuilder().property("x", false);
 
         assertEquals(

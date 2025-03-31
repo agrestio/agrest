@@ -2,12 +2,11 @@ package io.agrest.runtime.processor.update.stage;
 
 import io.agrest.AgRequest;
 import io.agrest.RootResourceEntity;
-import io.agrest.meta.AgSchema;
 import io.agrest.meta.AgEntity;
-import io.agrest.meta.AgEntityOverlay;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.entity.IExcludeMerger;
+import io.agrest.runtime.entity.IIdResolver;
 import io.agrest.runtime.entity.IIncludeMerger;
 import io.agrest.runtime.processor.update.UpdateContext;
 import org.apache.cayenne.di.Inject;
@@ -17,16 +16,16 @@ import org.apache.cayenne.di.Inject;
  */
 public class UpdateCreateResourceEntityStage implements Processor<UpdateContext<?>> {
 
-    private final AgSchema schema;
+    private final IIdResolver idResolver;
     private final IIncludeMerger includeMerger;
     private final IExcludeMerger excludeMerger;
 
     public UpdateCreateResourceEntityStage(
-            @Inject AgSchema schema,
+            @Inject IIdResolver idResolver,
             @Inject IIncludeMerger includeMerger,
             @Inject IExcludeMerger excludeMerger) {
 
-        this.schema = schema;
+        this.idResolver = idResolver;
         this.includeMerger = includeMerger;
         this.excludeMerger = excludeMerger;
     }
@@ -38,14 +37,19 @@ public class UpdateCreateResourceEntityStage implements Processor<UpdateContext<
     }
 
     protected <T> void doExecute(UpdateContext<T> context) {
-        AgEntityOverlay<T> overlay = context.getEntityOverlay(context.getType());
-        AgEntity<T> entity = schema.getEntity(context.getType());
+        AgEntity<T> entity = context.getSchema().getEntity(context.getType());
+        context.setId(idResolver.resolve(entity, context.getUnresolvedId()));
 
-        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(entity.resolveOverlay(schema, overlay));
+        RootResourceEntity<T> resourceEntity = new RootResourceEntity<>(entity);
+        if (context.isIncludingDataInResponse()) {
+            AgRequest request = context.getRequest();
+            includeMerger.merge(resourceEntity,
+                    request.getIncludes(),
+                    context.getSchema(),
+                    context.getMaxPathDepth());
 
-        AgRequest request = context.getRequest();
-        includeMerger.merge(resourceEntity, request.getIncludes(), context.getEntityOverlays());
-        excludeMerger.merge(resourceEntity, request.getExcludes());
+            excludeMerger.merge(resourceEntity, request.getExcludes());
+        }
 
         context.setEntity(resourceEntity);
     }

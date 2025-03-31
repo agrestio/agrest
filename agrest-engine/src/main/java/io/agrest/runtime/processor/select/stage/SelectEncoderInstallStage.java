@@ -3,7 +3,7 @@ package io.agrest.runtime.processor.select.stage;
 import io.agrest.encoder.Encoder;
 import io.agrest.processor.Processor;
 import io.agrest.processor.ProcessorOutcome;
-import io.agrest.runtime.encoder.IEncoderService;
+import io.agrest.runtime.encoder.EncoderFactory;
 import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
 
@@ -12,10 +12,10 @@ import org.apache.cayenne.di.Inject;
  */
 public class SelectEncoderInstallStage implements Processor<SelectContext<?>> {
 
-    private final IEncoderService encoderService;
+    private final EncoderFactory encoderFactory;
 
-    public SelectEncoderInstallStage(@Inject IEncoderService encoderService) {
-        this.encoderService = encoderService;
+    public SelectEncoderInstallStage(@Inject EncoderFactory encoderFactory) {
+        this.encoderFactory = encoderFactory;
     }
 
     @Override
@@ -30,6 +30,6 @@ public class SelectEncoderInstallStage implements Processor<SelectContext<?>> {
     }
 
     private <T> Encoder createEncoder(SelectContext<T> context) {
-        return encoderService.dataEncoder(context.getEntity(), context);
+        return encoderFactory.encoder(context.getEntity(), context);
     }
 }

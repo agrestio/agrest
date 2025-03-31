@@ -7,7 +7,6 @@ import io.agrest.access.UpdateAuthorizer;
 import io.agrest.resolver.RootDataResolver;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -31,10 +30,6 @@ public class DefaultEntity<T> implements AgEntity<T> {
     private final Map<String, AgIdPart> ids;
     private final Map<String, AgAttribute> attributes;
     private final Map<String, AgRelationship> relationships;
-
-    // resolved lazily to avoid stack overflow when reading sub entities
-    private volatile Map<String, AgAttribute> attributesInHierarchy;
-    private volatile Map<String, AgRelationship> relationshipsInHierarchy;
 
     public DefaultEntity(
             String name,
@@ -117,42 +112,6 @@ public class DefaultEntity<T> implements AgEntity<T> {
     }
 
     @Override
-    public Collection<AgAttribute> getAttributesInHierarchy() {
-        return getOrCreateAttributesInHierarchy().values();
-    }
-
-    @Override
-    public AgAttribute getAttributeInHierarchy(String name) {
-        return getOrCreateAttributesInHierarchy().get(name);
-    }
-
-    protected Map<String, AgAttribute> getOrCreateAttributesInHierarchy() {
-        // resolved lazily to avoid stack overflow when reading sub entities
-        if (this.attributesInHierarchy == null) {
-            this.attributesInHierarchy = collectAllAttributes();
-        }
-        return attributesInHierarchy;
-    }
-
-    @Override
-    public Collection<AgRelationship> getRelationshipsInHierarchy() {
-        return getOrCreateRelationshipsInHierarchy().values();
-    }
-
-    @Override
-    public AgRelationship getRelationshipInHierarchy(String name) {
-        return getOrCreateRelationshipsInHierarchy().get(name);
-    }
-
-    protected Map<String, AgRelationship> getOrCreateRelationshipsInHierarchy() {
-        // resolved lazily to avoid stack overflow when reading sub entities
-        if (this.relationshipsInHierarchy == null) {
-            this.relationshipsInHierarchy = collectAllRelationships();
-        }
-        return relationshipsInHierarchy;
-    }
-
-    @Override
     public RootDataResolver<T> getDataResolver() {
         return dataResolver;
     }
@@ -179,18 +138,29 @@ public class DefaultEntity<T> implements AgEntity<T> {
 
     @Override
     public AgEntity<T> resolveOverlayHierarchy(AgSchema schema, Map<Class<?>, AgEntityOverlay<?>> overlays) {
+        return overlays.isEmpty()
+                ? this
+                : resolveOverlayHierarchy(schema, this, null, overlays);
+    }
 
-        AgEntityOverlay<T> overlay = (AgEntityOverlay<T>) overlays.get(getType());
+    private static <T> AgEntity<T> resolveOverlayHierarchy(
+            AgSchema schema,
+            AgEntity<T> entity,
+            AgEntityOverlay<? super T> superOverlay,
+            Map<Class<?>, AgEntityOverlay<?>> overlays) {
 
-        if (getSubEntities().isEmpty()) {
-            return resolveOverlay(schema, overlay);
+        AgEntityOverlay<T> overlay = (AgEntityOverlay<T>) overlays.get(entity.getType());
+        AgEntityOverlay<T> mergedOverlay = combineOverlays(entity.getType(), overlay, superOverlay);
+
+        if (entity.getSubEntities().isEmpty()) {
+            return entity.resolveOverlay(schema, mergedOverlay);
         }
 
         boolean subEntitiesOverlaid = false;
 
         Set<AgEntity<? extends T>> subsOverlaid = new HashSet<>();
-        for (AgEntity<? extends T> sub : getSubEntities()) {
-            AgEntity<? extends T> subOverlaid = sub.resolveOverlayHierarchy(schema, overlays);
+        for (AgEntity<? extends T> sub : entity.getSubEntities()) {
+            AgEntity<? extends T> subOverlaid = resolveOverlayHierarchy(schema, sub, mergedOverlay, overlays);
 
             subsOverlaid.add(subOverlaid);
             subEntitiesOverlaid = subEntitiesOverlaid || subOverlaid != sub;
@@ -200,42 +170,31 @@ public class DefaultEntity<T> implements AgEntity<T> {
         // overlaid
 
         if (subEntitiesOverlaid) {
-            AgEntityOverlay<T> rootOverlay = overlay != null ? overlay : AgEntity.overlay(getType());
-            return rootOverlay.resolve(schema, this, subsOverlaid);
+            AgEntityOverlay<T> rootOverlay = mergedOverlay != null ? mergedOverlay : AgEntity.overlay(entity.getType());
+            return rootOverlay.resolve(schema, entity, subsOverlaid);
+        } else {
+            return mergedOverlay != null && !mergedOverlay.isEmpty()
+                    ? mergedOverlay.resolve(schema, entity, entity.getSubEntities())
+                    : entity;
         }
-        else {
-            return overlay != null && !overlay.isEmpty() ? overlay.resolve(schema, this, getSubEntities()) : this;
+    }
+
+    private static <T> AgEntityOverlay<T> combineOverlays(
+            Class<T> type,
+            AgEntityOverlay<T> overlay,
+            AgEntityOverlay<? super T> superOverlay) {
+
+        if (overlay != null) {
+            return overlay.mergeSuper(superOverlay);
+        } else if (superOverlay != null) {
+            return superOverlay.clone(type);
+        } else {
+            return null;
         }
     }
 
     @Override
     public String toString() {
         return "DefaultAgEntity[" + getName() + "]";
-    }
-
-    protected Map<String, AgAttribute> collectAllAttributes() {
-        return subEntities.isEmpty() ? attributes : collectAllAttributes(new HashMap<>(), this);
-    }
-
-    protected Map<String, AgAttribute> collectAllAttributes(Map<String, AgAttribute> collectTo, AgEntity<?> entity) {
-        // on the off-chance that sub-entities redefine our attributes, add subclasses first, and then add ours
-        // to override everything for this entity
-        entity.getSubEntities().forEach(se -> collectAllAttributes(collectTo, se));
-        entity.getAttributes().forEach(a -> collectTo.put(a.getName(), a));
-
-        return collectTo;
-    }
-
-    protected Map<String, AgRelationship> collectAllRelationships() {
-        return subEntities.isEmpty() ? relationships : collectAllRelationships(new HashMap<>(), this);
-    }
-
-    protected Map<String, AgRelationship> collectAllRelationships(Map<String, AgRelationship> collectTo, AgEntity<?> entity) {
-        // on the off-chance that sub-entities redefine our relationships, add subclasses first, and then add ours
-        // to override everything for this entity
-        entity.getSubEntities().forEach(se -> collectAllRelationships(collectTo, se));
-        entity.getRelationships().forEach(r -> collectTo.put(r.getName(), r));
-
-        return collectTo;
     }
 }

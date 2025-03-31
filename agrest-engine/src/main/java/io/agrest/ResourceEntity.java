@@ -1,35 +1,114 @@
 package io.agrest;
 
-import io.agrest.meta.AgAttribute;
 import io.agrest.meta.AgEntity;
 import io.agrest.protocol.Exp;
 import io.agrest.protocol.Sort;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 /**
  * A model of a resource entity for a given client request. ResourceEntity is based on an {@link AgEntity} with
  * request-specific changes. Connected ResourceEntities form a tree structure that overlays a certain subgraph of
  * AgEntities.
  */
-public interface ResourceEntity<T> {
+public abstract class ResourceEntity<T> {
+
+    private boolean idIncluded;
+
+    private final ResourceEntityProjection<T> baseProjection;
+    private final Map<Class<? extends T>, ResourceEntityProjection<? extends T>> projections;
+    private final Map<String, RelatedResourceEntity<?>> children;
+    private final Map<String, Object> properties;
+
+    private ResourceEntity<?> mapBy;
+    private final List<Sort> orderings;
+    private Exp exp;
+    private int start;
+    private int limit;
+
+    public ResourceEntity(AgEntity<T> agEntity) {
+
+        List<ResourceEntityProjection<? extends T>> projections = buildProjections(agEntity, new ArrayList<>());
+        this.baseProjection = (ResourceEntityProjection<T>) projections.get(0);
+        this.projections = projectionsByType(projections);
+        this.idIncluded = false;
+        this.children = new HashMap<>();
+        this.orderings = new ArrayList<>(2);
+        this.properties = new HashMap<>(5);
+    }
+
+    private static <T> List<ResourceEntityProjection<? extends T>> buildProjections(
+            AgEntity<? extends T> entity,
+            List<ResourceEntityProjection<? extends T>> projections) {
+
+        // generally we should not need a projection for abstract entities, but since there's still too much
+        // code relying on "baseProjection", we don't check for "abstract" flag here, and create projections
+        // for every entity
+
+        projections.add(new ResourceEntityProjection<>(entity));
+        entity.getSubEntities().forEach(se -> buildProjections(se, projections));
+        return projections;
+    }
+
+    private static <T> Map<Class<? extends T>, ResourceEntityProjection<? extends T>> projectionsByType(
+            List<ResourceEntityProjection<? extends T>> projections) {
+
+        if (projections.size() == 1) {
+            return Map.of(projections.get(0).getAgEntity().getType(), projections.get(0));
+        }
+
+        Map<Class<? extends T>, ResourceEntityProjection<? extends T>> byType = new HashMap<>();
+        projections.forEach(p -> byType.put(p.getAgEntity().getType(), p));
+        return byType;
+    }
 
     /**
      * @since 3.4
      */
-    default String getName() {
+    public String getName() {
         return getAgEntity().getName();
     }
 
-    default Class<T> getType() {
+    public Class<T> getType() {
         return getAgEntity().getType();
+    }
+
+    /**
+     * Returns the projection object associated with this ResourceEntity that corresponds to the topmost superclass
+     * of the entity. I.e. the same type as the T parameter of the entity.
+     *
+     * @since 5.0
+     */
+    public ResourceEntityProjection<T> getBaseProjection() {
+        return baseProjection;
+    }
+
+    /**
+     * @since 5.0
+     */
+    public <S extends T> ResourceEntityProjection<S> getProjection(Class<S> type) {
+        return (ResourceEntityProjection<S>) projections.get(type);
+    }
+
+    /**
+     * @since 5.0
+     */
+    public Collection<ResourceEntityProjection<? extends T>> getProjections() {
+        return projections.values();
     }
 
     /**
      * @since 1.12
      */
-    AgEntity<T> getAgEntity();
+    public AgEntity<T> getAgEntity() {
+        return getBaseProjection().getAgEntity();
+    }
 
     /**
      * Returns a previously stored custom object for a given name. The properties mechanism allows pluggable processing
@@ -37,7 +116,9 @@ public interface ResourceEntity<T> {
      *
      * @since 5.0
      */
-    <P> P getProperty(String name);
+    public <P> P getProperty(String name) {
+        return (P) properties.get(name);
+    }
 
     /**
      * Sets a property value for a given name. The properties mechanism allows pluggable processing pipelines to
@@ -45,178 +126,293 @@ public interface ResourceEntity<T> {
      *
      * @since 5.0
      */
-    void setProperty(String name, Object value);
-
-    /**
-     * Returns a read-only "view" of this ResourceEntity with attributes and relationships filtered for a particular
-     * subclass from the entity type inheritance hierarchy.
-     *
-     * @since 5.0
-     */
-    <ST extends T> ResourceEntity<ST> asSubEntity(AgEntity<ST> subEntity);
+    public void setProperty(String name, Object value) {
+        properties.put(name, value);
+    }
 
     /**
      * @since 5.0
      */
-    Exp getExp();
+    public Exp getExp() {
+        return exp;
+    }
 
     /**
      * @deprecated in favor of {@link #getExp()}
      */
-    @Deprecated(since = "5.0")
-    default Exp getQualifier() {
+    @Deprecated(since = "5.0", forRemoval = true)
+    public Exp getQualifier() {
         return getExp();
     }
 
     /**
      * @since 5.0
      */
-    void andExp(Exp exp);
+    public void andExp(Exp exp) {
+        this.exp = this.exp != null ? this.exp.and(exp) : exp;
+    }
 
     /**
      * @deprecated in favor of {@link #andExp(Exp)}
      */
-    @Deprecated(since = "5.0")
-    default void andQualifier(Exp qualifier) {
+    @Deprecated(since = "5.0", forRemoval = true)
+    public void andQualifier(Exp qualifier) {
         andExp(qualifier);
     }
 
-    List<Sort> getOrderings();
+    public List<Sort> getOrderings() {
+        return orderings;
+    }
 
     /**
-     * @since 4.7
+     * @return true if the attribute was added to one of the underlying the projections or was already a part of one
+     * of the projections
+     * @since 5.0
      */
-    AgAttribute getAttribute(String name);
+    public boolean ensureAttribute(String attributeName, boolean isDefault) {
+
+        boolean success = false;
+        for (ResourceEntityProjection<?> p : projections.values()) {
+            success = p.ensureAttribute(attributeName, isDefault) || success;
+        }
+        return success;
+    }
 
     /**
-     * @since 1.12
+     * @since 5.0
      */
-    Map<String, AgAttribute> getAttributes();
+    public boolean removeAttribute(String attributeName) {
+
+        boolean removed = false;
+        for (ResourceEntityProjection<?> p : projections.values()) {
+            removed = p.removeAttribute(attributeName) || removed;
+        }
+        return removed;
+    }
 
     /**
-     * Returns whether the named attribute was added to the entity implicitly, via the default rules, instead of being
-     * explicitly requested by the client.
-     *
      * @since 3.7
      */
-    boolean isDefaultAttribute(String name);
+    public boolean removeChild(String name) {
+
+        boolean removed = false;
+        for (ResourceEntityProjection<?> p : projections.values()) {
+            removed = p.removeRelationship(name) || removed;
+        }
+
+        if (removed) {
+            children.remove(name);
+        }
+
+        return removed;
+    }
 
     /**
-     * @since 3.7
+     * @since 5.0
      */
-    void addAttribute(AgAttribute attribute, boolean isDefault);
+    public boolean hasRelationship(String relationshipName) {
+        for (ResourceEntityProjection<?> p : projections.values()) {
+            if (p.getAgEntity().getRelationship(relationshipName) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
-     * @since 3.7
+     * @since 5.0
      */
-    AgAttribute removeAttribute(String name);
+    public boolean ensureRelationship(String relationshipName) {
+        boolean success = false;
+        for (ResourceEntityProjection<?> p : projections.values()) {
+            success = p.ensureRelationship(relationshipName) || success;
+        }
+        return success;
+    }
 
     /**
-     * @since 3.7
+     * @since 5.0
      */
-    RelatedResourceEntity<?> removeChild(String name);
+    public RelatedResourceEntity<?> ensureChild(
+            String relationshipName,
+            BiFunction<ResourceEntity<?>, String, RelatedResourceEntity<?>> childCreator) {
 
-    Map<String, RelatedResourceEntity<?>> getChildren();
+        return children.computeIfAbsent(relationshipName, r -> childCreator.apply(this, r));
+    }
+
+    /**
+     * @since 5.0
+     */
+    public Collection<RelatedResourceEntity<?>> getChildren() {
+        return children.values();
+    }
 
     /**
      * @since 1.1
      */
-    RelatedResourceEntity<?> getChild(String name);
+    public RelatedResourceEntity<?> getChild(String name) {
+        return children.get(name);
+    }
 
-    boolean isIdIncluded();
+    public boolean isIdIncluded() {
+        return idIncluded;
+    }
 
-    ResourceEntity<T> includeId(boolean include);
+    public ResourceEntity<T> includeId(boolean include) {
+        this.idIncluded = include;
+        return this;
+    }
 
-    ResourceEntity<T> includeId();
+    public ResourceEntity<T> includeId() {
+        this.idIncluded = true;
+        return this;
+    }
 
-    ResourceEntity<T> excludeId();
+    public ResourceEntity<T> excludeId() {
+        this.idIncluded = false;
+        return this;
+    }
 
-    ResourceEntity<?> getMapBy();
+    public ResourceEntity<?> getMapBy() {
+        return mapBy;
+    }
 
     /**
      * @since 1.1
      * @deprecated in favor of {@link #mapBy(ResourceEntity)}. mapByPath parameter is ignored.
      */
-    @Deprecated(since = "5.0")
-    default ResourceEntity<T> mapBy(ResourceEntity<?> mapBy, String mapByPath) {
+    @Deprecated(since = "5.0", forRemoval = true)
+    public ResourceEntity<T> mapBy(ResourceEntity<?> mapBy, String mapByPath) {
         return mapBy(mapBy);
     }
 
     /**
      * @since 5.0
      */
-    ResourceEntity<T> mapBy(ResourceEntity<?> mapBy);
+    public ResourceEntity<T> mapBy(ResourceEntity<?> mapBy) {
+        this.mapBy = mapBy;
+        return this;
+    }
 
     /**
      * @since 5.0
      */
-    int getStart();
+    public int getStart() {
+        return start;
+    }
 
     /**
      * @deprecated in favor of {@link #getStart()}
      */
-    @Deprecated(since = "5.0")
-    default int getFetchOffset() {
+    @Deprecated(since = "5.0", forRemoval = true)
+    public int getFetchOffset() {
         return getStart();
     }
 
     /**
      * @since 5.0
      */
-    void setStart(int start);
+    public void setStart(int start) {
+        this.start = start;
+    }
 
     /**
      * @deprecated in favor of {@link #setStart(int)}
      */
-    @Deprecated(since = "5.0")
-    default void setFetchOffset(int fetchOffset) {
+    @Deprecated(since = "5.0", forRemoval = true)
+    public void setFetchOffset(int fetchOffset) {
         setStart(fetchOffset);
     }
 
     /**
      * @since 5.0
      */
-    int getLimit();
+    public int getLimit() {
+        return limit;
+    }
 
     /**
      * @deprecated in favor of {@link #getLimit()}
      */
-    @Deprecated(since = "5.0")
-    default int getFetchLimit() {
+    @Deprecated(since = "5.0", forRemoval = true)
+    public int getFetchLimit() {
         return getLimit();
     }
 
     /**
      * @since 5.0
      */
-    void setLimit(int limit);
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
 
     /**
      * @deprecated in favor of {@link #setLimit(int)}
      */
-    @Deprecated(since = "5.0")
-    default void setFetchLimit(int fetchLimit) {
+    @Deprecated(since = "5.0", forRemoval = true)
+    public void setFetchLimit(int fetchLimit) {
         setLimit(fetchLimit);
     }
 
     /**
      * @since 1.23
      */
-    boolean isFiltered();
+    public boolean isFiltered() {
+        for (ResourceEntityProjection<?> p : projections.values()) {
+            if (!p.getAgEntity().getReadFilter().allowsAll()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * @deprecated in favor of {@link #getProperty(String)}
      */
-    @Deprecated(since = "5.0")
-    default <P> P getRequestProperty(String name) {
+    @Deprecated(since = "5.0", forRemoval = true)
+    public <P> P getRequestProperty(String name) {
         return getProperty(name);
     }
 
     /**
      * @deprecated in favor of {@link #setProperty(String, Object)}
      */
-    @Deprecated(since = "5.0")
-    default void setRequestProperty(String name, Object value) {
+    @Deprecated(since = "5.0", forRemoval = true)
+    public void setRequestProperty(String name, Object value) {
         setProperty(name, value);
+    }
+
+    /**
+     * Returns a sublist of the data collection with "start" and "limit" constraints applied if present.
+     *
+     * @since 5.0
+     */
+    protected List<T> getDataWindow(List<T> dataUnlimited) {
+
+        // not all resolvers
+        if (dataUnlimited == null) {
+            return null;
+        }
+
+        int total = dataUnlimited.size();
+
+        if (total == 0 || (start <= 0 && limit <= 0)) {
+            return dataUnlimited;
+        }
+
+        int i0 = Math.max(start, 0);
+        if (i0 >= total) {
+            return Collections.emptyList();
+        }
+
+        int i1 = limit > 0 ? Math.min(i0 + limit, total) : total;
+
+        return dataUnlimited.subList(i0, i1);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + '[' + getName() + ']';
     }
 }

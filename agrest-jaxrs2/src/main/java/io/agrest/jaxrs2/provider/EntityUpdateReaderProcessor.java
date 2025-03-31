@@ -3,18 +3,19 @@ package io.agrest.jaxrs2.provider;
 import io.agrest.EntityUpdate;
 import io.agrest.reflect.Types;
 import io.agrest.meta.AgSchema;
-import io.agrest.runtime.protocol.IEntityUpdateParser;
+import io.agrest.runtime.protocol.IUpdateRequestParser;
 
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
+@Deprecated(since = "5.0", forRemoval = true)
 class EntityUpdateReaderProcessor {
 
-	private IEntityUpdateParser parser;
-	private AgSchema schema;
+	private final IUpdateRequestParser parser;
+	private final AgSchema schema;
 
-	EntityUpdateReaderProcessor(IEntityUpdateParser parser, AgSchema schema) {
+	EntityUpdateReaderProcessor(IUpdateRequestParser parser, AgSchema schema) {
 		this.parser = parser;
 		this.schema = schema;
 	}

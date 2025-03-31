@@ -3,75 +3,116 @@ package io.agrest.cayenne.exp;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.agrest.AgException;
-import io.agrest.converter.jsonvalue.JsonValueConverter;
-import io.agrest.converter.jsonvalue.UtcDateConverter;
-import io.agrest.meta.AgEntity;
 import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.path.PathDescriptor;
+import io.agrest.cayenne.persister.ICayennePersister;
+import io.agrest.converter.jsonvalue.JsonValueConverter;
+import io.agrest.converter.jsonvalue.SqlDateConverter;
+import io.agrest.converter.jsonvalue.SqlTimeConverter;
+import io.agrest.converter.jsonvalue.SqlTimestampConverter;
+import io.agrest.converter.jsonvalue.UtilDateConverter;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.exp.TraversalHelper;
-import org.apache.cayenne.exp.parser.*;
+import org.apache.cayenne.exp.parser.ASTDbPath;
+import org.apache.cayenne.exp.parser.ASTExists;
+import org.apache.cayenne.exp.parser.ASTNotExists;
+import org.apache.cayenne.exp.parser.ASTObjPath;
+import org.apache.cayenne.exp.parser.ASTPath;
+import org.apache.cayenne.exp.parser.ASTSubquery;
+import org.apache.cayenne.exp.parser.ConditionNode;
+import org.apache.cayenne.exp.parser.Node;
+import org.apache.cayenne.exp.parser.SimpleNode;
+import org.apache.cayenne.map.DbJoin;
+import org.apache.cayenne.map.DbRelationship;
+import org.apache.cayenne.map.EntityResolver;
+import org.apache.cayenne.map.ObjEntity;
+import org.apache.cayenne.map.ObjRelationship;
+import org.apache.cayenne.query.FluentSelect;
+import org.apache.cayenne.query.ObjectSelect;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
 
-    private IPathResolver pathCache;
-    private Map<Class<?>, JsonValueConverter<?>> converters;
-    private Map<AgEntity<?>, ExpressionProcessor> postProcessors;
+    private static final String EMPTY_PATH = "";
 
-    public CayenneExpPostProcessor(@Inject IPathResolver pathCache) {
+    private final EntityResolver entityResolver;
+    private final IPathResolver pathCache;
+    private final Map<String, JsonValueConverter<?>> converters;
+    private final Map<String, ExpressionProcessor> postProcessors;
+
+    public CayenneExpPostProcessor(
+            @Inject IPathResolver pathCache,
+            @Inject ICayennePersister persister) {
+
         this.pathCache = pathCache;
+        this.entityResolver = persister.entityResolver();
 
         // TODO: instead of manually assembling converters we must switch to
         //  IJsonValueConverterFactory already used by DataObjectProcessor.
         //  The tricky part is the "id" attribute that is converted to DbPath
         //  , so its type can not be mapped with existing tools
-        Map<Class<?>, JsonValueConverter<?>> converters = new HashMap<>();
-        converters.put(Date.class, UtcDateConverter.converter());
-        converters.put(java.sql.Date.class, UtcDateConverter.converter());
-        converters.put(java.sql.Time.class, UtcDateConverter.converter());
-        converters.put(java.sql.Timestamp.class, UtcDateConverter.converter());
-        this.converters = converters;
+        this.converters = new HashMap<>();
+        converters.put(Date.class.getName(), UtilDateConverter.converter());
+        converters.put(java.sql.Date.class.getName(), SqlDateConverter.converter());
+        converters.put(java.sql.Time.class.getName(), SqlTimeConverter.converter());
+        converters.put(java.sql.Timestamp.class.getName(), SqlTimestampConverter.converter());
 
         postProcessors = new ConcurrentHashMap<>();
     }
 
     @Override
-    public Expression process(AgEntity<?> entity, Expression exp) {
-        return (exp == null) ? null : validateAndCleanup(entity, exp);
+    public Expression process(String entityName, Expression exp) {
+        return exp == null ? null : validateAndCleanup(entityResolver.getObjEntity(entityName), exp);
     }
 
-    private Expression validateAndCleanup(AgEntity<?> entity, Expression exp) {
+    private Expression validateAndCleanup(ObjEntity entity, Expression exp) {
 
-        // change expression in-place
-        // note - this will not fully handle an expression whose root is
-        // ASTObjPath, so will manually process it below
+        // Normalize paths in-place. Will not be able to change the root note that is handled explicitly below
         exp.traverse(getOrCreateExpressionProcessor(entity));
 
-        // process root ASTObjPath that can't be properly handled by
-        // 'expressionPostProcessor'. If it happens to be "id", it will be
-        // converted to "db:id".
-        if (exp instanceof ASTObjPath) {
-            exp = pathCache.resolve(entity, ((ASTObjPath) exp).getPath()).getPathExp();
-        }
+        // process root ASTExits|ASTNotExists that can't be properly handled by ExpressionProcessor.
+        Object processed = processExistsExp(exp);
 
-        return exp;
+        // Now process the root
+        return (Expression) normalizeIfPath(entity, processed);
     }
 
-    private ExpressionProcessor getOrCreateExpressionProcessor(AgEntity<?> entity) {
-        return postProcessors.computeIfAbsent(entity, e -> new ExpressionProcessor(e));
+    private ExpressionProcessor getOrCreateExpressionProcessor(ObjEntity entity) {
+        return postProcessors.computeIfAbsent(entity.getName(), e -> new ExpressionProcessor(entity));
+    }
+
+    private static Object processExistsExp(Object exp) {
+        if (!(exp instanceof ASTExists || exp instanceof ASTNotExists)) {
+            return exp;
+        }
+        Expression pathExistExp = (Expression)(((Expression) exp).getOperand(0));
+        if (pathExistExp instanceof ASTSubquery) {
+            return exp;
+        }
+        return exp instanceof ASTExists
+                ? pathExistExp
+                : pathExistExp.notExp();
+    }
+  
+    private Object normalizeIfPath(ObjEntity entity, Object expNode) {
+        return expNode instanceof ASTObjPath
+                ? pathCache.resolve(entity.getName(), ((ASTObjPath) expNode).getPath()).getPathExp()
+                : expNode;
     }
 
     private class ExpressionProcessor extends TraversalHelper {
 
-        private AgEntity<?> entity;
+        private final ObjEntity entity;
 
-        ExpressionProcessor(AgEntity<?> entity) {
+        ExpressionProcessor(ObjEntity entity) {
             this.entity = entity;
         }
 
@@ -83,23 +124,34 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
                         "Expression contains a DB_PATH expression that is not allowed here: %s",
                         parentNode);
             }
-
         }
 
         @Override
         public void finishedChild(Expression parentNode, int childIndex, boolean hasMoreChildren) {
-
             Object childNode = parentNode.getOperand(childIndex);
-            if (childNode instanceof ASTObjPath) {
-
-                // validate and replace if needed ... note that we can only
-                // replace non-root nodes during the traversal. Root node is
-                // validated and replaced explicitly by the caller.
-                ASTPath replacement = pathCache.resolve(entity, ((ASTObjPath) childNode).getPath()).getPathExp();
-                if (replacement != childNode) {
-                    parentNode.setOperand(childIndex, replacement);
-                }
+            Object replacementNode = normalizeIfPath(entity, childNode);
+            replacementNode = processExistsExp(replacementNode);
+            if (replacementNode != childNode) {
+                parentNode.setOperand(childIndex, replacementNode);
             }
+            prepareExistsPathOperand(parentNode, childNode);
+        }
+
+        private void prepareExistsPathOperand(Expression parentNode, Object childNode) {
+            if (!(parentNode instanceof ASTExists || parentNode instanceof ASTNotExists)) {
+                return;
+            }
+            if (!(childNode instanceof ASTPath)) {
+                throw AgException.badRequest("%s only supports path value as an argument", parentNode.expName());
+            }
+            ObjPathMarker marker = createPathMarker(entity, (ASTPath) childNode);
+            Expression pathExistExp = markerToExpression(marker);
+            ((ConditionNode) parentNode).jjtAddChild(
+                    marker.relationship != null
+                            ? new ASTSubquery(subquery(marker.relationship, pathExistExp))
+                            : (Node) pathExistExp,
+                    0
+            );
         }
 
         @Override
@@ -136,7 +188,7 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
 
             if (peerPath != null) {
 
-                PathDescriptor pd = pathCache.resolve(entity, peerPath);
+                PathDescriptor pd = pathCache.resolve(entity.getName(), peerPath);
                 if (pd.isAttributeOrId()) {
                     JsonValueConverter<?> converter = converters.get(pd.getType());
                     if (converter != null) {
@@ -152,6 +204,53 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
             }
 
             return node.asText();
+        }
+
+        private ObjPathMarker createPathMarker(ObjEntity entity, ASTPath o) {
+            String path = o.getPath();
+            String newPath;
+            String firstSegment;
+            int dotIndex = path.indexOf(".");
+            if (dotIndex == -1) {
+                firstSegment = path;
+                newPath = EMPTY_PATH;
+            } else {
+                firstSegment = path.substring(0, dotIndex);
+                newPath = path.substring(dotIndex + 1);
+            }
+            // mark relationship that this path relates to and transform path
+            ObjRelationship relationship = entity.getRelationship(firstSegment);
+            if (relationship == null) {
+                newPath = path;
+            }
+            return new ObjPathMarker(newPath, relationship);
+        }
+
+        private Expression markerToExpression(ObjPathMarker marker) {
+            // special case for an empty path
+            // we don't need additional qualifier, just plain exists subquery
+            if (marker.getPath().equals(EMPTY_PATH)) {
+                return null;
+            }
+            return ExpressionFactory.noMatchExp(marker, null);
+        }
+
+        private FluentSelect<?> subquery(ObjRelationship relationship, Expression exp) {
+            List<DbRelationship> dbRelationships = relationship.getDbRelationships();
+            for (DbRelationship dbRelationship : dbRelationships) {
+                for (DbJoin join : dbRelationship.getJoins()) {
+                    Expression joinMatchExp = ExpressionFactory.matchDbExp(join.getTargetName(),
+                            ExpressionFactory.enclosingObjectExp(ExpressionFactory.dbPathExp(join.getSourceName())));
+                    if (exp == null) {
+                        exp = joinMatchExp;
+                    } else {
+                        exp = exp.andExp(joinMatchExp);
+                    }
+                }
+            }
+            return ObjectSelect.query(Persistent.class)
+                    .dbEntityName(dbRelationships.get(0).getTargetEntityName())
+                    .where(exp);
         }
 
         private String findPeerPath(SimpleNode exp, Object child) {
@@ -200,6 +299,16 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
             }
 
             return null;
+        }
+    }
+
+    static class ObjPathMarker extends ASTObjPath {
+
+        final ObjRelationship relationship;
+
+        ObjPathMarker(String path, ObjRelationship relationship) {
+            super(path);
+            this.relationship = relationship;
         }
     }
 }

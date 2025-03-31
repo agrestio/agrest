@@ -1,9 +1,8 @@
 package io.agrest.runtime.entity;
 
 import io.agrest.ResourceEntity;
-import io.agrest.meta.AgEntityOverlay;
-
-import java.util.Map;
+import io.agrest.access.PathChecker;
+import io.agrest.runtime.meta.RequestSchema;
 
 /**
  * @since 2.13
@@ -11,7 +10,7 @@ import java.util.Map;
 public interface IMapByMerger {
     
     /**
-     * @since 3.4 additionally takes request overlays
+     * @since 5.0 takes RequestSchema
      */
-    <T> void merge(ResourceEntity<T> entity, String mapByPath, Map<Class<?>, AgEntityOverlay<?>> overlays);
+    <T> void merge(ResourceEntity<T> entity, String mapByPath, RequestSchema schema, PathChecker pathChecker);
 }

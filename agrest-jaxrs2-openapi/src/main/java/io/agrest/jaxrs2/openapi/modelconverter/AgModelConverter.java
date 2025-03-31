@@ -11,7 +11,10 @@ import java.util.Iterator;
 
 /**
  * A common superclass of Agrest-provided {@link ModelConverter} objects.
+ *
+ * @deprecated in favor of Jakarta version (JAX-RS 3)
  */
+@Deprecated(since = "5.0", forRemoval = true)
 public abstract class AgModelConverter implements ModelConverter {
 
     @Override

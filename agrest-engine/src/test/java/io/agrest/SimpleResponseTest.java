@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SimpleResponseTest {
 
 	@Test
-	public void testOf() {
+	public void of() {
 
 		SimpleResponse response = SimpleResponse.of(201, "YYYY");
 

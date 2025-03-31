@@ -5,7 +5,7 @@ package io.agrest.converter.valuestring;
  *
  * @since 5.0
  */
-public interface ValueStringConverter {
+public interface ValueStringConverter<T> {
 
-    String asString(Object object);
+    String asString(T object);
 }

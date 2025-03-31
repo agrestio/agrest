@@ -42,7 +42,7 @@ import io.agrest.runtime.processor.delete.stage.DeleteMapChangesStage;
 import io.agrest.runtime.processor.delete.stage.DeleteStartStage;
 import io.agrest.runtime.processor.select.stage.SelectApplyServerParamsStage;
 import io.agrest.runtime.processor.unrelate.stage.UnrelateStartStage;
-import io.agrest.runtime.processor.unrelate.stage.UnrelateUpdateDateStoreStage;
+import io.agrest.runtime.processor.unrelate.stage.UnrelateUpdateDataStoreStage;
 import io.agrest.runtime.processor.update.UpdateFlavorDIKeys;
 import io.agrest.runtime.processor.update.stage.UpdateApplyServerParamsStage;
 import io.agrest.runtime.processor.update.stage.UpdateCommitStage;
@@ -144,7 +144,7 @@ public class AgCayenneModule implements Module {
 
         // Cayenne overrides for unrelate stages
         binder.bind(UnrelateStartStage.class).to(CayenneUnrelateStartStage.class);
-        binder.bind(UnrelateUpdateDateStoreStage.class).to(CayenneUnrelateDataStoreStage.class);
+        binder.bind(UnrelateUpdateDataStoreStage.class).to(CayenneUnrelateDataStoreStage.class);
     }
 
     public static class Builder {

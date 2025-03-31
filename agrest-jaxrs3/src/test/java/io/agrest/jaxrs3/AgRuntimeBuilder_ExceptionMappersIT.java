@@ -5,8 +5,8 @@ import io.agrest.DataResponse;
 import io.agrest.SelectStage;
 import io.agrest.jaxrs3.junit.AgPojoTester;
 import io.agrest.jaxrs3.junit.PojoTest;
-import io.agrest.jaxrs3.pojo.model.P1;
-import io.agrest.jaxrs3.pojo.model.P2;
+import io.agrest.jaxrs3.junit.pojo.P1;
+import io.agrest.jaxrs3.junit.pojo.P2;
 import io.agrest.spi.AgExceptionMapper;
 import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.di.Module;
@@ -35,7 +35,7 @@ public class AgRuntimeBuilder_ExceptionMappersIT extends PojoTest {
     }
 
     @Test
-    public void testExceptionMapper() {
+    public void exceptionMapper() {
 
         // override standard mapper
         tester.target("/agexception").get()

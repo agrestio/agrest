@@ -1,0 +1,27 @@
+name: 'verify PR'
+
+on: pull_request
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    if: github.repository == 'agrestio/agrest'
+
+    strategy:
+      matrix:
+        java: [ 11, 17, 21 ]
+      fail-fast: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build and test...
+        run: mvn clean verify

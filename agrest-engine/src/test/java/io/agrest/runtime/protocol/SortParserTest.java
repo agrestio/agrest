@@ -21,7 +21,7 @@ public class SortParserTest {
     }
 
     @Test
-    public void testProcess_Array() {
+    public void process_Array() {
 
         List<Sort> orderings = parser.parse("[{\"path\":\"name\"}," +
                 "{\"path\":\"address\",\"direction\":\"ASC\"}," +
@@ -41,7 +41,7 @@ public class SortParserTest {
     }
 
     @Test
-    public void testProcess_Object() {
+    public void process_Object() {
 
         List<Sort> orderings = parser.parse("{\"path\":\"name\"}", null);
 
@@ -51,7 +51,7 @@ public class SortParserTest {
     }
 
     @Test
-    public void testProcess_Simple() {
+    public void process_Simple() {
 
         List<Sort> orderings = parser.parse("name", null);
 
@@ -61,7 +61,7 @@ public class SortParserTest {
     }
 
     @Test
-    public void testProcess_Simple_ASC() {
+    public void process_Simple_ASC() {
 
         List<Sort> orderings = parser.parse("name", "ASC");
 
@@ -71,7 +71,7 @@ public class SortParserTest {
     }
 
     @Test
-    public void testProcess_Simple_DESC() {
+    public void process_Simple_DESC() {
 
         List<Sort> orderings = parser.parse("name", "DESC");
 
@@ -81,7 +81,7 @@ public class SortParserTest {
     }
 
     @Test
-    public void testProcess_Simple_ASC_INSENSITIVE() {
+    public void process_Simple_ASC_INSENSITIVE() {
 
         List<Sort> orderings = parser.parse("name", "ASC_CI");
 
@@ -91,7 +91,7 @@ public class SortParserTest {
     }
 
     @Test
-    public void testProcess_Simple_DESC_INSENSITIVE() {
+    public void process_Simple_DESC_INSENSITIVE() {
 
         List<Sort> orderings = parser.parse("name", "DESC_CI");
 

@@ -17,19 +17,19 @@ public class EntityNoIdEncoder extends AbstractEncoder {
     }
 
     @Override
-    protected void encodeNonNullObject(Object object, JsonGenerator out) throws IOException {
+    protected void encodeNonNullObject(Object object, boolean skipNullProperties, JsonGenerator out) throws IOException {
         out.writeStartObject();
-        encodeProperties(object, out);
+        encodeProperties(object, skipNullProperties, out);
         out.writeEndObject();
     }
 
-    protected void encodeProperties(Object object, JsonGenerator out) throws IOException {
+    protected void encodeProperties(Object object, boolean skipNullProperties, JsonGenerator out) throws IOException {
 
         for (Map.Entry<String, EncodableProperty> e : encoders.entrySet()) {
             EncodableProperty p = e.getValue();
             String propertyName = e.getKey();
             Object v = object == null ? null : p.getReader().read(object);
-            p.getEncoder().encode(propertyName, v, out);
+            p.getEncoder().encode(propertyName, v, skipNullProperties, out);
         }
     }
 }

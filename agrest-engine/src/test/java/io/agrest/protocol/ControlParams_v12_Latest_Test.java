@@ -27,22 +27,22 @@ public class ControlParams_v12_Latest_Test {
             .build();
 
     @Test
-    public void testExp() {
+    public void exp() {
         ControlParamsTester.test(Pojo.class, tester.runtime())
                 .param("exp", "name = 'Joe'")
                 .parseRequest()
-                .assertExp(Exp.simple("name = 'Joe'"));
+                .assertExp(Exp.parse("name = 'Joe'"));
     }
 
     @Test
-    public void testSort_None() {
+    public void sort_None() {
         ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .parseRequest()
                 .assertSort();
     }
 
     @Test
-    public void testSort_Path_ImpliedAsc() {
+    public void sort_Path_ImpliedAsc() {
         ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .parseRequest()
@@ -50,7 +50,7 @@ public class ControlParams_v12_Latest_Test {
     }
 
     @Test
-    public void testSort_PathAndAsc() {
+    public void sort_PathAndAsc() {
         ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "asc")
@@ -59,7 +59,7 @@ public class ControlParams_v12_Latest_Test {
     }
 
     @Test
-    public void testSort_PathAndAscCi() {
+    public void sort_PathAndAscCi() {
         ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "asc_ci")
@@ -68,7 +68,7 @@ public class ControlParams_v12_Latest_Test {
     }
 
     @Test
-    public void testSort_PathAndDesc() {
+    public void sort_PathAndDesc() {
         ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "desc")
@@ -77,7 +77,7 @@ public class ControlParams_v12_Latest_Test {
     }
 
     @Test
-    public void testSort_PathAndDescCi() {
+    public void sort_PathAndDescCi() {
         ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "desc_ci")
@@ -86,7 +86,7 @@ public class ControlParams_v12_Latest_Test {
     }
 
     @Test
-    public void testSort_PathAndAsc_UC() {
+    public void sort_PathAndAsc_UC() {
         ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "ASC")
@@ -95,7 +95,7 @@ public class ControlParams_v12_Latest_Test {
     }
 
     @Test
-    public void testSort_PathAndAscCi_UC() {
+    public void sort_PathAndAscCi_UC() {
         ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "ASC_CI")
@@ -104,7 +104,7 @@ public class ControlParams_v12_Latest_Test {
     }
 
     @Test
-    public void testSort_PathAndDesc_UC() {
+    public void sort_PathAndDesc_UC() {
         ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "DESC")
@@ -113,7 +113,7 @@ public class ControlParams_v12_Latest_Test {
     }
 
     @Test
-    public void testSort_PathAndDescCi_UC() {
+    public void sort_PathAndDescCi_UC() {
         ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "name")
                 .param("direction", "DESC_CI")
@@ -122,7 +122,7 @@ public class ControlParams_v12_Latest_Test {
     }
 
     @Test
-    public void testSort_Object() {
+    public void sort_Object() {
         ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "{\"path\":\"name\",\"direction\":\"asc_ci\"}")
                 .parseRequest()
@@ -130,7 +130,7 @@ public class ControlParams_v12_Latest_Test {
     }
 
     @Test
-    public void testSort_ObjectArray() {
+    public void sort_ObjectArray() {
         ControlParamsTester.test(ControlParams_v11_Test.Pojo.class, tester.runtime())
                 .param("sort", "[{\"path\":\"name\",\"direction\":\"asc_ci\"},{\"path\":\"dateOfBirth\",\"direction\":\"desc_ci\"}]")
                 .parseRequest()
@@ -138,7 +138,7 @@ public class ControlParams_v12_Latest_Test {
     }
 
     @Test
-    public void testDefaultInclude() {
+    public void defaultInclude() {
         ControlParamsTester.test(Pojo.class, tester.runtime())
                 .parseRequest()
                 .assertIdIncluded()
@@ -147,7 +147,7 @@ public class ControlParams_v12_Latest_Test {
     }
 
     @Test
-    public void testInclude() {
+    public void include() {
         ControlParamsTester.test(Pojo.class, tester.runtime())
                 .param("include", "id", "name")
                 .parseRequest()
@@ -157,7 +157,7 @@ public class ControlParams_v12_Latest_Test {
     }
 
     @Test
-    public void testInclude_Related() {
+    public void include_Related() {
         ControlParamsTester.test(Pojo.class, tester.runtime())
                 .param("include", "id", "name", "details")
                 .parseRequest()
@@ -167,7 +167,7 @@ public class ControlParams_v12_Latest_Test {
     }
 
     @Test
-    public void testExclude() {
+    public void exclude() {
         ControlParamsTester.test(Pojo.class, tester.runtime())
                 .param("exclude", "id", "name")
                 .parseRequest()

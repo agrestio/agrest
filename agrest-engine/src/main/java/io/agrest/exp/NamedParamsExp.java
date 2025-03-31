@@ -5,7 +5,9 @@ import java.util.Objects;
 
 /**
  * @since 4.4
+ * @deprecated in favor of the new unified expression API
  */
+@Deprecated(since = "5.0")
 public class NamedParamsExp extends SimpleExp {
 
     private final Map<String, Object> params;

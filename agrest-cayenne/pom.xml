@@ -5,10 +5,11 @@
     <parent>
         <groupId>io.agrest</groupId>
         <artifactId>agrest-parent</artifactId>
-        <version>5.0.M8-SNAPSHOT</version>
+        <version>5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>agrest-cayenne</artifactId>
+  <version>5.0-SNAPSHOT</version>
     <name>agrest-cayenne: Cayenne backend for Agrest</name>
     <description>Cayenne backend for Agrest</description>
 
@@ -44,13 +45,13 @@
         </dependency>
         <dependency>
             <groupId>io.agrest</groupId>
-            <artifactId>agrest-jaxrs2</artifactId>
+            <artifactId>agrest-jaxrs3</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.agrest</groupId>
-            <artifactId>agrest-jaxrs2</artifactId>
+            <artifactId>agrest-jaxrs3</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
@@ -67,12 +68,12 @@
         </dependency>
         <dependency>
             <groupId>io.bootique.jetty</groupId>
-            <artifactId>bootique-jetty-junit5</artifactId>
+            <artifactId>bootique-jetty-jakarta-junit5</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.bootique.jersey</groupId>
-            <artifactId>bootique-jersey</artifactId>
+            <artifactId>bootique-jersey-jakarta</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

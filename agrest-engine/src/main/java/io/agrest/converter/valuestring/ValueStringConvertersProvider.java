@@ -14,7 +14,7 @@ import static io.agrest.reflect.Types.typeForName;
  */
 public class ValueStringConvertersProvider implements Provider<ValueStringConverters> {
 
-    private Map<String, ValueStringConverter> converters;
+    private final Map<String, ValueStringConverter> converters;
 
     public ValueStringConvertersProvider(@Inject Map<String, ValueStringConverter> converters) {
         this.converters = converters;
@@ -22,7 +22,7 @@ public class ValueStringConvertersProvider implements Provider<ValueStringConver
 
     @Override
     public ValueStringConverters get() throws DIRuntimeException {
-        Map<Class<?>, ValueStringConverter> converters = new HashMap<>();
+        Map<Class<?>, ValueStringConverter<?>> converters = new HashMap<>();
         this.converters.forEach((k, v) -> converters.put(typeForName(k), v));
 
         return new ValueStringConverters(converters, defaultConverter());
@@ -31,7 +31,7 @@ public class ValueStringConvertersProvider implements Provider<ValueStringConver
     /**
      * @since 2.11
      */
-    protected ValueStringConverter defaultConverter() {
+    protected ValueStringConverter<Object> defaultConverter() {
         return GenericConverter.converter();
     }
 }

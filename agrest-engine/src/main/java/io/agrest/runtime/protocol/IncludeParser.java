@@ -3,9 +3,9 @@ package io.agrest.runtime.protocol;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.agrest.AgException;
 import io.agrest.PathConstants;
+import io.agrest.access.PathChecker;
 import io.agrest.protocol.ControlParams;
 import io.agrest.protocol.Include;
-import io.agrest.runtime.entity.IncludeMerger;
 import io.agrest.runtime.jackson.IJacksonService;
 import org.apache.cayenne.di.Inject;
 import org.slf4j.Logger;
@@ -127,7 +127,7 @@ public class IncludeParser implements IIncludeParser {
     }
 
     private void appendPath(List<Include> includes, String path) {
-        IncludeMerger.checkTooLong(path);
+        PathChecker.exceedsLength(path);
 
         int dot = path.indexOf(PathConstants.DOT);
 
