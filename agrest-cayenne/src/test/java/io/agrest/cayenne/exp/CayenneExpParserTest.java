@@ -48,6 +48,12 @@ public class CayenneExpParserTest {
     }
 
     @Test
+    public void parseGreaterEqualNegative() {
+        Expression e = parser.parse(Exp.parse("a >= -5"));
+        assertEquals(ExpressionFactory.greaterOrEqualExp("a", -5), e);
+    }
+
+    @Test
     public void parseNotEqual() {
         Expression e = parser.parse(Exp.notEqual("a", 5));
         assertEquals(ExpressionFactory.exp("a != 5"), e);

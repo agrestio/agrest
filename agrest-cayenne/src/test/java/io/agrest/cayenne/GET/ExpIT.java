@@ -147,6 +147,21 @@ public class ExpIT extends MainDbTest {
     }
 
     @Test
+    public void negativeNumeric() {
+        tester.e2().insertColumns("id_", "name")
+                .values(1, "xxx")
+                .values(2, "yyy")
+                .values(3, "zzzz").exec();
+
+        tester.target("/e2")
+                .queryParam("include", "id")
+                .queryParam("exp", "id > -1")
+                .queryParam("order", "name asc")
+                .get()
+                .wasOk().bodyEquals(3, "{\"id\":1}", "{\"id\":2}", "{\"id\":3}");
+    }
+
+    @Test
     public void toOne_Equals() {
 
         tester.e2().insertColumns("id_", "name")

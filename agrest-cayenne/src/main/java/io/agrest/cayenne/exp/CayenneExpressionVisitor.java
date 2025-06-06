@@ -10,6 +10,8 @@ import org.apache.cayenne.exp.ExpressionParameter;
 import org.apache.cayenne.exp.parser.*;
 
 import java.lang.reflect.Constructor;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.function.BiFunction;
 
@@ -204,6 +206,10 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
 
     @Override
     public Expression visit(ExpNegate node, Expression data) {
+        if(node.jjtGetNumChildren() == 1 && node.jjtGetChild(0) instanceof ExpScalar) {
+            // special case for the negative scalar value, just negate value and skip this node
+            return process(node, data, new ASTScalar(negate(node.jjtGetChild(0).jjtGetValue())));
+        }
         return process(node, data, new ASTNegate());
     }
 
@@ -352,6 +358,25 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
         } else {
             return addToParent(parent, child);
         }
+    }
+
+    Object negate(Object value) {
+        if(value instanceof Number) {
+            if(value instanceof Integer) {
+                return -(Integer) value;
+            } else if(value instanceof Long) {
+                return -(Long) value;
+            } else if(value instanceof Double) {
+                return -(Double) value;
+            } else if(value instanceof Float) {
+                return -(Float) value;
+            } else if(value instanceof BigInteger) {
+                return ((BigInteger) value).negate();
+            } else if(value instanceof BigDecimal) {
+                return ((BigDecimal) value).negate();
+            }
+        }
+        return value;
     }
 
     // A hack - must use reflection to create Cayenne expressions, as the common int constructor is not public

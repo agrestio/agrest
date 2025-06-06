@@ -1,3 +1,7 @@
+## Release 5.0-RC2
+
+* #694 Expressions: negative numerics translate to a invalid Cayenne expression 
+
 ## Release 5.0-RC1
 
 * #647 `(not) exists` expressions
