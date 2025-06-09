@@ -10,7 +10,7 @@ jobs:
     name: JDK ${{ matrix.java }}
     strategy:
       matrix:
-        java: [ "1.8", "11", "17" ]
+        java: [ "8", "11", "17" ]
 
     steps:
       - name: Checkout...
@@ -43,7 +43,7 @@ jobs:
         # skip this for the release versions
         if: contains(env.POM_VERSION, '-SNAPSHOT')
         with:
-          java-version: 1.8
+          java-version: 8
           distribution: 'temurin'
           cache: 'maven'
 
