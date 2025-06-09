@@ -44,6 +44,10 @@
         <swagger.version>2.1.5</swagger.version>
         <mockito.version>3.9.0</mockito.version>
 
+        <!-- Plugin Versions -->
+        <central.publishing.plugin.version>0.7.0</central.publishing.plugin.version>
+
+        <!-- Misc -->
         <gpg.pinentry.mode>loopback</gpg.pinentry.mode>
     </properties>
 
@@ -77,15 +81,13 @@
 
     <distributionManagement>
         <repository>
-            <uniqueVersion>false</uniqueVersion>
-            <id>oss-sonatype-releases</id>
-            <name>Deployment Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+            <id>sonatype-central</id>
+            <name>Sonatype Central Portal Repository</name>
         </repository>
-        <snapshotRepository>
-            <id>oss-sonatype-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
+        <!--
+        default repo URLs are hardcoded in the `central-publishing-maven-plugin`
+        for the snapshot repo it's https://central.sonatype.com/repository/maven-snapshots/
+        -->
     </distributionManagement>
 
     <dependencyManagement>
@@ -268,9 +270,9 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.8</version>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>${central.publishing.plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -281,15 +283,11 @@
             </plugin>
             <!-- This plugin replaces maven-deploy-plugin and "deploy" goal -->
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                    <serverId>oss-sonatype-releases</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
-                    <!-- Default timeout is 5 minute and it's not enought for the all validation rules -->
-                    <stagingProgressTimeoutMinutes>20</stagingProgressTimeoutMinutes>
+                    <publishingServerId>sonatype-central</publishingServerId>
                 </configuration>
             </plugin>
         </plugins>
