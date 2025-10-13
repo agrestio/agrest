@@ -10,9 +10,8 @@ import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.map.ObjRelationship;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,13 +42,18 @@ class EntityPathCache {
     }
 
     PathDescriptor getOrCreate(String agPath) {
-        return pathCache.computeIfAbsent(agPath, p -> create(agPath, agPath, entity));
+        return getOrCreate(agPath, Collections.emptyMap());
+    }
+
+    PathDescriptor getOrCreate(String agPath, Map<String, String> aliases) {
+        return pathCache.computeIfAbsent(agPath, p -> create(agPath, agPath, entity, aliases));
     }
 
     private PathDescriptor create(
             String path,
             String remainingPath,
             ObjEntity remainingPathRootEntity,
+            Map<String, String> aliases,
             ObjRelationship... processedPath) {
 
         int dot = remainingPath.indexOf(PathConstants.DOT);
@@ -64,6 +68,9 @@ class EntityPathCache {
 
         if (dot > 0) {
             String segment = toRelationshipName(remainingPath.substring(0, dot));
+            if(aliases.containsKey(segment)) {
+                segment = aliases.get(segment);
+            }
 
             // followed by dot, so must be a relationship
             ObjRelationship relationship = remainingPathRootEntity.getRelationship(segment);
@@ -77,19 +84,22 @@ class EntityPathCache {
                     path,
                     remainingPath.substring(dot + 1),
                     relationship.getTargetEntity(),
+                    aliases,
                     push(processedPath, relationship));
         }
 
         ObjAttribute attribute = remainingPathRootEntity.getAttribute(remainingPath);
+        ASTObjPath objPath = new ASTObjPath(path);
+        objPath.setPathAliases(aliases);
         if (attribute != null) {
             return attribute.isPrimaryKey()
                     ? new PathDescriptor(attribute.getType(), new ASTDbPath(toDbPath(processedPath, attribute.getDbAttributePath())), true)
-                    : new PathDescriptor(attribute.getType(), new ASTObjPath(path), true);
+                    : new PathDescriptor(attribute.getType(), objPath, true);
         }
 
         ObjRelationship relationship = remainingPathRootEntity.getRelationship(toRelationshipName(remainingPath));
         if (relationship != null) {
-            return new PathDescriptor(relationship.getTargetEntity().getClassName(), new ASTObjPath(path), false);
+            return new PathDescriptor(relationship.getTargetEntity().getClassName(), objPath, false);
         }
 
         if (remainingPath.startsWith(ASTDbPath.DB_PREFIX)) {
@@ -106,7 +116,9 @@ class EntityPathCache {
         if (PathConstants.ID_PK_ATTRIBUTE.equals(remainingPath) && processedPath != null && processedPath.length > 0) {
             ObjRelationship lastProcessed = processedPath[processedPath.length - 1];
             String strippedPath = path.substring(0, path.length() - PathConstants.ID_PK_ATTRIBUTE.length() - 1);
-            return new PathDescriptor(lastProcessed.getTargetEntity().getClassName(), new ASTObjPath(strippedPath), false);
+            ASTObjPath strippedObjPath = new ASTObjPath(strippedPath);
+            strippedObjPath.setPathAliases(aliases);
+            return new PathDescriptor(lastProcessed.getTargetEntity().getClassName(), strippedObjPath, false);
         }
 
         throw AgException.badRequest("Invalid path '%s' for '%s'", remainingPath, remainingPathRootEntity.getName());

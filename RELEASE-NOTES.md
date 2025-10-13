@@ -1,6 +1,7 @@
 ## Release 5.0-RC2
 
 * #694 Expressions: negative numerics translate to a invalid Cayenne expression 
+* #697 Exp: path aliases are not functional 
 
 ## Release 5.0-RC1
 

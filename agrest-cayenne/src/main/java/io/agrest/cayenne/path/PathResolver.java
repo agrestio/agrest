@@ -4,6 +4,7 @@ import io.agrest.cayenne.persister.ICayennePersister;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.EntityResolver;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,8 +24,8 @@ public class PathResolver implements IPathResolver {
     }
 
     @Override
-    public PathDescriptor resolve(String entityName, String agPath) {
-        return entityPathCache(entityName).getOrCreate(agPath);
+    public PathDescriptor resolve(String entityName, String agPath, Map<String, String> aliases) {
+        return entityPathCache(entityName).getOrCreate(agPath, aliases == null ? Collections.emptyMap() : aliases);
     }
 
     EntityPathCache entityPathCache(String entityName) {

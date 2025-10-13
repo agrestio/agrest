@@ -70,6 +70,7 @@ class ExpPath extends SimpleNode {
   protected ExpPath shallowCopy() {
     ExpPath copy = new ExpPath(id);
     copy.setPath(getPath());
+    copy.setPathAliases(getPathAliases());
     return copy;
   }
 

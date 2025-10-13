@@ -103,9 +103,12 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
     }
   
     private Object normalizeIfPath(ObjEntity entity, Object expNode) {
-        return expNode instanceof ASTObjPath
-                ? pathCache.resolve(entity.getName(), ((ASTObjPath) expNode).getPath()).getPathExp()
-                : expNode;
+        if(expNode instanceof ASTObjPath) {
+            ASTObjPath path = (ASTObjPath)expNode;
+            PathDescriptor resolve = pathCache.resolve(entity.getName(), path.getPath(), path.getPathAliases());
+            return resolve.getPathExp();
+        }
+        return expNode;
     }
 
     private class ExpressionProcessor extends TraversalHelper {
@@ -184,11 +187,11 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
 
         private Object convert(SimpleNode parentExp, JsonNode node) {
 
-            String peerPath = findPeerPath(parentExp, node);
+            ASTObjPath peerPath = findPeerPath(parentExp, node);
 
             if (peerPath != null) {
 
-                PathDescriptor pd = pathCache.resolve(entity.getName(), peerPath);
+                PathDescriptor pd = pathCache.resolve(entity.getName(), peerPath.getPath(), peerPath.getPathAliases());
                 if (pd.isAttributeOrId()) {
                     JsonValueConverter<?> converter = converters.get(pd.getType());
                     if (converter != null) {
@@ -253,7 +256,7 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
                     .where(exp);
         }
 
-        private String findPeerPath(SimpleNode exp, Object child) {
+        private ASTObjPath findPeerPath(SimpleNode exp, Object child) {
 
             if (exp == null) {
                 return null;
@@ -271,7 +274,7 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
                     continue;
                 }
 
-                String path = findChildPath((Expression) operand);
+                ASTObjPath path = findChildPath((Expression) operand);
                 if (path != null) {
                     return path;
                 }
@@ -280,9 +283,9 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
             return null;
         }
 
-        private String findChildPath(Expression exp) {
+        private ASTObjPath findChildPath(Expression exp) {
             if (exp instanceof ASTObjPath) {
-                return ((ASTObjPath) exp).getPath();
+                return (ASTObjPath) exp;
             }
 
             int len = exp.getOperandCount();
@@ -292,7 +295,7 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
                     continue;
                 }
 
-                String path = findChildPath((Expression) operand);
+                ASTObjPath path = findChildPath((Expression) operand);
                 if (path != null) {
                     return path;
                 }

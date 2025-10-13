@@ -1,5 +1,8 @@
 package io.agrest.cayenne.path;
 
+import java.util.Collections;
+import java.util.Map;
+
 /**
  * Resolves Agrest expression paths to Cayenne paths.
  *
@@ -7,5 +10,9 @@ package io.agrest.cayenne.path;
  */
 public interface IPathResolver {
 
-    PathDescriptor resolve(String entityName, String agPath);
+    default PathDescriptor resolve(String entityName, String agPath) {
+        return resolve(entityName, agPath, Collections.emptyMap());
+    }
+
+    PathDescriptor resolve(String entityName, String agPath, Map<String, String> aliases);
 }

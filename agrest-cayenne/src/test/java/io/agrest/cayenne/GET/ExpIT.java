@@ -516,6 +516,26 @@ public class ExpIT extends MainDbTest {
                 .wasOk().bodyEquals(2, "{\"id\":3}", "{\"id\":4}");
     }
 
+    @Test
+    public void path_Alias() {
+
+        tester.e2().insertColumns("id_", "name")
+                .values(1, "xxx")
+                .values(2, "yyy").exec();
+
+        tester.e3().insertColumns("id_", "name", "e2_id")
+                .values(4, "aaa", 1)
+                .values(5, "bbb", 2)
+                .values(6, "ccc", 2)
+                .values(7, "ddd", 2).exec();
+
+        tester.target("/e2").queryParam("include", "id")
+                .queryParam("exp", "{\"exp\":\"e3s#a1.name = $name1 and e3s#a2.name = $name2\"" +
+                        ",\"params\":{\"name1\": \"bbb\", \"name2\": \"ccc\"}}")
+                .get()
+                .wasOk().bodyEquals(1, "{\"id\":2}");
+    }
+
     @Path("")
     public static class Resource {
 

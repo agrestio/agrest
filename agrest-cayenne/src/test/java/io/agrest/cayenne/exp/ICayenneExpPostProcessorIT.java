@@ -74,6 +74,13 @@ public class ICayenneExpPostProcessorIT extends MainDbTest {
     }
 
     @Test
+    void relChainAliasEndingWithAttribute() {
+        Expression e0 = exp("e2#alias1.e3s.name = 'a' and e2#alias1.e3s.name = 'b'");
+        Expression e1 = p.process("E3", e0);
+        assertEquals(e0, e1);
+    }
+
+    @Test
     void toOneId() {
         Expression e0 = exp("e2.id");
         Expression e1 = p.process("E3", e0);
