@@ -5,6 +5,8 @@ import java.util.Map;
 
 public final class ParsingUtils {
 
+    private static final String DB_PATH_PREFIX = "db:";
+
     private ParsingUtils() {
     }
 
@@ -12,6 +14,11 @@ public final class ParsingUtils {
         String path = pathExp.getPath();
         if (!path.contains("#")) {
             return;
+        }
+        String prefix = "";
+        if(path.startsWith(DB_PATH_PREFIX)) {
+            prefix = DB_PATH_PREFIX;
+            path = path.substring(DB_PATH_PREFIX.length());
         }
 
         String[] pathSegments = path.split("\\.");
@@ -30,7 +37,7 @@ public final class ParsingUtils {
                 pathSegments[i] = splitSegment[1];
             }
         }
-        pathExp.setPath(String.join(".", pathSegments));
+        pathExp.setPath(prefix + String.join(".", pathSegments));
         pathExp.setPathAliases(aliasMap);
     }
 }

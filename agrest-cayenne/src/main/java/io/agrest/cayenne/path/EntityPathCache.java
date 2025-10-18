@@ -89,25 +89,36 @@ class EntityPathCache {
         }
 
         ObjAttribute attribute = remainingPathRootEntity.getAttribute(remainingPath);
-        ASTObjPath objPath = new ASTObjPath(path);
-        objPath.setPathAliases(aliases);
         if (attribute != null) {
-            return attribute.isPrimaryKey()
-                    ? new PathDescriptor(attribute.getType(), new ASTDbPath(toDbPath(processedPath, attribute.getDbAttributePath())), true)
-                    : new PathDescriptor(attribute.getType(), objPath, true);
+            if (attribute.isPrimaryKey()) {
+                ASTDbPath dbPath = new ASTDbPath(toDbPath(processedPath, attribute.getDbAttributePath()));
+                dbPath.setPathAliases(aliases);
+                return new PathDescriptor(attribute.getType(), dbPath, true);
+            } else {
+                ASTObjPath objPath = new ASTObjPath(path);
+                objPath.setPathAliases(aliases);
+                return new PathDescriptor(attribute.getType(), objPath, true);
+            }
         }
 
+        if(aliases.containsKey(remainingPath)) {
+            remainingPath = aliases.get(remainingPath);
+        }
         ObjRelationship relationship = remainingPathRootEntity.getRelationship(toRelationshipName(remainingPath));
         if (relationship != null) {
+            ASTObjPath objPath = new ASTObjPath(path);
+            objPath.setPathAliases(aliases);
             return new PathDescriptor(relationship.getTargetEntity().getClassName(), objPath, false);
         }
 
         if (remainingPath.startsWith(ASTDbPath.DB_PREFIX)) {
             DbAttribute dbAttribute = remainingPathRootEntity.getDbEntity().getAttribute(remainingPath.substring(ASTDbPath.DB_PREFIX.length()));
             if (dbAttribute != null) {
+                ASTDbPath dbPath = new ASTDbPath(toDbPath(processedPath, dbAttribute.getName()));
+                dbPath.setPathAliases(aliases);
                 return new PathDescriptor(
                         TypesMapping.getJavaBySqlType(dbAttribute.getType()),
-                        new ASTDbPath(toDbPath(processedPath, dbAttribute.getName())),
+                        dbPath,
                         true);
             }
         }

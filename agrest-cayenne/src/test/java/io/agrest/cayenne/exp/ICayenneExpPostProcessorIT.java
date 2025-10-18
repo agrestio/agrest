@@ -9,6 +9,7 @@ import io.bootique.junit5.BQTestTool;
 import org.apache.cayenne.access.translator.select.TranslatableQueryWrapper;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.parser.ASTExists;
+import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.exp.parser.ASTSubquery;
 import org.apache.cayenne.exp.parser.SimpleNode;
 import org.apache.cayenne.query.ObjectSelect;
@@ -67,17 +68,59 @@ public class ICayenneExpPostProcessorIT extends MainDbTest {
     }
 
     @Test
+    void relAlias() {
+        Expression e0 = exp("e2#alias1");
+        Expression e1 = p.process("E3", e0);
+        assertEqualsPathAliasAware(e0, e1);
+    }
+
+    @Test
+    void relChainAlias() {
+        Expression e0 = exp("e2#alias1.e3s");
+        Expression e1 = p.process("E3", e0);
+        assertEqualsPathAliasAware(e0, e1);
+    }
+
+    @Test
+    void relChainEndAlias() {
+        Expression e0 = exp("e2.e3s#alias1");
+        Expression e1 = p.process("E3", e0);
+        assertEqualsPathAliasAware(e0, e1);
+    }
+
+    @Test
     void relChainEndingWithAttribute() {
         Expression e0 = exp("e2.e3s.name");
+        Expression e1 = p.process("E3", e0);
+        assertEqualsPathAliasAware(e0, e1);
+    }
+
+    @Test
+    void relChainAliasEndingWithAttribute() {
+        Expression e0 = exp("e2#alias1.e3s.name");
+        Expression e1 = p.process("E3", e0);
+        assertEqualsPathAliasAware(e0, e1);
+    }
+
+    @Test
+    void relChainAliasEndingWithAttributeExpression() {
+        Expression e0 = exp("e2#alias1.e3s.name = 'a' and e2#alias2.e3s.name = 'b'");
+        Expression e1 = p.process("E3", e0);
+        assertEqualsPathAliasAware(e0, e1);
+    }
+
+    @Test
+    void relChainId() {
+        Expression e0 = exp("e2.e3s.id = 1");
         Expression e1 = p.process("E3", e0);
         assertEquals(e0, e1);
     }
 
     @Test
-    void relChainAliasEndingWithAttribute() {
-        Expression e0 = exp("e2#alias1.e3s.name = 'a' and e2#alias1.e3s.name = 'b'");
+    void relChainAliasId() {
+        Expression e0 = exp("e2#alias1.e3s.id = 1 and e2#alias2.e3s.id = 2");
         Expression e1 = p.process("E3", e0);
-        assertEquals(e0, e1);
+        assertEqualsPathAliasAware(e0, e1);
     }
 
     @Test
@@ -143,5 +186,21 @@ public class ICayenneExpPostProcessorIT extends MainDbTest {
     @Test
     void invalidPath() {
         assertThrows(AgException.class, () -> p.process("E2", exp("a.b.c = 2")));
+    }
+
+    static void assertEqualsPathAliasAware(Expression expected, Expression actual) {
+        assertEquals(expected, actual);
+
+        if(expected instanceof ASTPath && actual instanceof ASTPath) {
+            ASTPath expectedPath = (ASTPath) expected;
+            ASTPath actualPath = (ASTPath) actual;
+            assertEquals(expectedPath.getPathAliases(), actualPath.getPathAliases(), "Expressions have different path aliases");
+        }
+
+        SimpleNode expectedNode = (SimpleNode) expected;
+        SimpleNode actualNode = (SimpleNode) actual;
+        for(int i = 0; i < expectedNode.jjtGetNumChildren(); i++) {
+            assertEqualsPathAliasAware((Expression) expectedNode.jjtGetChild(i), (Expression)actualNode.jjtGetChild(i));
+        }
     }
 }

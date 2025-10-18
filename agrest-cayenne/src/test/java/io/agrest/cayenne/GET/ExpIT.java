@@ -517,7 +517,7 @@ public class ExpIT extends MainDbTest {
     }
 
     @Test
-    public void path_Alias() {
+    public void path_AliasAttr() {
 
         tester.e2().insertColumns("id_", "name")
                 .values(1, "xxx")
@@ -532,6 +532,44 @@ public class ExpIT extends MainDbTest {
         tester.target("/e2").queryParam("include", "id")
                 .queryParam("exp", "{\"exp\":\"e3s#a1.name = $name1 and e3s#a2.name = $name2\"" +
                         ",\"params\":{\"name1\": \"bbb\", \"name2\": \"ccc\"}}")
+                .get()
+                .wasOk().bodyEquals(1, "{\"id\":2}");
+    }
+
+    @Test
+    public void path_AliasRel() {
+
+        tester.e2().insertColumns("id_", "name")
+                .values(1, "xxx")
+                .values(2, "yyy").exec();
+
+        tester.e3().insertColumns("id_", "name", "e2_id")
+                .values(4, "aaa", 1)
+                .values(5, "bbb", 2)
+                .values(6, "ccc", 2)
+                .values(7, "ddd", 2).exec();
+
+        tester.target("/e2").queryParam("include", "id")
+                .queryParam("exp", "{\"exp\":\"e3s#a1 = 5 and e3s#a2 = 6\"}")
+                .get()
+                .wasOk().bodyEquals(1, "{\"id\":2}");
+    }
+
+    @Test
+    public void path_AliasId() {
+
+        tester.e2().insertColumns("id_", "name")
+                .values(1, "xxx")
+                .values(2, "yyy").exec();
+
+        tester.e3().insertColumns("id_", "name", "e2_id")
+                .values(4, "aaa", 1)
+                .values(5, "bbb", 2)
+                .values(6, "ccc", 2)
+                .values(7, "ddd", 2).exec();
+
+        tester.target("/e2").queryParam("include", "id")
+                .queryParam("exp", "{\"exp\":\"e3s#a1.id = 5 and e3s#a2.id = 6\"}")
                 .get()
                 .wasOk().bodyEquals(1, "{\"id\":2}");
     }

@@ -110,6 +110,12 @@ public class CayenneExpParserTest {
     }
 
     @Test
+    public void parseEqual_DbPathAlias() {
+        Expression e = parser.parse(Exp.equal("db:a#alias1", 5));
+        assertEquals(ExpressionFactory.exp("db:a#alias1 = 5"), e);
+    }
+
+    @Test
     public void parseCompositeCondition() {
 
         Exp e0 = Exp.parse("a = 'b'");
