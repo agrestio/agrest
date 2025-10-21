@@ -21,6 +21,8 @@
         <module>agrest-jaxrs2-openapi</module>
         <module>agrest-cayenne</module>
         <module>agrest-bom</module>
+        <module>agrest-spring-boot-starter</module>
+        <module>agrest-spring-it</module>
     </modules>
 
     <properties>
@@ -32,7 +34,7 @@
         <!-- Upstream dependency versions (including "test" dependencies) -->
         <slf4j.version>2.0.17</slf4j.version>
         <cayenne.version>4.2.2</cayenne.version>
-
+ 
         <!-- JAX-RS 2 is deprecated -->
         <jaxrs2.version>2.1.6</jaxrs2.version>
 
@@ -40,6 +42,7 @@
         <jackson.version>2.15.4</jackson.version>
         <jackson.databind.version>2.15.4</jackson.databind.version>
         <bq.version>3.0-M6</bq.version>
+        <spring.boot.version>2.7.5</spring.boot.version>
         <junit5.version>5.12.1</junit5.version>
         <swagger.version>2.2.23</swagger.version>
         <mockito.version>3.9.0</mockito.version>
