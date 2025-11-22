@@ -2,6 +2,7 @@
 
 * #694 Expressions: negative numerics translate to a invalid Cayenne expression 
 * #697 Exp: path aliases are not functional 
+* #699 Upgrade to Cayenne 4.2.3
 
 ## Release 5.0-RC1
 
