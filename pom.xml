@@ -313,6 +313,9 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>sonatype-central</publishingServerId>
+                    <excludeArtifacts>
+                        <excludeArtifact>agrest-java17-tests</excludeArtifact>
+                    </excludeArtifacts>
                 </configuration>
             </plugin>
         </plugins>
