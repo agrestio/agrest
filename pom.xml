@@ -39,7 +39,7 @@
         <jaxrs3.version>3.0.0</jaxrs3.version>
         <jackson.version>2.15.4</jackson.version>
         <jackson.databind.version>2.15.4</jackson.databind.version>
-        <bq.version>3.0-M6</bq.version>
+        <bq.version>3.0-RC1</bq.version>
         <junit5.version>5.12.1</junit5.version>
         <swagger.version>2.2.23</swagger.version>
         <mockito.version>3.9.0</mockito.version>
