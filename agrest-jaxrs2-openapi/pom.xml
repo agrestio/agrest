@@ -5,12 +5,12 @@
     <parent>
         <groupId>io.agrest</groupId>
         <artifactId>agrest-parent</artifactId>
-        <version>5.0-SNAPSHOT</version>
+        <version>5.0-RC2</version>
     </parent>
 
     <!-- *** The module is deprecated -->
     <artifactId>agrest-jaxrs2-openapi</artifactId>
-    <version>5.0-SNAPSHOT</version>
+    <version>5.0-RC2</version>
     <name>agrest-jaxrs2-openapi: OpenAPI3/Swagger for JAX-RS 2 Agrest</name>
 
     <dependencyManagement>
