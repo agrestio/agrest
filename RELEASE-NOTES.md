@@ -1,3 +1,7 @@
+## Release 6.0-M1
+
+*  #701 Require Java 21
+
 ## Release 5.0
 
 * #700 Upgrade Jackson to 2.19.4
