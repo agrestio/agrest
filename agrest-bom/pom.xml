@@ -70,6 +70,11 @@
             </dependency>
             <dependency>
                 <groupId>io.agrest</groupId>
+                <artifactId>agrest-jaxrs3-openapi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.agrest</groupId>
                 <artifactId>agrest-jaxrs2</artifactId>
                 <version>${project.version}</version>
             </dependency>
