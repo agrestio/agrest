@@ -106,7 +106,7 @@ public interface Exp {
      * @since 5.0
      */
     static Exp in(String path, Object... scalars) {
-        if(scalars.length == 0){
+        if (scalars.length == 0) {
             return new ExpFalse();
         }
         return ExpUtils.composeBinary(new ExpIn(), path(path), ExpUtils.scalarArray(scalars));
@@ -116,7 +116,7 @@ public interface Exp {
      * @since 5.0
      */
     static Exp notIn(String path, Object... scalars) {
-        if(scalars.length == 0){
+        if (scalars.length == 0) {
             return new ExpTrue();
         }
         return ExpUtils.composeBinary(new ExpNotIn(), path(path), ExpUtils.scalarArray(scalars));
@@ -211,12 +211,10 @@ public interface Exp {
      */
     static Exp and(Exp... exps) {
         int len = exps.length;
-        switch (len) {
-            case 0:
-                return null;
-            case 1:
-                return exps[0];
-            default:
+        return switch (len) {
+            case 0 -> null;
+            case 1 -> exps[0];
+            default -> {
                 List<Node> children = new ArrayList<>(len);
 
                 for (Exp e : exps) {
@@ -226,8 +224,9 @@ public interface Exp {
                 ExpAnd exp = new ExpAnd();
                 exp.setChildren(children.toArray(new Node[0]));
 
-                return exp;
-        }
+                yield exp;
+            }
+        };
     }
 
     /**
@@ -235,12 +234,10 @@ public interface Exp {
      */
     static Exp or(Exp... exps) {
         int len = exps.length;
-        switch (len) {
-            case 0:
-                return null;
-            case 1:
-                return exps[0];
-            default:
+        return switch (len) {
+            case 0 -> null;
+            case 1 -> exps[0];
+            default -> {
                 List<Node> children = new ArrayList<>(len);
 
                 for (Exp e : exps) {
@@ -249,8 +246,9 @@ public interface Exp {
 
                 ExpOr exp = new ExpOr();
                 exp.setChildren(children.toArray(new Node[0]));
-                return exp;
-        }
+                yield exp;
+            }
+        };
     }
 
     /**

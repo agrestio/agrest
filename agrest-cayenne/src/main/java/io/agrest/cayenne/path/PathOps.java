@@ -33,14 +33,11 @@ public class PathOps {
      */
     public static ASTDbPath resolveAsDbPath(ASTPath p) {
 
-        switch (p.getType()) {
-            case Expression.DB_PATH:
-                return (ASTDbPath) p;
-            case Expression.OBJ_PATH:
-                return resolveAsDbPath(p);
-            default:
-                throw new IllegalArgumentException("Unexpected p type: " + p.getType());
-        }
+        return switch (p.getType()) {
+            case Expression.DB_PATH -> (ASTDbPath) p;
+            case Expression.OBJ_PATH -> resolveAsDbPath(p);
+            default -> throw new IllegalArgumentException("Unexpected p type: " + p.getType());
+        };
     }
 
     /**
@@ -48,14 +45,11 @@ public class PathOps {
      */
     public static ASTPath concat(ObjEntity entity, ASTPath p1, ASTPath p2) {
 
-        switch (p1.getType()) {
-            case Expression.DB_PATH:
-                return concatWithDbPath(entity, (ASTDbPath) p1, p2);
-            case Expression.OBJ_PATH:
-                return concatWithObjPath(entity, (ASTObjPath) p1, p2);
-            default:
-                throw new IllegalArgumentException("Unexpected p1 type: " + p1.getType());
-        }
+        return switch (p1.getType()) {
+            case Expression.DB_PATH -> concatWithDbPath(entity, (ASTDbPath) p1, p2);
+            case Expression.OBJ_PATH -> concatWithObjPath(entity, (ASTObjPath) p1, p2);
+            default -> throw new IllegalArgumentException("Unexpected p1 type: " + p1.getType());
+        };
     }
 
     /**
@@ -63,15 +57,14 @@ public class PathOps {
      */
     public static ASTPath concatWithDbPath(ObjEntity entity, ASTDbPath p1, ASTPath p2) {
 
-        switch (p2.getType()) {
-            case Expression.DB_PATH:
-                return new ASTDbPath(p1.getPath() + "." + p2.getPath());
-            case Expression.OBJ_PATH:
+        return switch (p2.getType()) {
+            case Expression.DB_PATH -> new ASTDbPath(p1.getPath() + "." + p2.getPath());
+            case Expression.OBJ_PATH -> {
                 ASTDbPath p2DB = resolveAsDbPath(entity, (ASTObjPath) p2);
-                return new ASTDbPath(p1.getPath() + "." + p2DB.getPath());
-            default:
-                throw new IllegalArgumentException("Unexpected p2 type: " + p2.getType());
-        }
+                yield new ASTDbPath(p1.getPath() + "." + p2DB.getPath());
+            }
+            default -> throw new IllegalArgumentException("Unexpected p2 type: " + p2.getType());
+        };
     }
 
     /**
@@ -79,14 +72,11 @@ public class PathOps {
      */
     public static ASTPath concatWithObjPath(ObjEntity entity, ASTObjPath p1, ASTPath p2) {
 
-        switch (p2.getType()) {
-            case Expression.DB_PATH:
-                return concatWithDbPath(entity, resolveAsDbPath(entity, p1), p2);
-            case Expression.OBJ_PATH:
-                return new ASTObjPath(p1.getPath() + "." + p2.getPath());
-            default:
-                throw new IllegalArgumentException("Unexpected p2 type: " + p2.getType());
-        }
+        return switch (p2.getType()) {
+            case Expression.DB_PATH -> concatWithDbPath(entity, resolveAsDbPath(entity, p1), p2);
+            case Expression.OBJ_PATH -> new ASTObjPath(p1.getPath() + "." + p2.getPath());
+            default -> throw new IllegalArgumentException("Unexpected p2 type: " + p2.getType());
+        };
     }
 
     private static ASTDbPath resolveAsDbPath(ObjEntity entity, ASTObjPath objPath) {
@@ -97,7 +87,7 @@ public class PathOps {
 
             CayenneMapEntry e = it.next();
 
-            if (buffer.length() > 0) {
+            if (!buffer.isEmpty()) {
                 buffer.append('.');
             }
 

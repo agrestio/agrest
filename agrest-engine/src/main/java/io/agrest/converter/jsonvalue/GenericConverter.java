@@ -18,20 +18,14 @@ public class GenericConverter implements JsonValueConverter<Object> {
 	public Object value(JsonNode valueNode) {
 		JsonToken type = valueNode.asToken();
 
-		switch (type) {
-		case VALUE_NUMBER_INT:
-			return valueNode.asInt();
-		case VALUE_NUMBER_FLOAT:
-			return valueNode.asDouble();
-		case VALUE_TRUE:
-			return Boolean.TRUE;
-		case VALUE_FALSE:
-			return Boolean.FALSE;
-		case VALUE_NULL:
-			return null;
-		default:
-			return valueNode.asText();
-		}
+        return switch (type) {
+            case VALUE_NUMBER_INT -> valueNode.asInt();
+            case VALUE_NUMBER_FLOAT -> valueNode.asDouble();
+            case VALUE_TRUE -> Boolean.TRUE;
+            case VALUE_FALSE -> Boolean.FALSE;
+            case VALUE_NULL -> null;
+            default -> valueNode.asText();
+        };
 	}
 
 }

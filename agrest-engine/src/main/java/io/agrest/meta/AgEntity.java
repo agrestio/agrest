@@ -80,19 +80,19 @@ public interface AgEntity<T> {
      */
     default DataReader getIdReader() {
         Collection<AgIdPart> ids = getIdParts();
-        switch (ids.size()) {
-            case 0:
-                throw new IllegalStateException("Can't create ID reader. No id parts defined for entity '" + getName() + "'");
-            case 1:
+        return switch (ids.size()) {
+            case 0 ->
+                    throw new IllegalStateException("Can't create ID reader. No id parts defined for entity '" + getName() + "'");
+            case 1 -> {
                 AgIdPart idPart = ids.iterator().next();
-                return o -> Collections.singletonMap(idPart.getName(), idPart.getDataReader().read(o));
-            default:
-                return o -> {
-                    Map<String, Object> values = new HashMap<>();
-                    ids.forEach(idx -> values.put(idx.getName(), idx.getDataReader().read(o)));
-                    return values;
-                };
-        }
+                yield o -> Collections.singletonMap(idPart.getName(), idPart.getDataReader().read(o));
+            }
+            default -> o -> {
+                Map<String, Object> values = new HashMap<>();
+                ids.forEach(idx -> values.put(idx.getName(), idx.getDataReader().read(o)));
+                return values;
+            };
+        };
     }
 
     /**

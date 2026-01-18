@@ -32,14 +32,11 @@ public abstract class AgEntityAwareModelConverter extends AgModelConverter {
     }
 
     protected Schema doResolveId(AgEntity<?> entity, ModelConverterContext context, PropertyAccessChecker accessChecker) {
-        switch (entity.getIdParts().size()) {
-            case 0:
-                return null;
-            case 1:
-                return doResolveSingleId(entity, context, accessChecker);
-            default:
-                return doResolveIdMap(entity, context, accessChecker);
-        }
+        return switch (entity.getIdParts().size()) {
+            case 0 -> null;
+            case 1 -> doResolveSingleId(entity, context, accessChecker);
+            default -> doResolveIdMap(entity, context, accessChecker);
+        };
     }
 
     protected Schema doResolveSingleId(AgEntity<?> entity, ModelConverterContext context, PropertyAccessChecker accessChecker) {

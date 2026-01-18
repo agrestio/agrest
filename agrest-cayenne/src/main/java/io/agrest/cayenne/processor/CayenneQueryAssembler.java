@@ -398,17 +398,11 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
     }
 
     private SortOrder toSortOrder(Direction direction) {
-        switch (direction) {
-            case asc:
-                return SortOrder.ASCENDING;
-            case asc_ci:
-                return SortOrder.ASCENDING_INSENSITIVE;
-            case desc_ci:
-                return SortOrder.DESCENDING_INSENSITIVE;
-            case desc:
-                return SortOrder.DESCENDING;
-            default:
-                throw new IllegalArgumentException("Missing or unexpected sort direction: " + direction);
-        }
+        return switch (direction) {
+            case asc -> SortOrder.ASCENDING;
+            case asc_ci -> SortOrder.ASCENDING_INSENSITIVE;
+            case desc_ci -> SortOrder.DESCENDING_INSENSITIVE;
+            case desc -> SortOrder.DESCENDING;
+        };
     }
 }

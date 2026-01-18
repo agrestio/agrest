@@ -52,14 +52,11 @@ public class JacksonService implements IJacksonService {
                 // therefore these two whitespace characters,
                 // which are perfectly valid in JSON but invalid in JS strings,
                 // need to be escaped...
-                switch (ch) {
-                    case '\u2028':
-                        return LINE_SEPARATOR;
-                    case '\u2029':
-                        return PARAGRAPH_SEPARATOR;
-                    default:
-                        return null;
-                }
+                return switch (ch) {
+                    case '\u2028' -> LINE_SEPARATOR;
+                    case '\u2029' -> PARAGRAPH_SEPARATOR;
+                    default -> null;
+                };
             }
         });
 

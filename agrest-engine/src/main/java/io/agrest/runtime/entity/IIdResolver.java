@@ -12,7 +12,7 @@ import java.util.List;
 public interface IIdResolver {
 
     default AgObjectId resolve(AgEntity<?> entity, Object idValue) {
-        return idValue != null ? resolve(entity, List.of(idValue)).get(0) : null;
+        return idValue != null ? resolve(entity, List.of(idValue)).getFirst() : null;
     }
 
     List<AgObjectId> resolve(AgEntity<?> entity, Collection<?> idValues);

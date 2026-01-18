@@ -34,29 +34,23 @@ public class BeanAnalyzer {
     private static PropertyGetter fromGetter(Method maybeGetter) {
         String n = maybeGetter.getName();
 
-        switch (getterType(maybeGetter)) {
-            case simple:
-                return new PropertyGetter(n, maybeGetter);
-            case classic:
-                return new PropertyGetter(Character.toLowerCase(n.charAt(3)) + n.substring(4), maybeGetter);
-            case classic_bool:
-                return new PropertyGetter(Character.toLowerCase(n.charAt(2)) + n.substring(3), maybeGetter);
-            case not_getter:
-            default:
-                return null;
-        }
+        return switch (getterType(maybeGetter)) {
+            case simple -> new PropertyGetter(n, maybeGetter);
+            case classic -> new PropertyGetter(Character.toLowerCase(n.charAt(3)) + n.substring(4), maybeGetter);
+            case classic_bool -> new PropertyGetter(Character.toLowerCase(n.charAt(2)) + n.substring(3), maybeGetter);
+            default -> null;
+        };
     }
 
     private static PropertySetter fromSetter(Method maybeSetter) {
         String n = maybeSetter.getName();
-        switch (setterType(maybeSetter)) {
-            case classic:
+        return switch (setterType(maybeSetter)) {
+            case classic -> {
                 Class<?> pt = maybeSetter.getParameterTypes()[0];
-                return new PropertySetter(Character.toLowerCase(n.charAt(3)) + n.substring(4), pt, maybeSetter);
-            case not_setter:
-            default:
-                return null;
-        }
+                yield new PropertySetter(Character.toLowerCase(n.charAt(3)) + n.substring(4), pt, maybeSetter);
+            }
+            case not_setter -> null;
+        };
     }
 
     private static GetterType getterType(Method method) {

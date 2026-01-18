@@ -217,12 +217,8 @@ public class CayenneAgEntityBuilder<T> {
             //  also declared as ID, and hence should not be exposed as an attribute anymore
 
             switch (IdMergeType.of(cayenneEntity.getName(), annotatedIdParts)) {
-                case replace:
-                    replaceIds(annotatedIdParts);
-                    break;
-                case merge_single:
-                    mergeSingleId(annotatedIdParts.iterator().next());
-                    break;
+                case replace -> replaceIds(annotatedIdParts);
+                case merge_single -> mergeSingleId(annotatedIdParts.iterator().next());
             }
         }
 

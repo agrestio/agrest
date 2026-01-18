@@ -1,20 +1,14 @@
 package io.agrest.runtime.entity;
 
-import io.agrest.AgException;
-import io.agrest.PathConstants;
 import io.agrest.ResourceEntity;
 import io.agrest.ResourceEntityProjection;
 import io.agrest.access.PathChecker;
 import io.agrest.meta.AgAttribute;
-import io.agrest.meta.AgEntityOverlay;
-import io.agrest.meta.AgSchema;
 import io.agrest.protocol.Include;
 import io.agrest.runtime.meta.RequestSchema;
 import org.apache.cayenne.di.Inject;
 
 import java.util.List;
-import java.util.Map;
-
 
 public class IncludeMerger implements IIncludeMerger {
 

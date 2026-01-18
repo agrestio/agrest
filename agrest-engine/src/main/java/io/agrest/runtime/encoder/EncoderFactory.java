@@ -154,19 +154,18 @@ public class EncoderFactory {
             entries.add(entry(relationship.getName(), property));
         }
 
-        switch (entries.size()) {
-            case 0:
-                return Collections.emptyMap();
-            case 1:
-                return Map.ofEntries(entries.get(0));
-            default:
+        return switch (entries.size()) {
+            case 0 -> Collections.emptyMap();
+            case 1 -> Map.ofEntries(entries.getFirst());
+            default -> {
                 // sort properties alphabetically to ensure predictable and user-friendly JSON
                 entries.sort(Map.Entry.comparingByKey());
                 Map<String, EncodableProperty> sorted = new LinkedHashMap<>((int) Math.ceil(entries.size() / 0.75));
                 entries.forEach(e -> sorted.put(e.getKey(), e.getValue()));
 
-                return sorted;
-        }
+                yield sorted;
+            }
+        };
     }
 
     protected MapByEncoder mapByEncoder(ResourceEntity<?> entity, Encoder encoder, ProcessingContext<?> context) {

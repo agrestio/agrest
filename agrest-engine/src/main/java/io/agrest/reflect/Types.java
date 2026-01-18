@@ -37,7 +37,7 @@ public class Types {
      * @since 2.11
      */
     public static Optional<Class<?>> getClassForTypeArgument(Type genericType) {
-        return Types.unwrapTypeArgument(genericType).map(Types::getClassForType).orElse(Optional.empty());
+        return Types.unwrapTypeArgument(genericType).flatMap(Types::getClassForType);
     }
 
     /**
@@ -78,32 +78,23 @@ public class Types {
             throw AgException.internalServerError("Type name cannot be null");
         }
 
-        switch (typeName) {
-            case "byte[]":
-                return byte[].class;
-            case "boolean":
-                return boolean.class;
-            case "byte":
-                return byte.class;
-            case "char":
-                return char.class;
-            case "short":
-                return short.class;
-            case "int":
-                return int.class;
-            case "long":
-                return long.class;
-            case "float":
-                return float.class;
-            case "double":
-                return double.class;
-            default: {
+        return switch (typeName) {
+            case "byte[]" -> byte[].class;
+            case "boolean" -> boolean.class;
+            case "byte" -> byte.class;
+            case "char" -> char.class;
+            case "short" -> short.class;
+            case "int" -> int.class;
+            case "long" -> long.class;
+            case "float" -> float.class;
+            case "double" -> double.class;
+            default -> {
                 try {
-                    return Class.forName(typeName);
+                    yield Class.forName(typeName);
                 } catch (ClassNotFoundException e) {
                     throw AgException.internalServerError(e, "Unknown class: %s", typeName);
                 }
             }
-        }
+        };
     }
 }

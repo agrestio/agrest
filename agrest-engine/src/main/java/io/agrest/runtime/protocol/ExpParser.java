@@ -23,25 +23,17 @@ public class ExpParser implements IExpParser {
     private static Object extractValue(JsonNode valueNode) {
         JsonToken type = valueNode.asToken();
 
-        switch (type) {
-            case VALUE_STRING:
-                return valueNode.asText();
-            case VALUE_NUMBER_INT:
-                return valueNode.asInt();
-            case VALUE_NUMBER_FLOAT:
-                return valueNode.asDouble();
-            case VALUE_TRUE:
-                return Boolean.TRUE;
-            case VALUE_FALSE:
-                return Boolean.FALSE;
-            case VALUE_NULL:
-                return null;
-            case START_ARRAY:
-                return extractArray(valueNode);
-            default:
-                // TODO: what else is left out? START_OBJECT maybe for map parameters?
-                return valueNode;
-        }
+        return switch (type) {
+            case VALUE_STRING -> valueNode.asText();
+            case VALUE_NUMBER_INT -> valueNode.asInt();
+            case VALUE_NUMBER_FLOAT -> valueNode.asDouble();
+            case VALUE_TRUE -> Boolean.TRUE;
+            case VALUE_FALSE -> Boolean.FALSE;
+            case VALUE_NULL -> null;
+            case START_ARRAY -> extractArray(valueNode);
+            // TODO: what else is left out? START_OBJECT maybe for map parameters?
+            default -> valueNode;
+        };
     }
 
     private static List<Object> extractArray(JsonNode arrayNode) {
