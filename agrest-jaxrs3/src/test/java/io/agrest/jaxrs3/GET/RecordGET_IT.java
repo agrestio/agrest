@@ -1,11 +1,11 @@
-package io.agrest.j17;
+package io.agrest.jaxrs3.GET;
 
 import io.agrest.DataResponse;
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
-import io.agrest.j17.junit.AgPojoTester;
 import io.agrest.jaxrs3.AgJaxrs;
+import io.agrest.jaxrs3.junit.AgPojoTester;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.bootique.jetty.junit5.JettyTester;
@@ -32,7 +32,7 @@ public class RecordGET_IT {
 
     @Test
     public void empty() {
-        Response r = tester.target().path("/r11").request().get();
+        Response r = tester.internalTarget().path("/r11").request().get();
         JettyTester.assertOk(r)
                 .assertContent("""
                         {"data":[],"total":0}""");
@@ -40,7 +40,7 @@ public class RecordGET_IT {
 
     @Test
     public void basic() {
-        Response r = tester.target().path("/r12").request().get();
+        Response r = tester.internalTarget().path("/r12").request().get();
         JettyTester.assertOk(r)
                 .assertContent("""
                         {"data":[{"id":1,"agAt1":"a1"},{"id":2,"agAt1":"a2"}],"total":2}""");
@@ -48,7 +48,8 @@ public class RecordGET_IT {
 
     @Test
     public void includes() {
-        Response r = tester.target().path("/r12")
+        Response r = tester.internalTarget()
+                .path("/r12")
                 .queryParam("include", "id", "agRel1", "agRel2")
                 .request().get();
         JettyTester.assertOk(r)

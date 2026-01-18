@@ -324,23 +324,11 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>sonatype-central</publishingServerId>
-                    <excludeArtifacts>
-                        <excludeArtifact>agrest-java17-tests</excludeArtifact>
-                    </excludeArtifacts>
                 </configuration>
             </plugin>
         </plugins>
     </build>
     <profiles>
-        <profile>
-            <id>java17</id>
-            <activation>
-                <jdk>[17,)</jdk>
-            </activation>
-            <modules>
-                <module>agrest-java17-tests</module>
-            </modules>
-        </profile>
         <!-- Release profile - sign artifacts; do extra checks to ensure we don't miss anything.. -->
         <profile>
             <id>release</id>

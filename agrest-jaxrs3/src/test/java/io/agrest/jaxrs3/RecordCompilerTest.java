@@ -1,9 +1,10 @@
-package io.agrest.j17;
+package io.agrest.jaxrs3;
+
 
 import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.annotation.AgRelationship;
-import io.agrest.j17.junit.AgPojoTester;
+import io.agrest.jaxrs3.junit.AgPojoTester;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgSchema;
