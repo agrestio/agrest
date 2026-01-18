@@ -1,6 +1,5 @@
 package io.agrest.cayenne.DELETE;
 
-import io.agrest.EntityDelete;
 import io.agrest.SimpleResponse;
 import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
@@ -15,9 +14,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.Context;
-import org.junit.jupiter.api.Test;
-
-import java.util.Collection;
+import org.junit.jupiter.api.Test; 
 
 public class RelatedIT extends MainDbTest {
 
@@ -130,12 +127,6 @@ public class RelatedIT extends MainDbTest {
         @Path("{id}")
         public SimpleResponse deleteE2ById(@PathParam("id") int id) {
             return AgJaxrs.delete(E2.class, config).byId(id).sync();
-        }
-
-        @Deprecated
-        @DELETE
-        public SimpleResponse deleteE2_Batch(Collection<EntityDelete<E2>> deleted) {
-            return AgJaxrs.runtime(config).delete(E2.class, deleted);
         }
 
         @DELETE

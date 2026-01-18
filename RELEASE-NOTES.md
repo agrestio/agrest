@@ -1,6 +1,7 @@
 ## Release 6.0-M1
 
-*  #701 Require Java 21
+* #701 Require Java 21
+* #702 Remove modules and APIs deprecated in 5.x
 
 ## Release 5.0
 

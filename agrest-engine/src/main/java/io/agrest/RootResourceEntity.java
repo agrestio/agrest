@@ -12,8 +12,6 @@ import java.util.List;
  */
 public class RootResourceEntity<T> extends ResourceEntity<T> {
 
-    @Deprecated(since = "5.0", forRemoval = true)
-    private String applicationBase;
     private List<T> data;
 
     public RootResourceEntity(AgEntity<T> agEntity) {
@@ -38,44 +36,10 @@ public class RootResourceEntity<T> extends ResourceEntity<T> {
     }
 
     /**
-     * @deprecated in favor of {@link #getData()}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public List<T> getResult() {
-        return data;
-    }
-
-    /**
      * @since 5.0
      */
     public void setData(List<T> data) {
         this.data = data;
-    }
-
-    /**
-     * @deprecated in favor of {@link #setData(List)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public void setResult(List<T> data) {
-        this.data = data;
-    }
-
-    /**
-     * @since 1.20
-     * @deprecated as metadata encoding that used this was removed from Agrest
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public String getApplicationBase() {
-        return applicationBase;
-    }
-
-    /**
-     * @since 1.20
-     * @deprecated as metadata encoding that used this was removed from Agrest
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public void setApplicationBase(String applicationBase) {
-        this.applicationBase = applicationBase;
     }
 
     public RootDataResolver<T> getResolver() {

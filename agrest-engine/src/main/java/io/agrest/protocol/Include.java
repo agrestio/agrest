@@ -62,14 +62,6 @@ public class Include {
         return sorts;
     }
 
-    /**
-     * @deprecated in favor of {@link #getSorts()}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public List<Sort> getOrderings() {
-        return getSorts();
-    }
-
     @Override
     public String toString() {
         return "include " + path;

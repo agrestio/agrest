@@ -2,8 +2,6 @@ package io.agrest.runtime.processor.select;
 
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
-import io.agrest.DataResponse;
-import io.agrest.HttpStatus;
 import io.agrest.RootResourceEntity;
 import io.agrest.SizeConstraints;
 import io.agrest.access.PathChecker;
@@ -15,7 +13,6 @@ import io.agrest.runtime.EntityParent;
 import io.agrest.runtime.meta.RequestSchema;
 import org.apache.cayenne.di.Injector;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +24,8 @@ import java.util.Map;
 public class SelectContext<T> extends BaseProcessingContext<T> {
 
     private final RequestSchema schema;
+    private final AgRequestBuilder requestBuilder;
+
     private Object unresolvedId;
     private AgObjectId id;
     private EntityParent<?> parent;
@@ -34,7 +33,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
     private SizeConstraints sizeConstraints;
     private boolean atMostOneObject;
     private Encoder encoder;
-    private AgRequestBuilder requestBuilder;
     private PathChecker pathChecker;
 
     public SelectContext(
@@ -48,24 +46,6 @@ public class SelectContext<T> extends BaseProcessingContext<T> {
         this.schema = schema;
         this.requestBuilder = requestBuilder;
         this.pathChecker = pathChecker;
-    }
-
-    /**
-     * Returns a new response object reflecting the context state.
-     *
-     * @return a new response object reflecting the context state.
-     * @since 1.24
-     * @deprecated unused anymore, as the context should not be creating a response. It is the responsibility of a
-     * pipeline
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public DataResponse<T> createDataResponse() {
-        int status = getResponseStatus() != null ? getResponseStatus() : HttpStatus.OK;
-
-        // support null ResourceEntity for cases with terminal stages invoked prior to SelectStage.CREATE_ENTITY
-        return entity != null
-                ? DataResponse.of(status, entity.getDataWindow()).headers(getResponseHeaders()).total(entity.getData().size()).encoder(encoder).build()
-                : DataResponse.of(status, Collections.<T>emptyList()).headers(getResponseHeaders()).build();
     }
 
     public boolean isById() {

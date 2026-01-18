@@ -34,22 +34,6 @@ public interface UpdateBuilder<T> {
     UpdateBuilder<T> byId(Object id);
 
     /**
-     * @deprecated in favor of {@link #byId(Object)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    default UpdateBuilder<T> id(Object id) {
-        return byId(id);
-    }
-
-    /**
-     * @deprecated in favor of {@link #byId(Object)}.
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    default UpdateBuilder<T> id(Map<String, Object> id) {
-        return byId(id);
-    }
-
-    /**
      * Sets up a relationship clause for all objects in this update.
      */
     UpdateBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent);

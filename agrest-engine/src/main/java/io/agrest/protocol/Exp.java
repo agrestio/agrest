@@ -1,6 +1,5 @@
 package io.agrest.protocol;
 
-import io.agrest.exp.ExpVisitor;
 import io.agrest.exp.parser.*;
 
 import java.util.ArrayList;
@@ -24,30 +23,6 @@ public interface Exp {
      */
     static Exp parse(String expString) {
         return AgExpressionParser.parse(Objects.requireNonNull(expString));
-    }
-
-    /**
-     * @deprecated in favor of {@link #parse(String)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    static Exp simple(String template) {
-        return parse(template);
-    }
-
-    /**
-     * @deprecated in favor of {@link #parse(String)} and {@link #namedParams(Map)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    static Exp witNamedParams(String template, Map<String, Object> params) {
-        return parse(template).namedParams(params);
-    }
-
-    /**
-     * @deprecated in favor of {@link #parse(String)} and {@link #positionalParams(Object...)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    static Exp withPositionalParams(String template, Object... params) {
-        return parse(template).positionalParams(params);
     }
 
     /**
@@ -305,18 +280,6 @@ public interface Exp {
      */
     default Exp namedParams(Map<String, Object> params, boolean pruneMissing) {
         return this;
-    }
-
-    /**
-     * Invokes a callback on the visitor corresponding to one of the known expression types. The operation is
-     * non-recursive even for composite expressions. If the visitor needs to descend into expression tree, it will
-     * need to implement this logic on its own.
-     *
-     * @deprecated in favor of {@link #accept(AgExpressionParserVisitor, Object)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    default void visit(ExpVisitor visitor) {
-        // DO NOTHING
     }
 
     /**

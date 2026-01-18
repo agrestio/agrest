@@ -37,20 +37,6 @@ public class DefaultDeleteBuilder<T> implements DeleteBuilder<T> {
         return this;
     }
 
-    @Deprecated(since = "5.0", forRemoval = true)
-    @Override
-    public DeleteBuilder<T> id(Object id) {
-        context.addId(AgObjectId.of(id));
-        return this;
-    }
-
-    @Deprecated(since = "5.0", forRemoval = true)
-    @Override
-    public DeleteBuilder<T> id(Map<String, Object> id) {
-        context.addId(AgObjectId.ofMap(id));
-        return this;
-    }
-
     @Override
     public DeleteBuilder<T> parent(Class<?> parentType, Object parentId, String relationshipFromParent) {
         context.setParent(new EntityParent<>(parentType, AgObjectId.of(parentId), relationshipFromParent));

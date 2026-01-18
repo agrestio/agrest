@@ -32,23 +32,6 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
         return new Builder<>(status, data);
     }
 
-    /**
-     * @deprecated in favor of the new builder created via {@link #of(int, List)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public static <T> DataResponse<T> forObject(T object) {
-        Objects.requireNonNull(object);
-        return of(HttpStatus.OK, List.of(object)).build();
-    }
-
-    /**
-     * @deprecated in favor of the new builder created via {@link #of(int, List)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public static <T> DataResponse<T> forObjects(List<T> data) {
-        return of(HttpStatus.OK, data).build();
-    }
-
     protected DataResponse(
             int status,
             Map<String, List<Object>> headers,
@@ -72,14 +55,6 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
         return data;
     }
 
-    /**
-     * @deprecated in favor of {@link #getData()}.
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public List<? extends T> getObjects() {
-        return data;
-    }
-
     public Encoder getEncoder() {
         return encoder;
     }
@@ -96,8 +71,8 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
 
     public static class Builder<T> {
 
-        private List<? extends T> data;
-        private Integer status;
+        private final List<? extends T> data;
+        private final Integer status;
         private Integer total;
         private Encoder encoder;
         private Map<String, List<Object>> headers;
@@ -112,18 +87,6 @@ public class DataResponse<T> extends AgResponse implements CollectionResponse<T>
          */
         public Builder headers(Map<String, List<Object>> headers) {
             this.headers = headers;
-            return this;
-        }
-
-        @Deprecated(since = "5.0", forRemoval = true)
-        public Builder<T> data(List<? extends T> data) {
-            this.data = data;
-            return this;
-        }
-
-        @Deprecated(since = "5.0", forRemoval = true)
-        public Builder<T> status(int status) {
-            this.status = status;
             return this;
         }
 

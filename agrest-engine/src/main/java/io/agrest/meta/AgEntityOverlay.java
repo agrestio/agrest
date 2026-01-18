@@ -394,14 +394,6 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated in favor of {@link #attribute(String, Class, Function)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public <V> AgEntityOverlay<T> redefineAttribute(String name, Class<V> valueType, Function<T, V> reader) {
-        return attribute(name, valueType, reader);
-    }
-
-    /**
      * Adds or replaces an attribute in the overlaid entity.
      *
      * @since 5.0
@@ -409,14 +401,6 @@ public class AgEntityOverlay<T> {
     public <V> AgEntityOverlay<T> attribute(String name, Class<V> valueType, Function<T, V> reader) {
         attributes.put(name, new DefaultAttributeOverlay(name, type, valueType, null, null, fromFunction(reader)));
         return this;
-    }
-
-    /**
-     * @deprecated in favor of {@link #attribute(String, Class, boolean, boolean, Function)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public <V> AgEntityOverlay<T> redefineAttribute(String name, Class<V> valueType, boolean readable, boolean writable, Function<T, V> reader) {
-        return attribute(name, valueType, readable, writable, reader);
     }
 
     /**
@@ -451,14 +435,6 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated in favor of {@link #toOne(String, Class, RelatedDataResolverFactory)}
-     */
-    @Deprecated(since = "5.0")
-    public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, RelatedDataResolverFactory resolverFactory) {
-        return toOne(name, targetType, resolverFactory);
-    }
-
-    /**
      * Adds or replaces a relationship overlay in the overlaid entity. This allows Agrest entities to declare properties not
      * present in the underlying Java objects or change how the standard relationships are read.
      *
@@ -471,14 +447,6 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated in favor of {@link #toOne(String, Class, boolean, boolean, RelatedDataResolverFactory)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, boolean readable, boolean writable, RelatedDataResolverFactory resolverFactory) {
-        return toOne(name, targetType, readable, writable, resolverFactory);
-    }
-
-    /**
      * Adds or replaces a relationship overlay in the overlaid entity. This allows Agrest entities to declare properties not
      * present in the underlying Java objects or change how the standard relationships are read.
      *
@@ -488,14 +456,6 @@ public class AgEntityOverlay<T> {
         RelatedDataResolver<?> resolver = resolverFactory.resolver(type, name);
         relationships.put(name, new DefaultRelationshipOverlay(name, type, targetType, false, readable, writable, resolver));
         return this;
-    }
-
-    /**
-     * @deprecated in favor of {@link #toOne(String, Class, Function)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, Function<T, V> reader) {
-        return toOne(name, targetType, reader);
     }
 
     /**
@@ -512,14 +472,6 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated in favor of {@link #toOne(String, Class, boolean, boolean, Function)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public <V> AgEntityOverlay<T> redefineToOne(String name, Class<V> targetType, boolean readable, boolean writable, Function<T, V> reader) {
-        return toOne(name, targetType, readable, writable, reader);
-    }
-
-    /**
      * Adds or replaces a to-one relationship in the overlaid entity. The value of the relationship will be
      * calculated from each entity object by applying the "reader" function. This allows Agrest entities
      * to declare properties not present in the underlying Java objects or change how the standard relationships are
@@ -530,14 +482,6 @@ public class AgEntityOverlay<T> {
     public <V> AgEntityOverlay<T> toOne(String name, Class<V> targetType, boolean readable, boolean writable, Function<T, V> reader) {
         relationships.put(name, new DefaultRelationshipOverlay(name, type, targetType, false, readable, writable, resolverForReader(reader)));
         return this;
-    }
-
-    /**
-     * @deprecated in favor of {@link #toMany(String, Class, RelatedDataResolverFactory)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, RelatedDataResolverFactory resolverFactory) {
-        return toMany(name, targetType, resolverFactory);
     }
 
     /**
@@ -553,14 +497,6 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated in favor of {@link #toMany(String, Class, boolean, boolean, RelatedDataResolverFactory)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, boolean readable, boolean writable, RelatedDataResolverFactory resolverFactory) {
-        return toMany(name, targetType, readable, writable, resolverFactory);
-    }
-
-    /**
      * Adds or replaces a relationship overlay in the overlaid entity. This allows Agrest entities to declare properties not
      * present in the underlying Java objects or change how the standard relationships are read.
      *
@@ -570,14 +506,6 @@ public class AgEntityOverlay<T> {
         RelatedDataResolver<?> resolver = resolverFactory.resolver(type, name);
         relationships.put(name, new DefaultRelationshipOverlay(name, type, targetType, true, readable, writable, resolver));
         return this;
-    }
-
-    /**
-     * @deprecated in favor of {@link #toMany(String, Class, Function)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, Function<T, List<V>> reader) {
-        return toMany(name, targetType, reader);
     }
 
     /**
@@ -594,14 +522,6 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated in favor of {@link #toMany(String, Class, boolean, boolean, Function)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public <V> AgEntityOverlay<T> redefineToMany(String name, Class<V> targetType, boolean readable, boolean writable, Function<T, List<V>> reader) {
-        return toMany(name, targetType, readable, writable, reader);
-    }
-
-    /**
      * Adds or replaces a to-many relationship in the overlaid entity. The value of the relationship will be
      * calculated from each entity object by applying the "reader" function. This allows Agrest entities
      * to declare properties not present in the underlying Java objects or change how the standard relationships are
@@ -615,14 +535,6 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated in favor of {@link #dataResolverFactory(RootDataResolverFactory)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public AgEntityOverlay<T> redefineDataResolverFactory(RootDataResolverFactory rootDataResolverFactory) {
-        return dataResolverFactory(rootDataResolverFactory);
-    }
-
-    /**
      * @since 5.0
      */
     public AgEntityOverlay<T> dataResolverFactory(RootDataResolverFactory rootDataResolverFactory) {
@@ -631,27 +543,11 @@ public class AgEntityOverlay<T> {
     }
 
     /**
-     * @deprecated in favor of {@link #dataResolver(RootDataResolver)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public AgEntityOverlay<T> redefineDataResolver(RootDataResolver<T> rootDataResolver) {
-        return dataResolver(rootDataResolver);
-    }
-
-    /**
      * @since 5.0
      */
     public AgEntityOverlay<T> dataResolver(RootDataResolver<T> rootDataResolver) {
         this.rootDataResolver = rootDataResolver;
         return this;
-    }
-
-    /**
-     * @deprecated in favor of {@link #dataResolver(Function)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public AgEntityOverlay<T> redefineDataResolver(Function<SelectContext<T>, List<T>> reader) {
-        return dataResolver(reader);
     }
 
     /**

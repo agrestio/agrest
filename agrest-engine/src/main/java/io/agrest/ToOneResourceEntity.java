@@ -27,27 +27,11 @@ public class ToOneResourceEntity<T> extends RelatedResourceEntity<T> {
     }
 
     /**
-     * @deprecated in favor of {@link #getDataByParent()}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public Map<AgObjectId, T> getResultsByParent() {
-        return getDataByParent();
-    }
-
-    /**
      * @since 5.0
      */
     public T getData(AgObjectId parentId) {
         // TODO: apply offset/limit like ToManyResourceEntity does, only to a single object?
         return dataByParent.get(parentId);
-    }
-
-    /**
-     * @deprecated in favor of {@link #getData(AgObjectId)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public T getResult(AgObjectId parentId) {
-        return getData(parentId);
     }
 
     @Override

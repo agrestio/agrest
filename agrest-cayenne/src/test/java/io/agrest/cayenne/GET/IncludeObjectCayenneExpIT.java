@@ -17,7 +17,7 @@ import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
 
-@Deprecated
+@Deprecated(forRemoval = false)
 public class IncludeObjectCayenneExpIT extends MainDbTest {
 
     @BQTestTool

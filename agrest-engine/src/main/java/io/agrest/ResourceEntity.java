@@ -138,26 +138,10 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * @deprecated in favor of {@link #getExp()}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public Exp getQualifier() {
-        return getExp();
-    }
-
-    /**
      * @since 5.0
      */
     public void andExp(Exp exp) {
         this.exp = this.exp != null ? this.exp.and(exp) : exp;
-    }
-
-    /**
-     * @deprecated in favor of {@link #andExp(Exp)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public void andQualifier(Exp qualifier) {
-        andExp(qualifier);
     }
 
     public List<Sort> getOrderings() {
@@ -278,15 +262,6 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * @since 1.1
-     * @deprecated in favor of {@link #mapBy(ResourceEntity)}. mapByPath parameter is ignored.
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public ResourceEntity<T> mapBy(ResourceEntity<?> mapBy, String mapByPath) {
-        return mapBy(mapBy);
-    }
-
-    /**
      * @since 5.0
      */
     public ResourceEntity<T> mapBy(ResourceEntity<?> mapBy) {
@@ -302,26 +277,10 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * @deprecated in favor of {@link #getStart()}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public int getFetchOffset() {
-        return getStart();
-    }
-
-    /**
      * @since 5.0
      */
     public void setStart(int start) {
         this.start = start;
-    }
-
-    /**
-     * @deprecated in favor of {@link #setStart(int)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public void setFetchOffset(int fetchOffset) {
-        setStart(fetchOffset);
     }
 
     /**
@@ -332,26 +291,10 @@ public abstract class ResourceEntity<T> {
     }
 
     /**
-     * @deprecated in favor of {@link #getLimit()}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public int getFetchLimit() {
-        return getLimit();
-    }
-
-    /**
      * @since 5.0
      */
     public void setLimit(int limit) {
         this.limit = limit;
-    }
-
-    /**
-     * @deprecated in favor of {@link #setLimit(int)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public void setFetchLimit(int fetchLimit) {
-        setLimit(fetchLimit);
     }
 
     /**
@@ -365,22 +308,6 @@ public abstract class ResourceEntity<T> {
         }
 
         return false;
-    }
-
-    /**
-     * @deprecated in favor of {@link #getProperty(String)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public <P> P getRequestProperty(String name) {
-        return getProperty(name);
-    }
-
-    /**
-     * @deprecated in favor of {@link #setProperty(String, Object)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public void setRequestProperty(String name, Object value) {
-        setProperty(name, value);
     }
 
     /**

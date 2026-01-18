@@ -2,9 +2,7 @@ package io.agrest.runtime;
 
 import io.agrest.AgRequestBuilder;
 import io.agrest.DeleteBuilder;
-import io.agrest.EntityDelete;
 import io.agrest.SelectBuilder;
-import io.agrest.SimpleResponse;
 import io.agrest.UnrelateBuilder;
 import io.agrest.UpdateBuilder;
 import io.agrest.access.PathChecker;
@@ -27,8 +25,6 @@ import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
 
 /**
  * Represents Agrest stack.
@@ -174,17 +170,6 @@ public class AgRuntime {
      */
     public <T> DeleteBuilder<T> delete(Class<T> type) {
         return new DefaultDeleteBuilder<>(createDeleteContext(type), deleteProcessorFactory);
-    }
-
-    /**
-     * @since 5.0
-     * @deprecated as DELETE HTTP method should have no body. Can be replaced with "delete(Class).byId(id1).byId(id2)"
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public <T> SimpleResponse delete(Class<T> root, Collection<EntityDelete<T>> deleted) {
-        DeleteBuilder<T> builder = delete(root);
-        deleted.forEach(entityDelete -> builder.byId(entityDelete.getId()));
-        return builder.sync();
     }
 
     private <T> SelectContext<T> createSelectContext(Class<T> type) {

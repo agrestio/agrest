@@ -37,27 +37,10 @@ public interface AgRequestBuilder {
      */
     AgRequestBuilder addSort(String unparsedSort);
 
-
-    /**
-     * @deprecated in favor of {@link #addSort(String)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    default AgRequestBuilder addOrdering(String unparsedSort) {
-        return addSort(unparsedSort);
-    }
-
     /**
      * @since 5.0
      */
     AgRequestBuilder addSort(String unparsedSort, String unparsedDirection);
-
-    /**
-     * @deprecated in favor of {@link #addSort(String, String)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    default AgRequestBuilder addOrdering(String unparsedSort, String unparsedDirection) {
-        return addSort(unparsedSort, unparsedDirection);
-    }
 
     /**
      * @since 5.0
@@ -65,25 +48,9 @@ public interface AgRequestBuilder {
     AgRequestBuilder addSort(Sort sort);
 
     /**
-     * @deprecated in favor of {@link #addSort(Sort)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    default AgRequestBuilder addOrdering(Sort sort) {
-        return addSort(sort);
-    }
-
-    /**
      * @since 5.0
      */
     AgRequestBuilder addSort(int index, Sort sort);
-
-    /**
-     * @deprecated in favor of {@link #addSort(int, Sort)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    default AgRequestBuilder addOrdering(int index, Sort sort) {
-        return addSort(index, sort);
-    }
 
     /**
      * @since 4.4

@@ -113,22 +113,6 @@ public interface SelectBuilder<T> {
     SelectBuilder<T> limit(int limit);
 
     /**
-     * @deprecated in favor of {@link #start(int)} to match the name of the Ag protocol parameter.
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    default SelectBuilder<T> fetchOffset(int offset) {
-        return start(offset);
-    }
-
-    /**
-     * @deprecated in favor of {@link #limit(int)} to match the name of the Ag protocol parameter.
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    default SelectBuilder<T> fetchLimit(int limit) {
-        return limit(limit);
-    }
-
-    /**
      * Sets the policy for the maximum depth of relationship paths, such as includes. This overrides runtime-defined
      * policy for this one request. Depth is counted from the root of the request. Only non-negative depths are allowed.
      * Zero depth blocks all relationships, "1" - blocks anything beyond direct relationships, and so on. Attribute

@@ -36,17 +36,6 @@ public class IncludeMerger implements IIncludeMerger {
     }
 
     /**
-     * @deprecated in favor of {@link PathChecker#exceedsLength(String)}. The new size
-     * limit is 1000 chars instead of 300.
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public static void checkTooLong(String path) {
-        if (path != null && path.length() > PathConstants.MAX_PATH_LENGTH) {
-            throw AgException.badRequest("Include/exclude path too long: %s", path);
-        }
-    }
-
-    /**
      * @since 3.4
      */
     @Override

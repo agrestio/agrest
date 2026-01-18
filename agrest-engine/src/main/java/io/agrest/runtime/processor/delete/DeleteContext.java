@@ -8,7 +8,6 @@ import io.agrest.runtime.meta.RequestSchema;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import org.apache.cayenne.di.Injector;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -39,14 +38,6 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
     }
 
     /**
-     * @deprecated in favor of {@link #isByIds()}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public boolean isById() {
-        return isByIds();
-    }
-
-    /**
      * @since 5.0
      */
     public Collection<?> getUnresolvedIds() {
@@ -69,17 +60,6 @@ public class DeleteContext<T> extends BaseProcessingContext<T> {
      */
     public void setIds(Collection<AgObjectId> ids) {
         this.ids = ids;
-    }
-
-    /**
-     * @deprecated in favor of {@link #setIds(Collection)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public void addId(AgObjectId id) {
-        if (this.ids == null) {
-            this.ids = new ArrayList<>();
-        }
-        this.ids.add(id);
     }
 
     public EntityParent<?> getParent() {

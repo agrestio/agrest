@@ -46,19 +46,6 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
         return injector.getInstance(key);
     }
 
-    /**
-     * Returns a new SimpleResponse with status of this context.
-     *
-     * @return a new SimpleResponse with status of this context.
-     * @since 1.24
-     * @deprecated unused anymore, as the context should not be creating a response. It is the responsibility of a
-     * pipeline
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public SimpleResponse createSimpleResponse() {
-        return SimpleResponse.of(getResponseStatus());
-    }
-
     @Override
     public Class<T> getType() {
         return type;
@@ -72,22 +59,6 @@ public abstract class BaseProcessingContext<T> implements ProcessingContext<T> {
     @Override
     public void setProperty(String name, Object value) {
         mutableProperties().put(name, value);
-    }
-
-    /**
-     * @deprecated in favor of {@link #getResponseStatus()}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public int getStatus() {
-        return getResponseStatus() != null ? getResponseStatus() : 0;
-    }
-
-    /**
-     * @deprecated in favor of {@link #setResponseStatus(Integer)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public void setStatus(int responseStatus) {
-        setResponseStatus(responseStatus);
     }
 
     /**

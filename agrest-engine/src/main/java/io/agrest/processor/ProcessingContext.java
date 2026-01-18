@@ -26,22 +26,6 @@ public interface ProcessingContext<T> {
     void setProperty(String name, Object value);
 
     /**
-     * @deprecated in favor of {@link #getProperty(String)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    default Object getAttribute(String name) {
-        return getProperty(name);
-    }
-
-    /**
-     * @deprecated in favor of {@link #setProperty(String, Object)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    default void setAttribute(String name, Object value) {
-        setProperty(name, value);
-    }
-
-    /**
      * Provides access to a desired service from the Agrest stack that created the current context.
      *
      * @since 5.0

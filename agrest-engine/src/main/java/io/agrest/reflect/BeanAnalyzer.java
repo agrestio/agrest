@@ -1,10 +1,7 @@
 package io.agrest.reflect;
 
 import java.lang.reflect.Method;
-import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
@@ -13,11 +10,6 @@ import java.util.stream.Stream;
 public class BeanAnalyzer {
 
     private static final Set<String> NOT_GETTERS = Set.of("getClass", "hashCode", "notify", "notifyAll", "toString");
-
-    @Deprecated(since = "5.0", forRemoval = true)
-    private static final Pattern SETTER = Pattern.compile("^set([A-Z].*)$");
-    @Deprecated(since = "5.0", forRemoval = true)
-    private static final Pattern GETTER = Pattern.compile("^(get|is)([A-Z].*)$");
 
     private enum GetterType {
         not_getter, classic, classic_bool, simple
@@ -37,39 +29,6 @@ public class BeanAnalyzer {
         return Stream.of(type.getMethods())
                 .map(BeanAnalyzer::fromSetter)
                 .filter(s -> s != null);
-    }
-
-    /**
-     * @deprecated no longer in use
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public static Optional<String> propertyNameFromGetter(String maybeGetter) {
-        Matcher matcher = GETTER.matcher(maybeGetter);
-        if (!matcher.find()) {
-            return Optional.empty();
-        }
-
-        String raw = matcher.group(2);
-        if (raw.equals("Class")) {
-            // 'getClass' is not a property we care about
-            return Optional.empty();
-        }
-
-        return Optional.of(Character.toLowerCase(raw.charAt(0)) + raw.substring(1));
-    }
-
-    /**
-     * @deprecated no longer in use
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public static Optional<String> propertyNameFromSetter(String maybeSetter) {
-        Matcher matcher = SETTER.matcher(maybeSetter);
-        if (!matcher.find()) {
-            return Optional.empty();
-        }
-
-        String raw = matcher.group(1);
-        return Optional.of(Character.toLowerCase(raw.charAt(0)) + raw.substring(1));
     }
 
     private static PropertyGetter fromGetter(Method maybeGetter) {

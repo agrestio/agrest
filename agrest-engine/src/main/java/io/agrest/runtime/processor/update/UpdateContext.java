@@ -3,9 +3,7 @@ package io.agrest.runtime.processor.update;
 import io.agrest.AgException;
 import io.agrest.AgRequest;
 import io.agrest.AgRequestBuilder;
-import io.agrest.DataResponse;
 import io.agrest.EntityUpdate;
-import io.agrest.HttpStatus;
 import io.agrest.ObjectMapperFactory;
 import io.agrest.RootResourceEntity;
 import io.agrest.access.PathChecker;
@@ -47,9 +45,6 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
     private final AgRequestBuilder requestBuilder;
     private final Map<ChangeOperationType, List<ChangeOperation<T>>> changeOperations;
 
-    @Deprecated(since = "5.0", forRemoval = true)
-    private boolean idUpdatesDisallowed;
-
     public UpdateContext(
             Class<T> type,
             RequestSchema schema,
@@ -68,24 +63,6 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 
         this.requestBuilder = requestBuilder;
         this.pathChecker = pathChecker;
-    }
-
-    /**
-     * Returns a newly created DataResponse object reflecting the context state.
-     *
-     * @return a newly created DataResponse object reflecting the context state.
-     * @since 1.24
-     * @deprecated unused anymore, as the context should not be creating a response. It is the responsibility of a
-     * pipeline
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public DataResponse<T> createDataResponse() {
-        int status = getResponseStatus() != null ? getResponseStatus() : HttpStatus.OK;
-
-        // support null ResourceEntity for cases with custom terminal stages
-        return entity != null
-                ? DataResponse.of(status, entity.getDataWindow()).total(entity.getData().size()).encoder(encoder).build()
-                : DataResponse.of(status, Collections.<T>emptyList()).build();
     }
 
     /**
@@ -174,26 +151,6 @@ public class UpdateContext<T> extends BaseProcessingContext<T> {
 
     public void setEntityData(String entityData) {
         this.entityData = entityData;
-    }
-
-    /**
-     * @since 1.19
-     * @deprecated not initialized and unused since 5.0, as ID permissions checking happens elsewhere, and doesn't need
-     * to be in the context
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public boolean isIdUpdatesDisallowed() {
-        return idUpdatesDisallowed;
-    }
-
-    /**
-     * @since 1.19
-     * @deprecated not initialized and unused since 5.0, as ID permissions checking happens elsewhere, and doesn't need
-     * to be in the context
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public void setIdUpdatesDisallowed(boolean idUpdatesDisallowed) {
-        this.idUpdatesDisallowed = idUpdatesDisallowed;
     }
 
     /**

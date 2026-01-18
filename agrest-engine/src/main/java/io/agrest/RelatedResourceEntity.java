@@ -31,14 +31,6 @@ public abstract class RelatedResourceEntity<T> extends ResourceEntity<T> {
      */
     public abstract void addData(AgObjectId parentId, T object);
 
-    /**
-     * @deprecated in favor of {@link #addData(AgObjectId, Object)}
-     */
-    @Deprecated(since = "5.0", forRemoval = true)
-    public void addResult(AgObjectId parentId, T object) {
-        addData(parentId, object);
-    }
-
     public ResourceEntity<?> getParent() {
         return parent;
     }
