@@ -37,8 +37,8 @@
         <jaxrs2.version>2.1.6</jaxrs2.version>
 
         <jaxrs3.version>3.0.0</jaxrs3.version>
-        <jackson.version>2.15.4</jackson.version>
-        <jackson.databind.version>2.15.4</jackson.databind.version>
+        <jackson.version>2.19.4</jackson.version>
+        <jackson.databind.version>2.19.4</jackson.databind.version>
         <bq.version>3.0-RC1</bq.version>
         <junit5.version>5.12.1</junit5.version>
         <swagger.version>2.2.23</swagger.version>
@@ -161,6 +161,17 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.databind.version}</version>
+            </dependency>
+            <!-- TODO: the following Jackson dependencies are only needed until we can upgrade to Bootique > 3.0-RC1 -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-jaxb-annotations</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.cayenne</groupId>
