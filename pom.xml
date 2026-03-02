@@ -32,7 +32,7 @@
         <cayenne.version>4.2.3</cayenne.version>
 
         <jaxrs3.version>3.0.0</jaxrs3.version>
-        <jackson.version>2.19.4</jackson.version>
+        <jackson.version>2.21.1</jackson.version>
         <jackson.databind.version>2.19.4</jackson.databind.version>
         <bq.version>3.0-RC1</bq.version>
         <junit5.version>5.12.1</junit5.version>
