@@ -4,6 +4,7 @@
 * #702 Remove modules and APIs deprecated in 5.x
 * #704 Upgrade to Cayenne 5.x
 * #706 Upgrade to JAX-RS 4.0.0
+* #707 Upgrade to Jackson 2.22.0
 
 ## Release 5.0
 
