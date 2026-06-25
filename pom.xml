@@ -33,7 +33,7 @@
 
         <jaxrs3.version>4.0.0</jaxrs3.version>
         <jackson.version>2.19.4</jackson.version>
-        <jackson.databind.version>2.19.4</jackson.databind.version>
+        <jackson.databind.version>2.22.0</jackson.databind.version>
         <bq.version>4.0-M3</bq.version>
         <junit5.version>5.13.4</junit5.version>
         <swagger.version>2.2.23</swagger.version>
