@@ -18,7 +18,7 @@ public abstract class MainDbTest {
     protected static AgCayenneTester.Builder<MainModelTester> tester(Class<?>... resources) {
         return new Builder()
                 .db(db)
-                .cayenneProject("main/cayenne-project.xml")
+                .cayenneProject("classpath:main/cayenne-project.xml")
                 .resources(resources);
     }
 

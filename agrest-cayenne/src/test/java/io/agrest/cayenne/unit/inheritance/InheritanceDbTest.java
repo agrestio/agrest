@@ -18,7 +18,7 @@ public abstract class InheritanceDbTest {
     protected static AgCayenneTester.Builder<InheritanceModelTester> tester(Class<?>... resources) {
         return new Builder()
                 .db(db)
-                .cayenneProject("inheritance/cayenne-project.xml")
+                .cayenneProject("classpath:inheritance/cayenne-project.xml")
                 .resources(resources);
     }
 

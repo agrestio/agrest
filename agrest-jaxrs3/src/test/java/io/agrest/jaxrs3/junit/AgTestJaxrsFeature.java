@@ -2,10 +2,9 @@ package io.agrest.jaxrs3.junit;
 
 import io.agrest.jaxrs3.AgJaxrsFeature;
 import io.agrest.runtime.AgRuntime;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Feature;
 import jakarta.ws.rs.core.FeatureContext;
-
-import javax.inject.Inject;
 
 /**
  * Integrates {@link AgJaxrsFeature} into Bootique test stack.

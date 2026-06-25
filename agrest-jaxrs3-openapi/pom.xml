@@ -73,7 +73,7 @@
         </dependency>
         <dependency>
             <groupId>io.bootique.jersey</groupId>
-            <artifactId>bootique-jersey-jakarta</artifactId>
+            <artifactId>bootique-jersey</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

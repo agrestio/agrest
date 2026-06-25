@@ -24,12 +24,12 @@ import io.bootique.junit5.scope.BQAfterMethodCallback;
 import io.bootique.junit5.scope.BQAfterScopeCallback;
 import io.bootique.junit5.scope.BQBeforeMethodCallback;
 import io.bootique.junit5.scope.BQBeforeScopeCallback;
+import jakarta.inject.Singleton;
 import jakarta.ws.rs.client.WebTarget;
 import org.apache.cayenne.Persistent;
 import org.apache.cayenne.runtime.CayenneRuntime;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -110,7 +110,7 @@ public abstract class AgCayenneTester implements BQBeforeScopeCallback, BQAfterS
         this.appInScope = createAppInScope(this.jettyInScope, this.cayenneInScope);
 
         CommandOutcome result = appInScope.run();
-        assertTrue(result.isSuccess(), () -> result.getMessage());
+        assertTrue(result.isSuccess(), result::getMessage);
         assertTrue(result.forkedToBackground());
     }
 
@@ -153,7 +153,7 @@ public abstract class AgCayenneTester implements BQBeforeScopeCallback, BQAfterS
                 .module(db.moduleWithTestDataSource("test"))
                 .module(jetty.moduleReplacingConnectors())
                 .module(cayenne.moduleWithTestHooks())
-                .module(b -> CayenneModule.extend(b).addProject(cayenneProject))
+                .module(b -> CayenneModule.extend(b).addLocation(cayenneProject))
                 .module(new AgModule(agCustomizer, resources));
 
         return builder.createRuntime();
@@ -228,7 +228,7 @@ public abstract class AgCayenneTester implements BQBeforeScopeCallback, BQAfterS
 
         private void configureJersey(JerseyModuleExtender extender) {
             extender.addFeature(AgTestJaxrsFeature.class);
-            resources.forEach(extender::addResource);
+            resources.forEach(extender::addApiResource);
         }
 
         @Provides

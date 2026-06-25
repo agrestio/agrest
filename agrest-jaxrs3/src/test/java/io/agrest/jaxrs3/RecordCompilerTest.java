@@ -22,8 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RecordCompilerTest {
 
     @BQTestTool
-    static final AgPojoTester tester = AgPojoTester.builder()
-            .build();
+    static final AgPojoTester tester = AgPojoTester.builder().build();
 
     @Test
     public void recordPropertiesRecognized() {

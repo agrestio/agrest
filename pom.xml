@@ -31,10 +31,10 @@
         <slf4j.version>2.0.17</slf4j.version>
         <cayenne.version>5.0-M2</cayenne.version>
 
-        <jaxrs3.version>3.0.0</jaxrs3.version>
+        <jaxrs3.version>4.0.0</jaxrs3.version>
         <jackson.version>2.19.4</jackson.version>
         <jackson.databind.version>2.19.4</jackson.databind.version>
-        <bq.version>3.0</bq.version>
+        <bq.version>4.0-M3</bq.version>
         <junit5.version>5.13.4</junit5.version>
         <swagger.version>2.2.23</swagger.version>
         <mockito.version>3.9.0</mockito.version>
@@ -211,16 +211,6 @@
             <dependency>
                 <groupId>io.bootique.jetty</groupId>
                 <artifactId>bootique-jetty-junit5</artifactId>
-                <version>${bq.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.bootique.jersey</groupId>
-                <artifactId>bootique-jersey-jakarta</artifactId>
-                <version>${bq.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.bootique.jetty</groupId>
-                <artifactId>bootique-jetty-jakarta-junit5</artifactId>
                 <version>${bq.version}</version>
             </dependency>
         </dependencies>
