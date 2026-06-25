@@ -10,7 +10,7 @@ import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.Encoder;
-import io.agrest.jaxrs3.AgJaxrs;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.runtime.processor.select.SelectContext;
 import io.bootique.junit5.BQTestTool;
 import jakarta.ws.rs.GET;

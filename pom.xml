@@ -16,8 +16,8 @@
     <modules>
         <module>agrest-annotations</module>
         <module>agrest-engine</module>
-        <module>agrest-jaxrs3</module>
-        <module>agrest-jaxrs3-openapi</module>
+        <module>agrest-jaxrs</module>
+        <module>agrest-jaxrs-openapi</module>
         <module>agrest-cayenne</module>
         <module>agrest-bom</module>
     </modules>
@@ -31,7 +31,7 @@
         <slf4j.version>2.0.17</slf4j.version>
         <cayenne.version>5.0-M2</cayenne.version>
 
-        <jaxrs3.version>4.0.0</jaxrs3.version>
+        <jaxrs.version>4.0.0</jaxrs.version>
         <jackson.version>2.19.4</jackson.version>
         <jackson.databind.version>2.19.4</jackson.databind.version>
         <bq.version>4.0-M3</bq.version>

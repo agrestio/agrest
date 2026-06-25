@@ -1,6 +1,22 @@
 _This document contains upgrade notes for Agrest 5.x and newer. Older versions are documented in 
 [UPGRADE-NOTES-1-4](./UPGRADE-NOTES-1-to-4.md)._
 
+## Upgrading to 6.0-M1
+
+### Upgraded to JAX-RS 4.0, with JAX-RS modules renamed to drop the "3"
+The JAX-RS modules now target JAX-RS 4.0. Among other consequences, the version-specific "3" in their names became
+misleading and has been removed:
+
+* `agrest-jaxrs3` -> `agrest-jaxrs`
+* `agrest-jaxrs3-openapi` -> `agrest-jaxrs-openapi`
+
+The Java packages inside were renamed to match:
+
+* `io.agrest.jaxrs3` -> `io.agrest.jaxrs`
+* `io.agrest.jaxrs3.openapi` -> `io.agrest.jaxrs.openapi`
+
+Update your Maven dependencies to the new artifact ids and adjust any imports of the renamed packages.
+
 ## Upgrading to 5.0.M17
 
 ### No more single-value syntax for updating to-many relationships [#633](https://github.com/agrestio/agrest/issues/633)

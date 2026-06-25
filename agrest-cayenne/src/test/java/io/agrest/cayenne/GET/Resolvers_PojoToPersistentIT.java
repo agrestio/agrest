@@ -9,7 +9,7 @@ import io.agrest.cayenne.pojo.model.PX1;
 import io.agrest.cayenne.pojo.runtime.PX1RootResolver;
 import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
-import io.agrest.jaxrs3.AgJaxrs;
+import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.resolver.RelatedDataResolverFactory;

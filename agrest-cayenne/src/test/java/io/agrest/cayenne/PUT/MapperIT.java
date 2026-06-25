@@ -5,7 +5,7 @@ import io.agrest.cayenne.cayenne.main.E1;
 import io.agrest.cayenne.cayenne.main.E23;
 import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
-import io.agrest.jaxrs3.AgJaxrs;
+import io.agrest.jaxrs.AgJaxrs;
 import io.bootique.junit5.BQTestTool;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
