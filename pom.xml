@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.agrest</groupId>
@@ -7,8 +8,8 @@
     <version>5.0-SNAPSHOT</version>
 
     <name>agrest: parent POM of all modules</name>
-    <description>Agrest is a Model-driven RESTful data services framework. This is the parent POM of all Agrest
-        modules
+    <description>
+        A Model-driven RESTful data services framework. This is the parent POM of all Agrest modules
     </description>
     <packaging>pom</packaging>
 
@@ -22,7 +23,6 @@
     </modules>
 
     <properties>
-
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -34,8 +34,8 @@
         <jaxrs3.version>3.0.0</jaxrs3.version>
         <jackson.version>2.19.4</jackson.version>
         <jackson.databind.version>2.19.4</jackson.databind.version>
-        <bq.version>3.0-RC1</bq.version>
-        <junit5.version>5.12.1</junit5.version>
+        <bq.version>3.0</bq.version>
+        <junit5.version>5.13.4</junit5.version>
         <swagger.version>2.2.23</swagger.version>
         <mockito.version>3.9.0</mockito.version>
 
