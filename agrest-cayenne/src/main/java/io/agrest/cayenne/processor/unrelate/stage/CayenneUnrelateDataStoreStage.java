@@ -9,8 +9,8 @@ import io.agrest.meta.AgSchema;
 import io.agrest.runtime.entity.IIdResolver;
 import io.agrest.runtime.processor.unrelate.UnrelateContext;
 import io.agrest.runtime.processor.unrelate.stage.UnrelateUpdateDataStoreStage;
-import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.ObjEntity;
 
@@ -40,13 +40,13 @@ public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDataStoreStage 
         ObjectContext cayenneContext = CayenneUnrelateStartStage.cayenneContext(context);
 
         if (context.getTargetId() != null) {
-            unrelateSingle((UnrelateContext<DataObject>) context, cayenneContext);
+            unrelateSingle((UnrelateContext<Persistent>) context, cayenneContext);
         } else {
-            unrelateAll((UnrelateContext<DataObject>) context, cayenneContext);
+            unrelateAll((UnrelateContext<Persistent>) context, cayenneContext);
         }
     }
 
-    private <T extends DataObject> void unrelateSingle(UnrelateContext<T> context, ObjectContext cayenneContext) {
+    private <T extends Persistent> void unrelateSingle(UnrelateContext<T> context, ObjectContext cayenneContext) {
 
         // validate relationship before doing anything else
         AgRelationship relationship = schema
@@ -57,12 +57,12 @@ public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDataStoreStage 
             throw AgException.badRequest("Invalid relationship: '%s'", context.getRelationship());
         }
 
-        DataObject parent = (DataObject) getExistingObject(context.getType(), cayenneContext, context.getSourceId());
+        Persistent parent = (Persistent) getExistingObject(context.getType(), cayenneContext, context.getSourceId());
 
         Class<?> childType = relationship.getTargetEntity().getType();
 
         // among other things this call checks that the target exists
-        DataObject child = (DataObject) getExistingObject(childType, cayenneContext, context.getTargetId());
+        Persistent child = (Persistent) getExistingObject(childType, cayenneContext, context.getTargetId());
 
         if (relationship.isToMany()) {
 
@@ -86,7 +86,7 @@ public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDataStoreStage 
         cayenneContext.commitChanges();
     }
 
-    private <T extends DataObject> void unrelateAll(UnrelateContext<T> context, ObjectContext cayenneContext) {
+    private <T extends Persistent> void unrelateAll(UnrelateContext<T> context, ObjectContext cayenneContext) {
         // validate relationship before doing anything else
         AgRelationship relationship = schema
                 .getEntity(context.getType())
@@ -96,7 +96,7 @@ public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDataStoreStage 
             throw AgException.badRequest("Invalid relationship: '%s'", context.getRelationship());
         }
 
-        DataObject parent = (DataObject) getExistingObject(context.getType(), cayenneContext, context.getSourceId());
+        Persistent parent = (Persistent) getExistingObject(context.getType(), cayenneContext, context.getSourceId());
 
         if (relationship.isToMany()) {
 
@@ -104,16 +104,16 @@ public class CayenneUnrelateDataStoreStage extends UnrelateUpdateDataStoreStage 
             // modification of the iterator, and to be able to batch-delete
             // objects if needed
             @SuppressWarnings("unchecked")
-            Collection<DataObject> relatedCollection = new ArrayList<>(
-                    (Collection<DataObject>) parent.readProperty(relationship.getName()));
+            Collection<Persistent> relatedCollection = new ArrayList<>(
+                    (Collection<Persistent>) parent.readProperty(relationship.getName()));
 
-            for (DataObject o : relatedCollection) {
+            for (Persistent o : relatedCollection) {
                 parent.removeToManyTarget(relationship.getName(), o, true);
             }
 
         } else {
 
-            DataObject target = (DataObject) parent.readProperty(relationship.getName());
+            Persistent target = (Persistent) parent.readProperty(relationship.getName());
             if (target != null) {
                 parent.setToOneTarget(relationship.getName(), null, true);
             }

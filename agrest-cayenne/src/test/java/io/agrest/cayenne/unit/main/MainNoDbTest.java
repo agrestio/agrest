@@ -1,7 +1,7 @@
 package io.agrest.cayenne.unit.main;
 
 import io.agrest.cayenne.unit.NoDbTest;
-import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.runtime.CayenneRuntime;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
  */
 public abstract class MainNoDbTest extends NoDbTest {
 
-    protected static ServerRuntime runtime;
+    protected static CayenneRuntime runtime;
 
     @BeforeAll
     public static void setUpClass() {
@@ -25,7 +25,7 @@ public abstract class MainNoDbTest extends NoDbTest {
     }
 
     @Override
-    public ServerRuntime getRuntime() {
+    public CayenneRuntime getRuntime() {
         return runtime;
     }
 }

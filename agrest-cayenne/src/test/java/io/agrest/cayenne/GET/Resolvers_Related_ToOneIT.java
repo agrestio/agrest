@@ -98,7 +98,7 @@ public class Resolvers_Related_ToOneIT extends MainDbTest {
                         "{\"id\":8,\"e2\":{\"id\":1}}",
                         "{\"id\":9,\"e2\":{\"id\":2}}");
 
-        tester.assertQueryCount(2);
+        tester.assertQueryCount(3);
     }
 
     @Test

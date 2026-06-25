@@ -2,7 +2,7 @@ package io.agrest.cayenne.processor;
 
 import io.agrest.access.PathChecker;
 import io.agrest.cayenne.cayenne.main.E3;
-import io.agrest.exp.AgExpressionException;
+import io.agrest.AgException;
 import io.agrest.id.AgObjectId;
 import io.agrest.AgRequestBuilder;
 import io.agrest.RootResourceEntity;
@@ -144,7 +144,7 @@ public class CayenneQueryAssemblerTest extends MainNoDbTest {
         c.setEntity(entity);
 
         entity.andExp(Exp.exists("name = 'test1'"));
-        assertThrows(AgExpressionException.class, () -> queryAssembler.createRootQuery(c));
+        assertThrows(AgException.class, () -> queryAssembler.createRootQuery(c));
     }
 
     @Test

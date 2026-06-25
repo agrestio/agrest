@@ -1,15 +1,15 @@
 package io.agrest.cayenne.persister;
 
 import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.map.EntityResolver;
+import org.apache.cayenne.runtime.CayenneRuntime;
 
 public class CayennePersister implements ICayennePersister {
 
-	private ServerRuntime runtime;
+	private CayenneRuntime runtime;
 	private ObjectContext sharedContext;
 
-	public CayennePersister(ServerRuntime runtime) {
+	public CayennePersister(CayenneRuntime runtime) {
 
 		if (runtime == null) {
 			throw new NullPointerException("Null runtime");

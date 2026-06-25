@@ -5,7 +5,7 @@ import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.cayenne.exp.ICayenneExpParser;
 import io.agrest.runtime.processor.update.UpdateContext;
-import org.apache.cayenne.DataObject;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.di.Inject;
 
 /**
@@ -21,7 +21,7 @@ public class CayenneMapIdempotentCreateOrUpdateStage extends CayenneMapCreateOrU
     }
 
     @Override
-    protected <T extends DataObject> void collectCreateOps(
+    protected <T extends Persistent> void collectCreateOps(
             UpdateContext<T> context,
             UpdateMap<T> updateMap) {
 

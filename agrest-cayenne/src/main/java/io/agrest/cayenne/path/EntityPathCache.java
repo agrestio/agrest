@@ -91,7 +91,7 @@ class EntityPathCache {
         ObjAttribute attribute = remainingPathRootEntity.getAttribute(remainingPath);
         if (attribute != null) {
             if (attribute.isPrimaryKey()) {
-                ASTDbPath dbPath = new ASTDbPath(toDbPath(processedPath, attribute.getDbAttributePath()));
+                ASTDbPath dbPath = new ASTDbPath(toDbPath(processedPath, attribute.getDbAttributePath().value()));
                 dbPath.setPathAliases(aliases);
                 return new PathDescriptor(attribute.getType(), dbPath, true);
             } else {

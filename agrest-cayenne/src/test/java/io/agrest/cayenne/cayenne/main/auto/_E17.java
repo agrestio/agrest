@@ -5,12 +5,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 
-import org.apache.cayenne.BaseDataObject;
+import org.apache.cayenne.PersistentObject;
 import org.apache.cayenne.exp.property.ListProperty;
 import org.apache.cayenne.exp.property.NumericProperty;
 import org.apache.cayenne.exp.property.PropertyFactory;
+import org.apache.cayenne.exp.property.SelfProperty;
 import org.apache.cayenne.exp.property.StringProperty;
 
+import io.agrest.cayenne.cayenne.main.E17;
 import io.agrest.cayenne.cayenne.main.E18;
 
 /**
@@ -19,9 +21,11 @@ import io.agrest.cayenne.cayenne.main.E18;
  * since it may be overwritten next time code is regenerated.
  * If you need to make any customizations, please use subclass.
  */
-public abstract class _E17 extends BaseDataObject {
+public abstract class _E17 extends PersistentObject {
 
     private static final long serialVersionUID = 1L;
+
+    public static final SelfProperty<E17> SELF = PropertyFactory.createSelf(E17.class);
 
     public static final String ID1_PK_COLUMN = "id1";
     public static final String ID2_PK_COLUMN = "id2";

@@ -10,16 +10,15 @@ import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs3.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.bootique.junit5.BQTestTool;
-import org.apache.cayenne.Cayenne;
-import org.apache.cayenne.DataObject;
-import org.junit.jupiter.api.Test;
-
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
+import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.Persistent;
+import org.junit.jupiter.api.Test;
 
 public class ReadFilter_OverlayIT extends MainDbTest {
 
@@ -33,11 +32,11 @@ public class ReadFilter_OverlayIT extends MainDbTest {
             )
             .build();
 
-    static <T extends DataObject> ReadFilter<T> evenFilter() {
+    static <T extends Persistent> ReadFilter<T> evenFilter() {
         return o -> Cayenne.intPKForObject(o) % 2 == 0;
     }
 
-    static <T extends DataObject> ReadFilter<T> oddFilter() {
+    static <T extends Persistent> ReadFilter<T> oddFilter() {
         return o -> Cayenne.intPKForObject(o) % 2 != 0;
     }
 

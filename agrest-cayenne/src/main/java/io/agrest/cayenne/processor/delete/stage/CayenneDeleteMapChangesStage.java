@@ -11,8 +11,8 @@ import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.stage.DeleteMapChangesStage;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
-import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.ObjectSelect;
@@ -41,13 +41,13 @@ public class CayenneDeleteMapChangesStage extends DeleteMapChangesStage {
 
     @Override
     public ProcessorOutcome execute(DeleteContext<?> context) {
-        mapDeleteOperations((DeleteContext<DataObject>) context);
+        mapDeleteOperations((DeleteContext<Persistent>) context);
         return context.getDeleteOperations().isEmpty()
                 ? ProcessorOutcome.STOP
                 : ProcessorOutcome.CONTINUE;
     }
 
-    protected <T extends DataObject> void mapDeleteOperations(DeleteContext<T> context) {
+    protected <T extends Persistent> void mapDeleteOperations(DeleteContext<T> context) {
         AgEntity<T> agEntity = context.getAgEntity();
         List<T> objects = findObjectsToDelete(context);
         List<ChangeOperation<T>> ops = new ArrayList<>(objects.size());
@@ -59,7 +59,7 @@ public class CayenneDeleteMapChangesStage extends DeleteMapChangesStage {
         context.setDeleteOperations(ops);
     }
 
-    protected <T extends DataObject> List<T> findObjectsToDelete(DeleteContext<T> context) {
+    protected <T extends Persistent> List<T> findObjectsToDelete(DeleteContext<T> context) {
 
         if (context.isByIds()) {
             return findByIds(context);
@@ -72,7 +72,7 @@ public class CayenneDeleteMapChangesStage extends DeleteMapChangesStage {
         }
     }
 
-    protected <T extends DataObject> List<T> findByIds(DeleteContext<T> context) {
+    protected <T extends Persistent> List<T> findByIds(DeleteContext<T> context) {
 
         ObjectContext cayenneContext = CayenneDeleteStartStage.cayenneContext(context);
         List<T> objects = queryAssembler.createQueryForIds(context.getAgEntity(), context.getIds()).select(cayenneContext);
@@ -91,7 +91,7 @@ public class CayenneDeleteMapChangesStage extends DeleteMapChangesStage {
         return objects;
     }
 
-    protected <T extends DataObject> List<T> findByParent(DeleteContext<T> context, EntityParent<?> parent) {
+    protected <T extends Persistent> List<T> findByParent(DeleteContext<T> context, EntityParent<?> parent) {
 
         AgEntity<?> parentAgEntity = context.getSchema().getEntity(parent.getType());
         ObjectContext cayenneContext = CayenneDeleteStartStage.cayenneContext(context);
@@ -108,7 +108,7 @@ public class CayenneDeleteMapChangesStage extends DeleteMapChangesStage {
                 .select(CayenneDeleteStartStage.cayenneContext(context));
     }
 
-    protected <T extends DataObject> List<T> findAll(DeleteContext<T> context) {
+    protected <T extends Persistent> List<T> findAll(DeleteContext<T> context) {
         return ObjectSelect.query(context.getType()).select(CayenneDeleteStartStage.cayenneContext(context));
     }
 }

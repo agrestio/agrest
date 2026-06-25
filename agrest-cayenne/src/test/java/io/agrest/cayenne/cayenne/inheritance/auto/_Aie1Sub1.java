@@ -6,8 +6,10 @@ import java.io.ObjectOutputStream;
 
 import org.apache.cayenne.exp.property.EntityProperty;
 import org.apache.cayenne.exp.property.PropertyFactory;
+import org.apache.cayenne.exp.property.SelfProperty;
 import org.apache.cayenne.exp.property.StringProperty;
 
+import io.agrest.cayenne.cayenne.inheritance.Aie1Sub1;
 import io.agrest.cayenne.cayenne.inheritance.Aie1Super;
 import io.agrest.cayenne.cayenne.inheritance.Ie2;
 
@@ -20,6 +22,8 @@ import io.agrest.cayenne.cayenne.inheritance.Ie2;
 public abstract class _Aie1Sub1 extends Aie1Super {
 
     private static final long serialVersionUID = 1L;
+
+    public static final SelfProperty<Aie1Sub1> SELF = PropertyFactory.createSelf(Aie1Sub1.class);
 
     public static final String ID_PK_COLUMN = "id";
 

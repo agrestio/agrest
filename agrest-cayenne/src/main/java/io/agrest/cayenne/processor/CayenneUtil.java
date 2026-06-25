@@ -65,11 +65,11 @@ public final class CayenneUtil {
 
                 ASTPath kp = pathResolver.resolve(agEntity.getName(), k).getPathExp();
                 if (kp instanceof ASTDbPath) {
-                    normalizedIdMap.put(kp.getPath(), v);
+                    normalizedIdMap.put(kp.getPath().value(), v);
                 } else {
-                    ObjAttribute pk = entity.getAttribute(kp.getPath());
+                    ObjAttribute pk = entity.getAttribute(kp.getPath().value());
                     if (pk == null) {
-                        throw AgException.internalServerError("No pk attribute %s.%s", entity.getName(), kp.getPath());
+                        throw AgException.internalServerError("No pk attribute %s.%s", entity.getName(), kp.getPath().value());
                     }
 
                     normalizedIdMap.put(pk.getDbAttributeName(), v);

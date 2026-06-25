@@ -10,8 +10,8 @@ import io.agrest.runtime.AgRuntimeBuilder;
 import io.bootique.BQModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
-import io.bootique.cayenne.v42.CayenneModule;
-import io.bootique.cayenne.v42.junit5.CayenneTester;
+import io.bootique.cayenne.v50.CayenneModule;
+import io.bootique.cayenne.v50.junit5.CayenneTester;
 import io.bootique.command.CommandOutcome;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
@@ -26,7 +26,7 @@ import io.bootique.junit5.scope.BQBeforeMethodCallback;
 import io.bootique.junit5.scope.BQBeforeScopeCallback;
 import jakarta.ws.rs.client.WebTarget;
 import org.apache.cayenne.Persistent;
-import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.runtime.CayenneRuntime;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import javax.inject.Singleton;
@@ -233,7 +233,7 @@ public abstract class AgCayenneTester implements BQBeforeScopeCallback, BQAfterS
 
         @Provides
         @Singleton
-        AgRuntime provideAgRuntime(ServerRuntime runtime) {
+        AgRuntime provideAgRuntime(CayenneRuntime runtime) {
             ICayennePersister persister = new CayennePersister(runtime);
             AgRuntimeBuilder agBuilder = AgRuntime.builder()
                     .module(AgCayenneModule.builder().persister(persister).build());

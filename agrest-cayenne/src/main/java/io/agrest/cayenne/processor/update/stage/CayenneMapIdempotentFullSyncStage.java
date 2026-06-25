@@ -1,7 +1,6 @@
 package io.agrest.cayenne.processor.update.stage;
 
 import io.agrest.AgException;
-import io.agrest.runtime.EntityParent;
 import io.agrest.EntityUpdate;
 import io.agrest.ObjectMapper;
 import io.agrest.cayenne.exp.ICayenneExpParser;
@@ -9,10 +8,11 @@ import io.agrest.cayenne.path.IPathResolver;
 import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneUtil;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
+import io.agrest.runtime.EntityParent;
 import io.agrest.runtime.processor.update.ChangeOperation;
 import io.agrest.runtime.processor.update.ChangeOperationType;
 import io.agrest.runtime.processor.update.UpdateContext;
-import org.apache.cayenne.DataObject;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 
@@ -38,7 +38,7 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
     }
 
     @Override
-    protected <T extends DataObject> void collectUpdateDeleteOps(
+    protected <T extends Persistent> void collectUpdateDeleteOps(
             UpdateContext<T> context,
             ObjectMapper<T> mapper,
             UpdateMap<T> updateMap) {
@@ -68,7 +68,7 @@ public class CayenneMapIdempotentFullSyncStage extends CayenneMapIdempotentCreat
     }
 
     @Override
-    protected <T extends DataObject> List<T> existingObjects(
+    protected <T extends Persistent> List<T> existingObjects(
             UpdateContext<T> context,
             Collection<Object> keys,
             ObjectMapper<T> mapper) {

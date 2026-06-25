@@ -29,7 +29,7 @@
 
         <!-- Upstream dependency versions (including "test" dependencies) -->
         <slf4j.version>2.0.17</slf4j.version>
-        <cayenne.version>4.2.3</cayenne.version>
+        <cayenne.version>5.0-M2</cayenne.version>
 
         <jaxrs3.version>3.0.0</jaxrs3.version>
         <jackson.version>2.19.4</jackson.version>
@@ -175,7 +175,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.cayenne</groupId>
-                <artifactId>cayenne-server</artifactId>
+                <artifactId>cayenne</artifactId>
                 <version>${cayenne.version}</version>
             </dependency>
             <!--
@@ -189,7 +189,7 @@
             </dependency>
             <dependency>
                 <groupId>io.bootique.cayenne</groupId>
-                <artifactId>bootique-cayenne42-junit5</artifactId>
+                <artifactId>bootique-cayenne50-junit5</artifactId>
                 <version>${bq.version}</version>
                 <exclusions>
                     <exclusion>

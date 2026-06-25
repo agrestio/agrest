@@ -15,7 +15,7 @@ import org.apache.cayenne.Persistent;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
-import org.apache.cayenne.exp.TraversalHelper;
+import org.apache.cayenne.exp.TraversalHandler;
 import org.apache.cayenne.exp.parser.ASTDbPath;
 import org.apache.cayenne.exp.parser.ASTExists;
 import org.apache.cayenne.exp.parser.ASTNotExists;
@@ -105,13 +105,13 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
     private Object normalizeIfPath(ObjEntity entity, Object expNode) {
         if(expNode instanceof ASTObjPath) {
             ASTObjPath path = (ASTObjPath)expNode;
-            PathDescriptor resolve = pathCache.resolve(entity.getName(), path.getPath(), path.getPathAliases());
+            PathDescriptor resolve = pathCache.resolve(entity.getName(), path.getPath().value(), path.getPathAliases());
             return resolve.getPathExp();
         }
         return expNode;
     }
 
-    private class ExpressionProcessor extends TraversalHelper {
+    private class ExpressionProcessor implements TraversalHandler {
 
         private final ObjEntity entity;
 
@@ -191,7 +191,7 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
 
             if (peerPath != null) {
 
-                PathDescriptor pd = pathCache.resolve(entity.getName(), peerPath.getPath(), peerPath.getPathAliases());
+                PathDescriptor pd = pathCache.resolve(entity.getName(), peerPath.getPath().value(), peerPath.getPathAliases());
                 if (pd.isAttributeOrId()) {
                     JsonValueConverter<?> converter = converters.get(pd.getType());
                     if (converter != null) {
@@ -210,7 +210,7 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
         }
 
         private ObjPathMarker createPathMarker(ObjEntity entity, ASTPath o) {
-            String path = o.getPath();
+            String path = o.getPath().value();
             String newPath;
             String firstSegment;
             int dotIndex = path.indexOf(".");
@@ -232,13 +232,13 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
         private Expression markerToExpression(ObjPathMarker marker) {
             // special case for an empty path
             // we don't need additional qualifier, just plain exists subquery
-            if (marker.getPath().equals(EMPTY_PATH)) {
+            if (marker.getPath().value().equals(EMPTY_PATH)) {
                 return null;
             }
             return ExpressionFactory.noMatchExp(marker, null);
         }
 
-        private FluentSelect<?> subquery(ObjRelationship relationship, Expression exp) {
+        private FluentSelect<?, ?> subquery(ObjRelationship relationship, Expression exp) {
             List<DbRelationship> dbRelationships = relationship.getDbRelationships();
             for (DbRelationship dbRelationship : dbRelationships) {
                 for (DbJoin join : dbRelationship.getJoins()) {

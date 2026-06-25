@@ -5,7 +5,7 @@ import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.resolver.BaseRootDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
-import org.apache.cayenne.DataObject;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.query.ObjectSelect;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @since 3.4
  */
-public class ViaQueryResolver<T extends DataObject> extends BaseRootDataResolver<T> {
+public class ViaQueryResolver<T extends Persistent> extends BaseRootDataResolver<T> {
 
     protected final ICayenneQueryAssembler queryAssembler;
     protected final ICayennePersister persister;

@@ -5,7 +5,7 @@ import io.agrest.cayenne.persister.ICayennePersister;
 import io.agrest.cayenne.processor.CayenneProcessor;
 import io.agrest.cayenne.processor.ICayenneQueryAssembler;
 import io.agrest.runtime.processor.select.SelectContext;
-import org.apache.cayenne.DataObject;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.query.ColumnSelect;
 
 import java.util.Collections;
@@ -16,7 +16,7 @@ import java.util.Collections;
  *
  * @since 3.4
  */
-public class ViaQueryWithParentIdsResolver<T extends DataObject> extends ViaQueryWithParentExpResolver<T> {
+public class ViaQueryWithParentIdsResolver<T extends Persistent> extends ViaQueryWithParentExpResolver<T> {
 
     public ViaQueryWithParentIdsResolver(ICayenneQueryAssembler queryAssembler, ICayennePersister persister) {
         super(queryAssembler, persister);

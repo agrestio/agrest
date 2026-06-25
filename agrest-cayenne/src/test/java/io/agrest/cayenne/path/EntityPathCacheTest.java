@@ -56,7 +56,7 @@ public class EntityPathCacheTest {
         assertNotNull(pd);
         assertTrue(pd.isAttributeOrId());
         assertEquals("java.lang.String", pd.getType());
-        assertEquals("name", pd.getPathExp().getPath());
+        assertEquals("name", pd.getPathExp().getPath().value());
         assertSame(pd, cache.getOrCreate("name"));
     }
 
@@ -67,7 +67,7 @@ public class EntityPathCacheTest {
         assertNotNull(pd);
         assertFalse(pd.isAttributeOrId());
         assertEquals("test.Y", pd.getType());
-        assertEquals("y", pd.getPathExp().getPath());
+        assertEquals("y", pd.getPathExp().getPath().value());
         assertSame(pd, cache.getOrCreate("y"));
     }
 
@@ -78,7 +78,7 @@ public class EntityPathCacheTest {
         assertNotNull(pd);
         assertTrue(pd.isAttributeOrId());
         assertEquals("java.lang.String", pd.getType());
-        assertEquals("y.name", pd.getPathExp().getPath());
+        assertEquals("y.name", pd.getPathExp().getPath().value());
         assertSame(pd, cache.getOrCreate("y.name"));
     }
 
@@ -95,7 +95,7 @@ public class EntityPathCacheTest {
         assertNotNull(pd);
         assertTrue(pd.isAttributeOrId());
         assertEquals("java.lang.String", pd.getType());
-        assertEquals("y+.name", pd.getPathExp().getPath());
+        assertEquals("y+.name", pd.getPathExp().getPath().value());
         assertSame(pd, cache.getOrCreate("y+.name"));
         assertNotSame(pd, cache.getOrCreate("y.name"));
     }

@@ -2,6 +2,7 @@
 
 * #701 Require Java 21
 * #702 Remove modules and APIs deprecated in 5.x
+* #704 Upgrade to Cayenne 5.x
 
 ## Release 5.0
 

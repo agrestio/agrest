@@ -1,7 +1,7 @@
 package io.agrest.cayenne.compiler;
 
 import io.agrest.reader.DataReader;
-import org.apache.cayenne.DataObject;
+import org.apache.cayenne.Persistent;
 
 public class DataObjectDataReader implements DataReader {
 
@@ -17,6 +17,6 @@ public class DataObjectDataReader implements DataReader {
 
 	@Override
 	public Object read(Object root) {
-		return ((DataObject) root).readProperty(propertyName);
+		return ((Persistent) root).readProperty(propertyName);
 	}
 }

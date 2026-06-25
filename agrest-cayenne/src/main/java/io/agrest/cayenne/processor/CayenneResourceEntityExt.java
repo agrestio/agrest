@@ -7,5 +7,5 @@ import org.apache.cayenne.query.FluentSelect;
  */
 public interface CayenneResourceEntityExt {
 
-    FluentSelect<?> getSelect();
+    FluentSelect<?, ?> getSelect();
 }

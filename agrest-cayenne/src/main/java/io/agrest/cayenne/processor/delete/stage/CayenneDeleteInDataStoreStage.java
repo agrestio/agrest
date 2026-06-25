@@ -4,8 +4,8 @@ import io.agrest.processor.ProcessorOutcome;
 import io.agrest.runtime.processor.delete.DeleteContext;
 import io.agrest.runtime.processor.delete.stage.DeleteInDataStoreStage;
 import io.agrest.runtime.processor.update.ChangeOperation;
-import org.apache.cayenne.DataObject;
 import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.Persistent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +17,11 @@ public class CayenneDeleteInDataStoreStage extends DeleteInDataStoreStage {
 
     @Override
     public ProcessorOutcome execute(DeleteContext<?> context) {
-        doExecute((DeleteContext<DataObject>) context);
+        doExecute((DeleteContext<Persistent>) context);
         return ProcessorOutcome.CONTINUE;
     }
 
-    protected <T extends DataObject> void doExecute(DeleteContext<T> context) {
+    protected <T extends Persistent> void doExecute(DeleteContext<T> context) {
 
         List<T> objects = new ArrayList<>(context.getDeleteOperations().size());
         for (ChangeOperation<T> op : context.getDeleteOperations()) {
