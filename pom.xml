@@ -49,7 +49,7 @@
         <release.plugin.version>3.1.1</release.plugin.version>
         <surefire.plugin.version>3.5.2</surefire.plugin.version>
         <failsafe.plugin.version>3.5.2</failsafe.plugin.version>
-        <central.publishing.plugin.version>0.7.0</central.publishing.plugin.version>
+        <central.publishing.plugin.version>0.11.0</central.publishing.plugin.version>
         <gpg.plugin.version>3.2.7</gpg.plugin.version>
 
         <!-- Misc -->
