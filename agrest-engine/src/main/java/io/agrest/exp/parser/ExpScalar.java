@@ -80,8 +80,8 @@ public class ExpScalar extends ExpBaseScalar<Object> {
             scalarImage = "null";
             return;
         }
-        if (value instanceof CharSequence) {
-            syncScalarImage(((CharSequence) value));
+        if (value instanceof CharSequence seq) {
+            syncScalarImage(seq);
             return;
         }
         if (value.getClass() == Long.class) {

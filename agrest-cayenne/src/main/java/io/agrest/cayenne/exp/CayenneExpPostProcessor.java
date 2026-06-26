@@ -103,8 +103,7 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
     }
   
     private Object normalizeIfPath(ObjEntity entity, Object expNode) {
-        if(expNode instanceof ASTObjPath) {
-            ASTObjPath path = (ASTObjPath)expNode;
+        if(expNode instanceof ASTObjPath path) {
             PathDescriptor resolve = pathCache.resolve(entity.getName(), path.getPath().value(), path.getPathAliases());
             return resolve.getPathExp();
         }
@@ -144,10 +143,10 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
             if (!(parentNode instanceof ASTExists || parentNode instanceof ASTNotExists)) {
                 return;
             }
-            if (!(childNode instanceof ASTPath)) {
+            if (!(childNode instanceof ASTPath path)) {
                 throw AgException.badRequest("%s only supports path value as an argument", parentNode.expName());
             }
-            ObjPathMarker marker = createPathMarker(entity, (ASTPath) childNode);
+            ObjPathMarker marker = createPathMarker(entity, path);
             Expression pathExistExp = markerToExpression(marker);
             ((ConditionNode) parentNode).jjtAddChild(
                     marker.relationship != null
@@ -160,27 +159,30 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
         @Override
         public void objectNode(Object leaf, Expression parentNode) {
 
-            if (leaf instanceof JsonNode) {
-                for (int i = 0; i < parentNode.getOperandCount(); i++) {
-                    if (leaf == parentNode.getOperand(i)) {
-                        parentNode.setOperand(i, convert((SimpleNode) parentNode, (JsonNode) leaf));
+            switch (leaf) {
+                case JsonNode node -> {
+                    for (int i = 0; i < parentNode.getOperandCount(); i++) {
+                        if (leaf == parentNode.getOperand(i)) {
+                            parentNode.setOperand(i, convert((SimpleNode) parentNode, node));
+                        }
                     }
                 }
-            }
-            // this is ASTList child case
-            else if (leaf instanceof Object[]) {
-
-                Object[] array = (Object[]) leaf;
-                for (int i = 0; i < array.length; i++) {
-                    if (array[i] instanceof JsonNode) {
-                        array[i] = convert((SimpleNode) parentNode, (JsonNode) array[i]);
+                // this is ASTList child case
+                case Object[] array -> {
+                    for (int i = 0; i < array.length; i++) {
+                        if (array[i] instanceof JsonNode node) {
+                            array[i] = convert((SimpleNode) parentNode, node);
+                        }
                     }
                 }
-            } else if (leaf instanceof String) {
-                for (int i = 0; i < parentNode.getOperandCount(); i++) {
-                    if (leaf == parentNode.getOperand(i)) {
-                        parentNode.setOperand(i, convert((SimpleNode) parentNode, TextNode.valueOf((String) leaf)));
+                case String s -> {
+                    for (int i = 0; i < parentNode.getOperandCount(); i++) {
+                        if (leaf == parentNode.getOperand(i)) {
+                            parentNode.setOperand(i, convert((SimpleNode) parentNode, TextNode.valueOf(s)));
+                        }
                     }
+                }
+                case null, default -> {
                 }
             }
         }
@@ -284,18 +286,18 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
         }
 
         private ASTObjPath findChildPath(Expression exp) {
-            if (exp instanceof ASTObjPath) {
-                return (ASTObjPath) exp;
+            if (exp instanceof ASTObjPath objPath) {
+                return objPath;
             }
 
             int len = exp.getOperandCount();
             for (int i = 0; i < len; i++) {
                 Object operand = exp.getOperand(i);
-                if (!(operand instanceof Expression)) {
+                if (!(operand instanceof Expression expression)) {
                     continue;
                 }
 
-                ASTObjPath path = findChildPath((Expression) operand);
+                ASTObjPath path = findChildPath(expression);
                 if (path != null) {
                     return path;
                 }

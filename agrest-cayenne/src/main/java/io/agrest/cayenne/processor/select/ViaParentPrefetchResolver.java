@@ -38,8 +38,8 @@ public class ViaParentPrefetchResolver extends BaseRelatedDataResolver<Persisten
 
         ResourceEntity<?> parent = entity.getParent();
         String parentPath = entity.getIncoming().getName();
-        if (parent instanceof RootResourceEntity) {
-            addRootPrefetch((RootResourceEntity) parent, parentPath, prefetchSemantics);
+        if (parent instanceof RootResourceEntity rootParent) {
+            addRootPrefetch(rootParent, parentPath, prefetchSemantics);
         } else {
             addRelatedPrefetch((RelatedResourceEntity<?>) parent, parentPath, prefetchSemantics);
         }
@@ -70,8 +70,8 @@ public class ViaParentPrefetchResolver extends BaseRelatedDataResolver<Persisten
 
         ResourceEntity<?> parent = entity.getParent();
         String parentPath = entity.getIncoming().getName() + "." + path;
-        if (parent instanceof RootResourceEntity) {
-            addRootPrefetch((RootResourceEntity) parent, parentPath, prefetchSemantics);
+        if (parent instanceof RootResourceEntity rootParent) {
+            addRootPrefetch(rootParent, parentPath, prefetchSemantics);
         } else {
             addRelatedPrefetch((RelatedResourceEntity<?>) parent, parentPath, prefetchSemantics);
         }

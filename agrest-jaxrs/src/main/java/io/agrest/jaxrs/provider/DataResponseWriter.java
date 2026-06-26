@@ -53,11 +53,13 @@ public class DataResponseWriter implements MessageBodyWriter<DataResponse<?>> {
             throws IOException {
 
         switch (t.getStatus()) {
-            case 304:
+            case 304 -> {
                 return;
-            default:
+            }
+            default -> {
                 boolean skipNullProperties = getEncodingPolicy().skipNullProperties();
                 getJacksonService().outputJson(out -> writeData(t, skipNullProperties, out), entityStream);
+            }
         }
     }
 

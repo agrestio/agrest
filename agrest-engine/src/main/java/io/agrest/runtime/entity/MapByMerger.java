@@ -28,13 +28,13 @@ public class MapByMerger implements IMapByMerger {
             return;
         }
 
-        if (entity instanceof RelatedResourceEntity && !((RelatedResourceEntity) entity).getIncoming().isToMany()) {
+        if (entity instanceof RelatedResourceEntity<?> related && !related.getIncoming().isToMany()) {
             LOGGER.info("Ignoring 'mapBy : {}' for to-one relationship property", mapByPath);
             return;
         }
 
-        ResourceEntity<?> mapByCompanionEntity = entity instanceof RelatedResourceEntity
-                ? mapByCompanionEntity((RelatedResourceEntity) entity)
+        ResourceEntity<?> mapByCompanionEntity = entity instanceof RelatedResourceEntity<?> related
+                ? mapByCompanionEntity(related)
                 : mapByCompanionEntity((RootResourceEntity) entity);
 
         new ResourceEntityTreeBuilder(mapByCompanionEntity, schema, pathChecker.getDepth(), false)

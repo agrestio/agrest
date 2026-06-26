@@ -27,14 +27,12 @@ class InPlaceParamReplacer implements TraversalHandler {
     public void finishedChild(SimpleNode node, int childIndex, boolean hasMoreChildren) {
 
         Object child = node.getOperand(childIndex);
-        if (child instanceof ExpNamedParameter) {
-            node.setOperand(childIndex, nextValue(((ExpNamedParameter) child).getName()));
-        } else if (child instanceof Object[]) {
-            Object[] array = (Object[]) child;
-
+        if (child instanceof ExpNamedParameter param) {
+            node.setOperand(childIndex, nextValue(param.getName()));
+        } else if (child instanceof Object[] array) {
             for (int i = 0; i < array.length; i++) {
-                if (array[i] instanceof ExpNamedParameter) {
-                    array[i] = nextValue(((ExpNamedParameter) array[i]).getName());
+                if (array[i] instanceof ExpNamedParameter param) {
+                    array[i] = nextValue(param.getName());
                 }
             }
         }

@@ -361,22 +361,15 @@ class CayenneExpressionVisitor implements AgExpressionParserVisitor<Expression> 
     }
 
     Object negate(Object value) {
-        if(value instanceof Number) {
-            if(value instanceof Integer) {
-                return -(Integer) value;
-            } else if(value instanceof Long) {
-                return -(Long) value;
-            } else if(value instanceof Double) {
-                return -(Double) value;
-            } else if(value instanceof Float) {
-                return -(Float) value;
-            } else if(value instanceof BigInteger) {
-                return ((BigInteger) value).negate();
-            } else if(value instanceof BigDecimal) {
-                return ((BigDecimal) value).negate();
-            }
-        }
-        return value;
+        return switch (value) {
+            case Integer i -> -i;
+            case Long l -> -l;
+            case Double d -> -d;
+            case Float f -> -f;
+            case BigInteger bi -> bi.negate();
+            case BigDecimal bd -> bd.negate();
+            case null, default -> value;
+        };
     }
 
     // A hack - must use reflection to create Cayenne expressions, as the common int constructor is not public

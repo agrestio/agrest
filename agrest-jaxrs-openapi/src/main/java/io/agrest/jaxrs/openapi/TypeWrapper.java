@@ -13,15 +13,12 @@ public interface TypeWrapper {
 
     static TypeWrapper forType(Type type) {
 
-        if (type instanceof JavaType) {
-            return new JacksonTypeWrapper((JavaType) type);
-        } else if (type instanceof ParameterizedType) {
-            return new ParameterizedTypeWrapper((ParameterizedType) type);
-        } else if (type instanceof Class) {
-            return new ClassTypeWrapper((Class<?>) type);
-        } else {
-            return null;
-        }
+        return switch (type) {
+            case JavaType jt -> new JacksonTypeWrapper(jt);
+            case ParameterizedType pt -> new ParameterizedTypeWrapper(pt);
+            case Class<?> c -> new ClassTypeWrapper(c);
+            case null, default -> null;
+        };
     }
 
     Type getType();

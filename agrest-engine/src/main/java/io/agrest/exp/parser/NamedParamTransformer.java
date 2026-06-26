@@ -17,12 +17,12 @@ class NamedParamTransformer implements Function<Object, Object> {
     @Override
     public Object apply(Object object) {
 
-        if (!(object instanceof ExpNamedParameter)) {
+        if (!(object instanceof ExpNamedParameter namedParameter)) {
             // after parameters are resolved, we may need to shake down the tree a bit
             return optimize(object);
         }
 
-        String name = ((ExpNamedParameter) object).getName();
+        String name = namedParameter.getName();
         if (!parameters.containsKey(name)) {
 
             // allow partial parameter resolution. It may be quiet useful
@@ -35,8 +35,8 @@ class NamedParamTransformer implements Function<Object, Object> {
     }
 
     private Object optimize(Object object) {
-        if(object instanceof SimpleNode) {
-            return ((SimpleNode) object).jjtAccept(new OptimizationVisitor(), null);
+        if(object instanceof SimpleNode node) {
+            return node.jjtAccept(new OptimizationVisitor(), null);
         }
         return object;
     }
@@ -64,8 +64,8 @@ class NamedParamTransformer implements Function<Object, Object> {
                 return node;
             }
             Node child = node.jjtGetChild(1);
-            if(child instanceof ExpScalarList) {
-                if(((ExpScalarList) child).getValue().isEmpty()) {
+            if(child instanceof ExpScalarList scalarList) {
+                if(scalarList.getValue().isEmpty()) {
                     return supplier.get();
                 }
             }

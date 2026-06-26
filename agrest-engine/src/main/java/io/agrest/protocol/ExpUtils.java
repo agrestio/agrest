@@ -18,8 +18,8 @@ final class ExpUtils {
 
     static void appendAndChild(List<Node> nodes, Node exp) {
 
-        if (exp instanceof ExpAnd) {
-            for (Node n : ((ExpAnd) exp).getChildren()) {
+        if (exp instanceof ExpAnd expAnd) {
+            for (Node n : expAnd.getChildren()) {
                 appendAndChild(nodes, n);
             }
         } else {
@@ -29,8 +29,8 @@ final class ExpUtils {
 
     static void appendOrChild(List<Node> nodes, Node exp) {
 
-        if (exp instanceof ExpOr) {
-            for (Node n : ((ExpOr) exp).getChildren()) {
+        if (exp instanceof ExpOr expOr) {
+            for (Node n : expOr.getChildren()) {
                 appendOrChild(nodes, n);
             }
         } else {
@@ -79,65 +79,65 @@ final class ExpUtils {
 
     // TODO: maybe we can handle all these arrays directly instead of converting them to lists?
     static List<?> wrapPrimitiveArray(Object value) {
-        if (value instanceof byte[]) {
-            byte[] array = (byte[]) value;
-            List<Byte> result = new ArrayList<>(array.length);
-            for (byte b : array) {
-                result.add(b);
+        return switch (value) {
+            case byte[] array -> {
+                List<Byte> result = new ArrayList<>(array.length);
+                for (byte b : array) {
+                    result.add(b);
+                }
+                yield result;
             }
-            return result;
-        } else if (value instanceof short[]) {
-            short[] array = (short[]) value;
-            List<Short> result = new ArrayList<>(array.length);
-            for (short b : array) {
-                result.add(b);
+            case short[] array -> {
+                List<Short> result = new ArrayList<>(array.length);
+                for (short b : array) {
+                    result.add(b);
+                }
+                yield result;
             }
-            return result;
-        } else if (value instanceof char[]) {
-            char[] array = (char[]) value;
-            List<Character> result = new ArrayList<>(array.length);
-            for (char b : array) {
-                result.add(b);
+            case char[] array -> {
+                List<Character> result = new ArrayList<>(array.length);
+                for (char b : array) {
+                    result.add(b);
+                }
+                yield result;
             }
-            return result;
-        } else if (value instanceof int[]) {
-            int[] array = (int[]) value;
-            List<Integer> result = new ArrayList<>(array.length);
-            for (int b : array) {
-                result.add(b);
+            case int[] array -> {
+                List<Integer> result = new ArrayList<>(array.length);
+                for (int b : array) {
+                    result.add(b);
+                }
+                yield result;
             }
-            return result;
-        } else if (value instanceof long[]) {
-            long[] array = (long[]) value;
-            List<Long> result = new ArrayList<>(array.length);
-            for (long b : array) {
-                result.add(b);
+            case long[] array -> {
+                List<Long> result = new ArrayList<>(array.length);
+                for (long b : array) {
+                    result.add(b);
+                }
+                yield result;
             }
-            return result;
-        } else if (value instanceof float[]) {
-            float[] array = (float[]) value;
-            List<Float> result = new ArrayList<>(array.length);
-            for (float b : array) {
-                result.add(b);
+            case float[] array -> {
+                List<Float> result = new ArrayList<>(array.length);
+                for (float b : array) {
+                    result.add(b);
+                }
+                yield result;
             }
-            return result;
-        } else if (value instanceof double[]) {
-            double[] array = (double[]) value;
-            List<Double> result = new ArrayList<>(array.length);
-            for (double b : array) {
-                result.add(b);
+            case double[] array -> {
+                List<Double> result = new ArrayList<>(array.length);
+                for (double b : array) {
+                    result.add(b);
+                }
+                yield result;
             }
-            return result;
-        } else if (value instanceof boolean[]) {
-            boolean[] array = (boolean[]) value;
-            List<Boolean> result = new ArrayList<>(array.length);
-            for (boolean b : array) {
-                result.add(b);
+            case boolean[] array -> {
+                List<Boolean> result = new ArrayList<>(array.length);
+                for (boolean b : array) {
+                    result.add(b);
+                }
+                yield result;
             }
-            return result;
-        } else {
-            throw AgException.internalServerError("Array of type '%s' is not supported as an 'in' exp parameter",
+            default -> throw AgException.internalServerError("Array of type '%s' is not supported as an 'in' exp parameter",
                     value.getClass().getComponentType().getSimpleName());
-        }
+        };
     }
 }

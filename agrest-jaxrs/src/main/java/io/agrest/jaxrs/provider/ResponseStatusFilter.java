@@ -19,8 +19,7 @@ public class ResponseStatusFilter implements ContainerResponseFilter {
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
 
         Object entity = responseContext.getEntity();
-        if (entity instanceof AgResponse) {
-            AgResponse response = (AgResponse) entity;
+        if (entity instanceof AgResponse response) {
             responseContext.setStatus(response.getStatus());
             response.getHeaders().forEach((n, h) -> responseContext.getHeaders().put(n, h));
         }

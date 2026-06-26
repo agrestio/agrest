@@ -65,29 +65,26 @@ public class EncodablePropertyFactory implements IEncodablePropertyFactory {
         // TODO: this is a hack - we are treating "id" as a "virtual" attribute, as there's generally no "id"
         //   property in AgEntity. See the same note in EntityPathCache
 
-        switch (ids.size()) {
-            case 0:
-                return Optional.empty();
-            case 1:
+        return switch (ids.size()) {
+            case 0 -> Optional.empty();
+            case 1 -> {
                 AgIdPart idPart = entity.getAgEntity().getIdParts().iterator().next();
-                EncodableProperty p1 = EncodableProperty
+                yield Optional.of(EncodableProperty
                         .property(entity.getAgEntity().getIdReader())
-                        .encodedWith(new IdEncoder(getEncoder(idPart.getType())));
-                return Optional.of(p1);
-
-            default:
-
+                        .encodedWith(new IdEncoder(getEncoder(idPart.getType()))));
+            }
+            default -> {
                 // keeping attribute encoders in alphabetical order
                 Map<String, Encoder> valueEncoders = new TreeMap<>();
                 for (AgIdPart id : ids) {
                     valueEncoders.put(id.getName(), getEncoder(id.getType()));
                 }
 
-                EncodableProperty p2 = EncodableProperty
+                yield Optional.of(EncodableProperty
                         .property(entity.getAgEntity().getIdReader())
-                        .encodedWith(new IdEncoder(valueEncoders));
-                return Optional.of(p2);
-        }
+                        .encodedWith(new IdEncoder(valueEncoders)));
+            }
+        };
     }
 
     protected Encoder getEncoder(Class<?> type) {

@@ -103,8 +103,7 @@ public abstract class SimpleNode implements Node {
         for (int i = 0; i < count; i++) {
             Object child = getOperand(i);
 
-            if (child instanceof SimpleNode && !(child instanceof ExpScalar)) {
-                SimpleNode childExp = (SimpleNode) child;
+            if (child instanceof SimpleNode childExp && !(child instanceof ExpScalar)) {
                 childExp.traverse(this, visitor);
             } else {
                 visitor.objectNode(child, this);

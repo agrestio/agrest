@@ -27,13 +27,10 @@ public abstract class RelatedEntityResultReader<T extends RelatedResourceEntity<
     protected AgObjectId readId(Object object) {
         // TODO: wrapping in AgObjectId is wasteful
         Map<String, Object> id = (Map<String, Object>) parentKeyReader.read(object);
-        switch (id.size()) {
-            case 0:
-                throw new RuntimeException("ID is empty for '" + entity.getName() + "'");
-            case 1:
-                return AgObjectId.of(id.values().iterator().next());
-            default:
-                return AgObjectId.ofMap(id);
-        }
+        return switch (id.size()) {
+            case 0 -> throw new RuntimeException("ID is empty for '" + entity.getName() + "'");
+            case 1 -> AgObjectId.of(id.values().iterator().next());
+            default -> AgObjectId.ofMap(id);
+        };
     }
 }

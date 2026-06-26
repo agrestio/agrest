@@ -45,10 +45,10 @@ public class SimpleResponseWriter implements MessageBodyWriter<SimpleResponse> {
             OutputStream entityStream) throws IOException {
 
         switch (t.getStatus()) {
-            case 304:
+            case 304 -> {
                 return;
-            default:
-                getJacksonService().outputJson(out -> writeData(t, out), entityStream);
+            }
+            default -> getJacksonService().outputJson(out -> writeData(t, out), entityStream);
         }
     }
 
