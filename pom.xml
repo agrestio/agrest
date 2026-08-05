@@ -31,9 +31,9 @@
         <cayenne.version>5.0-M2</cayenne.version>
 
         <jaxrs.version>4.0.0</jaxrs.version>
-        <jackson.version>2.22.0</jackson.version>
+        <jackson.version>2.22.1</jackson.version>
         <jackson.annotations.version>2.22</jackson.annotations.version>
-        <jackson.databind.version>2.22.0</jackson.databind.version>
+        <jackson.databind.version>2.22.1</jackson.databind.version>
         <bq.version>4.0-M3</bq.version>
         <junit5.version>5.13.4</junit5.version>
         <swagger.version>2.2.23</swagger.version>

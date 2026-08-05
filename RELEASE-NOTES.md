@@ -1,3 +1,7 @@
+## Release 6.0-M2
+
+* #710 Upgrade to Jackson 2.22.1
+
 ## Release 6.0-M1
 
 * #701 Require Java 21
