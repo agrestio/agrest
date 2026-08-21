@@ -1,6 +1,7 @@
 ## Release 6.0-M2
 
 * #710 Upgrade to Jackson 2.22.1
+* #711 Upgrade to Cayenne 5.0-M3
 
 ## Release 6.0-M1
 

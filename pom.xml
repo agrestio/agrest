@@ -28,13 +28,13 @@
 
         <!-- Upstream dependency versions (including "test" dependencies) -->
         <slf4j.version>2.0.17</slf4j.version>
-        <cayenne.version>5.0-M2</cayenne.version>
+        <cayenne.version>5.0-M3</cayenne.version>
 
         <jaxrs.version>4.0.0</jaxrs.version>
         <jackson.version>2.22.1</jackson.version>
         <jackson.annotations.version>2.22</jackson.annotations.version>
         <jackson.databind.version>2.22.1</jackson.databind.version>
-        <bq.version>4.0-M5</bq.version>
+        <bq.version>4.0-SNAPSHOT</bq.version>
         <junit5.version>5.13.4</junit5.version>
         <swagger.version>2.2.23</swagger.version>
         <mockito.version>3.9.0</mockito.version>
@@ -93,6 +93,20 @@
         for the snapshot repo it's https://central.sonatype.com/repository/maven-snapshots/
         -->
     </distributionManagement>
+
+    <!-- TODO: remove once we switch to a release version of Bootique -->
+    <repositories>
+        <repository>
+            <id>bootique-snapshots</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>

@@ -17,12 +17,13 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgSchema;
 import io.agrest.meta.LazySchema;
 import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.configuration.runtime.DataSourceFactory;
-import org.apache.cayenne.di.Module;
+import org.apache.cayenne.configuration.DataNodeDescriptor;
+import org.apache.cayenne.dba.JdbcAdapter;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.runtime.CayenneRuntime;
 import org.junit.jupiter.api.BeforeEach;
 
+import javax.sql.DataSource;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,15 +43,17 @@ public abstract class NoDbTest {
     protected CayenneQueryAssembler queryAssembler;
 
     protected static CayenneRuntime createRuntime(String project) {
-        Module module = binder -> {
-            DataSourceFactory dsf = mock(DataSourceFactory.class);
-            binder.bind(DataSourceFactory.class).toInstance(dsf);
-        };
+        // no DB access is needed here, so use a mock DataSource with an explicit adapter, bypassing
+        // adapter auto-detection that would try to open a connection
+        DataNodeDescriptor node = DataNodeDescriptor.of("test")
+                .dataSource(mock(DataSource.class))
+                .adapter(JdbcAdapter.class)
+                .build();
 
         return CayenneRuntime
                 .builder()
                 .addConfig(project)
-                .addModule(module)
+                .defaultDataNode(node)
                 .build();
     }
 

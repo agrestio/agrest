@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<data-map xmlns="http://cayenne.apache.org/schema/12/modelMap"
+<data-map xmlns="http://cayenne.apache.org/schema/13/modelMap"
 	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="http://cayenne.apache.org/schema/12/modelMap https://cayenne.apache.org/schema/12/modelMap.xsd"
-	 project-version="12">
+	 xsi:schemaLocation="http://cayenne.apache.org/schema/13/modelMap https://cayenne.apache.org/schema/13/modelMap.xsd"
+	 project-version="13">
 	<property name="defaultPackage" value="io.agrest.cayenne.cayenne.main"/>
 	<property name="quoteSqlIdentifiers" value="true"/>
 	<db-entity name="e1">
@@ -491,7 +491,7 @@
 	<obj-relationship name="e7s" source="E8" target="E7" deleteRule="Deny" db-relationship-path="e7s"/>
 	<obj-relationship name="e9" source="E8" target="E9" deleteRule="Nullify" db-relationship-path="e9"/>
 	<obj-relationship name="e8" source="E9" target="E8" deleteRule="Nullify" db-relationship-path="e8"/>
-	<cgen xmlns="http://cayenne.apache.org/schema/12/cgen">
+	<cgen xmlns="http://cayenne.apache.org/schema/13/cgen">
 		<name>Default</name>
 		<destDir>../../java</destDir>
 		<mode>entity</mode>
