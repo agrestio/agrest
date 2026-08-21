@@ -11,19 +11,19 @@ import io.bootique.BQModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.cayenne.v50.CayenneModule;
-import io.bootique.cayenne.v50.junit5.CayenneTester;
+import io.bootique.cayenne.v50.junit.CayenneTester;
 import io.bootique.command.CommandOutcome;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
-import io.bootique.jdbc.junit5.DbTester;
+import io.bootique.jdbc.junit.DbTester;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jersey.JerseyModuleExtender;
-import io.bootique.jetty.junit5.JettyTester;
-import io.bootique.junit5.BQTestScope;
-import io.bootique.junit5.scope.BQAfterMethodCallback;
-import io.bootique.junit5.scope.BQAfterScopeCallback;
-import io.bootique.junit5.scope.BQBeforeMethodCallback;
-import io.bootique.junit5.scope.BQBeforeScopeCallback;
+import io.bootique.jetty.junit.JettyTester;
+import io.bootique.junit.BQTestScope;
+import io.bootique.junit.scope.BQAfterMethodCallback;
+import io.bootique.junit.scope.BQAfterScopeCallback;
+import io.bootique.junit.scope.BQBeforeMethodCallback;
+import io.bootique.junit.scope.BQBeforeScopeCallback;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.client.WebTarget;
 import org.apache.cayenne.Persistent;
@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * An integration test utility that manages an application stack with a database and Cayenne runtime used for testing
  * Agrest endpoints. Under the hood combines multiple Bootique JUnit 5 tools. Users must annotate AgCayenneTester field
- * with {@link io.bootique.junit5.BQTestTool} to tie it to the JUnit 5 lifecycle.
+ * with {@link io.bootique.junit.BQTestTool} to tie it to the JUnit 5 lifecycle.
  */
 public abstract class AgCayenneTester implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback, BQAfterMethodCallback {
 

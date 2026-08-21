@@ -5,7 +5,7 @@ import io.agrest.cayenne.cayenne.main.E2;
 import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTestTool;
 import org.apache.cayenne.access.translator.select.TranslatableQueryWrapper;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.parser.ASTExists;

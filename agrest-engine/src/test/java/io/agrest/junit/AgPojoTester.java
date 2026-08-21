@@ -9,9 +9,9 @@ import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
-import io.bootique.junit5.BQTestScope;
-import io.bootique.junit5.scope.BQAfterScopeCallback;
-import io.bootique.junit5.scope.BQBeforeScopeCallback;
+import io.bootique.junit.BQTestScope;
+import io.bootique.junit.scope.BQAfterScopeCallback;
+import io.bootique.junit.scope.BQBeforeScopeCallback;
 import jakarta.inject.Singleton;
 import org.junit.jupiter.api.extension.ExtensionContext;
 

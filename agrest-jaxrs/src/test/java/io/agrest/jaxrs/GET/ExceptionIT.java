@@ -7,7 +7,7 @@ import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.jaxrs.junit.AgPojoTester;
 import io.agrest.jaxrs.junit.PojoTest;
 import io.agrest.jaxrs.junit.pojo.P1;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTestTool;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.WebApplicationException;

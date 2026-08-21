@@ -9,7 +9,7 @@ import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.jaxrs.junit.pojo.P7;
 import io.agrest.runtime.processor.select.SelectContext;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTestTool;
 import org.apache.cayenne.Cayenne;
 import org.junit.jupiter.api.Test;
 

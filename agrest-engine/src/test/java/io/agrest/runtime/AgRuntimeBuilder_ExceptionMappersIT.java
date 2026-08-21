@@ -6,8 +6,8 @@ import io.agrest.junit.AgPojoTester;
 import io.agrest.junit.pojo.P1;
 import io.agrest.junit.pojo.P2;
 import io.agrest.spi.AgExceptionMapper;
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestTool;
 import org.apache.cayenne.di.Module;
 import org.junit.jupiter.api.Test;
 

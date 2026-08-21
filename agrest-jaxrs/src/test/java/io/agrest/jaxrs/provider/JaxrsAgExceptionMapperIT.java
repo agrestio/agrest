@@ -5,7 +5,7 @@ import io.agrest.DataResponse;
 import io.agrest.jaxrs.junit.AgPojoTester;
 import io.agrest.jaxrs.junit.PojoTest;
 import io.agrest.jaxrs.junit.pojo.P1;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import jakarta.ws.rs.GET;

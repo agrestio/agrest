@@ -12,7 +12,7 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.resolver.BaseRootDataResolver;
 import io.agrest.runtime.processor.select.SelectContext;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTestTool;
 import org.apache.cayenne.ObjectId;
 import org.junit.jupiter.api.Test;
 

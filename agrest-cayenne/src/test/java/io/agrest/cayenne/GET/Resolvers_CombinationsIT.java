@@ -12,7 +12,7 @@ import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
 import io.agrest.resolver.RelatedDataResolverFactory;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTestTool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

@@ -8,7 +8,7 @@ import io.agrest.cayenne.cayenne.main.E8;
 import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs.AgJaxrs;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTestTool;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;

@@ -4,8 +4,8 @@ import io.agrest.annotation.AgAttribute;
 import io.agrest.annotation.AgId;
 import io.agrest.junit.AgPojoTester;
 import io.agrest.protocol.junit.ControlParamsTester;
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

@@ -11,7 +11,7 @@ import io.agrest.jaxrs.junit.pojo.P4;
 import io.agrest.jaxrs.junit.pojo.P6;
 import io.agrest.jaxrs.junit.pojo.P8;
 import io.agrest.jaxrs.junit.pojo.P9;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTestTool;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;

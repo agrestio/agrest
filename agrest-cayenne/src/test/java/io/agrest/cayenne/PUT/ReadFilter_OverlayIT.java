@@ -11,7 +11,7 @@ import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTestTool;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;

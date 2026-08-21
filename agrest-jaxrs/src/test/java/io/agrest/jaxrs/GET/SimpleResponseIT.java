@@ -3,7 +3,7 @@ package io.agrest.jaxrs.GET;
 import io.agrest.SimpleResponse;
 import io.agrest.jaxrs.junit.AgPojoTester;
 import io.agrest.jaxrs.junit.PojoTest;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import jakarta.ws.rs.GET;

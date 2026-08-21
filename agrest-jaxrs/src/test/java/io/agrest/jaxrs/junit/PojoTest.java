@@ -1,6 +1,6 @@
 package io.agrest.jaxrs.junit;
 
-import io.bootique.junit5.BQTest;
+import io.bootique.junit.BQTest;
 
 /**
  * An abstract superclass of integration tests that starts Bootique test runtime with JAX-RS service and an in-memory

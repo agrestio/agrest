@@ -8,8 +8,8 @@ import io.agrest.jaxrs.junit.AgPojoTester;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgIdPart;
 import io.agrest.meta.AgSchema;
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

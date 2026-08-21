@@ -1,10 +1,10 @@
 package io.agrest.cayenne.unit.main;
 
 import io.agrest.cayenne.unit.AgCayenneTester;
-import io.bootique.jdbc.junit5.derby.DerbyTester;
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestScope;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.jdbc.junit.derby.DerbyTester;
+import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestScope;
+import io.bootique.junit.BQTestTool;
 
 /**
  * An abstract superclass of integration tests that starts Bootique test runtime with JAX-RS service and Derby DB.

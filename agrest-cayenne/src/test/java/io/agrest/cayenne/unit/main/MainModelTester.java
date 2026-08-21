@@ -1,7 +1,7 @@
 package io.agrest.cayenne.unit.main;
 
 import io.agrest.cayenne.unit.AgCayenneTester;
-import io.bootique.jdbc.junit5.Table;
+import io.bootique.jdbc.junit.Table;
 
 public class MainModelTester extends AgCayenneTester {
 

@@ -3,8 +3,8 @@ package io.agrest.access;
 import io.agrest.junit.AgPojoTester;
 import io.agrest.meta.AgEntity;
 import io.agrest.junit.pojo.P11;
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;

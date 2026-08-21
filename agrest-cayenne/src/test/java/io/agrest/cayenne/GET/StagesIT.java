@@ -12,7 +12,7 @@ import io.agrest.encoder.DataResponseEncoder;
 import io.agrest.encoder.Encoder;
 import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.runtime.processor.select.SelectContext;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTestTool;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Configuration;

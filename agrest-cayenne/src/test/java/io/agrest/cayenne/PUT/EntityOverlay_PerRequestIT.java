@@ -13,7 +13,7 @@ import io.agrest.cayenne.unit.main.MainModelTester;
 import io.agrest.jaxrs.AgJaxrs;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgEntityOverlay;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTestTool;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.Persistent;
 import org.apache.cayenne.query.SelectById;

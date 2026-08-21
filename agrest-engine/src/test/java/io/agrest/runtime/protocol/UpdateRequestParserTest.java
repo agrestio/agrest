@@ -9,8 +9,8 @@ import io.agrest.junit.AgPojoTester;
 import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgSchema;
 import io.agrest.runtime.jackson.IJacksonService;
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

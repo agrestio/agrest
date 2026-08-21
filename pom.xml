@@ -34,7 +34,7 @@
         <jackson.version>2.22.1</jackson.version>
         <jackson.annotations.version>2.22</jackson.annotations.version>
         <jackson.databind.version>2.22.1</jackson.databind.version>
-        <bq.version>4.0-M3</bq.version>
+        <bq.version>4.0-M5</bq.version>
         <junit5.version>5.13.4</junit5.version>
         <swagger.version>2.2.23</swagger.version>
         <mockito.version>3.9.0</mockito.version>
@@ -184,12 +184,12 @@
             -->
             <dependency>
                 <groupId>io.bootique.jdbc</groupId>
-                <artifactId>bootique-jdbc-junit5-derby</artifactId>
+                <artifactId>bootique-jdbc-junit-derby</artifactId>
                 <version>${bq.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.cayenne</groupId>
-                <artifactId>bootique-cayenne50-junit5</artifactId>
+                <artifactId>bootique-cayenne50-junit</artifactId>
                 <version>${bq.version}</version>
                 <exclusions>
                     <exclusion>
@@ -200,7 +200,7 @@
             </dependency>
             <dependency>
                 <groupId>io.bootique</groupId>
-                <artifactId>bootique-junit5</artifactId>
+                <artifactId>bootique-junit</artifactId>
                 <version>${bq.version}</version>
             </dependency>
             <dependency>
@@ -210,7 +210,7 @@
             </dependency>
             <dependency>
                 <groupId>io.bootique.jetty</groupId>
-                <artifactId>bootique-jetty-junit5</artifactId>
+                <artifactId>bootique-jetty-junit</artifactId>
                 <version>${bq.version}</version>
             </dependency>
         </dependencies>
