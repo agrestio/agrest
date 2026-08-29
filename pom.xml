@@ -34,7 +34,16 @@
         <jackson.version>2.22.1</jackson.version>
         <jackson.annotations.version>2.22</jackson.annotations.version>
         <jackson.databind.version>2.22.1</jackson.databind.version>
-        <bq.version>4.0-SNAPSHOT</bq.version>
+        <!--
+        Pinning Bootique test dependencies to specific snapshot builds instead of a floating "4.0-SNAPSHOT",
+        so that the builds are reproducible. Each Bootique module is released from its own repo, hence
+        a separate property per module.
+        -->
+        <bq.version>4.0-20260829.004058-38</bq.version>
+        <bq.jdbc.version>4.0-20260829.005318-13</bq.jdbc.version>
+        <bq.cayenne.version>4.0-20260825.234135-9</bq.cayenne.version>
+        <bq.jersey.version>4.0-20260829.010711-34</bq.jersey.version>
+        <bq.jetty.version>4.0-20260829.010512-13</bq.jetty.version>
         <junit5.version>5.13.4</junit5.version>
         <swagger.version>2.2.23</swagger.version>
         <mockito.version>3.9.0</mockito.version>
@@ -199,12 +208,12 @@
             <dependency>
                 <groupId>io.bootique.jdbc</groupId>
                 <artifactId>bootique-jdbc-junit-derby</artifactId>
-                <version>${bq.version}</version>
+                <version>${bq.jdbc.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.cayenne</groupId>
                 <artifactId>bootique-cayenne50-junit</artifactId>
-                <version>${bq.version}</version>
+                <version>${bq.cayenne.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.apache.cayenne</groupId>
@@ -220,12 +229,12 @@
             <dependency>
                 <groupId>io.bootique.jersey</groupId>
                 <artifactId>bootique-jersey</artifactId>
-                <version>${bq.version}</version>
+                <version>${bq.jersey.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.jetty</groupId>
                 <artifactId>bootique-jetty-junit</artifactId>
-                <version>${bq.version}</version>
+                <version>${bq.jetty.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
