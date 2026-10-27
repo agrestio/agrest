@@ -31,9 +31,10 @@
         <cayenne.version>5.0-M3</cayenne.version>
 
         <jaxrs.version>4.0.0</jaxrs.version>
-        <jackson.version>2.22.1</jackson.version>
+        <jackson.version>2.22.3</jackson.version>
+        <jackson.databind.version>2.22.3</jackson.databind.version>
         <jackson.annotations.version>2.22</jackson.annotations.version>
-        <jackson.databind.version>2.22.1</jackson.databind.version>
+
         <!--
         Pinning Bootique test dependencies to specific snapshot builds instead of a floating "4.0-SNAPSHOT",
         so that the builds are reproducible. Each Bootique module is released from its own repo, hence

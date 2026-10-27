@@ -1,3 +1,7 @@
+## Release 6.0-M3
+
+* #714 Upgrade to Jackson 2.22.3
+
 ## Release 6.0-M2
 
 * #710 Upgrade to Jackson 2.22.1
