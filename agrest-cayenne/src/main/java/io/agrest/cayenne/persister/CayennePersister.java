@@ -2,7 +2,7 @@ package io.agrest.cayenne.persister;
 
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.map.EntityResolver;
-import org.apache.cayenne.runtime.CayenneRuntime;
+import org.apache.cayenne.CayenneRuntime;
 
 public class CayennePersister implements ICayennePersister {
 

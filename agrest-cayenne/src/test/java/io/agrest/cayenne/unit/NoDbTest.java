@@ -17,10 +17,10 @@ import io.agrest.meta.AgEntity;
 import io.agrest.meta.AgSchema;
 import io.agrest.meta.LazySchema;
 import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.configuration.DataNodeDescriptor;
+import org.apache.cayenne.project.DataNodeDescriptor;
 import org.apache.cayenne.dba.JdbcAdapter;
 import org.apache.cayenne.map.ObjEntity;
-import org.apache.cayenne.runtime.CayenneRuntime;
+import org.apache.cayenne.CayenneRuntime;
 import org.junit.jupiter.api.BeforeEach;
 
 import javax.sql.DataSource;

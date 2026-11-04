@@ -6,12 +6,11 @@ import io.agrest.cayenne.cayenne.main.E3;
 import io.agrest.cayenne.unit.main.MainDbTest;
 import io.agrest.cayenne.unit.main.MainModelTester;
 import io.bootique.junit.BQTestTool;
-import org.apache.cayenne.access.translator.select.TranslatableQueryWrapper;
 import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.parser.ASTExists;
-import org.apache.cayenne.exp.parser.ASTPath;
-import org.apache.cayenne.exp.parser.ASTSubquery;
-import org.apache.cayenne.exp.parser.SimpleNode;
+import org.apache.cayenne.exp.ExistsExp;
+import org.apache.cayenne.exp.PathExp;
+import org.apache.cayenne.exp.SubqueryExp;
+import org.apache.cayenne.query.FluentSelect;
 import org.apache.cayenne.query.ObjectSelect;
 import org.junit.jupiter.api.Test;
 
@@ -139,9 +138,7 @@ public class ICayenneExpPostProcessorIT extends MainDbTest {
 
     @Test
     void existsAtRoot() {
-        // can't create this via API, so it's ugly
-        ASTExists e0 = new ASTExists(null);
-        e0.jjtAddChild((SimpleNode)E3.E2.dot(E2.NAME).getExpression(), 0);
+        ExistsExp e0 = new ExistsExp(E3.E2.dot(E2.NAME).getExpression());
 
         Expression e1 = p.process("E3", e0);
 
@@ -152,16 +149,14 @@ public class ICayenneExpPostProcessorIT extends MainDbTest {
         assertEquals(expected, e1);
         // doesn't really compare internals, so need to check it manually
         Object operand = e1.getOperand(0);
-        assertInstanceOf(ASTSubquery.class, operand);
-        TranslatableQueryWrapper query = ((ASTSubquery) operand).getQuery();
-        assertEquals(subqueryWhere, query.getQualifier());
+        assertInstanceOf(SubqueryExp.class, operand);
+        FluentSelect<?, ?> query = ((SubqueryExp) operand).getQuery();
+        assertEquals(subqueryWhere, query.getWhere());
     }
 
     @Test
     void existsAtChild() {
-        // can't create this via API, so it's ugly
-        ASTExists exists = new ASTExists(null);
-        exists.jjtAddChild((SimpleNode)E3.E2.dot(E2.NAME).getExpression(), 0);
+        ExistsExp exists = new ExistsExp(E3.E2.dot(E2.NAME).getExpression());
 
         Expression e0 = or(exists, E3.PHONE_NUMBER.contains("123"));
         Expression e1 = p.process("E3", e0);
@@ -176,11 +171,11 @@ public class ICayenneExpPostProcessorIT extends MainDbTest {
         assertEquals(expected, e1);
         // doesn't really compare internals, so need to check it manually
         Object operand = e1.getOperand(0);
-        assertInstanceOf(ASTExists.class, operand);
-        Object queryOperand = ((ASTExists) operand).getOperand(0);
-        assertInstanceOf(ASTSubquery.class, queryOperand);
-        TranslatableQueryWrapper query = ((ASTSubquery) queryOperand).getQuery();
-        assertEquals(subqueryWhere, query.getQualifier());
+        assertInstanceOf(ExistsExp.class, operand);
+        Object queryOperand = ((ExistsExp) operand).getOperand(0);
+        assertInstanceOf(SubqueryExp.class, queryOperand);
+        FluentSelect<?, ?> query = ((SubqueryExp) queryOperand).getQuery();
+        assertEquals(subqueryWhere, query.getWhere());
     }
 
     @Test
@@ -191,16 +186,15 @@ public class ICayenneExpPostProcessorIT extends MainDbTest {
     static void assertEqualsPathAliasAware(Expression expected, Expression actual) {
         assertEquals(expected, actual);
 
-        if(expected instanceof ASTPath && actual instanceof ASTPath) {
-            ASTPath expectedPath = (ASTPath) expected;
-            ASTPath actualPath = (ASTPath) actual;
+        if (expected instanceof PathExp expectedPath && actual instanceof PathExp actualPath) {
             assertEquals(expectedPath.getPathAliases(), actualPath.getPathAliases(), "Expressions have different path aliases");
         }
 
-        SimpleNode expectedNode = (SimpleNode) expected;
-        SimpleNode actualNode = (SimpleNode) actual;
-        for(int i = 0; i < expectedNode.jjtGetNumChildren(); i++) {
-            assertEqualsPathAliasAware((Expression) expectedNode.jjtGetChild(i), (Expression)actualNode.jjtGetChild(i));
+        for (int i = 0; i < expected.getOperandCount(); i++) {
+            if (expected.getOperand(i) instanceof Expression expectedChild
+                    && actual.getOperand(i) instanceof Expression actualChild) {
+                assertEqualsPathAliasAware(expectedChild, actualChild);
+            }
         }
     }
 }

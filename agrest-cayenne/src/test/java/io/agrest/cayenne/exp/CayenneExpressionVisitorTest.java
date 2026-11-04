@@ -2,7 +2,7 @@ package io.agrest.cayenne.exp;
 
 import io.agrest.protocol.Exp;
 import org.apache.cayenne.exp.Expression;
-import org.apache.cayenne.exp.parser.PatternMatchNode;
+import org.apache.cayenne.exp.PatternMatchExp;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -17,58 +17,58 @@ public class CayenneExpressionVisitorTest {
 
     @ParameterizedTest
     @CsvSource(delimiterString = "_|", value = {
-            "abs(1)_|org.apache.cayenne.exp.parser.ASTAbs",
-            "1 + 2_|org.apache.cayenne.exp.parser.ASTAdd",
-            "t.isA = true and t.isB = true_|org.apache.cayenne.exp.parser.ASTAnd",
-            "t.value between 10 and 20_|org.apache.cayenne.exp.parser.ASTBetween",
-            "0xFF & 0x01_|org.apache.cayenne.exp.parser.ASTBitwiseAnd",
-            "0xFF << 2_|org.apache.cayenne.exp.parser.ASTBitwiseLeftShift",
-            "~0xA7_|org.apache.cayenne.exp.parser.ASTBitwiseNot",
-            "0xFF | 0x01_|org.apache.cayenne.exp.parser.ASTBitwiseOr",
-            "0xFF >> 2_|org.apache.cayenne.exp.parser.ASTBitwiseRightShift",
-            "0xFF ^ 0x01_|org.apache.cayenne.exp.parser.ASTBitwiseXor",
-            "concat(t.v, '10')_|org.apache.cayenne.exp.parser.ASTConcat",
-            "currentDate()_|org.apache.cayenne.exp.parser.ASTCurrentDate",
-            "currentTime()_|org.apache.cayenne.exp.parser.ASTCurrentTime",
-            "currentTimestamp()_|org.apache.cayenne.exp.parser.ASTCurrentTimestamp",
-            "t.value / 2_|org.apache.cayenne.exp.parser.ASTDivide",
-            "t.v1 = t.v2_|org.apache.cayenne.exp.parser.ASTEqual",
-            "exists details_|org.apache.cayenne.exp.parser.ASTExists",
-            "day(t.dateTime)_|org.apache.cayenne.exp.parser.ASTExtract",
-            "false_|org.apache.cayenne.exp.parser.ASTFalse",
-            "t.v > 0_|org.apache.cayenne.exp.parser.ASTGreater",
-            "t.v >= 0_|org.apache.cayenne.exp.parser.ASTGreaterOrEqual",
-            "t.v in (0, 5)_|org.apache.cayenne.exp.parser.ASTIn",
-            "length(a.v)_|org.apache.cayenne.exp.parser.ASTLength",
-            "t.v < 0_|org.apache.cayenne.exp.parser.ASTLess",
-            "t.v <= 0_|org.apache.cayenne.exp.parser.ASTLessOrEqual",
-            "t.name like '%s'_|org.apache.cayenne.exp.parser.ASTLike",
-            "t.name likeIgnoreCase '%s'_|org.apache.cayenne.exp.parser.ASTLikeIgnoreCase",
-            "locate(t.v, 'id')_|org.apache.cayenne.exp.parser.ASTLocate",
-            "lower(t.v)_|org.apache.cayenne.exp.parser.ASTLower",
-            "mod(t.v, 10)_|org.apache.cayenne.exp.parser.ASTMod",
-            "1 * 4_|org.apache.cayenne.exp.parser.ASTMultiply",
-            "$a_|org.apache.cayenne.exp.parser.ASTNamedParameter",
-            "-a.v_|org.apache.cayenne.exp.parser.ASTNegate",
-            "!(t.a = 1 and t.b = 3)_|org.apache.cayenne.exp.parser.ASTNot",
-            "t.value !between 10 and 20_|org.apache.cayenne.exp.parser.ASTNotBetween",
-            "t.v1 != t.v2_|org.apache.cayenne.exp.parser.ASTNotEqual",
-            "not exists details_|org.apache.cayenne.exp.parser.ASTNotExists",
-            "t.v !in (0, 5)_|org.apache.cayenne.exp.parser.ASTNotIn",
-            "t.name !like '%s'_|org.apache.cayenne.exp.parser.ASTNotLike",
-            "t.name !likeIgnoreCase '%s'_|org.apache.cayenne.exp.parser.ASTNotLikeIgnoreCase",
-            "a.v_|org.apache.cayenne.exp.parser.ASTObjPath",
-            "t.isA = true or t.isB = true_|org.apache.cayenne.exp.parser.ASTOr",
-            "1.2_|org.apache.cayenne.exp.parser.ASTScalar",
-            "null_|org.apache.cayenne.exp.parser.ASTScalar",
-            "1_|org.apache.cayenne.exp.parser.ASTScalar",
-            "\"value\"_|org.apache.cayenne.exp.parser.ASTScalar",
-            "sqrt(2)_|org.apache.cayenne.exp.parser.ASTSqrt",
-            "substring(a.v, 3)_|org.apache.cayenne.exp.parser.ASTSubstring",
-            "3 - 1_|org.apache.cayenne.exp.parser.ASTSubtract",
-            "trim(a.v)_|org.apache.cayenne.exp.parser.ASTTrim",
-            "true_|org.apache.cayenne.exp.parser.ASTTrue",
-            "upper(t.v)_|org.apache.cayenne.exp.parser.ASTUpper"
+            "abs(1)_|org.apache.cayenne.exp.AbsExp",
+            "1 + 2_|org.apache.cayenne.exp.AddExp",
+            "t.isA = true and t.isB = true_|org.apache.cayenne.exp.AndExp",
+            "t.value between 10 and 20_|org.apache.cayenne.exp.BetweenExp",
+            "0xFF & 0x01_|org.apache.cayenne.exp.BitwiseAndExp",
+            "0xFF << 2_|org.apache.cayenne.exp.BitwiseLeftShiftExp",
+            "~0xA7_|org.apache.cayenne.exp.BitwiseNotExp",
+            "0xFF | 0x01_|org.apache.cayenne.exp.BitwiseOrExp",
+            "0xFF >> 2_|org.apache.cayenne.exp.BitwiseRightShiftExp",
+            "0xFF ^ 0x01_|org.apache.cayenne.exp.BitwiseXorExp",
+            "concat(t.v, '10')_|org.apache.cayenne.exp.ConcatExp",
+            "currentDate()_|org.apache.cayenne.exp.CurrentDateExp",
+            "currentTime()_|org.apache.cayenne.exp.CurrentTimeExp",
+            "currentTimestamp()_|org.apache.cayenne.exp.CurrentTimestampExp",
+            "t.value / 2_|org.apache.cayenne.exp.DivideExp",
+            "t.v1 = t.v2_|org.apache.cayenne.exp.EqualExp",
+            "exists details_|org.apache.cayenne.exp.ExistsExp",
+            "day(t.dateTime)_|org.apache.cayenne.exp.ExtractExp",
+            "false_|org.apache.cayenne.exp.FalseExp",
+            "t.v > 0_|org.apache.cayenne.exp.GreaterExp",
+            "t.v >= 0_|org.apache.cayenne.exp.GreaterOrEqualExp",
+            "t.v in (0, 5)_|org.apache.cayenne.exp.InExp",
+            "length(a.v)_|org.apache.cayenne.exp.LengthExp",
+            "t.v < 0_|org.apache.cayenne.exp.LessExp",
+            "t.v <= 0_|org.apache.cayenne.exp.LessOrEqualExp",
+            "t.name like '%s'_|org.apache.cayenne.exp.LikeExp",
+            "t.name likeIgnoreCase '%s'_|org.apache.cayenne.exp.LikeIgnoreCaseExp",
+            "locate(t.v, 'id')_|org.apache.cayenne.exp.LocateExp",
+            "lower(t.v)_|org.apache.cayenne.exp.LowerExp",
+            "mod(t.v, 10)_|org.apache.cayenne.exp.ModExp",
+            "1 * 4_|org.apache.cayenne.exp.MultiplyExp",
+            "$a_|org.apache.cayenne.exp.ScalarExp",
+            "-a.v_|org.apache.cayenne.exp.NegateExp",
+            "!(t.a = 1 and t.b = 3)_|org.apache.cayenne.exp.NotExp",
+            "t.value !between 10 and 20_|org.apache.cayenne.exp.NotBetweenExp",
+            "t.v1 != t.v2_|org.apache.cayenne.exp.NotEqualExp",
+            "not exists details_|org.apache.cayenne.exp.NotExistsExp",
+            "t.v !in (0, 5)_|org.apache.cayenne.exp.NotInExp",
+            "t.name !like '%s'_|org.apache.cayenne.exp.NotLikeExp",
+            "t.name !likeIgnoreCase '%s'_|org.apache.cayenne.exp.NotLikeIgnoreCaseExp",
+            "a.v_|org.apache.cayenne.exp.ObjPathExp",
+            "t.isA = true or t.isB = true_|org.apache.cayenne.exp.OrExp",
+            "1.2_|org.apache.cayenne.exp.ScalarExp",
+            "null_|org.apache.cayenne.exp.ScalarExp",
+            "1_|org.apache.cayenne.exp.ScalarExp",
+            "\"value\"_|org.apache.cayenne.exp.ScalarExp",
+            "sqrt(2)_|org.apache.cayenne.exp.SqrtExp",
+            "substring(a.v, 3)_|org.apache.cayenne.exp.SubstringExp",
+            "3 - 1_|org.apache.cayenne.exp.SubtractExp",
+            "trim(a.v)_|org.apache.cayenne.exp.TrimExp",
+            "true_|org.apache.cayenne.exp.TrueExp",
+            "upper(t.v)_|org.apache.cayenne.exp.UpperExp"
 
             // TODO: Cayenne doesn't allow objPath as operand for logical operators (see AggregateConditionNode).
             //       It will be reasonable to change this.
@@ -89,8 +89,8 @@ public class CayenneExpressionVisitorTest {
             "a not likeIgnoreCase 'bcd' escape '$'"})
     public void accept_escapeChar(String agrestExp) {
         Expression cayenneExp = Exp.parse(agrestExp).accept(visitor, null);
-        assertInstanceOf(PatternMatchNode.class, cayenneExp);
-        PatternMatchNode matchNode = (PatternMatchNode) cayenneExp;
+        assertInstanceOf(PatternMatchExp.class, cayenneExp);
+        PatternMatchExp matchNode = (PatternMatchExp) cayenneExp;
         assertEquals('$', matchNode.getEscapeChar());
     }
 }

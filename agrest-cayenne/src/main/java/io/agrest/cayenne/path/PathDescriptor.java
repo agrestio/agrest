@@ -1,6 +1,6 @@
 package io.agrest.cayenne.path;
 
-import org.apache.cayenne.exp.parser.ASTPath;
+import org.apache.cayenne.exp.PathExp;
 
 /**
  * A mapping of an Agrest property path to a Cayenne path.
@@ -8,10 +8,10 @@ import org.apache.cayenne.exp.parser.ASTPath;
 public class PathDescriptor {
 
     private final boolean attributeOrId;
-    private final ASTPath path;
+    private final PathExp path;
     private final String type;
 
-    public PathDescriptor(String type, ASTPath path, boolean attributeOrId) {
+    public PathDescriptor(String type, PathExp path, boolean attributeOrId) {
         this.path = path;
         this.type = type;
         this.attributeOrId = attributeOrId;
@@ -28,7 +28,7 @@ public class PathDescriptor {
         return type;
     }
 
-    public ASTPath getPathExp() {
+    public PathExp getPathExp() {
         return path;
     }
 }

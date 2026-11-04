@@ -1,8 +1,5 @@
 package io.agrest.cayenne.cayenne.inheritance.auto;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.List;
 
 import org.apache.cayenne.PersistentObject;
@@ -22,8 +19,6 @@ import io.agrest.cayenne.cayenne.inheritance.Ie3;
  * If you need to make any customizations, please use subclass.
  */
 public abstract class _Aie1Super extends PersistentObject {
-
-    private static final long serialVersionUID = 1L;
 
     public static final SelfProperty<Aie1Super> SELF = PropertyFactory.createSelf(Aie1Super.class);
 
@@ -108,30 +103,6 @@ public abstract class _Aie1Super extends PersistentObject {
             default:
                 super.writePropertyDirectly(propName, val);
         }
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        writeSerialized(out);
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        readSerialized(in);
-    }
-
-    @Override
-    protected void writeState(ObjectOutputStream out) throws IOException {
-        super.writeState(out);
-        out.writeObject(this.a0);
-        out.writeInt(this.type);
-        out.writeObject(this.ie3s);
-    }
-
-    @Override
-    protected void readState(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        super.readState(in);
-        this.a0 = (String)in.readObject();
-        this.type = in.readInt();
-        this.ie3s = in.readObject();
     }
 
 }

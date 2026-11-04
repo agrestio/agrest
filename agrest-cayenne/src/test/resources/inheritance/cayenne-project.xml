@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<domain xmlns="http://cayenne.apache.org/schema/13/domain"
+<project xmlns="http://cayenne.apache.org/schema/14/project"
 	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="http://cayenne.apache.org/schema/13/domain https://cayenne.apache.org/schema/13/domain.xsd"
-	 project-version="13">
+	 xsi:schemaLocation="http://cayenne.apache.org/schema/14/project https://cayenne.apache.org/schema/14/project.xsd">
 	<map name="datamap"/>
-</domain>
+</project>

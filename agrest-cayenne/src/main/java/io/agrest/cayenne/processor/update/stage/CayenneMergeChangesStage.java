@@ -21,7 +21,7 @@ import org.apache.cayenne.ObjectId;
 import org.apache.cayenne.Persistent;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.ExpressionFactory;
-import org.apache.cayenne.exp.parser.ASTPath;
+import org.apache.cayenne.exp.PathExp;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.DbEntity;
 import org.apache.cayenne.map.EntityResolver;
@@ -366,7 +366,7 @@ public class CayenneMergeChangesStage extends UpdateMergeChangesStage {
     }
 
     protected DbAttribute dbAttributeForAgAttribute(AgEntity<?> agEntity, String attributeName) {
-        ASTPath path = pathResolver.resolve(agEntity.getName(), attributeName).getPathExp();
+        PathExp path = pathResolver.resolve(agEntity.getName(), attributeName).getPathExp();
         Object attribute = path.evaluate(entityResolver.getObjEntity(agEntity.getName()));
         return attribute instanceof ObjAttribute objAttribute ? objAttribute.getDbAttribute() : (DbAttribute) attribute;
     }

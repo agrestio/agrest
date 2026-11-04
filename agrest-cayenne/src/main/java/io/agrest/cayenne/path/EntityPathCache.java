@@ -3,8 +3,8 @@ package io.agrest.cayenne.path;
 import io.agrest.AgException;
 import io.agrest.PathConstants;
 import org.apache.cayenne.dba.TypesMapping;
-import org.apache.cayenne.exp.parser.ASTDbPath;
-import org.apache.cayenne.exp.parser.ASTObjPath;
+import org.apache.cayenne.exp.DbPathExp;
+import org.apache.cayenne.exp.ObjPathExp;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
@@ -37,7 +37,7 @@ class EntityPathCache {
             // TODO: here we are ignoring the name of the ID attribute and are using the fixed name instead.
             //  Same issue as the above
             ObjAttribute a = pks.iterator().next();
-            pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor(a.getType(), new ASTDbPath(a.getDbAttributePath()), true));
+            pathCache.put(PathConstants.ID_PK_ATTRIBUTE, new PathDescriptor(a.getType(), new DbPathExp(a.getDbAttributePath()), true));
         }
     }
 
@@ -91,11 +91,11 @@ class EntityPathCache {
         ObjAttribute attribute = remainingPathRootEntity.getAttribute(remainingPath);
         if (attribute != null) {
             if (attribute.isPrimaryKey()) {
-                ASTDbPath dbPath = new ASTDbPath(toDbPath(processedPath, attribute.getDbAttributePath().value()));
+                DbPathExp dbPath = new DbPathExp(toDbPath(processedPath, attribute.getDbAttributePath().value()));
                 dbPath.setPathAliases(aliases);
                 return new PathDescriptor(attribute.getType(), dbPath, true);
             } else {
-                ASTObjPath objPath = new ASTObjPath(path);
+                ObjPathExp objPath = new ObjPathExp(path);
                 objPath.setPathAliases(aliases);
                 return new PathDescriptor(attribute.getType(), objPath, true);
             }
@@ -106,15 +106,15 @@ class EntityPathCache {
         }
         ObjRelationship relationship = remainingPathRootEntity.getRelationship(toRelationshipName(remainingPath));
         if (relationship != null) {
-            ASTObjPath objPath = new ASTObjPath(path);
+            ObjPathExp objPath = new ObjPathExp(path);
             objPath.setPathAliases(aliases);
             return new PathDescriptor(relationship.getTargetEntity().getClassName(), objPath, false);
         }
 
-        if (remainingPath.startsWith(ASTDbPath.DB_PREFIX)) {
-            DbAttribute dbAttribute = remainingPathRootEntity.getDbEntity().getAttribute(remainingPath.substring(ASTDbPath.DB_PREFIX.length()));
+        if (remainingPath.startsWith(DbPathExp.DB_PREFIX)) {
+            DbAttribute dbAttribute = remainingPathRootEntity.getDbEntity().getAttribute(remainingPath.substring(DbPathExp.DB_PREFIX.length()));
             if (dbAttribute != null) {
-                ASTDbPath dbPath = new ASTDbPath(toDbPath(processedPath, dbAttribute.getName()));
+                DbPathExp dbPath = new DbPathExp(toDbPath(processedPath, dbAttribute.getName()));
                 dbPath.setPathAliases(aliases);
                 return new PathDescriptor(
                         TypesMapping.getJavaBySqlType(dbAttribute.getType()),
@@ -127,7 +127,7 @@ class EntityPathCache {
         if (PathConstants.ID_PK_ATTRIBUTE.equals(remainingPath) && processedPath != null && processedPath.length > 0) {
             ObjRelationship lastProcessed = processedPath[processedPath.length - 1];
             String strippedPath = path.substring(0, path.length() - PathConstants.ID_PK_ATTRIBUTE.length() - 1);
-            ASTObjPath strippedObjPath = new ASTObjPath(strippedPath);
+            ObjPathExp strippedObjPath = new ObjPathExp(strippedPath);
             strippedObjPath.setPathAliases(aliases);
             return new PathDescriptor(lastProcessed.getTargetEntity().getClassName(), strippedObjPath, false);
         }

@@ -18,8 +18,8 @@ import io.agrest.runtime.constraints.UpdateConstraints;
 import io.agrest.runtime.processor.update.UpdateContext;
 import io.agrest.runtime.processor.update.stage.UpdateApplyServerParamsStage;
 import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.exp.parser.ASTDbPath;
-import org.apache.cayenne.exp.parser.ASTPath;
+import org.apache.cayenne.exp.DbPathExp;
+import org.apache.cayenne.exp.PathExp;
 import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.EntityResolver;
@@ -174,7 +174,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
             // 'getSourceName' assumes AgEntity's id attribute name is based on DbAttribute name
             Object id = u.getToOneIds().get(agRelationshipName);
             if (id != null) {
-                u.addIdPartIfAbsent(ASTDbPath.DB_PREFIX + outgoingJoin.getSourceName(), id);
+                u.addIdPartIfAbsent(DbPathExp.DB_PREFIX + outgoingJoin.getSourceName(), id);
             }
         }
     }
@@ -195,7 +195,7 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
                 Map<String, Object> pkMap = (Map<String, Object>) pk;
                 for (DbJoin join : outgoingJoins) {
                     // 'getSourceName' and 'getTargetName' assumes AgEntity's id attribute name is based on DbAttribute name
-                    u.addIdPartIfAbsent(ASTDbPath.DB_PREFIX + join.getSourceName(), pkMap.get(join.getTargetName()));
+                    u.addIdPartIfAbsent(DbPathExp.DB_PREFIX + join.getSourceName(), pkMap.get(join.getTargetName()));
                 }
             }
         }
@@ -273,15 +273,15 @@ public class CayenneUpdateApplyServerParamsStage extends UpdateApplyServerParams
         Map<String, String> parentAgKeysToChildDbPaths = new HashMap<>();
         for (AgIdPart idPart : parentAgEntity.getIdParts()) {
 
-            ASTPath idPath = pathResolver.resolve(parentCayenneEntity.getName(), idPart.getName()).getPathExp();
-            ASTDbPath dbPath = PathOps.resolveAsDbPath(idPath);
+            PathExp idPath = pathResolver.resolve(parentCayenneEntity.getName(), idPart.getName()).getPathExp();
+            DbPathExp dbPath = PathOps.resolveAsDbPath(parentCayenneEntity, idPath);
             String targetPath = sourceToTargetJoins.remove(dbPath.getPath().value());
             if (targetPath == null) {
                 // not a part of our relationship, ignore
                 continue;
             }
 
-            parentAgKeysToChildDbPaths.put(idPart.getName(), ASTDbPath.DB_PREFIX + targetPath);
+            parentAgKeysToChildDbPaths.put(idPart.getName(), DbPathExp.DB_PREFIX + targetPath);
         }
 
         if (!sourceToTargetJoins.isEmpty()) {

@@ -1,83 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<data-map xmlns="http://cayenne.apache.org/schema/13/modelMap"
+<dataMap xmlns="http://cayenne.apache.org/schema/14/dataMap"
 	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="http://cayenne.apache.org/schema/13/modelMap https://cayenne.apache.org/schema/13/modelMap.xsd"
-	 project-version="13">
-	<property name="defaultPackage" value="io.agrest.cayenne.cayenne.inheritance"/>
-	<property name="quoteSqlIdentifiers" value="true"/>
-	<db-entity name="ie1">
-		<db-attribute name="a0" type="VARCHAR" length="100"/>
-		<db-attribute name="a1" type="VARCHAR" length="100"/>
-		<db-attribute name="a2" type="VARCHAR" length="100"/>
-		<db-attribute name="a3" type="VARCHAR" length="100"/>
-		<db-attribute name="e2_id" type="INTEGER"/>
-		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
-		<db-attribute name="type" type="INTEGER" isMandatory="true"/>
-	</db-entity>
-	<db-entity name="ie2">
-		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
-	</db-entity>
-	<db-entity name="ie3">
-		<db-attribute name="e1_id" type="INTEGER" isMandatory="true"/>
-		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
-	</db-entity>
-	<obj-entity name="Aie1Sub1" superEntityName="Aie1Super" className="io.agrest.cayenne.cayenne.inheritance.Aie1Sub1">
+	 xsi:schemaLocation="http://cayenne.apache.org/schema/14/dataMap https://cayenne.apache.org/schema/14/dataMap.xsd"
+	 defaultPackage="io.agrest.cayenne.cayenne.inheritance"
+	 quoteSqlIdentifiers="true">
+	<dbEntity name="ie1">
+		<dbAttribute name="a0" type="VARCHAR" length="100"/>
+		<dbAttribute name="a1" type="VARCHAR" length="100"/>
+		<dbAttribute name="a2" type="VARCHAR" length="100"/>
+		<dbAttribute name="a3" type="VARCHAR" length="100"/>
+		<dbAttribute name="e2_id" type="INTEGER"/>
+		<dbAttribute name="id" type="INTEGER" primaryKey="true" generated="true" mandatory="true"/>
+		<dbAttribute name="type" type="INTEGER" mandatory="true"/>
+	</dbEntity>
+	<dbEntity name="ie2">
+		<dbAttribute name="id" type="INTEGER" primaryKey="true" generated="true" mandatory="true"/>
+	</dbEntity>
+	<dbEntity name="ie3">
+		<dbAttribute name="e1_id" type="INTEGER" mandatory="true"/>
+		<dbAttribute name="id" type="INTEGER" primaryKey="true" generated="true" mandatory="true"/>
+	</dbEntity>
+	<objEntity name="Aie1Sub1" superEntityName="Aie1Super" className="io.agrest.cayenne.cayenne.inheritance.Aie1Sub1">
 		<qualifier><![CDATA[type = 1]]></qualifier>
-		<obj-attribute name="a1" type="java.lang.String" db-attribute-path="a1"/>
-		<attribute-override name="a0" db-attribute-path="a0"/>
-		<attribute-override name="type" db-attribute-path="type"/>
-	</obj-entity>
-	<obj-entity name="Aie1Sub1Sub1" superEntityName="Aie1Sub1" className="io.agrest.cayenne.cayenne.inheritance.Aie1Sub1Sub1">
+		<objAttribute name="a1" type="java.lang.String" dbAttributePath="a1"/>
+		<attributeOverride name="a0" dbAttributePath="a0"/>
+		<attributeOverride name="type" dbAttributePath="type"/>
+	</objEntity>
+	<objEntity name="Aie1Sub1Sub1" superEntityName="Aie1Sub1" className="io.agrest.cayenne.cayenne.inheritance.Aie1Sub1Sub1">
 		<qualifier><![CDATA[type = 3]]></qualifier>
-		<obj-attribute name="a3" type="java.lang.String" db-attribute-path="a3"/>
-	</obj-entity>
-	<obj-entity name="Aie1Sub2" superEntityName="Aie1Super" className="io.agrest.cayenne.cayenne.inheritance.Aie1Sub2">
+		<objAttribute name="a3" type="java.lang.String" dbAttributePath="a3"/>
+	</objEntity>
+	<objEntity name="Aie1Sub2" superEntityName="Aie1Super" className="io.agrest.cayenne.cayenne.inheritance.Aie1Sub2">
 		<qualifier><![CDATA[type = 2]]></qualifier>
-		<obj-attribute name="a2" type="java.lang.String" db-attribute-path="a2"/>
-	</obj-entity>
-	<obj-entity name="Aie1Super" abstract="true" className="io.agrest.cayenne.cayenne.inheritance.Aie1Super" dbEntityName="ie1">
-		<obj-attribute name="a0" type="java.lang.String" db-attribute-path="a0"/>
-		<obj-attribute name="type" type="int" db-attribute-path="type"/>
-	</obj-entity>
-	<obj-entity name="Ie1Sub1" superEntityName="Ie1Super" className="io.agrest.cayenne.cayenne.inheritance.Ie1Sub1">
+		<objAttribute name="a2" type="java.lang.String" dbAttributePath="a2"/>
+	</objEntity>
+	<objEntity name="Aie1Super" abstract="true" className="io.agrest.cayenne.cayenne.inheritance.Aie1Super" dbEntityName="ie1">
+		<objAttribute name="a0" type="java.lang.String" dbAttributePath="a0"/>
+		<objAttribute name="type" type="int" dbAttributePath="type"/>
+	</objEntity>
+	<objEntity name="Ie1Sub1" superEntityName="Ie1Super" className="io.agrest.cayenne.cayenne.inheritance.Ie1Sub1">
 		<qualifier><![CDATA[type = 1]]></qualifier>
-		<obj-attribute name="a1" type="java.lang.String" db-attribute-path="a1"/>
-		<attribute-override name="a0" db-attribute-path="a0"/>
-		<attribute-override name="type" db-attribute-path="type"/>
-	</obj-entity>
-	<obj-entity name="Ie1Sub1Sub1" superEntityName="Ie1Sub1" className="io.agrest.cayenne.cayenne.inheritance.Ie1Sub1Sub1">
+		<objAttribute name="a1" type="java.lang.String" dbAttributePath="a1"/>
+		<attributeOverride name="a0" dbAttributePath="a0"/>
+		<attributeOverride name="type" dbAttributePath="type"/>
+	</objEntity>
+	<objEntity name="Ie1Sub1Sub1" superEntityName="Ie1Sub1" className="io.agrest.cayenne.cayenne.inheritance.Ie1Sub1Sub1">
 		<qualifier><![CDATA[type = 3]]></qualifier>
-		<obj-attribute name="a3" type="java.lang.String" db-attribute-path="a3"/>
-	</obj-entity>
-	<obj-entity name="Ie1Sub2" superEntityName="Ie1Super" className="io.agrest.cayenne.cayenne.inheritance.Ie1Sub2">
+		<objAttribute name="a3" type="java.lang.String" dbAttributePath="a3"/>
+	</objEntity>
+	<objEntity name="Ie1Sub2" superEntityName="Ie1Super" className="io.agrest.cayenne.cayenne.inheritance.Ie1Sub2">
 		<qualifier><![CDATA[type = 2]]></qualifier>
-		<obj-attribute name="a2" type="java.lang.String" db-attribute-path="a2"/>
-	</obj-entity>
-	<obj-entity name="Ie1Super" abstract="true" className="io.agrest.cayenne.cayenne.inheritance.Ie1Super" dbEntityName="ie1">
-		<obj-attribute name="a0" type="java.lang.String" db-attribute-path="a0"/>
-		<obj-attribute name="type" type="int" db-attribute-path="type"/>
-	</obj-entity>
-	<obj-entity name="Ie2" className="io.agrest.cayenne.cayenne.inheritance.Ie2" dbEntityName="ie2"/>
-	<obj-entity name="Ie3" className="io.agrest.cayenne.cayenne.inheritance.Ie3" dbEntityName="ie3"/>
-	<db-relationship name="ie2" source="ie1" target="ie2">
-		<db-attribute-pair source="e2_id" target="id"/>
-	</db-relationship>
-	<db-relationship name="ie3s" source="ie1" target="ie3" toMany="true">
-		<db-attribute-pair source="id" target="e1_id"/>
-	</db-relationship>
-	<db-relationship name="ie1s" source="ie2" target="ie1" toMany="true">
-		<db-attribute-pair source="id" target="e2_id"/>
-	</db-relationship>
-	<db-relationship name="ie1" source="ie3" target="ie1">
-		<db-attribute-pair source="e1_id" target="id"/>
-	</db-relationship>
-	<obj-relationship name="ie2" source="Aie1Sub1" target="Ie2" deleteRule="Nullify" db-relationship-path="ie2"/>
-	<obj-relationship name="ie3s" source="Aie1Super" target="Ie3" deleteRule="Cascade" db-relationship-path="ie3s"/>
-	<obj-relationship name="ie2" source="Ie1Sub1" target="Ie2" deleteRule="Nullify" db-relationship-path="ie2"/>
-	<obj-relationship name="ie3s" source="Ie1Super" target="Ie3" deleteRule="Cascade" db-relationship-path="ie3s"/>
-	<obj-relationship name="ie1s" source="Ie2" target="Ie1Sub1" deleteRule="Deny" db-relationship-path="ie1s"/>
-	<obj-relationship name="ie1" source="Ie3" target="Ie1Super" deleteRule="Nullify" db-relationship-path="ie1"/>
-	<cgen xmlns="http://cayenne.apache.org/schema/13/cgen">
+		<objAttribute name="a2" type="java.lang.String" dbAttributePath="a2"/>
+	</objEntity>
+	<objEntity name="Ie1Super" abstract="true" className="io.agrest.cayenne.cayenne.inheritance.Ie1Super" dbEntityName="ie1">
+		<objAttribute name="a0" type="java.lang.String" dbAttributePath="a0"/>
+		<objAttribute name="type" type="int" dbAttributePath="type"/>
+	</objEntity>
+	<objEntity name="Ie2" className="io.agrest.cayenne.cayenne.inheritance.Ie2" dbEntityName="ie2"/>
+	<objEntity name="Ie3" className="io.agrest.cayenne.cayenne.inheritance.Ie3" dbEntityName="ie3"/>
+	<dbRelationship name="ie2" source="ie1" target="ie2">
+		<dbAttributePair source="e2_id" target="id"/>
+	</dbRelationship>
+	<dbRelationship name="ie3s" source="ie1" target="ie3" toMany="true">
+		<dbAttributePair source="id" target="e1_id"/>
+	</dbRelationship>
+	<dbRelationship name="ie1s" source="ie2" target="ie1" toMany="true">
+		<dbAttributePair source="id" target="e2_id"/>
+	</dbRelationship>
+	<dbRelationship name="ie1" source="ie3" target="ie1">
+		<dbAttributePair source="e1_id" target="id"/>
+	</dbRelationship>
+	<objRelationship name="ie2" source="Aie1Sub1" target="Ie2" deleteRule="nullify" dbRelationshipPath="ie2"/>
+	<objRelationship name="ie3s" source="Aie1Super" target="Ie3" deleteRule="cascade" dbRelationshipPath="ie3s"/>
+	<objRelationship name="ie2" source="Ie1Sub1" target="Ie2" deleteRule="nullify" dbRelationshipPath="ie2"/>
+	<objRelationship name="ie3s" source="Ie1Super" target="Ie3" deleteRule="cascade" dbRelationshipPath="ie3s"/>
+	<objRelationship name="ie1s" source="Ie2" target="Ie1Sub1" deleteRule="deny" dbRelationshipPath="ie1s"/>
+	<objRelationship name="ie1" source="Ie3" target="Ie1Super" deleteRule="nullify" dbRelationshipPath="ie1"/>
+	<cgen xmlns="http://cayenne.apache.org/schema/14/cgen">
 		<name>Default</name>
 		<destDir>../../java</destDir>
 		<mode>entity</mode>
@@ -94,4 +93,4 @@
 		<createPropertyNames>false</createPropertyNames>
 		<createPKProperties>false</createPKProperties>
 	</cgen>
-</data-map>
+</dataMap>

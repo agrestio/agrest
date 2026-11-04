@@ -28,7 +28,7 @@
 
         <!-- Upstream dependency versions (including "test" dependencies) -->
         <slf4j.version>2.0.17</slf4j.version>
-        <cayenne.version>5.0-M3</cayenne.version>
+        <cayenne.version>5.0-RC1</cayenne.version>
 
         <jaxrs.version>4.0.0</jaxrs.version>
         <jackson.version>2.22.3</jackson.version>
@@ -42,7 +42,7 @@
         -->
         <bq.version>4.0-20260829.004058-38</bq.version>
         <bq.jdbc.version>4.0-20260829.005318-13</bq.jdbc.version>
-        <bq.cayenne.version>4.0-20260825.234135-9</bq.cayenne.version>
+        <bq.cayenne.version>4.0-20261104.190905-14</bq.cayenne.version>
         <bq.jersey.version>4.0-20260829.010711-34</bq.jersey.version>
         <bq.jetty.version>4.0-20260829.010512-13</bq.jetty.version>
         <junit5.version>5.13.4</junit5.version>

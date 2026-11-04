@@ -55,7 +55,7 @@ import org.apache.cayenne.CayenneRuntimeException;
 import org.apache.cayenne.di.Binder;
 import org.apache.cayenne.di.Key;
 import org.apache.cayenne.di.Module;
-import org.apache.cayenne.runtime.CayenneRuntime;
+import org.apache.cayenne.CayenneRuntime;
 import org.apache.cayenne.validation.ValidationException;
 import org.apache.cayenne.value.Json;
 

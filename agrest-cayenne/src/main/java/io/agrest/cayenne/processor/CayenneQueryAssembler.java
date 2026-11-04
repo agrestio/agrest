@@ -19,8 +19,8 @@ import io.agrest.runtime.processor.select.SelectContext;
 import org.apache.cayenne.di.Inject;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
-import org.apache.cayenne.exp.parser.ASTDbPath;
-import org.apache.cayenne.exp.parser.ASTPath;
+import org.apache.cayenne.exp.DbPathExp;
+import org.apache.cayenne.exp.PathExp;
 import org.apache.cayenne.exp.property.Property;
 import org.apache.cayenne.exp.property.PropertyFactory;
 import org.apache.cayenne.map.EntityResolver;
@@ -102,7 +102,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         AgEntity<?> parentEntity = entity.getParent().getAgEntity();
         ObjEntity parentObjEntity = entityResolver.getObjEntity(entity.getParent().getName());
         ObjRelationship objRelationship = findRelationship(parentObjEntity, entity.getIncoming().getName());
-        ASTDbPath reversePath = new ASTDbPath(objRelationship.getReverseDbRelationshipPath());
+        DbPathExp reversePath = new DbPathExp(objRelationship.getReverseDbRelationshipPath());
 
         Property<?>[] columns = new Property<?>[parentEntity.getIdParts().size() + 1];
 
@@ -112,7 +112,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
         // columns must be added in the order of id parts iteration, as this is how they will be read from result
         int i = 1;
         for (AgIdPart idPart : parentEntity.getIdParts()) {
-            ASTPath idPartPath = pathResolver.resolve(parentEntity.getName(), idPart.getName()).getPathExp();
+            PathExp idPartPath = pathResolver.resolve(parentEntity.getName(), idPart.getName()).getPathExp();
             Expression propertyExp = PathOps.concatWithDbPath(parentObjEntity, reversePath, idPartPath);
             columns[i++] = PropertyFactory.createBase(propertyExp, idPart.getType());
         }
@@ -150,12 +150,12 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
 
         if (idSize == 1) {
             String partName = entity.getIdParts().iterator().next().getName();
-            ASTPath idPath = pathResolver.resolve(entity.getName(), partName).getPathExp();
+            PathExp idPath = pathResolver.resolve(entity.getName(), partName).getPathExp();
             return id -> ExpressionFactory.matchExp(idPath, id.get(partName));
         } else {
 
             List<String> partNames = new ArrayList<>(idSize);
-            List<ASTPath> paths = new ArrayList<>(idSize);
+            List<PathExp> paths = new ArrayList<>(idSize);
             for (AgIdPart idPart : entity.getIdParts()) {
                 partNames.add(idPart.getName());
                 paths.add(pathResolver.resolve(entity.getName(), idPart.getName()).getPathExp());
@@ -385,7 +385,7 @@ public class CayenneQueryAssembler implements ICayenneQueryAssembler {
                         idAttribute.getName());
             }
 
-            ASTPath path = pathResolver.resolve(entity.getName(), idAttribute.getName()).getPathExp();
+            PathExp path = pathResolver.resolve(entity.getName(), idAttribute.getName()).getPathExp();
             qualifiers.add(ExpressionFactory.matchExp(path, idValue));
         }
         return ExpressionFactory.and(qualifiers);

@@ -1,8 +1,5 @@
 package io.agrest.cayenne.cayenne.main.auto;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.List;
 
 import org.apache.cayenne.PersistentObject;
@@ -22,8 +19,6 @@ import io.agrest.cayenne.cayenne.main.E15E1;
  * If you need to make any customizations, please use subclass.
  */
 public abstract class _E1 extends PersistentObject {
-
-    private static final long serialVersionUID = 1L;
 
     public static final SelfProperty<E1> SELF = PropertyFactory.createSelf(E1.class);
 
@@ -125,32 +120,6 @@ public abstract class _E1 extends PersistentObject {
             default:
                 super.writePropertyDirectly(propName, val);
         }
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        writeSerialized(out);
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        readSerialized(in);
-    }
-
-    @Override
-    protected void writeState(ObjectOutputStream out) throws IOException {
-        super.writeState(out);
-        out.writeObject(this.age);
-        out.writeObject(this.description);
-        out.writeObject(this.name);
-        out.writeObject(this.e15e1);
-    }
-
-    @Override
-    protected void readState(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        super.readState(in);
-        this.age = (Integer)in.readObject();
-        this.description = (String)in.readObject();
-        this.name = (String)in.readObject();
-        this.e15e1 = in.readObject();
     }
 
 }

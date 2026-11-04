@@ -27,7 +27,7 @@ import io.bootique.junit.scope.BQBeforeScopeCallback;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.client.WebTarget;
 import org.apache.cayenne.Persistent;
-import org.apache.cayenne.runtime.CayenneRuntime;
+import org.apache.cayenne.CayenneRuntime;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.util.ArrayList;

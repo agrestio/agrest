@@ -11,8 +11,8 @@ import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.ObjectId;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
-import org.apache.cayenne.exp.parser.ASTDbPath;
-import org.apache.cayenne.exp.parser.ASTPath;
+import org.apache.cayenne.exp.DbPathExp;
+import org.apache.cayenne.exp.PathExp;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjAttribute;
 import org.apache.cayenne.map.ObjEntity;
@@ -63,8 +63,8 @@ public final class CayenneUtil {
             Map<String, Object> normalizedIdMap = new HashMap<>(pks.size() * 2);
             idMap.forEach((k, v) -> {
 
-                ASTPath kp = pathResolver.resolve(agEntity.getName(), k).getPathExp();
-                if (kp instanceof ASTDbPath) {
+                PathExp kp = pathResolver.resolve(agEntity.getName(), k).getPathExp();
+                if (kp instanceof DbPathExp) {
                     normalizedIdMap.put(kp.getPath().value(), v);
                 } else {
                     ObjAttribute pk = entity.getAttribute(kp.getPath().value());
@@ -101,7 +101,7 @@ public final class CayenneUtil {
 
         ObjectSelect<A> query = ObjectSelect.query(agEntity.getType());
         for (AgIdPart idPart : agEntity.getIdParts()) {
-            ASTPath idPath = pathResolver.resolve(agEntity.getName(), idPart.getName()).getPathExp();
+            PathExp idPath = pathResolver.resolve(agEntity.getName(), idPart.getName()).getPathExp();
             query.and(ExpressionFactory.matchExp(idPath, id.get(idPart.getName())));
         }
 
@@ -121,13 +121,13 @@ public final class CayenneUtil {
             throw AgException.internalServerError("Invalid parent relationship: '%s'", parent.getRelationship());
         }
 
-        ASTDbPath reversePath = new ASTDbPath(objRelationship.getReverseDbRelationshipPath());
+        DbPathExp reversePath = new DbPathExp(objRelationship.getReverseDbRelationshipPath());
 
         // Navigate through DbRelationships. There may be no reverse ObjRelationship. Reverse DB should always be there
 
         AgObjectId id = parent.getId();
         Function<AgIdPart, Expression> expBuilder = p -> {
-            ASTPath idPartPath = pathResolver.resolve(parentObjEntity.getName(), p.getName()).getPathExp();
+            PathExp idPartPath = pathResolver.resolve(parentObjEntity.getName(), p.getName()).getPathExp();
             Expression pathExp = PathOps.concatWithDbPath(parentObjEntity, reversePath, idPartPath);
 
             Object val = id.get(p.getName());

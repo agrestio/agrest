@@ -13,18 +13,16 @@ import io.agrest.converter.jsonvalue.SqlTimestampConverter;
 import io.agrest.converter.jsonvalue.UtilDateConverter;
 import org.apache.cayenne.Persistent;
 import org.apache.cayenne.di.Inject;
+import org.apache.cayenne.exp.ConditionExp;
+import org.apache.cayenne.exp.DbPathExp;
+import org.apache.cayenne.exp.ExistsExp;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
+import org.apache.cayenne.exp.NotExistsExp;
+import org.apache.cayenne.exp.ObjPathExp;
+import org.apache.cayenne.exp.PathExp;
+import org.apache.cayenne.exp.SubqueryExp;
 import org.apache.cayenne.exp.TraversalHandler;
-import org.apache.cayenne.exp.parser.ASTDbPath;
-import org.apache.cayenne.exp.parser.ASTExists;
-import org.apache.cayenne.exp.parser.ASTNotExists;
-import org.apache.cayenne.exp.parser.ASTObjPath;
-import org.apache.cayenne.exp.parser.ASTPath;
-import org.apache.cayenne.exp.parser.ASTSubquery;
-import org.apache.cayenne.exp.parser.ConditionNode;
-import org.apache.cayenne.exp.parser.Node;
-import org.apache.cayenne.exp.parser.SimpleNode;
 import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
 import org.apache.cayenne.map.EntityResolver;
@@ -33,11 +31,12 @@ import org.apache.cayenne.map.ObjRelationship;
 import org.apache.cayenne.query.FluentSelect;
 import org.apache.cayenne.query.ObjectSelect;
 
+import java.util.ArrayDeque;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
 
@@ -46,7 +45,6 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
     private final EntityResolver entityResolver;
     private final IPathResolver pathCache;
     private final Map<String, JsonValueConverter<?>> converters;
-    private final Map<String, ExpressionProcessor> postProcessors;
 
     public CayenneExpPostProcessor(
             @Inject IPathResolver pathCache,
@@ -64,8 +62,6 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
         converters.put(java.sql.Date.class.getName(), SqlDateConverter.converter());
         converters.put(java.sql.Time.class.getName(), SqlTimeConverter.converter());
         converters.put(java.sql.Timestamp.class.getName(), SqlTimestampConverter.converter());
-
-        postProcessors = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -75,35 +71,32 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
 
     private Expression validateAndCleanup(ObjEntity entity, Expression exp) {
 
-        // Normalize paths in-place. Will not be able to change the root note that is handled explicitly below
-        exp.traverse(getOrCreateExpressionProcessor(entity));
+        // Normalize paths in-place. Will not be able to change the root note that is handled explicitly below.
+        // The processor keeps the traversal state, so a new instance is needed per expression
+        exp.traverse(new ExpressionProcessor(entity));
 
-        // process root ASTExits|ASTNotExists that can't be properly handled by ExpressionProcessor.
+        // process root ExistsExp|NotExistsExp that can't be properly handled by ExpressionProcessor.
         Object processed = processExistsExp(exp);
 
         // Now process the root
         return (Expression) normalizeIfPath(entity, processed);
     }
 
-    private ExpressionProcessor getOrCreateExpressionProcessor(ObjEntity entity) {
-        return postProcessors.computeIfAbsent(entity.getName(), e -> new ExpressionProcessor(entity));
-    }
-
     private static Object processExistsExp(Object exp) {
-        if (!(exp instanceof ASTExists || exp instanceof ASTNotExists)) {
+        if (!(exp instanceof ExistsExp || exp instanceof NotExistsExp)) {
             return exp;
         }
-        Expression pathExistExp = (Expression)(((Expression) exp).getOperand(0));
-        if (pathExistExp instanceof ASTSubquery) {
+        Expression pathExistExp = (Expression) (((Expression) exp).getOperand(0));
+        if (pathExistExp instanceof SubqueryExp) {
             return exp;
         }
-        return exp instanceof ASTExists
+        return exp instanceof ExistsExp
                 ? pathExistExp
                 : pathExistExp.notExp();
     }
-  
+
     private Object normalizeIfPath(ObjEntity entity, Object expNode) {
-        if(expNode instanceof ASTObjPath path) {
+        if (expNode instanceof ObjPathExp path) {
             PathDescriptor resolve = pathCache.resolve(entity.getName(), path.getPath().value(), path.getPathAliases());
             return resolve.getPathExp();
         }
@@ -114,18 +107,29 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
 
         private final ObjEntity entity;
 
+        // Cayenne expression nodes don't know their parents, so we track the ancestors of the current node
+        // ourselves. The head of the deque is the node being traversed.
+        private final Deque<Expression> ancestors;
+
         ExpressionProcessor(ObjEntity entity) {
             this.entity = entity;
+            this.ancestors = new ArrayDeque<>();
         }
 
         @Override
         public void startNode(Expression node, Expression parentNode) {
-            if (node instanceof ASTDbPath) {
+            if (node instanceof DbPathExp) {
                 // probably a good idea to disallow DbPath's
                 throw AgException.badRequest(
                         "Expression contains a DB_PATH expression that is not allowed here: %s",
                         parentNode);
             }
+            ancestors.push(node);
+        }
+
+        @Override
+        public void endNode(Expression node, Expression parentNode) {
+            ancestors.pop();
         }
 
         @Override
@@ -140,56 +144,50 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
         }
 
         private void prepareExistsPathOperand(Expression parentNode, Object childNode) {
-            if (!(parentNode instanceof ASTExists || parentNode instanceof ASTNotExists)) {
+            if (!(parentNode instanceof ExistsExp || parentNode instanceof NotExistsExp)) {
                 return;
             }
-            if (!(childNode instanceof ASTPath path)) {
+            if (!(childNode instanceof PathExp path)) {
                 throw AgException.badRequest("%s only supports path value as an argument", parentNode.expName());
             }
-            ObjPathMarker marker = createPathMarker(entity, path);
+            PathMarker marker = createPathMarker(entity, path);
             Expression pathExistExp = markerToExpression(marker);
-            ((ConditionNode) parentNode).jjtAddChild(
-                    marker.relationship != null
-                            ? new ASTSubquery(subquery(marker.relationship, pathExistExp))
-                            : (Node) pathExistExp,
-                    0
-            );
+            parentNode.setOperand(0, marker.relationship() != null
+                    ? new SubqueryExp(subquery(marker.relationship(), pathExistExp))
+                    : pathExistExp);
         }
 
         @Override
         public void objectNode(Object leaf, Expression parentNode) {
 
             switch (leaf) {
-                case JsonNode node -> {
-                    for (int i = 0; i < parentNode.getOperandCount(); i++) {
-                        if (leaf == parentNode.getOperand(i)) {
-                            parentNode.setOperand(i, convert((SimpleNode) parentNode, node));
-                        }
-                    }
-                }
-                // this is ASTList child case
+                case JsonNode node -> replaceOperand(parentNode, leaf, convert(parentNode, node));
+
+                // this is ListExp child case
                 case Object[] array -> {
                     for (int i = 0; i < array.length; i++) {
                         if (array[i] instanceof JsonNode node) {
-                            array[i] = convert((SimpleNode) parentNode, node);
+                            array[i] = convert(parentNode, node);
                         }
                     }
                 }
-                case String s -> {
-                    for (int i = 0; i < parentNode.getOperandCount(); i++) {
-                        if (leaf == parentNode.getOperand(i)) {
-                            parentNode.setOperand(i, convert((SimpleNode) parentNode, TextNode.valueOf(s)));
-                        }
-                    }
-                }
+                case String s -> replaceOperand(parentNode, leaf, convert(parentNode, TextNode.valueOf(s)));
                 case null, default -> {
                 }
             }
         }
 
-        private Object convert(SimpleNode parentExp, JsonNode node) {
+        private void replaceOperand(Expression parentNode, Object leaf, Object replacement) {
+            for (int i = 0; i < parentNode.getOperandCount(); i++) {
+                if (leaf == parentNode.getOperand(i)) {
+                    parentNode.setOperand(i, replacement);
+                }
+            }
+        }
 
-            ASTObjPath peerPath = findPeerPath(parentExp, node);
+        private Object convert(Expression parentExp, JsonNode node) {
+
+            ObjPathExp peerPath = findPeerPath(parentExp, node);
 
             if (peerPath != null) {
 
@@ -211,7 +209,7 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
             return node.asText();
         }
 
-        private ObjPathMarker createPathMarker(ObjEntity entity, ASTPath o) {
+        private PathMarker createPathMarker(ObjEntity entity, PathExp o) {
             String path = o.getPath().value();
             String newPath;
             String firstSegment;
@@ -228,16 +226,16 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
             if (relationship == null) {
                 newPath = path;
             }
-            return new ObjPathMarker(newPath, relationship);
+            return new PathMarker(newPath, relationship);
         }
 
-        private Expression markerToExpression(ObjPathMarker marker) {
+        private Expression markerToExpression(PathMarker marker) {
             // special case for an empty path
             // we don't need additional qualifier, just plain exists subquery
-            if (marker.getPath().value().equals(EMPTY_PATH)) {
+            if (marker.path().equals(EMPTY_PATH)) {
                 return null;
             }
-            return ExpressionFactory.noMatchExp(marker, null);
+            return ExpressionFactory.noMatchExp(new ObjPathExp(marker.path()), null);
         }
 
         private FluentSelect<?, ?> subquery(ObjRelationship relationship, Expression exp) {
@@ -258,35 +256,43 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
                     .where(exp);
         }
 
-        private ASTObjPath findPeerPath(SimpleNode exp, Object child) {
+        /**
+         * Walks up the ancestors of the "child" value until the closest condition node, and then searches the
+         * condition's other branches for a path. Starts with the "exp" node, which must be the current head of the
+         * ancestors deque.
+         */
+        private ObjPathExp findPeerPath(Expression exp, Object child) {
 
-            if (exp == null) {
-                return null;
-            }
+            Object current = child;
+            for (Expression ancestor : ancestors) {
 
-            if (!(exp instanceof ConditionNode)) {
-                return findPeerPath((SimpleNode) exp.jjtGetParent(), exp);
-            }
-
-            // terminate walk up at a ConditionNode, start a walk down
-            int len = exp.getOperandCount();
-            for (int i = 0; i < len; i++) {
-                Object operand = exp.getOperand(i);
-                if (operand == child || !(operand instanceof Expression)) {
+                if (!(ancestor instanceof ConditionExp)) {
+                    current = ancestor;
                     continue;
                 }
 
-                ASTObjPath path = findChildPath((Expression) operand);
-                if (path != null) {
-                    return path;
+                // terminate walk up at a ConditionExp, start a walk down
+                int len = ancestor.getOperandCount();
+                for (int i = 0; i < len; i++) {
+                    Object operand = ancestor.getOperand(i);
+                    if (operand == current || !(operand instanceof Expression)) {
+                        continue;
+                    }
+
+                    ObjPathExp path = findChildPath((Expression) operand);
+                    if (path != null) {
+                        return path;
+                    }
                 }
+
+                return null;
             }
 
             return null;
         }
 
-        private ASTObjPath findChildPath(Expression exp) {
-            if (exp instanceof ASTObjPath objPath) {
+        private ObjPathExp findChildPath(Expression exp) {
+            if (exp instanceof ObjPathExp objPath) {
                 return objPath;
             }
 
@@ -297,7 +303,7 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
                     continue;
                 }
 
-                ASTObjPath path = findChildPath(expression);
+                ObjPathExp path = findChildPath(expression);
                 if (path != null) {
                     return path;
                 }
@@ -307,13 +313,9 @@ public class CayenneExpPostProcessor implements ICayenneExpPostProcessor {
         }
     }
 
-    static class ObjPathMarker extends ASTObjPath {
-
-        final ObjRelationship relationship;
-
-        ObjPathMarker(String path, ObjRelationship relationship) {
-            super(path);
-            this.relationship = relationship;
-        }
+    /**
+     * A path with its first segment split off as a relationship, when the first segment is one.
+     */
+    record PathMarker(String path, ObjRelationship relationship) {
     }
 }

@@ -22,7 +22,7 @@ import io.agrest.resolver.RootDataResolver;
 import io.agrest.resolver.ThrowingRootDataResolver;
 import org.apache.cayenne.ObjectId;
 import org.apache.cayenne.dba.TypesMapping;
-import org.apache.cayenne.exp.parser.ASTDbPath;
+import org.apache.cayenne.exp.DbPathExp;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.EntityInheritanceTree;
 import org.apache.cayenne.map.EntityResolver;
@@ -185,7 +185,7 @@ public class CayenneAgEntityBuilder<T> {
 
                 id = new DefaultIdPart(
                         // TODO: we are exposing DB column name here
-                        ASTDbPath.DB_PREFIX + pk.getName(),
+                        DbPathExp.DB_PREFIX + pk.getName(),
                         typeForName(TypesMapping.getJavaBySqlType(pk.getType())),
                         true,
                         true,

@@ -1,8 +1,5 @@
 package io.agrest.cayenne.cayenne.main.auto;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -23,8 +20,6 @@ import io.agrest.cayenne.cayenne.main.E16;
  * If you need to make any customizations, please use subclass.
  */
 public abstract class _E16 extends PersistentObject {
-
-    private static final long serialVersionUID = 1L;
 
     public static final SelfProperty<E16> SELF = PropertyFactory.createSelf(E16.class);
 
@@ -140,34 +135,6 @@ public abstract class _E16 extends PersistentObject {
             default:
                 super.writePropertyDirectly(propName, val);
         }
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        writeSerialized(out);
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        readSerialized(in);
-    }
-
-    @Override
-    protected void writeState(ObjectOutputStream out) throws IOException {
-        super.writeState(out);
-        out.writeObject(this.cDate);
-        out.writeObject(this.cLocalDate);
-        out.writeObject(this.cLocalDateTime);
-        out.writeObject(this.cTime);
-        out.writeObject(this.cTimestamp);
-    }
-
-    @Override
-    protected void readState(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        super.readState(in);
-        this.cDate = (Date)in.readObject();
-        this.cLocalDate = (LocalDate)in.readObject();
-        this.cLocalDateTime = (LocalDateTime)in.readObject();
-        this.cTime = (Time)in.readObject();
-        this.cTimestamp = (Timestamp)in.readObject();
     }
 
 }

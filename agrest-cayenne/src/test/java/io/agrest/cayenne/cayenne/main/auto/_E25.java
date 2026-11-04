@@ -1,9 +1,5 @@
 package io.agrest.cayenne.cayenne.main.auto;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import org.apache.cayenne.PersistentObject;
 import org.apache.cayenne.exp.property.PropertyFactory;
 import org.apache.cayenne.exp.property.SelfProperty;
@@ -17,8 +13,6 @@ import io.agrest.cayenne.cayenne.main.E25;
  * If you need to make any customizations, please use subclass.
  */
 public abstract class _E25 extends PersistentObject {
-
-    private static final long serialVersionUID = 1L;
 
     public static final SelfProperty<E25> SELF = PropertyFactory.createSelf(E25.class);
 
@@ -49,24 +43,6 @@ public abstract class _E25 extends PersistentObject {
             default:
                 super.writePropertyDirectly(propName, val);
         }
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        writeSerialized(out);
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        readSerialized(in);
-    }
-
-    @Override
-    protected void writeState(ObjectOutputStream out) throws IOException {
-        super.writeState(out);
-    }
-
-    @Override
-    protected void readState(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        super.readState(in);
     }
 
 }

@@ -1,8 +1,5 @@
 package io.agrest.cayenne.cayenne.main.auto;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Date;
@@ -26,8 +23,6 @@ import io.agrest.cayenne.cayenne.main.E19;
  * If you need to make any customizations, please use subclass.
  */
 public abstract class _E19 extends PersistentObject {
-
-    private static final long serialVersionUID = 1L;
 
     public static final SelfProperty<E19> SELF = PropertyFactory.createSelf(E19.class);
 
@@ -473,70 +468,6 @@ public abstract class _E19 extends PersistentObject {
             default:
                 super.writePropertyDirectly(propName, val);
         }
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        writeSerialized(out);
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        readSerialized(in);
-    }
-
-    @Override
-    protected void writeState(ObjectOutputStream out) throws IOException {
-        super.writeState(out);
-        out.writeObject(this.bigDecimal);
-        out.writeObject(this.bigInteger);
-        out.writeObject(this.booleanObject);
-        out.writeObject(this.booleanPrimitive);
-        out.writeObject(this.byteObject);
-        out.writeObject(this.bytePrimitive);
-        out.writeObject(this.cDate);
-        out.writeObject(this.cString);
-        out.writeObject(this.cTime);
-        out.writeObject(this.cTimestamp);
-        out.writeObject(this.charObject);
-        out.writeObject(this.charPrimitive);
-        out.writeObject(this.doubleObject);
-        out.writeObject(this.doublePrimitive);
-        out.writeObject(this.floatObject);
-        out.writeObject(this.floatPrimitive);
-        out.writeObject(this.guid);
-        out.writeObject(this.intObject);
-        out.writeObject(this.intPrimitive);
-        out.writeObject(this.longObject);
-        out.writeObject(this.longPrimitive);
-        out.writeObject(this.shortObject);
-        out.writeObject(this.shortPrimitive);
-    }
-
-    @Override
-    protected void readState(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        super.readState(in);
-        this.bigDecimal = (BigDecimal)in.readObject();
-        this.bigInteger = (BigInteger)in.readObject();
-        this.booleanObject = (Boolean)in.readObject();
-        this.booleanPrimitive = (Boolean)in.readObject();
-        this.byteObject = (Byte)in.readObject();
-        this.bytePrimitive = (Byte)in.readObject();
-        this.cDate = (Date)in.readObject();
-        this.cString = (String)in.readObject();
-        this.cTime = (Time)in.readObject();
-        this.cTimestamp = (Timestamp)in.readObject();
-        this.charObject = (Character)in.readObject();
-        this.charPrimitive = (Character)in.readObject();
-        this.doubleObject = (Double)in.readObject();
-        this.doublePrimitive = (Double)in.readObject();
-        this.floatObject = (Float)in.readObject();
-        this.floatPrimitive = (Float)in.readObject();
-        this.guid = (byte[])in.readObject();
-        this.intObject = (Integer)in.readObject();
-        this.intPrimitive = (Integer)in.readObject();
-        this.longObject = (Long)in.readObject();
-        this.longPrimitive = (Long)in.readObject();
-        this.shortObject = (Short)in.readObject();
-        this.shortPrimitive = (Short)in.readObject();
     }
 
 }

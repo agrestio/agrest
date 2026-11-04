@@ -1,7 +1,7 @@
 package io.agrest.cayenne.unit.main;
 
 import io.agrest.cayenne.unit.NoDbTest;
-import org.apache.cayenne.runtime.CayenneRuntime;
+import org.apache.cayenne.CayenneRuntime;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
