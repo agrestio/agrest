@@ -1,6 +1,5 @@
 package io.agrest.processor;
 
-import io.agrest.SimpleResponse;
 import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.di.Key;
 
