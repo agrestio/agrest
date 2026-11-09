@@ -31,8 +31,8 @@
         <cayenne.version>5.0-RC1</cayenne.version>
 
         <jaxrs.version>4.0.0</jaxrs.version>
-        <jackson.version>2.22.3</jackson.version>
-        <jackson.databind.version>2.22.3</jackson.databind.version>
+        <jackson.version>2.22.4</jackson.version>
+        <jackson.databind.version>2.22.4</jackson.databind.version>
         <jackson.annotations.version>2.22</jackson.annotations.version>
 
         <!--
