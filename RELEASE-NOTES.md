@@ -4,6 +4,7 @@
 * #715 Upgrade to Cayenne 5.0-RC1
 * #716 Upgrade to Jackson 2.22.4
 * #717 Upgrade commons-lang3 to 3.20.0
+* #718 Upgrade Swagger transitive dependencies
 
 ## Release 6.0-M2
 

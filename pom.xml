@@ -48,6 +48,9 @@
         <junit5.version>5.13.4</junit5.version>
         <swagger.version>2.2.23</swagger.version>
         <commons.lang3.version>3.20.0</commons.lang3.version>
+        <javassist.version>3.33.0-GA</javassist.version>
+        <snakeyaml.version>2.5</snakeyaml.version>
+        <jakarta.validation.version>3.1.1</jakarta.validation.version>
         <mockito.version>3.9.0</mockito.version>
 
         <!-- Plugin Versions -->
@@ -207,6 +210,21 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons.lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta.validation.version}</version>
             </dependency>
             <!--
             Importing individual Bootique modules instead of a BOM, as BOM would be treated as a dependency
