@@ -47,6 +47,7 @@
         <bq.jetty.version>4.0-20260829.010512-13</bq.jetty.version>
         <junit5.version>5.13.4</junit5.version>
         <swagger.version>2.2.23</swagger.version>
+        <commons.lang3.version>3.20.0</commons.lang3.version>
         <mockito.version>3.9.0</mockito.version>
 
         <!-- Plugin Versions -->
@@ -201,6 +202,11 @@
                 <groupId>org.apache.cayenne</groupId>
                 <artifactId>cayenne</artifactId>
                 <version>${cayenne.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons.lang3.version}</version>
             </dependency>
             <!--
             Importing individual Bootique modules instead of a BOM, as BOM would be treated as a dependency
