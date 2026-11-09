@@ -35,16 +35,7 @@
         <jackson.databind.version>2.22.4</jackson.databind.version>
         <jackson.annotations.version>2.22</jackson.annotations.version>
 
-        <!--
-        Pinning Bootique test dependencies to specific snapshot builds instead of a floating "4.0-SNAPSHOT",
-        so that the builds are reproducible. Each Bootique module is released from its own repo, hence
-        a separate property per module.
-        -->
-        <bq.version>4.0-20260829.004058-38</bq.version>
-        <bq.jdbc.version>4.0-20260829.005318-13</bq.jdbc.version>
-        <bq.cayenne.version>4.0-20261104.190905-14</bq.cayenne.version>
-        <bq.jersey.version>4.0-20260829.010711-34</bq.jersey.version>
-        <bq.jetty.version>4.0-20260829.010512-13</bq.jetty.version>
+        <bq.version>4.0-M7</bq.version>
         <junit.version>6.1.3</junit.version>
         <swagger.version>2.2.23</swagger.version>
         <commons.lang3.version>3.20.0</commons.lang3.version>
@@ -107,20 +98,6 @@
         for the snapshot repo it's https://central.sonatype.com/repository/maven-snapshots/
         -->
     </distributionManagement>
-
-    <!-- TODO: remove once we switch to a release version of Bootique -->
-    <repositories>
-        <repository>
-            <id>bootique-snapshots</id>
-            <url>https://central.sonatype.com/repository/maven-snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -227,12 +204,12 @@
             <dependency>
                 <groupId>io.bootique.jdbc</groupId>
                 <artifactId>bootique-jdbc-junit-derby</artifactId>
-                <version>${bq.jdbc.version}</version>
+                <version>${bq.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.cayenne</groupId>
                 <artifactId>bootique-cayenne50-junit</artifactId>
-                <version>${bq.cayenne.version}</version>
+                <version>${bq.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.apache.cayenne</groupId>
@@ -248,12 +225,12 @@
             <dependency>
                 <groupId>io.bootique.jersey</groupId>
                 <artifactId>bootique-jersey</artifactId>
-                <version>${bq.jersey.version}</version>
+                <version>${bq.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.jetty</groupId>
                 <artifactId>bootique-jetty-junit</artifactId>
-                <version>${bq.jetty.version}</version>
+                <version>${bq.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
