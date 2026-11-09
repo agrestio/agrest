@@ -5,6 +5,7 @@
 * #716 Upgrade to Jackson 2.22.4
 * #717 Upgrade commons-lang3 to 3.20.0
 * #718 Upgrade Swagger transitive dependencies
+* #719 Upgrade to JUnit 6
 
 ## Release 6.0-M2
 

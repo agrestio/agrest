@@ -45,7 +45,7 @@
         <bq.cayenne.version>4.0-20261104.190905-14</bq.cayenne.version>
         <bq.jersey.version>4.0-20260829.010711-34</bq.jersey.version>
         <bq.jetty.version>4.0-20260829.010512-13</bq.jetty.version>
-        <junit5.version>5.13.4</junit5.version>
+        <junit.version>6.1.3</junit.version>
         <swagger.version>2.2.23</swagger.version>
         <commons.lang3.version>3.20.0</commons.lang3.version>
         <javassist.version>3.33.0-GA</javassist.version>
@@ -127,18 +127,12 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
-                <version>${junit5.version}</version>
+                <version>${junit.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-params</artifactId>
-                <version>${junit5.version}</version>
-            </dependency>
-            <!-- Use Vintage until we switch every module to JUnit 5-->
-            <dependency>
-                <groupId>org.junit.vintage</groupId>
-                <artifactId>junit-vintage-engine</artifactId>
-                <version>${junit5.version}</version>
+                <version>${junit.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
